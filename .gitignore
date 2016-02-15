@@ -2,6 +2,9 @@
 Thumbs.db
 ehthumbs.db
 
+# ignore java class files
+*.class
+
 # Folder config file
 Desktop.ini
 
