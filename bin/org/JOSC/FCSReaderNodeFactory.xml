@@ -25,9 +25,9 @@
     </fullDescription>
     
     <ports>
-        <inPort index="0" name="In-Port name">Description of first input port...</inPort>
-        <!-- possibly more input ports here-->
-        <outPort index="0" name="Out-Port name">Description of first output port...</outPort>
+        <outPort index="0" name="Meta information">Keywords from the header of the fcs file.</outPort>
+        <!-- possibly more output ports here-->
+        <outPort index="1" name="listmode data">The data coming from the data section of the FCS file. Listmode data for single cells.</outPort>
         <!-- possibly more output ports here-->
     </ports>    
     <views>

@@ -30,7 +30,7 @@ public class FCSReaderNodeDialog extends DefaultNodeSettingsPane {
                     FCSReaderNodeModel.CFGKEY_FileLocation,
                     FCSReaderNodeModel.DEFAULT_FileLocation),
                 "foo",
-                "fcs|lmd"                	
+                "fcs"                	
         		));
                     
     }

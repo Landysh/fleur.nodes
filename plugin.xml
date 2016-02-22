@@ -21,5 +21,15 @@
             factory-class="org.JOSC.FCSReaderNodeFactory"
             id="org.JOSC.FCSReaderNodeFactory"/>
    </extension>
+   <extension
+         point="org.knime.workbench.repository.categories">
+      <category
+            icon="icons/missing.gif"
+            level-id="josc"
+            locked="true"
+            name="JOSC"
+            path="/">
+      </category>
+   </extension>
    
 </plugin>

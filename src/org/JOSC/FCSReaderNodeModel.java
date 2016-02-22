@@ -2,6 +2,8 @@ package org.JOSC;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
@@ -43,7 +45,7 @@ public class FCSReaderNodeModel extends NodeModel {
 	static final String CFGKEY_FileLocation = "File Location";
 
     /** initial default count value. */
-    static final String DEFAULT_FileLocation = "<path to file>";
+    static final String DEFAULT_FileLocation = "C:\\Users\\Aaron\\Desktop\\A1.fcs";
 
     // example value: the models count variable filled from the dialog 
     // and used in the models execution method. The default components of the
@@ -70,44 +72,49 @@ public class FCSReaderNodeModel extends NodeModel {
             final ExecutionContext exec) throws Exception {
 
         logger.info("Starting Execution");
-      
-        //First Port is the fcs file header which contains meta information about the array
-        DataColumnSpec[] fcsHeader = new DataColumnSpec[2];
-        fcsHeader[0] = 
-            new DataColumnSpecCreator("Keyword", StringCell.TYPE).createSpec();
-        fcsHeader[1] = 
-            new DataColumnSpecCreator("Value", StringCell.TYPE).createSpec();
-                DataTableSpec outputSpec = new DataTableSpec(fcsHeader);
-        // Create buffered data container
-        BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        // Lets figure out how many keywords to add.
-        int keywordCount = getKeywordCount();
-        
-        for (int i = 0; i < keywordCount; i++) {
+        //get table specs
+        DataTableSpec[] tableSpecs = getDataSpecs();
+        // Create buffered data container for port 0
+        BufferedDataContainer container = exec.createDataContainer(tableSpecs[0]);      
+        Hashtable<String, String> headerTable = FCSFileReader.getFCSHeader(m_FileLocation.getStringValue());
+       
+       Enumeration<String> enumKey = headerTable.keys();
+       int i=0;
+       while(enumKey.hasMoreElements()) {
+    	   String key = enumKey.nextElement();
+           String val = headerTable.get(key);
+           RowKey rowKey = new RowKey("Row " + i);
+           // the cells of the current row, the types of the cells must match
+           // the column spec (see above)
+           DataCell[] cells = new DataCell[2];
+           cells[0] = new StringCell(key); 
+           cells[1] = new StringCell(val); 
+           DataRow row = new DefaultRow(key, cells);
+           container.addRowToTable(row);
+           exec.checkCanceled();
+           i++;
+           if(key.equals("0") && val.equals("0"))
+        	   headerTable.remove(key);
+        	}
+        int keywordCount = headerTable.size(); 
+        for (int j = 0; i < keywordCount; i++) {
             RowKey key = new RowKey("Row " + i);
             // the cells of the current row, the types of the cells must match
             // the column spec (see above)
-            DataCell[] cells = new DataCell[3];
+            DataCell[] cells = new DataCell[2];
             cells[0] = new StringCell("String_" + i); 
-            cells[1] = new DoubleCell(0.5 * i); 
+            cells[1] = new StringCell("foo"); 
             DataRow row = new DefaultRow(key, cells);
             container.addRowToTable(row);
             
-            // check if the execution monitor was canceled
-            exec.checkCanceled();
-            exec.setProgress(i / (double)keywordCount, 
-                "Adding row " + i);
+//            exec.setProgress(i / (double)keywordCount, 
+//                "Adding keyword " + i);
         }
         // once we are done, we close the container and return its table
         container.close();
         BufferedDataTable out = container.getTable();
-        return new BufferedDataTable[]{out};
+        return new BufferedDataTable[]{out,out};
     }
-
-    private int getKeywordCount() {
-		// TODO Auto-generated method stub
-		return 10;
-	}
 
 	/**
      * {@inheritDoc}
@@ -121,7 +128,7 @@ public class FCSReaderNodeModel extends NodeModel {
 
     /**
      * {@inheritDoc}
-     */
+     */ 
     @Override
     protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
             throws InvalidSettingsException {
@@ -131,11 +138,33 @@ public class FCSReaderNodeModel extends NodeModel {
         // to execute. If the node can execute in its current state return
         // the spec of its output data table(s) (if you can, otherwise an array
         // with null elements), or throw an exception with a useful user message
-
-        return new DataTableSpec[]{null};
+    	
+    	DataTableSpec[] specs = getDataSpecs(); 	
+   	
+        return specs;
     }
 
-    /**
+    private DataTableSpec[] getDataSpecs() {
+   	
+    	//Get spec for port 0
+    	DataColumnSpec keys = new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
+    	DataColumnSpec values = new DataColumnSpecCreator("value", StringCell.TYPE).createSpec();
+    	DataColumnSpec[] colSpecs = new DataColumnSpec[2];
+    	colSpecs[0]=keys;
+    	colSpecs[1]=values;
+    	DataTableSpec headerSpec = new DataTableSpec(colSpecs);
+    	DataTableSpec[] specs = new DataTableSpec[2];
+    	specs[0]=headerSpec;
+    	
+    	//get spec for port 1
+    	//TODO parse parameter names to create output spec.
+    	specs[1] = headerSpec;		
+    	
+    	return specs;
+	}
+
+
+	/**
      * {@inheritDoc}
      */
     @Override
