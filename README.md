@@ -1,6 +1,6 @@
 Inflor
 --------------------------------------------
-# Open Source Flow Cytometry Nodes for KNIME.
+Open Source Flow Cytometry Nodes for KNIME.
 
 ### License
 
