@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<plugin>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?><plugin>
 
    <!-- This is an example for providing an own category 
       <extension
@@ -14,22 +13,16 @@
    </extension>
    -->
    
-   <extension
-         point="org.knime.workbench.repository.nodes">
-      <node
-            category-path="/"
-            factory-class="org.JOSC.FCSReaderNodeFactory"
-            id="org.JOSC.FCSReaderNodeFactory"/>
-   </extension>
-   <extension
-         point="org.knime.workbench.repository.categories">
-      <category
-            icon="icons/missing.gif"
-            level-id="josc"
-            locked="true"
-            name="JOSC"
-            path="/">
+   <extension point="org.knime.workbench.repository.nodes">
+      <node category-path="/inflor" factory-class="main.java.FCSReaderNodeFactory" id="Inflor.FCSReaderNodeFactory"/>
+</extension>
+   <extension point="org.knime.workbench.repository.categories">
+      <category icon="icons/inflor_knime.png" level-id="inflor" locked="true" name="Inflor" path="/">
       </category>
+   </extension>
+   <extension point="org.knime.core.PortType">
+      <portType hidden="false" name="Inflor.FCSPort" objectClass="main.java.FCSPortObject" objectSerializer="main.java.FCSPortSerializer" specClass="main.java.FCSObjectSpec">
+      </portType>
    </extension>
    
 </plugin>

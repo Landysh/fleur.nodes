@@ -4,12 +4,14 @@ Bundle-Name: FCSReader-Node extension for KNIME Workbench
 Bundle-SymbolicName: org.JOSC; singleton:=true
 Bundle-Version: 0.01
 Bundle-ClassPath: fcsreader.jar
-Bundle-Activator: org.JOSC.FCSReaderNodePlugin
+Bundle-Activator: main.java.FCSReaderNodePlugin
 Bundle-Vendor: Landysh
 Require-Bundle: org.eclipse.core.runtime,
  org.knime.workbench.core,
  org.knime.workbench.repository,
  org.knime.base
 Bundle-ActivationPolicy: lazy
-Export-Package: org.JOSC
-
+Import-Package: com.fasterxml.jackson.core;version="2.5.2",
+ com.fasterxml.jackson.databind;version="2.5.2",
+ com.fasterxml.jackson.databind.type;version="2.5.2",
+ junit.extensions;version="4.12.0"
