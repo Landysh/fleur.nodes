@@ -27,20 +27,20 @@ public class FCSFileReader {
 	static final int LASTBYTE_EndDataOffset = 41;
 
 	// file properties
-	String 						pathToFile;
+	public String 				pathToFile;
 	RandomAccessFile 			FCSFile;
-	String						FCSVersion;
+	public String				FCSVersion;
 	Hashtable<String, String> 	header;
 
 	// fcs properties
-	Integer 					parameterCount;
-	Integer 					beginText;
-	Integer 					endText;
-	Integer 					beginData;
-	Integer 					endData;
-	String 						dataType;
-	Integer[] 					bitMap;
-	Long 						flowJoDemoID = null;
+	public Integer 				parameterCount;
+	public Integer 				beginText;
+	public Integer 				endText;
+	public Integer 				beginData;
+	public Integer 				endData;
+	public String 				dataType;
+	public Integer[] 			bitMap;
+	public Long 				flowJoDemoID = null;
 
 	// Constructor
 	public FCSFileReader(String path_to_file) throws Exception {
@@ -218,10 +218,36 @@ public class FCSFileReader {
 		double[] row = new double[parameterCount];
 		if (dataType.equals("F")) {
 			row = readFloatRow(row);
+			
 		}else if (dataType.equals("I")){
 			row = readIntegerRow(row);
 		}
 		return row;
 	}
 
+	public double[][] readAllData() throws IOException {
+		Integer cellCount = getKeywordValueInteger("$TOT", header);
+		double [][] allData = new double[parameterCount][cellCount];
+		FCSFile.seek(beginData);
+		double[] row = new double[parameterCount];
+		if (dataType.equals("F")){
+			for (int i=0;i<cellCount;i++){
+				row = readFloatRow(row);
+				for (int j=0;j<row.length;j++){
+					allData[i][j] = row[j];
+				}
+			}
+		}else if (dataType.equals("F")){
+			for (int i=0;i<cellCount;i++){
+				row = readIntegerRow(row);
+				for (int j=0;j<row.length;j++){
+					allData[i][j] = row[j];
+				}
+			}
+		}else {
+			System.out.println("Houston, we have an unsupported data type (or some other problem).");
+		}
+		return allData;
+	}
+    
 }

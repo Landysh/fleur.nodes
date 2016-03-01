@@ -7,11 +7,10 @@ import java.util.zip.ZipEntry;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.port.PortObject.PortObjectSerializer;
-
-
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortObjectZipInputStream;
 import org.knime.core.node.port.PortObjectZipOutputStream;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.ArrayType;
@@ -85,7 +84,7 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 						
 		}	
 		 if(keywords==null||parameterData==null||parameterList==null){
-			 Exception e = new Exception("Null entries when loading the port.");
+			 Exception e = new Exception("Null entries encountered when loading the port.");
 			 System.out.println(e.getStackTrace());
 			 e.printStackTrace();
 		 }
