@@ -27,9 +27,9 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 /**
- * This is the model implementation of FCSReader. It will do stuff
- *
- * @author Landysh
+ * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor 
+ * FCSFileReader in the context of a KNIME Source node which produces a standard KNIME data table.
+ * @author Aaron Hart
  */
 public class FCSReaderNodeModel extends NodeModel {
 
@@ -77,8 +77,9 @@ public class FCSReaderNodeModel extends NodeModel {
 		BufferedDataContainer data = null;
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
+			EventFrame frame = FCSReader.getEventFrame();
 			Hashtable <String, String> keywords = FCSReader.getHeader();
-			DataTableSpec[] tableSpecs = createPortSpecs(keywords);
+			DataTableSpec[] tableSpecs = createPortSpecs(frame);
 			// Read header section
 			header = exec.createDataContainer(tableSpecs[0]);
 			Enumeration<String> enumKey = keywords.keys();
@@ -106,21 +107,19 @@ public class FCSReaderNodeModel extends NodeModel {
 
 			// Read data section
 			data = exec.createDataContainer(tableSpecs[1]);
-			Integer cellCount = FCSFileReader.getKeywordValueInteger("$TOT",keywords);
-			Integer parCount = FCSFileReader.getKeywordValueInteger("$PAR", keywords);
 			FCSReader.initRowReader();
-			for (int j = 0; j <= cellCount - 1; j++) {
+			for (int j = 0; j <= frame.eventCount - 1; j++) {
 				RowKey rowKey = new RowKey("Row " + j);
-				DataCell[] dataCells = new DataCell[parCount];
+				DataCell[] dataCells = new DataCell[frame.parameterCount];
 				double[] FCSRow = FCSReader.readRow();
-				for (int k = 0; k <= parCount - 1; k++) {
+				for (int k = 0; k <= frame.parameterCount - 1; k++) {
 					dataCells[k] = new DoubleCell(FCSRow[k]);
 				}
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				data.addRowToTable(dataRow);
 				if (j % 1000 == 0) {
 					exec.checkCanceled();
-					exec.setProgress(j / cellCount, j + " rows read.");
+					exec.setProgress(j / frame.eventCount, j + " rows read.");
 				}
 			}
 			// once we are done, we close the container and return its table
@@ -133,10 +132,10 @@ public class FCSReaderNodeModel extends NodeModel {
 		return new BufferedDataTable[] { header.getTable(), data.getTable() };
 	}
 
-	private DataTableSpec[] createPortSpecs(Hashtable<String, String> keywords) {
+	private DataTableSpec[] createPortSpecs(EventFrame frame) {
 		DataTableSpec[] specs = new DataTableSpec[2];
 		specs[0] = createKeywordSpec();
-		specs[1] = createDataSpec(keywords);
+		specs[1] = createDataSpec(frame);
 		return specs;
 	}
 
@@ -164,8 +163,8 @@ public class FCSReaderNodeModel extends NodeModel {
 		DataTableSpec[] specs = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			Hashtable <String, String> keywords = FCSReader.getHeader();
-			specs = createPortSpecs(keywords);
+			EventFrame eventsFrame = FCSReader.getEventFrame();
+			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -174,25 +173,14 @@ public class FCSReaderNodeModel extends NodeModel {
 		return specs;
 	}
 
-	private DataTableSpec createDataSpec(Hashtable<String, String> keywords) {
-		int parCount = FCSFileReader.getKeywordValueInteger("$PAR", keywords);
+	private DataTableSpec createDataSpec(EventFrame frame) {
+		int parCount = frame.parameterCount;
 		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount];
-		for (Integer i = 1; i <= parCount; i++) {
-			String parKey = "$P" + i.toString() + "N";
-			String stainKey = "$P" + i.toString() + "S";
-			String parVal = FCSFileReader.getKeywordValueString(parKey, keywords);
-			String columnName;
-			if (keywords.containsKey(stainKey)){
-				String stainVal = FCSFileReader.getKeywordValueString(stainKey, keywords);
-				 columnName = new String(parVal + " " + stainVal);
-			} else {
-				 columnName = new String(parVal);
-			}
-			DataColumnSpec spec = new DataColumnSpecCreator(columnName, DoubleCell.TYPE).createSpec();
-			colSpecs[i - 1] = spec;
+		String[] columnNames = frame.getColumnNames();
+		for (int i=0; i<columnNames.length; i++) {
+			colSpecs[i] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
 		}
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
-
 		return dataSpec;
 	}
 

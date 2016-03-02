@@ -85,7 +85,6 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 		}	
 		 if(keywords==null||parameterData==null||parameterList==null){
 			 Exception e = new Exception("Null entries encountered when loading the port.");
-			 System.out.println(e.getStackTrace());
 			 e.printStackTrace();
 		 }
 		FCSPortObject newFCSPortObject = new FCSPortObject(keywords, parameterList, parameterData);

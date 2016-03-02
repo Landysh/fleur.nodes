@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.NoSuchElementException;
 import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -29,18 +28,14 @@ public class FCSFileReader {
 	// file properties
 	public String 				pathToFile;
 	RandomAccessFile 			FCSFile;
-	public String				FCSVersion;
-	Hashtable<String, String> 	header;
-
-	// fcs properties
-	public Integer 				parameterCount;
 	public Integer 				beginText;
 	public Integer 				endText;
 	public Integer 				beginData;
 	public Integer 				endData;
 	public String 				dataType;
 	public Integer[] 			bitMap;
-	public Long 				flowJoDemoID = null;
+	EventFrame			 		eventFrame;
+	public String				UUID;
 
 	// Constructor
 	public FCSFileReader(String path_to_file) throws Exception {
@@ -48,23 +43,17 @@ public class FCSFileReader {
 		File f = new File(pathToFile);
 		// file specific properties
 		FCSFile = new RandomAccessFile(f, "r");
-		FCSVersion = readFCSVersion(FCSFile);
 		// text specific properties
 		beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
 		endText = readOffset(FIRSTBYTE_EndTextOffset, LASTBYTE_EndTextOffset);
-		header = readHeader(path_to_file);
+		Hashtable<String, String> header = readHeader(path_to_file);
+		header.put("FCSVersion", readFCSVersion(FCSFile));
+		eventFrame = new EventFrame(header);
 		// data specific properties
-		parameterCount = getKeywordValueInteger("$PAR", header);
 		beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
 		endData = readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
 		bitMap = createBitMap(header);
-		Boolean ok = hasValidHeader(header);
-		dataType = getKeywordValueString("$DATATYPE", header);
-
-		if(!ok){
-			Exception e = new Exception("Invalid FCS Header: ");
-			throw e;
-		}
+		dataType = eventFrame.getKeywordValueString("$DATATYPE");
 	}
 
 	public void close() throws IOException {
@@ -74,66 +63,15 @@ public class FCSFileReader {
 	private Integer[] createBitMap(Hashtable<String, String> keywords) {
 		// This method reads how many bytes per parameter and returns an integer
 		// array of these values
-		Integer parCount = getKeywordValueInteger("$PAR", keywords);
-		Integer[] map = new Integer[parCount];
-		for (int i = 1; i <= parCount; i++) {
+		Integer[] map = new Integer[eventFrame.parameterCount];
+		for (int i = 1; i <= eventFrame.parameterCount; i++) {
 			String key = "$P" + (i) + "B";
-			Integer byteSize = getKeywordValueInteger(key, keywords);
+			Integer byteSize = eventFrame.getKeywordValueInteger(key);
 			map[i - 1] = byteSize;
 		}
 		return map;
 	}
-
-	public String getFCSVersion(){
-		return FCSVersion;
-	}
 	
-	public Hashtable<String, String> getHeader() {
-		return header;
-	}
-
-	public static Integer getKeywordValueInteger(String keyword, Hashtable<String, String> keywords) {
-		//This method will try to return an FCS header keyword and if it isn't found will return -1!
-		Integer value = -1; 
-		if(keywords.containsKey(keyword)){
-			String valueString = keywords.get(keyword).trim();
-			value = Integer.parseInt(valueString);
-		} else {
-			System.out.println( keyword + " not found, -1 returned at your peril.");
-		}
-		return value;
-	}
-
-	public static String getKeywordValueString(String keyword, Hashtable<String, String> keywords) {
-		//This method will try to return an FCS header keyword and if it isn't found will return an empty string.
-		String value = "";
-		try{
-			value = keywords.get(keyword).trim();
-		}catch (NoSuchElementException e){
-			System.out.println( keyword + " not found, <empy string> returned at your peril.");
-		}
-		return value;
-	}
-	
-	public String[] getParameterNames(Hashtable<String, String> header){
-		// provide the header of an FCS file Reader (eg. getHeader()) and get some back the parameter list.
-		String[] parameterList = new String[getKeywordValueInteger("$PAR", header)];
-		return parameterList;
-	}
-	
-	
-	private Boolean hasValidHeader(Hashtable<String, String> header) throws FileNotFoundException, IOException {
-		Boolean validHeader = false;
-		// Check required keywords later...
-		if (FCSVersion.contains("FCS" )&& header.get("$TOT")!=null) {
-			validHeader = true;
-		} else {
-			System.out.println("Invalid header: missing required information.");
-		}
-
-	return validHeader;
-	}
-
 	public void initRowReader() {
 		try {
 			FCSFile.seek(beginData);
@@ -145,7 +83,8 @@ public class FCSFileReader {
 	public String readFCSVersion(RandomAccessFile raFile)
 			throws UnsupportedEncodingException, IOException, FileNotFoundException {
 		// mark the current location (should be byte 0)
-		byte[] bytes = new byte[END_FCSVersionOffset - BEGIN_FCSVersionOffset];
+		FCSFile.seek(0);
+		byte[] bytes = new byte[END_FCSVersionOffset - BEGIN_FCSVersionOffset+1];
 		raFile.read(bytes);
 		String FCSVersion = new String(bytes, "UTF-8");
 		return FCSVersion;
@@ -171,11 +110,14 @@ public class FCSFileReader {
 	}
 
 	private Hashtable<String, String> readHeader(String path_to_file) throws IOException {
+		Hashtable <String, String> header = new Hashtable<String, String>();
+		
 		// Delimiter is first UTF-8 character in the text section
 		byte[] delimiterBytes = new byte[1];
 		FCSFile.seek(beginText);
 		FCSFile.read(delimiterBytes);
 		String delimiter = new String(delimiterBytes);
+		
 		// Read the rest of the text bytes, this will contain the keywords
 		// commonly referred to as the FCS header
 		int textLength = endText - beginText + 1;
@@ -214,8 +156,8 @@ public class FCSFileReader {
 	}
 
 	public double[] readRow() throws IOException {
-		// Hope it's pointed at the right spot! (use ) and also we have a reference to global variable
-		double[] row = new double[parameterCount];
+		// Hope it's pointed at the right spot!
+		double[] row = new double[eventFrame.parameterCount];
 		if (dataType.equals("F")) {
 			row = readFloatRow(row);
 			
@@ -225,29 +167,32 @@ public class FCSFileReader {
 		return row;
 	}
 
-	public double[][] readAllData() throws IOException {
-		Integer cellCount = getKeywordValueInteger("$TOT", header);
-		double [][] allData = new double[parameterCount][cellCount];
-		FCSFile.seek(beginData);
-		double[] row = new double[parameterCount];
-		if (dataType.equals("F")){
-			for (int i=0;i<cellCount;i++){
-				row = readFloatRow(row);
-				for (int j=0;j<row.length;j++){
-					allData[i][j] = row[j];
-				}
-			}
-		}else if (dataType.equals("F")){
-			for (int i=0;i<cellCount;i++){
-				row = readIntegerRow(row);
-				for (int j=0;j<row.length;j++){
-					allData[i][j] = row[j];
-				}
-			}
-		}else {
-			System.out.println("Houston, we have an unsupported data type (or some other problem).");
-		}
-		return allData;
+	public Hashtable<String, String> getHeader() {
+		return eventFrame.getHeader();
 	}
-    
+
+	public EventFrame getEventFrame() {
+		return eventFrame;
+	}
+
+	public void readColumnEventData() throws IOException {
+		Hashtable<String, double[]> allData = new Hashtable<String, double[]>();
+		String[] columnNames = eventFrame.getColumnNames();
+		FCSFile.seek(beginData);
+		for (int i=0; i< columnNames.length; i++){
+			double[] column = new double[eventFrame.eventCount];
+			allData.put(columnNames[i], column);
+		}
+		for (int i=0; i<eventFrame.eventCount; i++){
+			double[] row = readRow();
+			for (int j=0; j<columnNames.length;j++){
+				allData.get(columnNames[j])[i] = row[j];
+			}
+		}
+		eventFrame.setData(allData);
+	}
+
+	public Hashtable<String, double[]> getColumnStore() {
+		return eventFrame.columnStore;
+	}
 }
