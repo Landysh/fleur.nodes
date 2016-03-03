@@ -65,9 +65,10 @@ public class FCSReaderNodeModel extends NodeModel {
 
 	/**
 	 * {@inheritDoc}
+	 * @throws CanceledExecutionException 
 	 */
 	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec) throws CanceledExecutionException
 			{
 
 		logger.info("Starting Execution");
@@ -108,13 +109,14 @@ public class FCSReaderNodeModel extends NodeModel {
 			// Read data section
 			data = exec.createDataContainer(tableSpecs[1]);
 			FCSReader.initRowReader();
-			for (int j = 0; j <= frame.eventCount - 1; j++) {
+			for (int j = 0; j<frame.eventCount; j++) {
 				RowKey rowKey = new RowKey("Row " + j);
-				DataCell[] dataCells = new DataCell[frame.parameterCount];
+				DataCell[] dataCells = new DataCell[frame.parameterCount+1];
 				double[] FCSRow = FCSReader.readRow();
-				for (int k = 0; k <= frame.parameterCount - 1; k++) {
+				for (int k=0; k<frame.parameterCount; k++) {
 					dataCells[k] = new DoubleCell(FCSRow[k]);
 				}
+				dataCells[frame.parameterCount] = new DoubleCell(new Double(j));
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				data.addRowToTable(dataRow);
 				if (j % 1000 == 0) {
@@ -127,6 +129,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new CanceledExecutionException("Execution Failed.");
 		}
 		
 		return new BufferedDataTable[] { header.getTable(), data.getTable() };
@@ -167,23 +170,24 @@ public class FCSReaderNodeModel extends NodeModel {
 			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
 		return specs;
 	}
 
 	private DataTableSpec createDataSpec(EventFrame frame) {
 		int parCount = frame.parameterCount;
-		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount];
+		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount+1];
 		String[] columnNames = frame.getColumnNames();
 		for (int i=0; i<columnNames.length; i++) {
 			colSpecs[i] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
 		}
+		// last column
+		colSpecs[parCount] = new DataColumnSpecCreator("Event Index", DoubleCell.TYPE).createSpec();
+
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
 		return dataSpec;
 	}
-
 	private DataTableSpec createKeywordSpec() {
 		DataColumnSpec[] colSpecs = new DataColumnSpec[2];
 		colSpecs[0] = new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();

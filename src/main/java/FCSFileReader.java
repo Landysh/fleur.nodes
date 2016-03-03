@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.knime.core.node.InvalidSettingsException;
+
 public class FCSFileReader {
 
 	// From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
@@ -91,7 +93,7 @@ public class FCSFileReader {
 	}
 
 	private double[] readFloatRow(double[] row) throws IOException {
-		for (int i = 0; i <= row.length - 1; i++) {
+		for (int i=0; i<row.length; i++) {
 			byte[] bytes = new byte[bitMap[i] /8 ];
 			FCSFile.read(bytes);
 			row[i] = ByteBuffer.wrap(bytes).getFloat();
@@ -99,7 +101,7 @@ public class FCSFileReader {
 		return row;
 	}
 	private double[] readIntegerRow(double[] row) throws IOException {
-		for (int i = 0; i <= row.length - 1; i++) {
+		for (int i=0; i<row.length; i++) {
 			Short I = null;
 			byte[] bytes = new byte[bitMap[i] / 8];
 			FCSFile.read(bytes);

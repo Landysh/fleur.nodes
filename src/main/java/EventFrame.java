@@ -8,19 +8,20 @@ public class EventFrame {
 	public Hashtable<String, String> 	keywords;
 	public ArrayList<String> 			parameterList;
 	public Hashtable<String, double[]> 	columnStore;
+	
 	// fcs properties
 	public Integer 						parameterCount;
 	public Integer						eventCount;
 	
 	
-	public EventFrame(Hashtable<String, String> newKeywords) throws Exception{
+	public EventFrame(Hashtable<String, String> newKeywords) throws Exception {
 		keywords = newKeywords;
 		parameterCount = getKeywordValueInteger("$PAR");
 		eventCount = getKeywordValueInteger("$TOT");
 		Boolean ok = false;
 		ok = validateHeader();
 		if(!ok){
-			Exception e = new Exception("Invalid FCS Header: ");
+			Exception e = new Exception("Invalid FCS Header.");
 			e.printStackTrace();
 			throw e;
 		}
