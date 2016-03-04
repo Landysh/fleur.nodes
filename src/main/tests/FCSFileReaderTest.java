@@ -12,7 +12,7 @@ public class FCSFileReaderTest {
 	//Define Constants  
 //	private static final int LOWER_BOUND = 1000;
 	  
-	String path1 = "C:/Users/Aaron/git/JOSC/src/main/tests/extData/int-15_scatter_events.fcs";
+	String path1 = "src/main/tests/extData/int-15_scatter_events.fcs";
 	@SuppressWarnings("deprecation")
 	@Test
 	  public void testInitialization() throws Exception {
@@ -29,11 +29,13 @@ public class FCSFileReaderTest {
 	    assertEquals( r.endData, 	(Integer) 635);
 	    assertEquals( r.dataType, 	"I");
 	    assertEquals( r.bitMap, 	new Integer[] {16,16});
+	    System.out.println("Test1 completed (succefully or otherwise)");
+
 	  }
-	  
+	 @Test
 	  public void testReadAllData() throws Exception {
 		//Setup
-		  FCSFileReader r = new FCSFileReader(path1);
+		FCSFileReader r = new FCSFileReader(path1);
 		
 		//Test
 	     Hashtable<String, double[]> testData = r.getColumnStore();
@@ -44,6 +46,6 @@ public class FCSFileReaderTest {
 	    //Assert
 	    assertEquals( testData.get("FCS"), fcs );
 	    assertEquals( testData.get("SSC"), ssc );
-
+	    System.out.println("Test2 completed (succefully or otherwise)");
 	}
 }
