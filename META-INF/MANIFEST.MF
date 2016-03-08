@@ -1,17 +1,20 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: FCSReader-Node extension for KNIME Workbench
-Bundle-SymbolicName: org.JOSC; singleton:=true
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: io.landysh.inflor;singleton:=true
 Bundle-Version: 0.01
 Bundle-ClassPath: fcsreader.jar,
- src/main/java/ext/hamcrest-core-1.3.jar
-Bundle-Activator: main.java.FCSReaderNodePlugin
-Bundle-Vendor: Landysh
+ src/ext/hamcrest-core-1.3.jar,
+ src/ext/ejml-0.29-libs/EJML-core-0.29.jar,
+ src/ext/ejml-0.29-libs/EJML-simple-0.29.jar,
+ src/ext/ejml-0.29-libs/EJML-dense64-0.29.jar,
+ src/ext/ejml-0.29-libs/EJML-denseC64-0.29.jar,
+ src/
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
  org.knime.workbench.core,
  org.knime.workbench.repository,
  org.knime.base
-Bundle-ActivationPolicy: lazy
 Import-Package: com.fasterxml.jackson.core;version="2.5.2",
  com.fasterxml.jackson.databind;version="2.5.2",
  com.fasterxml.jackson.databind.type;version="2.5.2",
@@ -20,3 +23,52 @@ Import-Package: com.fasterxml.jackson.core;version="2.5.2",
  org.junit.runner.notification;version="4.12.0",
  org.junit.runners;version="4.12.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: com.jujutsu.tsne,
+ ext,
+ io.landysh.inflor.java.core,
+ io.landysh.inflor.java.knime.nodes.FCSReader,
+ io.landysh.inflor.java.knime.nodes.tsne,
+ io.landysh.inflor.java.knime.portTypes.fcs,
+ io.landysh.inflor.tests,
+ io.landysh.inflor.tests.extData,
+ org.ejml,
+ org.ejml.alg.block,
+ org.ejml.alg.block.decomposition.bidiagonal,
+ org.ejml.alg.block.decomposition.chol,
+ org.ejml.alg.block.decomposition.hessenberg,
+ org.ejml.alg.block.decomposition.qr,
+ org.ejml.alg.block.linsol.chol,
+ org.ejml.alg.block.linsol.qr,
+ org.ejml.alg.dense.decompose,
+ org.ejml.alg.dense.decompose.chol,
+ org.ejml.alg.dense.decompose.lu,
+ org.ejml.alg.dense.decompose.qr,
+ org.ejml.alg.dense.decomposition,
+ org.ejml.alg.dense.decomposition.bidiagonal,
+ org.ejml.alg.dense.decomposition.chol,
+ org.ejml.alg.dense.decomposition.eig,
+ org.ejml.alg.dense.decomposition.eig.symm,
+ org.ejml.alg.dense.decomposition.eig.watched,
+ org.ejml.alg.dense.decomposition.hessenberg,
+ org.ejml.alg.dense.decomposition.lu,
+ org.ejml.alg.dense.decomposition.qr,
+ org.ejml.alg.dense.decomposition.svd,
+ org.ejml.alg.dense.decomposition.svd.implicitqr,
+ org.ejml.alg.dense.linsol,
+ org.ejml.alg.dense.linsol.chol,
+ org.ejml.alg.dense.linsol.lu,
+ org.ejml.alg.dense.linsol.qr,
+ org.ejml.alg.dense.linsol.svd,
+ org.ejml.alg.dense.misc,
+ org.ejml.alg.dense.mult,
+ org.ejml.alg.fixed,
+ org.ejml.alg.generic,
+ org.ejml.data,
+ org.ejml.factory,
+ org.ejml.interfaces.decomposition,
+ org.ejml.interfaces.linsol,
+ org.ejml.ops,
+ org.ejml.simple,
+ org.hamcrest,
+ org.hamcrest.core,
+ org.hamcrest.internal;x-internal:=true

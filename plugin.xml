@@ -13,16 +13,17 @@
    </extension>
    -->
    
-   <extension point="org.knime.workbench.repository.nodes">
-      <node category-path="/inflor" factory-class="main.java.FCSReaderNodeFactory" id="Inflor.FCSReaderNodeFactory"/>
+<extension point="org.knime.workbench.repository.nodes">
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSReader.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.tsne.TSNENodeFactory" id="TSNENodeFactory"/>
 </extension>
-   <extension point="org.knime.workbench.repository.categories">
-      <category icon="icons/inflor_knime.png" level-id="inflor" locked="true" name="Inflor" path="/">
-      </category>
-   </extension>
-   <extension point="org.knime.core.PortType">
-      <portType hidden="false" name="Inflor.FCSPort" objectClass="main.java.FCSPortObject" objectSerializer="main.java.FCSPortSerializer" specClass="main.java.FCSObjectSpec">
-      </portType>
-   </extension>
+
+<extension point="org.knime.workbench.repository.categories">
+		<category icon="icons/inflor_knime.png" level-id="inflor" locked="true" name="Inflor" path="/"></category>
+</extension>
+
+<extension point="org.knime.core.PortType">
+      <portType hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSPortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSPortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSObjectSpec"></portType>
+</extension>
    
 </plugin>
