@@ -47,13 +47,24 @@ public class TSNENodeModel extends NodeModel {
 	private SettingsModelColumnFilter2 modelColumns = 
 			new SettingsModelColumnFilter2(CFGKEY_Columns);
 
+	// Iterations
+	static final 	String 		CFGKEY_Iterations = "Iterations";
+	static final 	Integer 	MIN_Iterations = 1;
+	static final 	Integer 	MAX_Iterations = 100;
+	static final 	Integer 	DEFAULT_Iterations = 3;
 
+    private final SettingsModelIntegerBounded modelIterations = 
+    		new SettingsModelIntegerBounded(CFGKEY_Iterations,
+    		DEFAULT_Iterations,
+    		MIN_Iterations,
+    		MAX_Iterations
+    		);
     
 	// PCA Dims
 	static final 	String 		CFGKEY_InitDims = "PCA Dimensions";
-	static final 	Integer 	MIN_InitDims = 1;
+	static final 	Integer 	MIN_InitDims = 0;
 	static final 	Integer 	MAX_InitDims = 100;
-	static final 	Integer 	DEFAULT_InitDims = 3;
+	static final 	Integer 	DEFAULT_InitDims = 10;
 
     private final SettingsModelIntegerBounded modelInitDims = 
     		new SettingsModelIntegerBounded(CFGKEY_InitDims,
@@ -190,6 +201,7 @@ public class TSNENodeModel extends NodeModel {
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
     	modelColumns.saveSettingsTo(settings);
+    	modelIterations.saveSettingsTo(settings);
     	modelPerplexity.saveSettingsTo(settings);
     	modelInitDims.saveSettingsTo(settings);
     }
@@ -203,6 +215,7 @@ public class TSNENodeModel extends NodeModel {
     	modelColumns.loadSettingsFrom(settings);
     	modelPerplexity.loadSettingsFrom(settings);
     	modelInitDims.loadSettingsFrom(settings);
+    	modelIterations.loadSettingsFrom(settings);
     }
 
     /**

@@ -31,6 +31,14 @@ public class TSNENodeDialog extends DefaultNodeSettingsPane {
 		DialogComponent diaC = new DialogComponentColumnFilter2(modelColumns, 0);
 		addDialogComponent(diaC);
 		
+		//Iterations
+		SettingsModelIntegerBounded modelIterations = 
+				new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_Iterations, 
+				TSNENodeModel.DEFAULT_Iterations, 
+				TSNENodeModel.MIN_Iterations, 
+				TSNENodeModel.MAX_Iterations);
+		addDialogComponent(new DialogComponentNumber(modelIterations,"Runtime (Iterations)", 1));
+		
 		
 		//Initial PCA Dims
 		SettingsModelIntegerBounded modelInitDims = 
