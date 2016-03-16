@@ -83,4 +83,8 @@ public class EventFrame {
 		}
 		return columnNames;
 	}
+	
+	public Hashtable<String, double[]> getColumnData() {
+		return columnStore;
+	}
 }

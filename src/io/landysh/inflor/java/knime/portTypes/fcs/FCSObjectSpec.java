@@ -17,8 +17,7 @@ public class FCSObjectSpec implements PortObjectSpec {
 
 	@Override
 	public JComponent[] getViews() {
-		// TODO Auto-generated method stub
-		return null;
+        return new JComponent[]{new FCSSummaryView(header)};
 	}
 
 }

@@ -41,7 +41,7 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 		out.write(parameterListBytes);
 		
 		// Serialize data
-		double[][] parameterData = FCSObject.getData();
+		Hashtable<String, double[]> parameterData = FCSObject.getData();
 		byte[] parameterDataBytes = mapper.writeValueAsBytes(parameterData);
 		ZipEntry parameterDataEntry = new ZipEntry(ZIP_ENTRY_DATA);
 		out.putNextEntry(parameterDataEntry);
@@ -57,7 +57,8 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 		String name;
 		Hashtable<String, String> keywords = null;
 		String [] parameterList = null;
-		double[][] parameterData = null;
+		Hashtable<String, double[]> parameterData = null;
+		FCSObjectSpec fcsSpec = null;
 		ObjectMapper mapper = new ObjectMapper();
 		while (stop==false){
 			try {
@@ -81,13 +82,14 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 			} catch (NullPointerException e) {
 					stop = true;
 			}
-						
+			fcsSpec = new FCSObjectSpec(keywords,parameterList);		
 		}	
 		 if(keywords==null||parameterData==null||parameterList==null){
-			 Exception e = new Exception("Null entries encountered when loading the port.");
+			 CanceledExecutionException e = new CanceledExecutionException("Null entries encountered when loading the port.");
 			 e.printStackTrace();
+			 throw e;
 		 }
-		FCSPortObject newFCSPortObject = new FCSPortObject(keywords, parameterList, parameterData);
+		FCSPortObject newFCSPortObject = new FCSPortObject(fcsSpec, parameterData);
 
 		return newFCSPortObject;
 	}

@@ -18,6 +18,7 @@
 	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.tsne.TSNENodeFactory" id="TSNENodeFactory"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FlowSetReaderNodeFactory" id="FlowSetReaderNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory" id="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">

@@ -3,7 +3,7 @@
     <name>FCSFrameReader</name>
     
     <shortDescription>
-        This node reads an FCS file into an FCS Frame port
+        Reads a data file into an FCS Frame
     </shortDescription>
     
     <fullDescription>

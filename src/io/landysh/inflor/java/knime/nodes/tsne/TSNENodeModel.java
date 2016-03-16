@@ -49,9 +49,9 @@ public class TSNENodeModel extends NodeModel {
 
 	// Iterations
 	static final 	String 		CFGKEY_Iterations = "Iterations";
-	static final 	Integer 	MIN_Iterations = 1;
-	static final 	Integer 	MAX_Iterations = 100;
-	static final 	Integer 	DEFAULT_Iterations = 3;
+	static final 	Integer 	MIN_Iterations = 10;
+	static final 	Integer 	MAX_Iterations = 500;
+	static final 	Integer 	DEFAULT_Iterations = 250;
 
     private final SettingsModelIntegerBounded modelIterations = 
     		new SettingsModelIntegerBounded(CFGKEY_Iterations,
@@ -76,7 +76,7 @@ public class TSNENodeModel extends NodeModel {
 	// Perplexity
 	static final 	String 		CFGKEY_Perplexity = "Maximum iterations";
 	static final 	Double 		MIN_Perplexity = 1.;
-	static final 	Double 		MAX_Perplexity = 500.;
+	static final 	Double 		MAX_Perplexity = 100.;
 	static final	Double	 	DEFAULT_Perplexity = 20.;
 
     private final SettingsModelDoubleBounded modelPerplexity = 
@@ -110,7 +110,7 @@ public class TSNENodeModel extends NodeModel {
     	
         TSne tsne = new FastTSne();
         
-        double [][] Y = tsne.tsne(data,2,modelInitDims.getIntValue(),modelPerplexity.getDoubleValue(),300);
+        double [][] Y = tsne.tsne(data, 2, -1, modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), false);
     	
     	DataTableSpec newColSpec = createTableSpec(inData[0].getSpec());
     	DataTableSpec spec = new DataTableSpec(inData[0].getSpec(), newColSpec);

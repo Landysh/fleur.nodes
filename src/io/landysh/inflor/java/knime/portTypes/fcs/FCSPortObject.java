@@ -19,18 +19,17 @@ public class FCSPortObject extends AbstractSimplePortObject implements PortObjec
 	
 	public Hashtable<String, String> 	header;
 	public String[] 					parameterList;
-	public double[][] 					parameterData;
-	
-	public FCSPortObject(Hashtable<String, String> keywords, String[] plist, double[][] FCSParameters ) {
-		header = keywords;
-		parameterList = plist;
-		parameterData = FCSParameters;
-	}
+	public Hashtable<String, double[]> 					parameterData;
 
+	public FCSPortObject(FCSObjectSpec spec, Hashtable<String, double[]> columns) {
+		header = spec.header;
+		parameterList = spec.parameterList;
+		parameterData = columns;
+	}
 	@Override
 	public String getSummary() {
 		Integer pCount = parameterList.length;
-		Integer rowCount = parameterData[0].length;
+		Integer rowCount = parameterData.get(parameterList[0]).length;
 		String message = "FCS array containing " + pCount + " parameters and " + rowCount + " rows ";
 		return message;
 	}
@@ -72,7 +71,7 @@ public class FCSPortObject extends AbstractSimplePortObject implements PortObjec
 		
 		// Save data
 		for (i=0; i<parameterList.length; i++){
-			model.addDoubleArray(parameterList[i], parameterData[i]);
+			model.addDoubleArray(parameterList[i], parameterData.get(parameterList[i]));
 		}
 		
 	}
@@ -89,15 +88,13 @@ public class FCSPortObject extends AbstractSimplePortObject implements PortObjec
 			newHeader.put(keywords[i], keywordValues[i]);
 		}
 		header = newHeader;
-		// Save parameterList
+		//Load parameterList
 		parameterList = model.getStringArray("parameters");
 		
-		// Save data
-		int parCount = parameterList.length;
-		int rowCount = Integer.parseInt(header.get("TOT").trim());
-		double[][] newData = new double[parCount][rowCount];
+		// Load data
+		Hashtable<String, double[]> newData = null;
 		for (int i=0; i<parameterList.length; i++){
-			model.getDoubleArray(parameterList[i], parameterData[i]);
+			model.getDoubleArray(parameterList[i], parameterData.get(parameterList[i]));
 		}
 		parameterData = newData;
 	}
@@ -110,7 +107,7 @@ public class FCSPortObject extends AbstractSimplePortObject implements PortObjec
 		return parameterList;
 	}
 
-	public double[][] getData() {
+	public Hashtable<String, double[]> getData() {
 		return parameterData;
 	}
 	

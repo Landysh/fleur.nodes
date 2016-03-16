@@ -4,7 +4,7 @@ import org.knime.core.node.NodeView;
 
 /**
  * <code>NodeView</code> for the "FCSFrameReader" Node.
- * This node reads an FCS file into an FCS Frame port
+ * Reads a data file into an FCS Frame
  *
  * @author Aaron Hart
  */
