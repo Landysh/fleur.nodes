@@ -9,8 +9,6 @@ import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import org.knime.core.node.InvalidSettingsException;
-
 public class FCSFileReader {
 
 	// From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
@@ -56,6 +54,7 @@ public class FCSFileReader {
 		endData = readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
 		bitMap = createBitMap(header);
 		dataType = eventFrame.getKeywordValueString("$DATATYPE");
+		parseSpillover(header);
 	}
 
 	public void close() throws IOException {
@@ -81,7 +80,41 @@ public class FCSFileReader {
 			e.printStackTrace();
 		}
 	}
-
+	private void parseSpillover(Hashtable<String, String> keywords) 
+			throws Exception {
+		String spill = null;
+		
+		//Check for spillover keywords
+		if(keywords.containsKey("$SPILLOVER")){
+			spill = keywords.get("SPILLOVER");
+		} else if (keywords.containsKey("SPILL")){
+			spill = keywords.get("SPILL");
+		} else {
+			throw new Exception("No spillover keyword found.");
+		}
+		
+		// Magic string parsing from FCS Spec PDF
+		String[] s = spill.split(",");
+		int p = Integer.parseInt(s[0].trim());
+		double[][] matrix = new double[p][p];
+		if (p >= 2){
+			String[] compPars = new String[p];
+			for(int i=0;i<compPars.length;i++){
+				compPars[i] = s[i+1];
+				double[] row = new double[p];
+				for (int j=0;j<p;j++){
+					int index = 1 + p + i*j+j;
+					row[j] = Double.parseDouble(s[index]);	
+				}
+				matrix[i] = row;
+			}
+		eventFrame.compParameters = compPars;
+		eventFrame.setSpillMatrix(matrix);
+		}else {
+			throw new Exception("Spillover Keyword - " + spill + " - appears to be invalid.");
+		}
+	}
+	
 	public String readFCSVersion(RandomAccessFile raFile)
 			throws UnsupportedEncodingException, IOException, FileNotFoundException {
 		// mark the current location (should be byte 0)
@@ -179,7 +212,7 @@ public class FCSFileReader {
 
 	public void readColumnEventData() throws IOException {
 		Hashtable<String, double[]> allData = new Hashtable<String, double[]>();
-		String[] columnNames = eventFrame.getColumnNames();
+		String[] columnNames = eventFrame.getCannonColumnNames();
 		FCSFile.seek(beginData);
 		for (int i=0; i< columnNames.length; i++){
 			double[] column = new double[eventFrame.eventCount];

@@ -17,6 +17,7 @@ import org.knime.core.data.def.StringCell;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.EventFrame;
@@ -46,15 +47,15 @@ public class FCSReaderNodeModel extends NodeModel {
 	 * the dialog).
 	 */
 	static final String CFGKEY_FileLocation = "File Location";
-
-	/** initial default count value. */
 	static final String DEFAULT_FileLocation = "";
 
-	// example value: the models count variable filled from the dialog
-	// and used in the models execution method. The default components of the
-	// dialog work with "SettingsModels".
+	static final String KEY_Compensate = "Compensate on read:";
+	static final Boolean DEFAULT_Compensate = false;
+
 	private final SettingsModelString m_FileLocation = new SettingsModelString(CFGKEY_FileLocation,
 			DEFAULT_FileLocation);
+	
+	private final SettingsModelBoolean m_Compensate = new SettingsModelBoolean(KEY_Compensate, DEFAULT_Compensate);
 
 	static FCSFileReader FCS_READER;
 
@@ -120,10 +121,19 @@ public class FCSReaderNodeModel extends NodeModel {
 				for (int k=0; k<frame.parameterCount; k++) {
 					dataCells[k] = new DoubleCell(FCSRow[k]);
 				}
+				if(m_Compensate.getBooleanValue()==true){
+					double[][] matrix = frame.spillMatrix;
+					String[] p = frame.compParameters;
+					for (int i=0;i<p.length;i++){
+						double compVal = 0.;
+						///
+					}
+					
+				}
 				dataCells[frame.parameterCount] = new DoubleCell(new Double(j));
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				data.addRowToTable(dataRow);
-				if (j % 1000 == 0) {
+				if (j % 100 == 0) {
 					exec.checkCanceled();
 					exec.setProgress(j / (double)frame.eventCount, j + " rows read.");
 				}
@@ -131,9 +141,8 @@ public class FCSReaderNodeModel extends NodeModel {
 			// once we are done, we close the container and return its table
 			data.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new CanceledExecutionException("Execution Failed.");
+			throw new CanceledExecutionException("Execution Failed while reading data file.");
 		}
 		
 		return new BufferedDataTable[] { header.getTable(), data.getTable() };
@@ -151,9 +160,7 @@ public class FCSReaderNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
-		// Also data handled in load/saveInternals will be erased here.
+		FCS_READER = null;
 	}
 
 	/**
@@ -162,11 +169,6 @@ public class FCSReaderNodeModel extends NodeModel {
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
 
-		// TODO: check if user settings are available, fit to the incoming
-		// table structure, and the incoming types are feasible for the node
-		// to execute. If the node can execute in its current state return
-		// the spec of its output data table(s) (if you can, otherwise an array
-		// with null elements), or throw an exception with a useful user message
 		DataTableSpec[] specs = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
@@ -181,17 +183,29 @@ public class FCSReaderNodeModel extends NodeModel {
 
 	private DataTableSpec createDataSpec(EventFrame frame) {
 		int parCount = frame.parameterCount;
-		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount+1];
-		String[] columnNames = frame.getColumnNames();
+		int compParCount = 0;
+		String[] compPars = null;
+		if (m_Compensate.getBooleanValue()==true){
+			compPars = frame.compParameters;
+			compParCount = compPars.length;
+		}
+		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount+1+compParCount];
+		String[] columnNames = frame.getCannonColumnNames();
 		for (int i=0; i<columnNames.length; i++) {
 			colSpecs[i] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
 		}
+		
+		for (int j=0; j<compPars.length; j++) {
+			colSpecs[parCount + j] = new DataColumnSpecCreator("Comp::" + compPars[j], DoubleCell.TYPE).createSpec();
+		}
+		
 		// last column
-		colSpecs[parCount] = new DataColumnSpecCreator("Event Index", DoubleCell.TYPE).createSpec();
+		colSpecs[parCount+compParCount] = new DataColumnSpecCreator("Event Index", DoubleCell.TYPE).createSpec();
 
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
 		return dataSpec;
 	}
+
 	private DataTableSpec createKeywordSpec() {
 		DataColumnSpec[] colSpecs = new DataColumnSpec[2];
 		colSpecs[0] = new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
@@ -207,10 +221,8 @@ public class FCSReaderNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-		// TODO save user settings to the config object.
-
 		m_FileLocation.saveSettingsTo(settings);
-
+		m_Compensate.saveSettingsTo(settings);
 	}
 
 	/**
@@ -219,12 +231,8 @@ public class FCSReaderNodeModel extends NodeModel {
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
 
-		// TODO load (valid) settings from the config object.
-		// It can be safely assumed that the settings are valided by the
-		// method below.
-
 		m_FileLocation.loadSettingsFrom(settings);
-
+		m_Compensate.loadSettingsFrom(settings);
 	}
 
 	/**
@@ -233,13 +241,8 @@ public class FCSReaderNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
 
-		// TODO check if the settings could be applied to our model
-		// e.g. if the count is in a certain range (which is ensured by the
-		// SettingsModel).
-		// Do not actually set any values of any member variables.
-
 		m_FileLocation.validateSettings(settings);
-
+		m_Compensate.validateSettings(settings);
 	}
 
 	/**

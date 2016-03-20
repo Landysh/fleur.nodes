@@ -120,7 +120,7 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 
 
 	private FCSObjectSpec createPortSpec(EventFrame eventsFrame) {
-		FCSObjectSpec spec = new FCSObjectSpec(eventsFrame.getHeader(), eventsFrame.getColumnNames());
+		FCSObjectSpec spec = new FCSObjectSpec(eventsFrame.getHeader(), eventsFrame.getCannonColumnNames());
 		return spec;
 	}
 

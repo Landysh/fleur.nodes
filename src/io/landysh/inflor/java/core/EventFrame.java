@@ -8,12 +8,14 @@ public class EventFrame {
 	public Hashtable<String, String> 	keywords;
 	public ArrayList<String> 			parameterList;
 	public Hashtable<String, double[]> 	columnStore;
+	public String[]						compParameters;
+	public double[][]					spillMatrix;
+
 	
 	// fcs properties
 	public Integer 						parameterCount;
 	public Integer						eventCount;
-	
-	
+		
 	public EventFrame(Hashtable<String, String> newKeywords) throws Exception {
 		keywords = newKeywords;
 		parameterCount = getKeywordValueInteger("$PAR");
@@ -70,21 +72,34 @@ public class EventFrame {
 		 columnStore = allData;
 	}
 
-	public String[] getColumnNames() {
+	public String[] getCannonColumnNames() {
+		String[] columnNames = new String[parameterCount];
+		for (int i=0;i<parameterCount;i++){
+			String PnNValue = keywords.get("$P" + (i+1) + "N");
+				columnNames[i] = (PnNValue).trim();
+		}
+		return columnNames;
+	}
+	
+	public String[] getDisplayColumnNames() {
 		String[] columnNames = new String[parameterCount];
 		for (int i=0;i<parameterCount;i++){
 			String PnNValue = keywords.get("$P" + (i+1) + "N");
 			String PnSValue = keywords.get("$P" + (i+1) + "S");
 			if(!PnNValue.equals(PnSValue) && PnSValue!=null ){
-				columnNames[i] = (PnNValue + " _ " + PnSValue).trim();
+				columnNames[i] = (PnNValue + "   " + PnSValue).trim();
 			} else {
 				columnNames[i] = PnNValue.trim();
 			}
 		}
 		return columnNames;
 	}
-	
 	public Hashtable<String, double[]> getColumnData() {
 		return columnStore;
+	}
+
+	public void setSpillMatrix(double[][] matrix) {
+		// TODO Auto-generated method stub
+		
 	}
 }
