@@ -4,25 +4,41 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 
+import org.ejml.data.DenseMatrix64F;
+import static org.ejml.ops.CommonOps.invert;
+
+
+
 public class EventFrame {
+	//file details
+	public String 						UUID;
 	public Hashtable<String, String> 	keywords;
 	public ArrayList<String> 			parameterList;
 	public Hashtable<String, double[]> 	columnStore;
+	
+	// Compensation details
 	public String[]						compParameters;
-	public double[][]					spillMatrix;
+	public Integer[]					compParameterMap;
+	public double[][]					FCSpillMatrix;
+	public DenseMatrix64F				compMatrix;
 
 	
 	// fcs properties
 	public Integer 						parameterCount;
 	public Integer						eventCount;
-		
+
+	
 	public EventFrame(Hashtable<String, String> newKeywords) throws Exception {
 		keywords = newKeywords;
 		parameterCount = getKeywordValueInteger("$PAR");
 		eventCount = getKeywordValueInteger("$TOT");
-		Boolean ok = false;
-		ok = validateHeader();
-		if(!ok){
+		if (keywords.keySet().contains("$SPILL")||keywords.keySet().contains("SPILLOVER")){
+			parseSpillover(keywords);
+			compMatrix = new DenseMatrix64F(FCSpillMatrix);
+			invert(compMatrix);
+		}
+		
+		if(!validateHeader()){
 			Exception e = new Exception("Invalid FCS Header.");
 			e.printStackTrace();
 			throw e;
@@ -90,16 +106,79 @@ public class EventFrame {
 				columnNames[i] = (PnNValue + "   " + PnSValue).trim();
 			} else {
 				columnNames[i] = PnNValue.trim();
-			}
-		}
+			}		}
 		return columnNames;
 	}
 	public Hashtable<String, double[]> getColumnData() {
 		return columnStore;
 	}
 
-	public void setSpillMatrix(double[][] matrix) {
-		// TODO Auto-generated method stub
+	public int findIndexByName(String s) throws Exception{
+		Integer index = null;
+		for (int i=0; i<parameterList.size();i++){
+			if (parameterList.get(i).equals(s)){
+				index = i;
+			} 
+		}
+		if (index!= null){
+			return index;
+		} else {
+			throw new Exception("Parameter index not found.");
+		}
+	}
+	
+	private void parseSpillover(Hashtable<String, String> keywords) 
+			throws Exception {
+		String spill = null;
 		
+		//Check for spillover keywords
+		if(keywords.containsKey("$SPILLOVER")){
+			spill = keywords.get("SPILLOVER");
+		} else if (keywords.containsKey("SPILL")){
+			spill = keywords.get("SPILL");
+		} else {
+			throw new Exception("No spillover keyword found.");
+		}
+		
+		// Magic string parsing from FCS Spec PDF
+		String[] s = spill.split(",");
+		int p = Integer.parseInt(s[0].trim());
+		double[][] matrix = new double[p][p];
+		if (p >= 2){
+			String[] compPars = new String[p];
+			for(int i=0;i<compPars.length;i++){
+				compPars[i] = s[i+1];
+				double[] row = new double[p];
+				for (int j=0;j<p;j++){
+					int index = 1 + p + i*j+j;
+					row[j] = Double.parseDouble(s[index]);	
+				}
+				matrix[i] = row;
+			}
+		compParameters = compPars;
+		FCSpillMatrix = matrix;
+		}else {
+			throw new Exception("Spillover Keyword - " + spill + " - appears to be invalid.");
+		}
+	}
+	public double[] getCompRow(double[] FCSRow) throws Exception {
+		double[] compRow = null;
+		if (compParameters!= null){
+			compRow = new double[compParameters.length];
+			for (int i=0;i<compParameters.length;i++){
+				double spills = compMatrix.get(0,0);
+				Integer pIndex = findIndexByName(compParameters[i]);
+				double pValue = FCSRow[pIndex];
+				for (int j=0;j< compParameters.length;j++){
+					if (i!=j){
+						Integer sIndex = findIndexByName(compParameters[j]);
+						double sValue =  FCSRow[sIndex];
+					}
+				}
+				
+				compRow[i] = pValue;
+			}
+		}
+		return compRow;
 	}
 }

@@ -121,16 +121,13 @@ public class FCSReaderNodeModel extends NodeModel {
 				for (int k=0; k<frame.parameterCount; k++) {
 					dataCells[k] = new DoubleCell(FCSRow[k]);
 				}
-				if(m_Compensate.getBooleanValue()==true){
-					double[][] matrix = frame.spillMatrix;
-					String[] p = frame.compParameters;
-					for (int i=0;i<p.length;i++){
-						double compVal = 0.;
-						///
+				if(m_Compensate.getBooleanValue()==true){		
+					double[] FCSCompRow = frame.getCompRow(FCSRow);
+					for (int l=0;l<FCSCompRow.length;l++){
+						dataCells[frame.parameterCount + l] = new DoubleCell(FCSCompRow[l]);
 					}
-					
 				}
-				dataCells[frame.parameterCount] = new DoubleCell(new Double(j));
+				dataCells[frame.parameterCount+frame.compParameters.length] = new DoubleCell(new Double(j));
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				data.addRowToTable(dataRow);
 				if (j % 100 == 0) {

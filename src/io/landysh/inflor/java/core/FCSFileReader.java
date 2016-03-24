@@ -54,7 +54,6 @@ public class FCSFileReader {
 		endData = readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
 		bitMap = createBitMap(header);
 		dataType = eventFrame.getKeywordValueString("$DATATYPE");
-		parseSpillover(header);
 	}
 
 	public void close() throws IOException {
@@ -80,40 +79,7 @@ public class FCSFileReader {
 			e.printStackTrace();
 		}
 	}
-	private void parseSpillover(Hashtable<String, String> keywords) 
-			throws Exception {
-		String spill = null;
-		
-		//Check for spillover keywords
-		if(keywords.containsKey("$SPILLOVER")){
-			spill = keywords.get("SPILLOVER");
-		} else if (keywords.containsKey("SPILL")){
-			spill = keywords.get("SPILL");
-		} else {
-			throw new Exception("No spillover keyword found.");
-		}
-		
-		// Magic string parsing from FCS Spec PDF
-		String[] s = spill.split(",");
-		int p = Integer.parseInt(s[0].trim());
-		double[][] matrix = new double[p][p];
-		if (p >= 2){
-			String[] compPars = new String[p];
-			for(int i=0;i<compPars.length;i++){
-				compPars[i] = s[i+1];
-				double[] row = new double[p];
-				for (int j=0;j<p;j++){
-					int index = 1 + p + i*j+j;
-					row[j] = Double.parseDouble(s[index]);	
-				}
-				matrix[i] = row;
-			}
-		eventFrame.compParameters = compPars;
-		eventFrame.setSpillMatrix(matrix);
-		}else {
-			throw new Exception("Spillover Keyword - " + spill + " - appears to be invalid.");
-		}
-	}
+
 	
 	public String readFCSVersion(RandomAccessFile raFile)
 			throws UnsupportedEncodingException, IOException, FileNotFoundException {
