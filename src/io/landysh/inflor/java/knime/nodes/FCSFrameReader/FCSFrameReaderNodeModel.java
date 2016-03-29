@@ -20,8 +20,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.java.core.EventFrame;
 import io.landysh.inflor.java.core.FCSFileReader;
-import io.landysh.inflor.java.knime.portTypes.fcs.FCSObjectSpec;
-import io.landysh.inflor.java.knime.portTypes.fcs.FCSPortObject;
+import io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec;
+import io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor 
@@ -57,7 +57,7 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 	protected FCSFrameReaderNodeModel() {
 
 		// Top port contains header information, bottom, array data
-        super(new PortType[0], new PortType[]{PortTypeRegistry.getInstance().getPortType(FCSPortObject.class)});
+        super(new PortType[0], new PortType[]{PortTypeRegistry.getInstance().getPortType(FCSFramePortObject.class)});
 	}
 
 	/**
@@ -78,9 +78,9 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 			exec.checkCanceled();
 			FCSReader.readColumnEventData();
 			exec.setProgress(0.6, "data read.");
-			FCSObjectSpec spec = createPortSpec(frame);
+			FCSFrameSpec spec = createPortSpec(frame);
 			Hashtable<String, double[]> columns = FCSReader.getColumnStore();
-			FCSPortObject port = new FCSPortObject(spec, columns);
+			FCSFramePortObject port = new FCSFramePortObject(spec, columns);
 			return new PortObject[] {port};
 			
 		} catch (Exception e) {
@@ -104,9 +104,9 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-    protected FCSObjectSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
+    protected FCSFrameSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
 
-		FCSObjectSpec spec = null;
+		FCSFrameSpec spec = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
 			EventFrame eventsFrame = FCSReader.getEventFrame();
@@ -115,12 +115,12 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 		} catch (Exception e) {
 			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
-		return new FCSObjectSpec[]{spec};
+		return new FCSFrameSpec[]{spec};
 	}
 
 
-	private FCSObjectSpec createPortSpec(EventFrame eventsFrame) {
-		FCSObjectSpec spec = new FCSObjectSpec(eventsFrame.getHeader(), eventsFrame.getCannonColumnNames());
+	private FCSFrameSpec createPortSpec(EventFrame eventsFrame) {
+		FCSFrameSpec spec = new FCSFrameSpec(eventsFrame.getHeader(), eventsFrame.getCannonColumnNames());
 		return spec;
 	}
 

@@ -26,7 +26,7 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSPortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSPortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSObjectSpec"/>
+      <portType color="#9B30FF" hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec"/>
 </extension>
    
 </plugin>

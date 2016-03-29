@@ -15,14 +15,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.fasterxml.jackson.databind.type.ArrayType;
 
-public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
+public class FCSFramePortSerializer extends PortObjectSerializer <FCSFramePortObject> {
 	
 	private static final String ZIP_ENTRY_HEADER = "keywords";
 	private static final String ZIP_ENTRY_PARAMETERLIST= "parameterList";
 	private static final String ZIP_ENTRY_DATA= "data";
 
 	@Override
-	public void savePortObject(FCSPortObject FCSObject, PortObjectZipOutputStream out, ExecutionMonitor exec)
+	public void savePortObject(FCSFramePortObject FCSObject, PortObjectZipOutputStream out, ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -50,7 +50,7 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 	}
 
 	@Override
-	public FCSPortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec, ExecutionMonitor exec)
+	public FCSFramePortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec, ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
 		Boolean stop = false;
 		ZipEntry entry;
@@ -58,7 +58,7 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 		Hashtable<String, String> keywords = null;
 		String [] parameterList = null;
 		Hashtable<String, double[]> parameterData = null;
-		FCSObjectSpec fcsSpec = null;
+		FCSFrameSpec fcsSpec = null;
 		ObjectMapper mapper = new ObjectMapper();
 		while (stop==false){
 			try {
@@ -82,14 +82,14 @@ public class FCSPortSerializer extends PortObjectSerializer <FCSPortObject> {
 			} catch (NullPointerException e) {
 					stop = true;
 			}
-			fcsSpec = new FCSObjectSpec(keywords,parameterList);		
+			fcsSpec = new FCSFrameSpec(keywords,parameterList);		
 		}	
 		 if(keywords==null||parameterData==null||parameterList==null){
 			 CanceledExecutionException e = new CanceledExecutionException("Null entries encountered when loading the port.");
 			 e.printStackTrace();
 			 throw e;
 		 }
-		FCSPortObject newFCSPortObject = new FCSPortObject(fcsSpec, parameterData);
+		FCSFramePortObject newFCSPortObject = new FCSFramePortObject(fcsSpec, parameterData);
 
 		return newFCSPortObject;
 	}

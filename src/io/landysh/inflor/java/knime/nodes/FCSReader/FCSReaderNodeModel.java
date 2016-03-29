@@ -116,15 +116,15 @@ public class FCSReaderNodeModel extends NodeModel {
 			FCSReader.initRowReader();
 			for (int j = 0; j<frame.eventCount; j++) {
 				RowKey rowKey = new RowKey("Row " + j);
-				DataCell[] dataCells = new DataCell[frame.parameterCount+1];
+				DataCell[] dataCells = new DataCell[frame.parameterCount + frame.compParameters.length + 1];
 				double[] FCSRow = FCSReader.readRow();
 				for (int k=0; k<frame.parameterCount; k++) {
 					dataCells[k] = new DoubleCell(FCSRow[k]);
-				}
-				if(m_Compensate.getBooleanValue()==true){		
-					double[] FCSCompRow = frame.getCompRow(FCSRow);
-					for (int l=0;l<FCSCompRow.length;l++){
-						dataCells[frame.parameterCount + l] = new DoubleCell(FCSCompRow[l]);
+					if(m_Compensate.getBooleanValue()==true){		
+						double[] FCSCompRow = frame.doCompRow(FCSRow);
+						for (int l=0;l<FCSCompRow.length;l++){
+							dataCells[frame.parameterCount + l] = new DoubleCell(FCSCompRow[l]);
+						}
 					}
 				}
 				dataCells[frame.parameterCount+frame.compParameters.length] = new DoubleCell(new Double(j));
@@ -138,6 +138,7 @@ public class FCSReaderNodeModel extends NodeModel {
 			// once we are done, we close the container and return its table
 			data.close();
 		} catch (Exception e) {
+			exec.setMessage("Execution Failed while reading data file.");
 			e.printStackTrace();
 			throw new CanceledExecutionException("Execution Failed while reading data file.");
 		}
@@ -173,6 +174,7 @@ public class FCSReaderNodeModel extends NodeModel {
 			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
 		return specs;

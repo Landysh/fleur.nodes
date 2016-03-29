@@ -15,13 +15,13 @@ import org.knime.core.node.port.AbstractSimplePortObject;
 import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 
-public class FCSPortObject extends AbstractSimplePortObject implements PortObject {
+public class FCSFramePortObject extends AbstractSimplePortObject implements PortObject {
 	
 	public Hashtable<String, String> 	header;
 	public String[] 					parameterList;
 	public Hashtable<String, double[]> 					parameterData;
 
-	public FCSPortObject(FCSObjectSpec spec, Hashtable<String, double[]> columns) {
+	public FCSFramePortObject(FCSFrameSpec spec, Hashtable<String, double[]> columns) {
 		header = spec.header;
 		parameterList = spec.parameterList;
 		parameterData = columns;
@@ -36,7 +36,7 @@ public class FCSPortObject extends AbstractSimplePortObject implements PortObjec
 
 	@Override
 	public PortObjectSpec getSpec() {
-		PortObjectSpec p = new FCSObjectSpec(header,parameterList);
+		PortObjectSpec p = new FCSFrameSpec(header,parameterList);
 		return p;
 	}
 

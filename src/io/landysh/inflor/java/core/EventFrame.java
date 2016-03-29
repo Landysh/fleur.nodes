@@ -1,19 +1,19 @@
 package io.landysh.inflor.java.core;
 
-import java.util.ArrayList;
+import static org.ejml.ops.CommonOps.invert;
+import static org.ejml.ops.CommonOps.mult;
+
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 
 import org.ejml.data.DenseMatrix64F;
-import static org.ejml.ops.CommonOps.invert;
-
 
 
 public class EventFrame {
 	//file details
 	public String 						UUID;
 	public Hashtable<String, String> 	keywords;
-	public ArrayList<String> 			parameterList;
+	public String[]			 			parameterList;
 	public Hashtable<String, double[]> 	columnStore;
 	
 	// Compensation details
@@ -31,8 +31,9 @@ public class EventFrame {
 	public EventFrame(Hashtable<String, String> newKeywords) throws Exception {
 		keywords = newKeywords;
 		parameterCount = getKeywordValueInteger("$PAR");
+		parameterList = parseParameterList(keywords);
 		eventCount = getKeywordValueInteger("$TOT");
-		if (keywords.keySet().contains("$SPILL")||keywords.keySet().contains("SPILLOVER")){
+		if (keywords.containsKey("$SPILL")||keywords.containsKey("SPILL")){
 			parseSpillover(keywords);
 			compMatrix = new DenseMatrix64F(FCSpillMatrix);
 			invert(compMatrix);
@@ -43,6 +44,15 @@ public class EventFrame {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	private String[] parseParameterList(Hashtable<String, String> keywords2) {
+		String[] plist = new String[parameterCount];
+		for (int i=1;i<=parameterCount;i++){
+			String keyword = ("$P"+ i + "N");
+			plist[i-1] = getKeywordValueString(keyword);
+		}
+		return plist;
 	}
 
 	private Boolean validateHeader() {
@@ -115,8 +125,8 @@ public class EventFrame {
 
 	public int findIndexByName(String s) throws Exception{
 		Integer index = null;
-		for (int i=0; i<parameterList.size();i++){
-			if (parameterList.get(i).equals(s)){
+		for (int i=0; i<parameterList.length;i++){
+			if (parameterList[i].equals(s)){
 				index = i;
 			} 
 		}
@@ -146,8 +156,10 @@ public class EventFrame {
 		double[][] matrix = new double[p][p];
 		if (p >= 2){
 			String[] compPars = new String[p];
+			Integer[] pMap = new Integer[p];
 			for(int i=0;i<compPars.length;i++){
 				compPars[i] = s[i+1];
+				pMap[i] = findIndexByName(compPars[i]);
 				double[] row = new double[p];
 				for (int j=0;j<p;j++){
 					int index = 1 + p + i*j+j;
@@ -155,30 +167,33 @@ public class EventFrame {
 				}
 				matrix[i] = row;
 			}
+		compParameterMap = pMap;
 		compParameters = compPars;
 		FCSpillMatrix = matrix;
 		}else {
 			throw new Exception("Spillover Keyword - " + spill + " - appears to be invalid.");
 		}
 	}
-	public double[] getCompRow(double[] FCSRow) throws Exception {
-		double[] compRow = null;
+	public double[] doCompRow(double[] FCSRow) throws Exception {
+		double[] compedRow = null;
 		if (compParameters!= null){
-			compRow = new double[compParameters.length];
-			for (int i=0;i<compParameters.length;i++){
-				double spills = compMatrix.get(0,0);
-				Integer pIndex = findIndexByName(compParameters[i]);
-				double pValue = FCSRow[pIndex];
-				for (int j=0;j< compParameters.length;j++){
-					if (i!=j){
-						Integer sIndex = findIndexByName(compParameters[j]);
-						double sValue =  FCSRow[sIndex];
-					}
+			compedRow = new double[compParameters.length];
+			double[] unCompedRow = new double[compParameters.length];
+			for (int i=0;i<compParameters.length;i++ ){				
+				int index = compParameterMap[i];
+				unCompedRow[i] = FCSRow[index];
 				}
-				
-				compRow[i] = pValue;
+			DenseMatrix64F unCompedVector = new DenseMatrix64F(new double[][] {unCompedRow});
+			DenseMatrix64F c = new DenseMatrix64F(new double[][] {unCompedRow});  
+			mult(unCompedVector,compMatrix,c);
+			compedRow = c.data;
 			}
+		if (compedRow!=null){
+			return compedRow;
+		} else {
+			Exception e = new Exception("Comped array is null, this should not happen.");
+			e.printStackTrace();
+			throw e;
 		}
-		return compRow;
 	}
 }

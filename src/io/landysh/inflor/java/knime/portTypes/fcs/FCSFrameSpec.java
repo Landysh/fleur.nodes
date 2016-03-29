@@ -6,18 +6,18 @@ import javax.swing.JComponent;
 
 import org.knime.core.node.port.PortObjectSpec;
 
-public class FCSObjectSpec implements PortObjectSpec {
+public class FCSFrameSpec implements PortObjectSpec {
 	public Hashtable<String, String> 	header;
 	public String[] 					parameterList;
 	
-	public FCSObjectSpec(Hashtable<String, String> keywords, String[] plist) {
+	public FCSFrameSpec(Hashtable<String, String> keywords, String[] plist) {
 		header = keywords;
 		parameterList = plist;
 	}
 
 	@Override
 	public JComponent[] getViews() {
-        return new JComponent[]{new FCSSummaryView(header)};
+        return null;///new JComponent[]{new FCSSummaryView(header)};
 	}
 
 }
