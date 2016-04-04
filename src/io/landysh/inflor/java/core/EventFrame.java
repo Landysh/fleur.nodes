@@ -137,6 +137,7 @@ public class EventFrame {
 		}
 	}
 	
+	//Unit test: Completed but not running.
 	private void parseSpillover(Hashtable<String, String> keywords) 
 			throws Exception {
 		String spill = null;
@@ -153,8 +154,14 @@ public class EventFrame {
 		// Magic string parsing from FCS Spec PDF
 		String[] s = spill.split(",");
 		int p = Integer.parseInt(s[0].trim());
-		double[][] matrix = new double[p][p];
 		if (p >= 2){
+			double[] spills = new double[p*p];
+			int k=0;
+			for (int i=p+1; i<spills.length + p + 1;i++){
+				spills[k] = Double.parseDouble(s[i]);
+				k++;
+			}
+			double[][] matrix = new double[p][p];
 			String[] compPars = new String[p];
 			Integer[] pMap = new Integer[p];
 			for(int i=0;i<compPars.length;i++){
