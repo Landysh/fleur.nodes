@@ -114,20 +114,31 @@ public class FCSReaderNodeModel extends NodeModel {
 			// Read data section
 			data = exec.createDataContainer(tableSpecs[1]);
 			FCSReader.initRowReader();
-			for (int j = 0; j<frame.eventCount; j++) {
-				RowKey rowKey = new RowKey("Row " + j);
-				DataCell[] dataCells = new DataCell[frame.parameterCount + frame.compParameters.length + 1];
+			for (Integer j = 0; j<frame.eventCount; j++) {
+				RowKey rowKey = new RowKey(j.toString());
+				DataCell[] dataCells = null;
+				if(m_Compensate.getBooleanValue()==true){
+					dataCells = new DataCell[frame.parameterCount + frame.compParameters.length];
+				} else {
+					dataCells = new DataCell[frame.parameterCount];
+				}
+
 				double[] FCSRow = FCSReader.readRow();
-				for (int k=0; k<frame.parameterCount; k++) {
+				//for each uncomped parameter
+				int k=0;
+				while ( k<frame.parameterCount) {
+					// add uncomped data
 					dataCells[k] = new DoubleCell(FCSRow[k]);
-					if(m_Compensate.getBooleanValue()==true){		
-						double[] FCSCompRow = frame.doCompRow(FCSRow);
-						for (int l=0;l<FCSCompRow.length;l++){
-							dataCells[frame.parameterCount + l] = new DoubleCell(FCSCompRow[l]);
-						}
+					k++;
+				}
+				//for each comped parameter
+				if(m_Compensate.getBooleanValue()==true){	
+					double[] FCSCompRow = frame.doCompRow(FCSRow);
+					for (int l=0;l<FCSCompRow.length;l++){
+						dataCells[frame.parameterCount+l] = new DoubleCell(FCSCompRow[l]);
 					}
 				}
-				dataCells[frame.parameterCount+frame.compParameters.length] = new DoubleCell(new Double(j));
+				//dataCells[frame.parameterCount+frame.compParameters.length] = new DoubleCell(new Double(j));
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				data.addRowToTable(dataRow);
 				if (j % 100 == 0) {
@@ -184,22 +195,23 @@ public class FCSReaderNodeModel extends NodeModel {
 		int parCount = frame.parameterCount;
 		int compParCount = 0;
 		String[] compPars = null;
+		// get comp info if available
 		if (m_Compensate.getBooleanValue()==true){
+			compParCount = frame.compParameters.length;
 			compPars = frame.compParameters;
-			compParCount = compPars.length;
 		}
-		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount+1+compParCount];
-		String[] columnNames = frame.getCannonColumnNames();
-		for (int i=0; i<columnNames.length; i++) {
+		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount+compParCount];
+		String[] columnNames = frame.getDisplayColumnNames();
+		int i = 0;
+		while (i<columnNames.length) {
 			colSpecs[i] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
+			i++;
 		}
-		
-		for (int j=0; j<compPars.length; j++) {
-			colSpecs[parCount + j] = new DataColumnSpecCreator("Comp::" + compPars[j], DoubleCell.TYPE).createSpec();
+		if (m_Compensate.getBooleanValue()==true){
+			for (int j=0; j<compPars.length; j++) {
+				colSpecs[parCount + j] = new DataColumnSpecCreator("Comp::" + compPars[j], DoubleCell.TYPE).createSpec();
+			}
 		}
-		
-		// last column
-		colSpecs[parCount+compParCount] = new DataColumnSpecCreator("Event Index", DoubleCell.TYPE).createSpec();
 
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
 		return dataSpec;

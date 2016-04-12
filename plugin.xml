@@ -17,8 +17,7 @@
 	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSReader.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
 	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.tsne.TSNENodeFactory" id="TSNENodeFactory"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FlowSetReaderNodeFactory" id="FlowSetReaderNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory" id="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.nodes.knime.FindSinglets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.nodes.knime.RemoveDoubletsNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -26,7 +25,7 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec"/>
+      <portType color="#9B30FF" hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec" specSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSpecSerializer"/>
 </extension>
    
 </plugin>

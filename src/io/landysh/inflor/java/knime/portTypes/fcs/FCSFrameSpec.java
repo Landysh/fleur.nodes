@@ -20,4 +20,12 @@ public class FCSFrameSpec implements PortObjectSpec {
         return null;///new JComponent[]{new FCSSummaryView(header)};
 	}
 
+	public Hashtable<String, String> getHeader() {
+		return header;
+	}
+
+	public String[] getParameterList() {
+		return parameterList;
+	}
+
 }

@@ -30,23 +30,25 @@ public class FCSFramePortSerializer extends PortObjectSerializer <FCSFramePortOb
 		Hashtable<String, String> header = FCSObject.getHeader();
 		byte[] headerBytes = mapper.writeValueAsBytes(header);
 		ZipEntry headerEntry = new ZipEntry(ZIP_ENTRY_HEADER);
+		//headerEntry.setSize(headerBytes.length);
 		out.putNextEntry(headerEntry);
-		out.write(headerBytes);
-		
+		out.write(headerBytes, 0, headerBytes.length);
+
 		// Serialize parameterList
 		String[] parameterList = FCSObject.getParameterList();
 		byte[] parameterListBytes = mapper.writeValueAsBytes(parameterList);
 		ZipEntry pListEntry = new ZipEntry(ZIP_ENTRY_PARAMETERLIST);
+		//pListEntry.setSize(parameterListBytes.length);
 		out.putNextEntry(pListEntry);
-		out.write(parameterListBytes);
-		
+		out.write(parameterListBytes,0,parameterListBytes.length);
+
 		// Serialize data
 		Hashtable<String, double[]> parameterData = FCSObject.getData();
 		byte[] parameterDataBytes = mapper.writeValueAsBytes(parameterData);
 		ZipEntry parameterDataEntry = new ZipEntry(ZIP_ENTRY_DATA);
+		//parameterDataEntry.setSize(parameterDataBytes.length);
 		out.putNextEntry(parameterDataEntry);
-		out.write(parameterDataBytes);
-		
+		out.write(parameterDataBytes, 0, parameterDataBytes.length);		
 	}
 
 	@Override

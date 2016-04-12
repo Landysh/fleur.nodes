@@ -1,8 +1,10 @@
 package io.landysh.inflor.tests;
 
-import static org.junit.Assert.*;
 import java.util.Hashtable;
+
+import static org.junit.Assert.*;
 import org.junit.Test;
+
 import io.landysh.inflor.java.core.EventFrame;
 import io.landysh.inflor.java.core.FCSFileReader;
 
@@ -47,7 +49,7 @@ public class EventFrameTest {
 	    
 		//Assert    
 		for (int i=0; i<truespillover.length; i++){
-			for (int j=0; i<truespillover.length; j++){
+			for (int j=0; j<truespillover.length; j++){
 				assert(truespillover[i][j] == testSpillover[i][j]);
 		   }
 	   }

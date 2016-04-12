@@ -113,7 +113,7 @@ public class EventFrame {
 			String PnNValue = keywords.get("$P" + (i+1) + "N");
 			String PnSValue = keywords.get("$P" + (i+1) + "S");
 			if(!PnNValue.equals(PnSValue) && PnSValue!=null ){
-				columnNames[i] = (PnNValue + "   " + PnSValue).trim();
+				columnNames[i] = (PnNValue + "  " + PnSValue).trim();
 			} else {
 				columnNames[i] = PnNValue.trim();
 			}		}
@@ -135,6 +135,18 @@ public class EventFrame {
 		} else {
 			throw new Exception("Parameter index not found.");
 		}
+	}
+	
+	public String findStainName (String parameterName){
+		String stainName = "";
+		try {
+			int index = findIndexByName(parameterName);
+			stainName = getKeywordValueString("$P" + (1+index)+"S");
+		} catch (Exception e) {
+			System.out.print("No stain name found for: " + parameterName);
+		}
+		
+		return stainName;
 	}
 	
 	//Unit test: Completed but not running.
@@ -169,7 +181,7 @@ public class EventFrame {
 				pMap[i] = findIndexByName(compPars[i]);
 				double[] row = new double[p];
 				for (int j=0;j<p;j++){
-					int index = 1 + p + i*j+j;
+					int index = 1 + p + i*p+j;
 					row[j] = Double.parseDouble(s[index]);	
 				}
 				matrix[i] = row;

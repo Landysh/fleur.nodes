@@ -113,6 +113,7 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 			spec = createPortSpec(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
 		return new FCSFrameSpec[]{spec};
