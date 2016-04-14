@@ -14,10 +14,11 @@
    -->
    
 <extension point="org.knime.workbench.repository.nodes">
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSReader.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.tsne.TSNENodeFactory" id="TSNENodeFactory"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.FCSFrameReader.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.nodes.knime.FindSinglets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.nodes.knime.RemoveDoubletsNodeFactory"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.ReadFCS.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.SNE.TSNENodeFactory" id="TSNENodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.ReadFCSFrame.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.Singlets.FindSingletsNodeFactory" id="io.landysh.inflor.nodes.knime.RemoveDoubletsNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.CellCycle.LearnCellCycleNodeFactory" id="io.landysh.inflor.knime.nodes.CellCycle.ModelCellCycleNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">

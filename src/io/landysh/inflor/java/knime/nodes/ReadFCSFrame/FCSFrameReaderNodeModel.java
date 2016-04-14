@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.FCSFrameReader;
+package io.landysh.inflor.java.knime.nodes.ReadFCSFrame;
 
 import java.io.File;
 import java.io.IOException;

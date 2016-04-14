@@ -1,4 +1,4 @@
-package io.landysh.inflor.nodes.knime.FindSinglets;
+package io.landysh.inflor.java.knime.nodes.Singlets;
 
 import org.knime.core.node.NodeView;
 
@@ -8,14 +8,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeView extends NodeView<RemoveDoubletsNodeModel> {
+public class FindSingletsNodeView extends NodeView<FindSingletsNodeModel> {
 
     /**
      * Creates a new view.
      * 
-     * @param nodeModel The model (class: {@link RemoveDoubletsNodeModel})
+     * @param nodeModel The model (class: {@link FindSingletsNodeModel})
      */
-    protected RemoveDoubletsNodeView(final RemoveDoubletsNodeModel nodeModel) {
+    protected FindSingletsNodeView(final FindSingletsNodeModel nodeModel) {
         super(nodeModel);
         // TODO: generated method stub
     }

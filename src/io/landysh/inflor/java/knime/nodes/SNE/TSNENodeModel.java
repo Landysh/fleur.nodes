@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.tsne;
+package io.landysh.inflor.java.knime.nodes.SNE;
 
 import java.io.File;
 import java.io.IOException;

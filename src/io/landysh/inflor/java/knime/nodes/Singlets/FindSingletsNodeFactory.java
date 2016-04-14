@@ -1,4 +1,4 @@
-package io.landysh.inflor.nodes.knime.FindSinglets;
+package io.landysh.inflor.java.knime.nodes.Singlets;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
@@ -10,15 +10,15 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeFactory 
-        extends NodeFactory<RemoveDoubletsNodeModel> {
+public class FindSingletsNodeFactory 
+        extends NodeFactory<FindSingletsNodeModel> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RemoveDoubletsNodeModel createNodeModel() {
-        return new RemoveDoubletsNodeModel();
+    public FindSingletsNodeModel createNodeModel() {
+        return new FindSingletsNodeModel();
     }
 
     /**
@@ -33,9 +33,9 @@ public class RemoveDoubletsNodeFactory
      * {@inheritDoc}
      */
     @Override
-    public NodeView<RemoveDoubletsNodeModel> createNodeView(final int viewIndex,
-            final RemoveDoubletsNodeModel nodeModel) {
-        return new RemoveDoubletsNodeView(nodeModel);
+    public NodeView<FindSingletsNodeModel> createNodeView(final int viewIndex,
+            final FindSingletsNodeModel nodeModel) {
+        return new FindSingletsNodeView(nodeModel);
     }
 
     /**
@@ -51,7 +51,7 @@ public class RemoveDoubletsNodeFactory
      */
     @Override
     public NodeDialogPane createNodeDialogPane() {
-        return new RemoveDoubletsNodeDialog();
+        return new FindSingletsNodeDialog();
     }
 
 }

@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.FCSReader;
+package io.landysh.inflor.java.knime.nodes.ReadFCS;
 
 import java.io.File;
 import java.io.IOException;

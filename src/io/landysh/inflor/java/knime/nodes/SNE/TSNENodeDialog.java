@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.tsne;
+package io.landysh.inflor.java.knime.nodes.SNE;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponent;

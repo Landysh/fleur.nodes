@@ -1,5 +1,8 @@
-package io.landysh.inflor.nodes.knime.FindSinglets;
+package io.landysh.inflor.java.knime.nodes.Singlets;
 
+import org.knime.core.node.DataAwareNodeDialogPane;
+import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 
 /**
@@ -13,13 +16,19 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
  * 
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
+public class FindSingletsNodeDialog extends DataAwareNodeDialogPane {
 
     /**
      * New pane for configuring the RemoveDoublets node.
      */
-    protected RemoveDoubletsNodeDialog() {
-
+    protected FindSingletsNodeDialog() {
+    	
     }
+
+	@Override
+	protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
