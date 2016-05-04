@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import io.landysh.inflor.java.core.EventFrame;
+import io.landysh.inflor.java.core.AnnotatedVectorStore;
 import io.landysh.inflor.java.core.FCSFileReader;
 
 public class EventFrameTest {
@@ -42,7 +42,7 @@ public class EventFrameTest {
 		
 		FCSFileReader file1 = new FCSFileReader(path1);
 		Hashtable <String, String> header1 = file1.getHeader();
-		EventFrame frame = new EventFrame(header1);
+		AnnotatedVectorStore frame = new AnnotatedVectorStore(header1);
 		
 		//Test 
 		double[][] testSpillover = frame.FCSpillMatrix;
