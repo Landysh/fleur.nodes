@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="src/ext/protobuf-java-2.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="src/ext/ejml-0.29-libs/EJML-denseC64-0.29.jar"/>
 	<classpathentry exported="true" kind="lib" path="src/ext/ejml-0.29-libs/EJML-dense64-0.29.jar"/>
 	<classpathentry exported="true" kind="lib" path="src/ext/ejml-0.29-libs/EJML-simple-0.29.jar"/>

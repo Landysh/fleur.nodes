@@ -11,14 +11,14 @@
             name="My nodes"
             path="/"/>
    </extension>
-   -->
+   -->2
    
 <extension point="org.knime.workbench.repository.nodes">
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.ReadFCS.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.SNE.TSNENodeFactory" id="TSNENodeFactory"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.ReadFCSFrame.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.Singlets.FindSingletsNodeFactory" id="io.landysh.inflor.nodes.knime.RemoveDoubletsNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.CellCycle.LearnCellCycleNodeFactory" id="io.landysh.inflor.knime.nodes.CellCycle.ModelCellCycleNodeFactory"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.FCSReaderNodeFactory" id="FCSReaderNodeFactory"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.calculateTSNE.TSNENodeFactory" id="TSNENodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCSFrame.FCSFrameReaderNodeFactory" id="FCSFrameReaderNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsNodeFactory" id="io.landysh.inflor.nodes.knime.RemoveDoubletsNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.learnCellCycle.LearnCellCycleNodeFactory" id="io.landysh.inflor.knime.nodes.CellCycle.ModelCellCycleNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -26,7 +26,7 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.FCSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec" specSerializer="io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortSpecSerializer"/>
+      <portType color="#9B30FF" hidden="false" name="Inflor.AVSPort" objectClass="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStorePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStorePortSerializer" specClass="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStoreSpec" specSerializer="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStorePortSpecSerializer"/>
 </extension>
    
 </plugin>
