@@ -1,0 +1,26 @@
+package io.landysh.inflor.java.core.proto;
+
+
+message AnnotatedVectorsProto {
+  
+  repeated string vectorNames = 1;
+  
+  message Keyword {
+	required string key = 1;
+	required string value = 2;
+	}
+  
+  repeated Keyword keywords = 2;
+  
+  message Vector {
+  	required string name = 1;
+  	repeated double array = 2;
+	}
+  
+  repeated Vector vectors =3;
+
+}
+
+
+
+
