@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.ReadFCSFrame;
+package io.landysh.inflor.java.knime.nodes.readFCSFrame;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;

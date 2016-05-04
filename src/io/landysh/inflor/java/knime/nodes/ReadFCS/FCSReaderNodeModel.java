@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.ReadFCS;
+package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import io.landysh.inflor.java.core.EventFrame;
+import io.landysh.inflor.java.core.AnnotatedVectorStore;
 import io.landysh.inflor.java.core.FCSFileReader;
 
 import org.knime.core.node.ExecutionContext;
@@ -83,7 +83,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		BufferedDataContainer data = null;
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			EventFrame frame = FCSReader.getEventFrame();
+			AnnotatedVectorStore frame = FCSReader.getEventFrame();
 			Hashtable <String, String> keywords = FCSReader.getHeader();
 			DataTableSpec[] tableSpecs = createPortSpecs(frame);
 			// Read header section
@@ -157,7 +157,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		return new BufferedDataTable[] { header.getTable(), data.getTable() };
 	}
 
-	private DataTableSpec[] createPortSpecs(EventFrame frame) {
+	private DataTableSpec[] createPortSpecs(AnnotatedVectorStore frame) {
 		DataTableSpec[] specs = new DataTableSpec[2];
 		specs[0] = createKeywordSpec();
 		specs[1] = createDataSpec(frame);
@@ -181,7 +181,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		DataTableSpec[] specs = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			EventFrame eventsFrame = FCSReader.getEventFrame();
+			AnnotatedVectorStore eventsFrame = FCSReader.getEventFrame();
 			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
@@ -191,7 +191,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		return specs;
 	}
 
-	private DataTableSpec createDataSpec(EventFrame frame) {
+	private DataTableSpec createDataSpec(AnnotatedVectorStore frame) {
 		int parCount = frame.parameterCount;
 		int compParCount = 0;
 		String[] compPars = null;

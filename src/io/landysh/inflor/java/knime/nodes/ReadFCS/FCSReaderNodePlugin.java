@@ -2,7 +2,7 @@
  * $Revision$ $Date$ $Author$
  *
  */
-package io.landysh.inflor.java.knime.nodes.ReadFCS;
+package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

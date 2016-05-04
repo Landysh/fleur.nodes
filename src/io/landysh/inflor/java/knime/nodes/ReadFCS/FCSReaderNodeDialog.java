@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.ReadFCS;
+package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;
