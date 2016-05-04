@@ -37,7 +37,7 @@ public class FCSFileReaderTest {
 	r.readColumnEventData();
 	
 	//Test
-	Hashtable<String, double[]> testData = r.getColumnStore();
+	Hashtable<String, Double[]> testData = r.getColumnStore();
 	    
 	   double[] fcs = {400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400};
 	   double[] ssc = {300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500};

@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.ReadFCSFrame;
+package io.landysh.inflor.java.knime.nodes.readFCSFrame;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +18,10 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import io.landysh.inflor.java.core.EventFrame;
+import io.landysh.inflor.java.core.AnnotatedVectorStore;
 import io.landysh.inflor.java.core.FCSFileReader;
-import io.landysh.inflor.java.knime.portTypes.fcs.FCSFrameSpec;
-import io.landysh.inflor.java.knime.portTypes.fcs.FCSFramePortObject;
+import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStorePortObject;
+import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.AnnotatedVectorStoreSpec;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor 
@@ -57,7 +57,7 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 	protected FCSFrameReaderNodeModel() {
 
 		// Top port contains header information, bottom, array data
-        super(new PortType[0], new PortType[]{PortTypeRegistry.getInstance().getPortType(FCSFramePortObject.class)});
+        super(new PortType[0], new PortType[]{PortTypeRegistry.getInstance().getPortType(AnnotatedVectorStorePortObject.class)});
 	}
 
 	/**
@@ -73,14 +73,14 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 		FCSFileReader FCSReader;
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			EventFrame frame = FCSReader.getEventFrame();
+			AnnotatedVectorStore frame = FCSReader.getEventFrame();
 			exec.setProgress(0.1, "header read.");
 			exec.checkCanceled();
 			FCSReader.readColumnEventData();
 			exec.setProgress(0.6, "data read.");
-			FCSFrameSpec spec = createPortSpec(frame);
-			Hashtable<String, double[]> columns = FCSReader.getColumnStore();
-			FCSFramePortObject port = new FCSFramePortObject(spec, columns);
+			AnnotatedVectorStoreSpec spec = createPortSpec(frame);
+			Hashtable<String,Double[]> columns = FCSReader.getColumnStore();
+			AnnotatedVectorStorePortObject port = new AnnotatedVectorStorePortObject(spec, columns);
 			return new PortObject[] {port};
 			
 		} catch (Exception e) {
@@ -104,24 +104,24 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-    protected FCSFrameSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
+    protected AnnotatedVectorStoreSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
 
-		FCSFrameSpec spec = null;
+		AnnotatedVectorStoreSpec spec = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			EventFrame eventsFrame = FCSReader.getEventFrame();
+			AnnotatedVectorStore eventsFrame = FCSReader.getEventFrame();
 			spec = createPortSpec(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
-		return new FCSFrameSpec[]{spec};
+		return new AnnotatedVectorStoreSpec[]{spec};
 	}
 
 
-	private FCSFrameSpec createPortSpec(EventFrame eventsFrame) {
-		FCSFrameSpec spec = new FCSFrameSpec(eventsFrame.getHeader(), eventsFrame.getCannonColumnNames());
+	private AnnotatedVectorStoreSpec createPortSpec(AnnotatedVectorStore eventsFrame) {
+		AnnotatedVectorStoreSpec spec = new AnnotatedVectorStoreSpec(eventsFrame.getHeader(), eventsFrame.getCannonColumnNames());
 		return spec;
 	}
 

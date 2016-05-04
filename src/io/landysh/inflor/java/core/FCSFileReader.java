@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -34,7 +36,7 @@ public class FCSFileReader {
 	public Integer 				endData;
 	public String 				dataType;
 	public Integer[] 			bitMap;
-	EventFrame			 		eventFrame;
+	AnnotatedVectorStore			 		eventFrame;
 	public String				UUID;
 
 	// Constructor
@@ -48,7 +50,7 @@ public class FCSFileReader {
 		endText = readOffset(FIRSTBYTE_EndTextOffset, LASTBYTE_EndTextOffset);
 		Hashtable<String, String> header = readHeader(path_to_file);
 		header.put("FCSVersion", readFCSVersion(FCSFile));
-		eventFrame = new EventFrame(header);
+		eventFrame = new AnnotatedVectorStore(header);
 		// data specific properties
 		beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
 		endData = readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
@@ -123,6 +125,7 @@ public class FCSFileReader {
 		// commonly referred to as the FCS header
 		int textLength = endText - beginText + 1;
 		byte[] keywordBytes = new byte[textLength];
+		
 		FCSFile.read(keywordBytes);
 		String rawKeywords = new String(keywordBytes, "UTF-8");
 		if (rawKeywords.length() > 0 && rawKeywords.charAt(rawKeywords.length() - 1) == delimiter.charAt(0)) {
@@ -141,9 +144,40 @@ public class FCSFileReader {
 				table.put(key, value);
 			}
 		}
+		String sha256 = calculateSHA(keywordBytes);
+		table.put("SHA-256", sha256);
 		header = table;
-
 		return header;
+
+
+
+	}
+
+	private String calculateSHA(byte[] inBytes) {
+		/**Returns the SHA256 checksum of a byte array or 
+		 * the literal string "Error" in the case of an exception being thrown during execution
+		 */
+		StringBuffer buffer = null;
+		try {
+			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			messageDigest.update(inBytes);
+			
+	        byte[] bytes = messageDigest.digest();
+	        buffer = new StringBuffer();
+	        for (int i = 0; i < bytes.length; i++) {
+	        	buffer.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+	        }
+
+		} catch (NoSuchAlgorithmException e) {
+			// Should never happen in this context. Algorithm is hard coded.
+			e.printStackTrace();
+		}
+		if (buffer!=null){
+			return buffer.toString();
+		} else {
+			return "ERROR";
+		}
+		
 	}
 
 	private int readOffset(int start, int end) throws IOException {
@@ -172,16 +206,16 @@ public class FCSFileReader {
 		return eventFrame.getHeader();
 	}
 
-	public EventFrame getEventFrame() {
+	public AnnotatedVectorStore getEventFrame() {
 		return eventFrame;
 	}
 
 	public void readColumnEventData() throws IOException {
-		Hashtable<String, double[]> allData = new Hashtable<String, double[]>();
+		Hashtable<String, Double[]> allData = new Hashtable<String, Double[]>();
 		String[] columnNames = eventFrame.getCannonColumnNames();
 		FCSFile.seek(beginData);
 		for (int i=0; i< columnNames.length; i++){
-			double[] column = new double[eventFrame.eventCount];
+			Double[] column = new Double[eventFrame.eventCount];
 			allData.put(columnNames[i], column);
 		}
 		for (int i=0; i<eventFrame.eventCount; i++){
@@ -193,7 +227,7 @@ public class FCSFileReader {
 		eventFrame.setData(allData);
 	}
 
-	public Hashtable<String, double[]> getColumnStore() {
+	public Hashtable<String,Double[]> getColumnStore() {
 		return eventFrame.columnStore;
 	}
 }
