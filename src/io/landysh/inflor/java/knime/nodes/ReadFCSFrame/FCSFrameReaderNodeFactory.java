@@ -4,6 +4,8 @@ import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
 
+import io.landysh.inflor.java.knime.nodes.readFCS.FCSReaderNodeDialog;
+
 /**
  * <code>NodeFactory</code> for the "FCSFrameReader" Node.
  * Reads a data file into an FCS Frame
@@ -51,7 +53,7 @@ public class FCSFrameReaderNodeFactory
      */
     @Override
     public NodeDialogPane createNodeDialogPane() {
-        return new FCSFrameReaderNodeDialog();
+        return new FCSReaderNodeDialog();
     }
 
 }
