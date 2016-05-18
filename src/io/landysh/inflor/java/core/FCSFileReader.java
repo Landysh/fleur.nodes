@@ -206,7 +206,7 @@ public class FCSFileReader {
 		return eventFrame.getHeader();
 	}
 
-	public AnnotatedVectorStore getEventFrame() {
+	public AnnotatedVectorStore getVectorStore() {
 		return eventFrame;
 	}
 
@@ -228,6 +228,6 @@ public class FCSFileReader {
 	}
 
 	public Hashtable<String,Double[]> getColumnStore() {
-		return eventFrame.columnStore;
+		return eventFrame.vectorStore;
 	}
 }

@@ -83,7 +83,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		BufferedDataContainer data = null;
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			AnnotatedVectorStore frame = FCSReader.getEventFrame();
+			AnnotatedVectorStore frame = FCSReader.getVectorStore();
 			Hashtable <String, String> keywords = FCSReader.getHeader();
 			DataTableSpec[] tableSpecs = createPortSpecs(frame);
 			// Read header section
@@ -181,7 +181,7 @@ public class FCSReaderNodeModel extends NodeModel {
 		DataTableSpec[] specs = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			AnnotatedVectorStore eventsFrame = FCSReader.getEventFrame();
+			AnnotatedVectorStore eventsFrame = FCSReader.getVectorStore();
 			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {

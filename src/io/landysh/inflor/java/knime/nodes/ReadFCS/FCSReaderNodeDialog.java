@@ -22,7 +22,7 @@ public class FCSReaderNodeDialog extends DefaultNodeSettingsPane {
 	 * New pane for configuring FCSReader node dialog. This is just a suggestion
 	 * to demonstrate possible default dialog components.
 	 */
-	protected FCSReaderNodeDialog() {
+	public FCSReaderNodeDialog() {
 		super();
 
 		addDialogComponent(new DialogComponentFileChooser(new SettingsModelString(
