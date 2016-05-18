@@ -15,6 +15,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
+import org.knime.core.data.filestore.FileStore;
+import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
@@ -67,20 +69,20 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 	@Override
 	 protected PortObject[] execute(final PortObject[] inObjects, final ExecutionContext exec) throws CanceledExecutionException
 			{
-
+		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 		logger.info("Starting Execution");
-		// get table specs
 		FCSFileReader FCSReader;
 		try {
+			FileStore fs = fileStoreFactory.createFileStore("test.file");
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			AnnotatedVectorStore frame = FCSReader.getEventFrame();
+			AnnotatedVectorStore frame = FCSReader.getVectorStore();
 			exec.setProgress(0.1, "header read.");
 			exec.checkCanceled();
 			FCSReader.readColumnEventData();
 			exec.setProgress(0.6, "data read.");
 			AnnotatedVectorStoreSpec spec = createPortSpec(frame);
-			Hashtable<String,Double[]> columns = FCSReader.getColumnStore();
-			AnnotatedVectorStorePortObject port = new AnnotatedVectorStorePortObject(spec, columns);
+			AnnotatedVectorStore vectorStore = FCSReader.getVectorStore();
+			AnnotatedVectorStorePortObject port = AnnotatedVectorStorePortObject.createPortObject(spec, vectorStore, fs);
 			return new PortObject[] {port};
 			
 		} catch (Exception e) {
@@ -109,7 +111,7 @@ public class FCSFrameReaderNodeModel extends NodeModel {
 		AnnotatedVectorStoreSpec spec = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-			AnnotatedVectorStore eventsFrame = FCSReader.getEventFrame();
+			AnnotatedVectorStore eventsFrame = FCSReader.getVectorStore();
 			spec = createPortSpec(eventsFrame);
 			FCSReader.close();
 		} catch (Exception e) {
