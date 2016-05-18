@@ -3,10 +3,17 @@ package io.landysh.inflor.java.core;
 import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 
 import org.ejml.data.DenseMatrix64F;
+
+import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto;
+import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword;
+import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Vector;
 
 
 public class AnnotatedVectorStore {
@@ -14,8 +21,8 @@ public class AnnotatedVectorStore {
 	//file details
 	public String 						UUID;
 	public Hashtable<String, String> 	annotation;
-	public String[]			 			collumnNames;
-	public Hashtable<String, Double[]> 	columnStore;
+	public String[]			 			vectorNames;
+	public Hashtable<String, Double[]> 	vectorStore;
 	
 	// Compensation details
 	public String[]						compParameters;
@@ -33,7 +40,7 @@ public class AnnotatedVectorStore {
 	public AnnotatedVectorStore(Hashtable<String, String> FCSHeader) throws Exception {
 		annotation = FCSHeader;
 		parameterCount = getKeywordValueInteger("$PAR");
-		collumnNames = parseParameterList(annotation);
+		vectorNames = parseParameterList(annotation);
 		eventCount = getKeywordValueInteger("$TOT");
 		if (annotation.containsKey("$SPILL")||annotation.containsKey("SPILL")){
 			parseSpillover(annotation);
@@ -46,6 +53,10 @@ public class AnnotatedVectorStore {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	public AnnotatedVectorStore() {
+		//empty constructor, use with .load()
 	}
 
 	private String[] parseParameterList(Hashtable<String, String> keywords2) {
@@ -97,7 +108,7 @@ public class AnnotatedVectorStore {
 	}
 
 	public void  setData(Hashtable<String, Double[]> allData) {
-		 columnStore = allData;
+		 vectorStore = allData;
 	}
 
 	public String[] getCannonColumnNames() {
@@ -122,13 +133,13 @@ public class AnnotatedVectorStore {
 		return columnNames;
 	}
 	public Hashtable<String,Double[]> getColumnData() {
-		return columnStore;
+		return vectorStore;
 	}
 
 	public int findIndexByName(String s) throws Exception{
 		Integer index = null;
-		for (int i=0; i<collumnNames.length;i++){
-			if (collumnNames[i].equals(s)){
+		for (int i=0; i<vectorNames.length;i++){
+			if (vectorNames[i].equals(s)){
 				index = i;
 			} 
 		}
@@ -216,5 +227,82 @@ public class AnnotatedVectorStore {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	public byte[] getBytes() {
+		//create the builder
+				AnnotatedVectorsProto.Builder messageBuilder = AnnotatedVectorsProto.newBuilder();
+				
+				//Should add UUID field here.
+				
+				//add the vector names.
+				for (String s: vectorNames){
+					messageBuilder.addVectorNames(s);
+				}
+				
+				//add the keywords.
+				for (String s: annotation.keySet()){
+					String key = s;
+					String value = annotation.get(s);
+					AnnotatedVectorsProto.Keyword.Builder keyBuilder = AnnotatedVectorsProto.Keyword.newBuilder();
+					keyBuilder.setKey(key);
+					keyBuilder.setValue(value);
+					AnnotatedVectorsProto.Keyword keyword = keyBuilder.build();
+					messageBuilder.addKeywords(keyword);
+					}
+				//add the data.
+				Integer size = vectorNames.length;
+				for (int i=0;i<size;i++){
+					AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
+					Double[] vectorArray = vectorStore.get(vectorNames[i]);
+					
+					vectorBuilder.setName(vectorNames[i]);
+					for (int j=0;j<vectorArray.length;j++){
+						vectorBuilder.addArray(vectorArray[j]);
+					}
+					AnnotatedVectorsProto.Vector v = vectorBuilder.build();
+					messageBuilder.addVectors(v);
+					}
+				
+				//build the message
+				AnnotatedVectorsProto AVSProto = messageBuilder.build();
+				byte[] message = AVSProto.toByteArray();
+		return message;
+	}
+	
+	public void save(FileOutputStream out) throws IOException {
+		byte[] bytes = this.getBytes();
+		out.write(bytes);
+		out.flush();
+		
+	}
+
+	public static AnnotatedVectorStore load(FileInputStream input) throws Exception {
+		byte[] buffer = new byte[input.available()];
+		input.read(buffer);
+		AnnotatedVectorsProto message = AnnotatedVectorsProto.parseFrom(buffer);
+		
+		//The annotation
+		Hashtable <String, String> annotation = new Hashtable <String, String>();
+		for (int i=0;i<message.getKeywordsCount();i++){
+			Keyword keyword = message.getKeywords(i);
+			String key = keyword.getKey();
+			String value = keyword.getValue();
+			annotation.put(key, value);
+		}
+		AnnotatedVectorStore vectorStore = new AnnotatedVectorStore(annotation);
+		
+		Integer vectorCount = message.getVectorsCount();
+		String[] vectorNames = new String[vectorCount];
+		
+		//The vectors
+		for (int j=0;j<vectorCount;j++){
+			Vector vector = message.getVectors(j);
+			String   key = vector.getName();
+			vectorNames[j] = key;
+			Double[] values = (Double[]) vector.getArrayList().toArray();
+			vectorStore.vectorStore.put(key, values);
+		}
+		return vectorStore;
 	}
 }
