@@ -9,14 +9,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Landysh
  */
-public class FCSReaderNodeFactory extends NodeFactory<FCSReaderNodeModel> {
+public class ReadFCSTableNodeFactory extends NodeFactory<ReadFCSTableNodeModel> {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FCSReaderNodeModel createNodeModel() {
-		return new FCSReaderNodeModel();
+	public ReadFCSTableNodeModel createNodeModel() {
+		return new ReadFCSTableNodeModel();
 	}
 
 	/**
@@ -31,8 +31,8 @@ public class FCSReaderNodeFactory extends NodeFactory<FCSReaderNodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeView<FCSReaderNodeModel> createNodeView(final int viewIndex, final FCSReaderNodeModel nodeModel) {
-		return new FCSReaderNodeView(nodeModel);
+	public NodeView<ReadFCSTableNodeModel> createNodeView(final int viewIndex, final ReadFCSTableNodeModel nodeModel) {
+		return new ReadFCSTableNodeView(nodeModel);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class FCSReaderNodeFactory extends NodeFactory<FCSReaderNodeModel> {
 	 */
 	@Override
 	public NodeDialogPane createNodeDialogPane() {
-		return new FCSReaderNodeDialog();
+		return new ReadFCSNodeDialog();
 	}
 
 }

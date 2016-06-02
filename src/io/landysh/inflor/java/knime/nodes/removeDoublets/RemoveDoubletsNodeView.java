@@ -1,21 +1,21 @@
-package io.landysh.inflor.java.knime.nodes.findSinglets;
+package io.landysh.inflor.java.knime.nodes.removeDoublets;
 
 import org.knime.core.node.NodeView;
 
 /**
- * <code>NodeView</code> for the "RemoveDoublets" Node.
- * Attempts to identify and compare pulse shape parameters in order to remove aggregated particles. 
+ * <code>NodeView</code> for the "FindSingletsFrame" Node.
+ * 
  *
  * @author Aaron Hart
  */
-public class FindSingletsNodeView extends NodeView<FindSingletsNodeModel> {
+public class RemoveDoubletsNodeView extends NodeView<RemoveDoubletsNodeModel> {
 
     /**
      * Creates a new view.
      * 
-     * @param nodeModel The model (class: {@link FindSingletsNodeModel})
+     * @param nodeModel The model (class: {@link RemoveDoubletsNodeModel})
      */
-    protected FindSingletsNodeView(final FindSingletsNodeModel nodeModel) {
+    protected RemoveDoubletsNodeView(final RemoveDoubletsNodeModel nodeModel) {
         super(nodeModel);
         // TODO: generated method stub
     }
