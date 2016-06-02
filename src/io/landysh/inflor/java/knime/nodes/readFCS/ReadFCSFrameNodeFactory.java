@@ -1,10 +1,8 @@
-package io.landysh.inflor.java.knime.nodes.readFCSFrame;
+package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
-
-import io.landysh.inflor.java.knime.nodes.readFCS.FCSReaderNodeDialog;
 
 /**
  * <code>NodeFactory</code> for the "FCSFrameReader" Node.
@@ -12,15 +10,15 @@ import io.landysh.inflor.java.knime.nodes.readFCS.FCSReaderNodeDialog;
  *
  * @author Aaron Hart
  */
-public class FCSFrameReaderNodeFactory 
-        extends NodeFactory<FCSFrameReaderNodeModel> {
+public class ReadFCSFrameNodeFactory 
+        extends NodeFactory<ReadFCSFrameNodeModel> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public FCSFrameReaderNodeModel createNodeModel() {
-        return new FCSFrameReaderNodeModel();
+    public ReadFCSFrameNodeModel createNodeModel() {
+        return new ReadFCSFrameNodeModel();
     }
 
     /**
@@ -35,9 +33,9 @@ public class FCSFrameReaderNodeFactory
      * {@inheritDoc}
      */
     @Override
-    public NodeView<FCSFrameReaderNodeModel> createNodeView(final int viewIndex,
-            final FCSFrameReaderNodeModel nodeModel) {
-        return new FCSFrameReaderNodeView(nodeModel);
+    public NodeView<ReadFCSFrameNodeModel> createNodeView(final int viewIndex,
+            final ReadFCSFrameNodeModel nodeModel) {
+        return new ReadFCSFrameNodeView(nodeModel);
     }
 
     /**
@@ -53,7 +51,7 @@ public class FCSFrameReaderNodeFactory
      */
     @Override
     public NodeDialogPane createNodeDialogPane() {
-        return new FCSReaderNodeDialog();
+        return new ReadFCSNodeDialog();
     }
 
 }

@@ -33,25 +33,31 @@ public class TSNENodeDialog extends DefaultNodeSettingsPane {
 		
 		//Iterations
 		SettingsModelIntegerBounded modelIterations = 
-				new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_Iterations, 
+			new SettingsModelIntegerBounded(
+				TSNENodeModel.CFGKEY_Iterations, 
 				TSNENodeModel.DEFAULT_Iterations, 
 				TSNENodeModel.MIN_Iterations, 
-				TSNENodeModel.MAX_Iterations);
+				TSNENodeModel.MAX_Iterations
+				);
 		addDialogComponent(new DialogComponentNumber(modelIterations,"Runtime (Iterations)", 1));
 		
 		
 		//Initial PCA Dims
 		SettingsModelIntegerBounded modelInitDims = 
-				new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_InitDims, 
+			new SettingsModelIntegerBounded(
+				TSNENodeModel.CFGKEY_InitDims, 
 				TSNENodeModel.DEFAULT_InitDims, 
 				TSNENodeModel.MIN_InitDims, 
-				TSNENodeModel.MAX_InitDims);
+				TSNENodeModel.MAX_InitDims
+				);
 		addDialogComponent(new DialogComponentNumber(modelInitDims,"Initial Dimensions", 1));
 		
 		
 
 		//Perplexity
-		SettingsModelDoubleBounded modelPerplexity = new SettingsModelDoubleBounded(TSNENodeModel.CFGKEY_Perplexity, 
+		SettingsModelDoubleBounded modelPerplexity = 
+			new SettingsModelDoubleBounded(
+				TSNENodeModel.CFGKEY_Perplexity, 
 				TSNENodeModel.DEFAULT_Perplexity, 
 				TSNENodeModel.MIN_Perplexity, 
 				TSNENodeModel.MAX_Perplexity);

@@ -14,7 +14,7 @@ public class FCSFileReaderTest {
 	@Test
 	  public void testInitialization() throws Exception {
 		//Setup
-		FCSFileReader r = new FCSFileReader(path1);
+		FCSFileReader r = new FCSFileReader(path1, false);
 		 
 		//Test
 		
@@ -23,7 +23,6 @@ public class FCSFileReaderTest {
 	    assertEquals( r.beginText, 	(Integer) 256);
 	    assertEquals( r.endText,   	(Integer) 511);
 	    assertEquals( r.beginData, 	(Integer) 576);
-	    assertEquals( r.endData, 	(Integer) 635);
 	    assertEquals( r.dataType, 	"I");
 //	    assertEquals( r.bitMap, 	new Integer[] {16,16});
 	    System.out.println("FCSFileReaderTest testInitialization completed (succefully or otherwise)");
@@ -33,11 +32,11 @@ public class FCSFileReaderTest {
 	@Test
 	public void testReadAllData() throws Exception {
 	//Setup
-	FCSFileReader r = new FCSFileReader(path1);
+	FCSFileReader r = new FCSFileReader(path1, false);
 	r.readColumnEventData();
 	
 	//Test
-	Hashtable<String, Double[]> testData = r.getColumnStore();
+	Hashtable<String, double[]> testData = r.getColumnStore().getData();
 	    
 	   double[] fcs = {400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400};
 	   double[] ssc = {300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500};
