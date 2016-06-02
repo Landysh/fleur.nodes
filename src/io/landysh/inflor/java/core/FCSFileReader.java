@@ -1,9 +1,9 @@
 package io.landysh.inflor.java.core;
 
+import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -14,81 +14,48 @@ import java.util.StringTokenizer;
 public class FCSFileReader {
 
 	// From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
-	private static final int BEGIN_FCSVersionOffset = 0;
-	private static final int END_FCSVersionOffset = 5;
+	static final int BEGIN_FCSVersionOffset = 0;
+	static final int END_FCSVersionOffset = 5;
 
-	private static final int FIRSTBYTE_BeginTextOffset = 10;
-	private static final int LASTBYTE_BeginTextOffset = 17;
-	private static final int FIRSTBYTE_EndTextOffset = 18;
-	private static final int LASTBYTE_EndTextOffset = 25;
+	static final int FIRSTBYTE_BeginTextOffset = 10;
+	static final int LASTBYTE_BeginTextOffset = 17;
+	static final int FIRSTBYTE_EndTextOffset = 18;
+	static final int LASTBYTE_EndTextOffset = 25;
 
-	private static final int FIRSTBYTE_BeginDataOffset = 26;
-	private static final int LASTBYTE_BeginDataOffset = 33;
-	private static final int FIRSTBYTE_EndDataOffset = 34;
-	private static final int LASTBYTE_EndDataOffset = 41;
+	static final int FIRSTBYTE_BeginDataOffset = 26;
+	static final int LASTBYTE_BeginDataOffset = 33;
+	static final int FIRSTBYTE_EndDataOffset = 34;
+	static final int LASTBYTE_EndDataOffset = 41;
 
 	// file properties
-	public final String					pathToFile;
-	public final RandomAccessFile 		FCSFile;
-	public final Integer 				beginText;
-	public final Integer 				endText;
-	public final Integer 				beginData;
-	public final String 				dataType;
-	public final Integer[] 				bitMap;
-	public final ColumnStore			columnStore;
-	public final String[] 				fileParameterList;
-	public final String[] 				compParameterList;
+	public String 				pathToFile;
+	RandomAccessFile 			FCSFile;
+	public Integer 				beginText;
+	public Integer 				endText;
+	public Integer 				beginData;
+	public Integer 				endData;
+	public String 				dataType;
+	public Integer[] 			bitMap;
+	AnnotatedVectorStore			 		eventFrame;
+	public String				UUID;
 
 	// Constructor
-	public FCSFileReader(String path_to_file, boolean compensate) throws Exception {
-		// Open the file
+	public FCSFileReader(String path_to_file) throws Exception {
 		pathToFile = path_to_file;
 		File f = new File(pathToFile);
+		// file specific properties
 		FCSFile = new RandomAccessFile(f, "r");
-		
 		// text specific properties
 		beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
 		endText = readOffset(FIRSTBYTE_EndTextOffset, LASTBYTE_EndTextOffset);
 		Hashtable<String, String> header = readHeader(path_to_file);
 		header.put("FCSVersion", readFCSVersion(FCSFile));
-		
-		//Try to validate the header.
-		if(FCSUtils.validateHeader(header)==false){
-			Exception e = new Exception("Invalid FCS Header.");
-			e.printStackTrace();
-			throw e;
-		}
-		
-		fileParameterList = FCSUtils.parseParameterList(header);
-		SpilloverCompensator comp = new SpilloverCompensator(header);
-		compParameterList = comp.getCompParameterNames();
-		int rowCount = Integer.parseInt(header.get("$TOT"));
-		String[] columnNames = parseColumnNames(header, compensate); 
-		columnStore = new ColumnStore(header, columnNames);
-		columnStore.setRowCount(rowCount);
-		
+		eventFrame = new AnnotatedVectorStore(header);
 		// data specific properties
 		beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
-		readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
+		endData = readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
 		bitMap = createBitMap(header);
-		dataType = columnStore.getKeywordValue("$DATATYPE");
-	}
-
-	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) throws Exception {
-		if (compensate==true){
-			SpilloverCompensator comp = new SpilloverCompensator(header);
-			String[] compParameters = comp.getCompDisplayNames(header);
-			String[] allParameters = new String[compParameters.length+fileParameterList.length];
-			for (int i=0;i<fileParameterList.length;i++){
-				allParameters[i]= fileParameterList[i];
-			}
-			for (int j=0; j<compParameters.length;j++){
-				allParameters[fileParameterList.length+j] = compParameters[j];
-			}
-			return allParameters;
-		} else {
-			return fileParameterList;
-		}
+		dataType = eventFrame.getKeywordValueString("$DATATYPE");
 	}
 
 	public void close() throws IOException {
@@ -98,12 +65,10 @@ public class FCSFileReader {
 	private Integer[] createBitMap(Hashtable<String, String> keywords) {
 		// This method reads how many bytes per parameter and returns an integer
 		// array of these values
-		String[] rawParameterNames = FCSUtils.parseParameterList(keywords);
-		Integer[] map = new Integer[rawParameterNames.length];
-		for (int i = 1; i <= map.length; i++) {
+		Integer[] map = new Integer[eventFrame.parameterCount];
+		for (int i = 1; i <= eventFrame.parameterCount; i++) {
 			String key = "$P" + (i) + "B";
-			String value = columnStore.getKeywordValue(key);
-			Integer byteSize = Integer.parseInt(value);
+			Integer byteSize = eventFrame.getKeywordValueInteger(key);
 			map[i - 1] = byteSize;
 		}
 		return map;
@@ -147,7 +112,7 @@ public class FCSFileReader {
 		return row;
 	}
 
-	private Hashtable<String, String> readHeader(String path_to_file) throws Exception {
+	private Hashtable<String, String> readHeader(String path_to_file) throws IOException {
 		Hashtable <String, String> header = new Hashtable<String, String>();
 		
 		// Delimiter is first UTF-8 character in the text section
@@ -157,6 +122,7 @@ public class FCSFileReader {
 		String delimiter = new String(delimiterBytes);
 		
 		// Read the rest of the text bytes, this will contain the keywords
+		// commonly referred to as the FCS header
 		int textLength = endText - beginText + 1;
 		byte[] keywordBytes = new byte[textLength];
 		
@@ -165,6 +131,7 @@ public class FCSFileReader {
 		if (rawKeywords.length() > 0 && rawKeywords.charAt(rawKeywords.length() - 1) == delimiter.charAt(0)) {
 			rawKeywords = rawKeywords.substring(0, rawKeywords.length() - 1);
 		}
+		// TODO catch case of delimiter in text file here.
 		StringTokenizer s = new StringTokenizer(rawKeywords, delimiter);
 		Hashtable<String, String> table = new Hashtable<String, String>();
 		Boolean ok = true;
@@ -181,6 +148,9 @@ public class FCSFileReader {
 		table.put("SHA-256", sha256);
 		header = table;
 		return header;
+
+
+
 	}
 
 	private String calculateSHA(byte[] inBytes) {
@@ -205,8 +175,9 @@ public class FCSFileReader {
 		if (buffer!=null){
 			return buffer.toString();
 		} else {
-			throw new NullPointerException("Could not calculate SHA, byte buffer is null");
+			return "ERROR";
 		}
+		
 	}
 
 	private int readOffset(int start, int end) throws IOException {
@@ -220,11 +191,8 @@ public class FCSFileReader {
 	}
 
 	public double[] readRow() throws IOException {
-		/** 
-		 * Reads the next row of the data.
-		 */
-		
-		double[] row = new double[fileParameterList.length];
+		// Hope it's pointed at the right spot!
+		double[] row = new double[eventFrame.parameterCount];
 		if (dataType.equals("F")) {
 			row = readFloatRow(row);
 			
@@ -235,45 +203,31 @@ public class FCSFileReader {
 	}
 
 	public Hashtable<String, String> getHeader() {
-		return columnStore.getKeywords();
+		return eventFrame.getHeader();
 	}
 
-	public ColumnStore getColumnStore() {
-		return columnStore;
+	public AnnotatedVectorStore getVectorStore() {
+		return eventFrame;
 	}
 
-	public void readColumnEventData() throws Exception {
-		Hashtable<String, double[]> allData = new Hashtable<String, double[]>();
-		String[] columnNames = columnStore.getColumnNames();
-		//Initialize file parameters
+	public void readColumnEventData() throws IOException {
+		Hashtable<String, Double[]> allData = new Hashtable<String, Double[]>();
+		String[] columnNames = eventFrame.getCannonColumnNames();
 		FCSFile.seek(beginData);
-		for (String name: columnNames){
-			double[] column = new double[columnStore.getRowCount()];
-			allData.put(name, column);
-		}		
-		
-		// Setup the spillover compensator
-		SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
-				
-		// Read the rows of data and put them in the right columns
-		for (int i=0; i<columnStore.getRowCount(); i++){
+		for (int i=0; i< columnNames.length; i++){
+			Double[] column = new Double[eventFrame.eventCount];
+			allData.put(columnNames[i], column);
+		}
+		for (int i=0; i<eventFrame.eventCount; i++){
 			double[] row = readRow();
-			for (int j=0; j<fileParameterList.length;j++){
-				allData.get(fileParameterList[j])[i] = row[j];
-			}
-			double[] compRow = compensator.compensateRow(row);
-			for (int k=0;k<compParameterList.length;k++){
-				allData.get(compParameterList[k])[i] = compRow[k];
+			for (int j=0; j<columnNames.length;j++){
+				allData.get(columnNames[j])[i] = row[j];
 			}
 		}
-		columnStore.setData(allData);
+		eventFrame.setData(allData);
 	}
 
-	public boolean hasCompParameters() {
-		if (compParameterList!=null && compParameterList.length>=2){
-			return true;
-		} else {
-			return false;
-		}
+	public Hashtable<String,Double[]> getColumnStore() {
+		return eventFrame.vectorStore;
 	}
 }

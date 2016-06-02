@@ -16,40 +16,37 @@ import org.knime.core.node.port.PortObjectSpecZipOutputStream;
 
 import io.landysh.inflor.java.core.FCSSummaryView;
 
-public class ColumnStorePortSpec implements PortObjectSpec {
+public class AnnotatedVectorStoreSpec implements PortObjectSpec {
 	
-	public static final class Serializer extends PortObjectSpecSerializer<ColumnStorePortSpec> {
+	public static final class Serializer extends PortObjectSpecSerializer<AnnotatedVectorStoreSpec> {
 		@Override
-		public ColumnStorePortSpec loadPortObjectSpec(PortObjectSpecZipInputStream in) throws IOException {
-			return 	ColumnStorePortSpec.load(in);
+		public AnnotatedVectorStoreSpec loadPortObjectSpec(PortObjectSpecZipInputStream in) throws IOException {
+			return 	AnnotatedVectorStoreSpec.load(in);
 		}
 
 		@Override
-		public void savePortObjectSpec(ColumnStorePortSpec spec, PortObjectSpecZipOutputStream out)
+		public void savePortObjectSpec(AnnotatedVectorStoreSpec spec, PortObjectSpecZipOutputStream out)
 				throws IOException {
 			spec.save(out);	
 		}
 	}
 	
-    private static final NodeLogger LOGGER = NodeLogger.getLogger(ColumnStorePortSpec.class);
+    private static final NodeLogger LOGGER = NodeLogger.getLogger(AnnotatedVectorStoreSpec.class);
 	
 	private final static String CFG_SPEC 		 = "spec";
 	private final static String CFG_KEYS 		 = "keys";
 	private final static String CFG_VALUES 		 = "values";
-	private final static String CFG_COLUMN_NAMES = "vector names";
-	private final static String CFG_RowCount	 = "row count";
+	private final static String CFG_VECTOR_NAMES = "vector names";
 	
 	public Hashtable<String, String> 	keywords;
-	public String[] 					columnNames;
-	private int 						rowCount;
+	public String[] 					vectorNames;
 	
-	public ColumnStorePortSpec(Hashtable<String, String> keys, String[] columns, int count) {
-		keywords = keys;
-		columnNames = columns;
-		rowCount = count;
+	public AnnotatedVectorStoreSpec(Hashtable<String, String> inKeys, String[] plist) {
+		keywords = inKeys;
+		vectorNames = plist;
 	}
 
-	public static ColumnStorePortSpec load(PortObjectSpecZipInputStream in) {
+	public static AnnotatedVectorStoreSpec load(PortObjectSpecZipInputStream in) {
 		ModelContentRO model = null;
         try {
             ZipEntry zentry = in.getNextEntry();
@@ -61,12 +58,10 @@ public class ColumnStorePortSpec implements PortObjectSpec {
         String[] keys = null;
         String[] values = null;
         String[] newVectorNames = null;
-        int newRowCount = 0;
         try {
         	keys = model.getStringArray(CFG_KEYS);
         	values = model.getStringArray(CFG_VALUES);
-        	newVectorNames = model.getStringArray(CFG_COLUMN_NAMES);
-        	newRowCount = model.getInt(CFG_RowCount);
+        	newVectorNames = model.getStringArray(CFG_VECTOR_NAMES);
         } catch (InvalidSettingsException ise) {
             LOGGER.error("Internal error: Could not load settings", ise);
         }
@@ -75,7 +70,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
         	newKeywords.put(keys[i], values[i]);
         }
         
-        return new ColumnStorePortSpec(newKeywords, newVectorNames, newRowCount);
+        return new AnnotatedVectorStoreSpec(newKeywords, newVectorNames);
 		
 	}
 
@@ -93,8 +88,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 		ModelContent modelOut = new ModelContent(CFG_SPEC);
         modelOut.addStringArray(CFG_KEYS, keys);
         modelOut.addStringArray(CFG_VALUES, values);
-        modelOut.addStringArray(CFG_COLUMN_NAMES, columnNames);
-        modelOut.addInt(CFG_RowCount, rowCount);
+        modelOut.addStringArray(CFG_VECTOR_NAMES, vectorNames);
         try {
         	out.putNextEntry(new ZipEntry(CFG_SPEC));
         	modelOut.saveToXML(out);
@@ -103,7 +97,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
         }
 	}
 
-	public ColumnStorePortSpec() {
+	public AnnotatedVectorStoreSpec() {
 		// no op, use with .load
 	}
 
@@ -112,16 +106,12 @@ public class ColumnStorePortSpec implements PortObjectSpec {
         return new JComponent[]{new FCSSummaryView(keywords)};
 	}
 
-	public Hashtable<String, String> getKeywords() {
+	public Hashtable<String, String> getHeader() {
 		return keywords;
 	}
 
-	public String[] getColumnNames() {
-		return columnNames;
-	}
-
-	public int getRowCount() {
-		return rowCount;
+	public String[] getParameterList() {
+		return vectorNames;
 	}
 
 }

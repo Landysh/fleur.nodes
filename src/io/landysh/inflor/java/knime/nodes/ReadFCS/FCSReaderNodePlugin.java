@@ -15,14 +15,14 @@ import org.osgi.framework.BundleContext;
  *
  * @author Landysh
  */
-public class ReadFCSNodePlugin extends Plugin {
+public class FCSReaderNodePlugin extends Plugin {
 	// The shared instance.
-	private static ReadFCSNodePlugin plugin;
+	private static FCSReaderNodePlugin plugin;
 
 	/**
 	 * The constructor.
 	 */
-	public ReadFCSNodePlugin() {
+	public FCSReaderNodePlugin() {
 		super();
 		plugin = this;
 	}
@@ -60,7 +60,7 @@ public class ReadFCSNodePlugin extends Plugin {
 	 * 
 	 * @return Singleton instance of the Plugin
 	 */
-	public static ReadFCSNodePlugin getDefault() {
+	public static FCSReaderNodePlugin getDefault() {
 		return plugin;
 	}
 

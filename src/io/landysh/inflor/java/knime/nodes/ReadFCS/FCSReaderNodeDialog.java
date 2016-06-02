@@ -16,20 +16,21 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
  * 
  * @author Aaron Hart
  */
-public class ReadFCSNodeDialog extends DefaultNodeSettingsPane {
+public class FCSReaderNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring FCSReader node dialog.
+	 * New pane for configuring FCSReader node dialog. This is just a suggestion
+	 * to demonstrate possible default dialog components.
 	 */
-	public ReadFCSNodeDialog() {
+	public FCSReaderNodeDialog() {
 		super();
 
 		addDialogComponent(new DialogComponentFileChooser(new SettingsModelString(
-				ReadFCSTableNodeModel.CFGKEY_FileLocation, ReadFCSTableNodeModel.DEFAULT_FileLocation), "foo", "fcs"));
+				FCSReaderNodeModel.CFGKEY_FileLocation, FCSReaderNodeModel.DEFAULT_FileLocation), "foo", "fcs"));
 		
 		addDialogComponent(new DialogComponentBoolean(
 							new SettingsModelBoolean(
-									ReadFCSTableNodeModel.KEY_Compensate, 
-									ReadFCSTableNodeModel.DEFAULT_Compensate), "Compensate on read"));
+									FCSReaderNodeModel.KEY_Compensate, 
+									FCSReaderNodeModel.DEFAULT_Compensate), "Compensate on read"));
 	}
 }

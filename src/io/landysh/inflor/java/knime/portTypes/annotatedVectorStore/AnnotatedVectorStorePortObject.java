@@ -23,48 +23,48 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import io.landysh.inflor.java.core.ColumnStore;
+import io.landysh.inflor.java.core.AnnotatedVectorStore;
 
-public class ColumnStorePortObject extends FileStorePortObject {
+public class AnnotatedVectorStorePortObject extends FileStorePortObject {
 	
-	public static final class Serializer extends PortObjectSerializer <ColumnStorePortObject> {
+	public static final class Serializer extends PortObjectSerializer <AnnotatedVectorStorePortObject> {
 		
 		@Override
-        public void savePortObject(final ColumnStorePortObject portObject, final PortObjectZipOutputStream out,
+        public void savePortObject(final AnnotatedVectorStorePortObject portObject, final PortObjectZipOutputStream out,
             final ExecutionMonitor exec) throws IOException, CanceledExecutionException {
 			portObject.save(out);
 		}
 
 		@Override
-		public ColumnStorePortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec, ExecutionMonitor exec)
+		public AnnotatedVectorStorePortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec, ExecutionMonitor exec)
 				throws IOException, CanceledExecutionException {
-				ColumnStorePortObject avsPortObject = new ColumnStorePortObject();
+				AnnotatedVectorStorePortObject avsPortObject = new AnnotatedVectorStorePortObject();
 				avsPortObject.load(in, spec);
 				return avsPortObject;
 		}
 	}
 	
-    public static final PortType TYPE = PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class);
+    public static final PortType TYPE = PortTypeRegistry.getInstance().getPortType(AnnotatedVectorStorePortObject.class);
 	
  
-	private ColumnStorePortSpec m_spec;
-	private WeakReference<ColumnStore> m_columnStore;
-	private String[] m_columnNames;
+	private AnnotatedVectorStoreSpec m_spec;
+	private WeakReference<AnnotatedVectorStore> m_vectorStore;
+	private String[] vectorNames;
 
 	public void save(PortObjectZipOutputStream out) throws IOException {
         ModelContent content = new ModelContent("FOO");
-        content.addStringArray("BAR", m_columnNames);
+        content.addStringArray("BAR", vectorNames);
         content.saveToXML(out);
 		
 	}
 	
     private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
             throws IOException, CanceledExecutionException {
-            m_spec = (ColumnStorePortSpec)spec;
-            m_columnStore = new WeakReference<ColumnStore>(null);
+            m_spec = (AnnotatedVectorStoreSpec)spec;
+            m_vectorStore = new WeakReference<AnnotatedVectorStore>(null);
             ModelContentRO contentRO = ModelContent.loadFromXML(in);
             try {
-            	m_columnNames = contentRO.getStringArray("BAR");
+            	vectorNames = contentRO.getStringArray("BAR");
             } catch (InvalidSettingsException ise) {
                 IOException ioe = new IOException("Unable to restore meta information: " + ise.getMessage());
                 ioe.initCause(ise);
@@ -72,64 +72,65 @@ public class ColumnStorePortObject extends FileStorePortObject {
             }
         }
 
-	public ColumnStorePortObject(ColumnStorePortSpec spec, ColumnStore vectorStore,
+	public AnnotatedVectorStorePortObject(AnnotatedVectorStoreSpec spec, AnnotatedVectorStore vectorStore,
 			FileStore fileStore) {
-       super(Lists.newArrayList(fileStore));
+        super(Lists.newArrayList(fileStore));
        m_spec = spec;
-       m_columnStore =  new WeakReference<ColumnStore>(vectorStore);
-       m_columnNames = vectorStore.getColumnNames();
+       m_vectorStore =  new WeakReference<AnnotatedVectorStore>(vectorStore);
+       vectorNames = vectorStore.vectorNames;
 	}
-	public ColumnStorePortObject() {
+	public AnnotatedVectorStorePortObject() {
 		// to be used in conjunction only with .load().
 	}
 
-    public static ColumnStorePortObject createPortObject(final ColumnStorePortSpec spec,
-            final ColumnStore columnStore, final FileStore fileStore) {
-            final ColumnStorePortObject portObject = new ColumnStorePortObject(spec, columnStore, fileStore);
+    public static AnnotatedVectorStorePortObject createPortObject(final AnnotatedVectorStoreSpec spec,
+            final AnnotatedVectorStore vectorStore, final FileStore fileStore) {
+            final AnnotatedVectorStorePortObject portObject = new AnnotatedVectorStorePortObject(spec, vectorStore, fileStore);
             try {	
-                serialize(columnStore, fileStore);
+                serialize(vectorStore, fileStore);
             } catch (IOException e) {
                 throw new IllegalStateException("Something went wrong during serialization.", e);
             }
             return portObject;
         }
-    private static void serialize(final ColumnStore vectorStore, final FileStore fileStore) throws IOException {
+    private static void serialize(final AnnotatedVectorStore vectorStore, final FileStore fileStore) throws IOException {
         final File file = fileStore.getFile();
         try (FileOutputStream out = new FileOutputStream(file)) {
         	vectorStore.save(out);
         }
     }
     
-    private ColumnStore deserialize() throws IOException {
+    private AnnotatedVectorStore deserialize() throws IOException {
         final File file = getFileStore(0).getFile();
-        ColumnStore vectorStore;
-        try {
-        	FileInputStream input = new FileInputStream(file);
-        	vectorStore = ColumnStore.load(input);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IOException();
-		}
+        AnnotatedVectorStore vectorStore;
+        try (FileInputStream input = new FileInputStream(file)) {
+        	try {
+				vectorStore = AnnotatedVectorStore.load(input);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IOException();
+			}
+        }
         return vectorStore;
     }
     
-    public ColumnStore getColumnStore(){
-    	ColumnStore vectorStore = m_columnStore.get();
+    public AnnotatedVectorStore getVectorStore(){
+    	AnnotatedVectorStore vectorStore = m_vectorStore.get();
     	if (vectorStore== null){
     		try{
     			vectorStore = deserialize();
     		} catch (IOException e){
     			throw new IllegalStateException("Error in deserialization.", e);
     		}
-    		m_columnStore = new WeakReference<ColumnStore>(vectorStore);
+    		m_vectorStore = new WeakReference<AnnotatedVectorStore>(vectorStore);
     	}
     	return vectorStore;
     }
     
 	@Override
 	public String getSummary() {
-		Integer pCount = m_columnNames.length;
-		Integer rowCount = m_columnStore.get().getRowCount();
+		Integer pCount = vectorNames.length;
+		Integer rowCount = m_vectorStore.get().getColumnData().get(vectorNames[0]).length;
 		String message = "vector set containing " + pCount + " parameters and " + rowCount + " rows ";
 		return message;
 	}
@@ -149,6 +150,10 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	}
 
 	public String[] getParameterList() {
-		return m_columnNames;
+		return vectorNames;
+	}
+
+	public Hashtable<String,Double[]> getData() {
+		return m_vectorStore.get().getColumnData();
 	}
 }

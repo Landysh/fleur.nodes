@@ -7,15 +7,15 @@ import org.knime.core.node.NodeView;
  *
  * @author Landysh
  */
-public class ReadFCSTableNodeView extends NodeView<ReadFCSTableNodeModel> {
+public class FCSReaderNodeView extends NodeView<FCSReaderNodeModel> {
 
 	/**
 	 * Creates a new view.
 	 * 
 	 * @param nodeModel
-	 *            The model (class: {@link ReadFCSTableNodeModel})
+	 *            The model (class: {@link FCSReaderNodeModel})
 	 */
-	protected ReadFCSTableNodeView(final ReadFCSTableNodeModel nodeModel) {
+	protected FCSReaderNodeView(final FCSReaderNodeModel nodeModel) {
 		super(nodeModel);
 
 		// TODO instantiate the components of the view here.
@@ -30,7 +30,7 @@ public class ReadFCSTableNodeView extends NodeView<ReadFCSTableNodeModel> {
 
 		// TODO retrieve the new model from your nodemodel and
 		// update the view.
-		ReadFCSTableNodeModel nodeModel = getNodeModel();
+		FCSReaderNodeModel nodeModel = getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve
