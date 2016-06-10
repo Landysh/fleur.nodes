@@ -15,7 +15,7 @@ public class ColumnStore {
 	//file details
 	public  String 							UUID;
 	private Hashtable<String, String> 		keywords;
-	private Hashtable<String, double[]> 	columnData;
+	private Hashtable<String, FCSVector> 	columnData;
 	
 	//data properties
 	private Integer 						columnCount;
@@ -26,9 +26,9 @@ public class ColumnStore {
 	 */
 	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) throws Exception {
 		this.keywords = keywords;
-		columnData = new Hashtable<String, double[]>();
+		columnData = new Hashtable<String, FCSVector>();
 		for (String name:columnNames){
-			columnData.put(name, new double[]{});
+			columnData.put(name, new FCSVector(name){});
 		}
 	}
 
@@ -45,9 +45,9 @@ public class ColumnStore {
 		return keywords;
 	}
 
-	public void  setData(Hashtable<String, double[]> allData) {
+	public void  setData(Hashtable<String, FCSVector> allData) {
 		 columnData = allData;
-		 rowCount = allData.get(getColumnNames()[0]).length;
+		 rowCount = allData.get(getColumnNames()[0]).getData().length;
 		 columnCount = getColumnNames().length;
 	}
 	
@@ -84,7 +84,7 @@ public class ColumnStore {
 		for (int i=0;i<size;i++){
 			AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
 			String name = getColumnNames()[i];
-			double[] vectorArray = columnData.get(name);
+			double[] vectorArray = columnData.get(name).getData();
 			
 			vectorBuilder.setName(name);
 			for (int j=0;j<vectorArray.length;j++){
@@ -134,7 +134,7 @@ public class ColumnStore {
 
 	public double[] getColumn(String name) {
 		if (name  != null){
-			return columnData.get(name);
+			return columnData.get(name).getData();
 		} else {
 			NullPointerException npe = new NullPointerException("Input null.");
 			npe.printStackTrace();
@@ -149,18 +149,20 @@ public class ColumnStore {
 	public double[] getRow(int index) {
 		double[] row = new double[columnCount];
 		int i=0;
-		for (String column:getColumnNames()){
-			row[i] = columnData.get(column)[index];
+		for (String name:getColumnNames()){
+			row[i] = columnData.get(name).getData()[index];
 			i++; 
 		}
 		return row;
 	}
 
-	public void addColumn(String name, double[] column) {
-		if (rowCount== -1 || rowCount==column.length){
-			columnData.put(name, column);
-			columnCount = getColumnNames().length;
-			rowCount = column.length;
+	public void addColumn(String name, double[] data) {
+		if (rowCount== -1 || rowCount==data.length){
+			rowCount = data.length;
+			FCSVector newVector = new FCSVector(name);
+			newVector.setData(data);
+			columnData.put(name, newVector);
+			columnCount = getColumnCount();
 		} else {
 			throw new IllegalStateException("New column does not match frame size: " + rowCount.toString());
 		}
@@ -174,7 +176,7 @@ public class ColumnStore {
 		return getColumnNames().length;
 	}
 
-	public Hashtable<String, double[]> getData() {
+	public Hashtable<String, FCSVector> getData() {
 		return columnData;
 	}
 }

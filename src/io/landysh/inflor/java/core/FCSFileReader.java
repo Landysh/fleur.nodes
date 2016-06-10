@@ -37,7 +37,8 @@ public class FCSFileReader {
 	public final Integer[] 				bitMap;
 	public final ColumnStore			columnStore;
 	public final String[] 				fileParameterList;
-	public final String[] 				compParameterList;
+	private final boolean 				compensateOnRead;
+	public  	 String[] 				compParameterList = null;
 
 	// Constructor
 	public FCSFileReader(String path_to_file, boolean compensate) throws Exception {
@@ -45,6 +46,8 @@ public class FCSFileReader {
 		pathToFile = path_to_file;
 		File f = new File(pathToFile);
 		FCSFile = new RandomAccessFile(f, "r");
+		
+		compensateOnRead = compensate;
 		
 		// text specific properties
 		beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
@@ -60,8 +63,11 @@ public class FCSFileReader {
 		}
 		
 		fileParameterList = FCSUtils.parseParameterList(header);
-		SpilloverCompensator comp = new SpilloverCompensator(header);
-		compParameterList = comp.getCompParameterNames();
+		if (compensate==true){
+			SpilloverCompensator comp = new SpilloverCompensator(header);
+			compParameterList = comp.getCompParameterNames();
+		}
+
 		int rowCount = Integer.parseInt(header.get("$TOT"));
 		String[] columnNames = parseColumnNames(header, compensate); 
 		columnStore = new ColumnStore(header, columnNames);
@@ -74,18 +80,23 @@ public class FCSFileReader {
 		dataType = columnStore.getKeywordValue("$DATATYPE");
 	}
 
-	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) throws Exception {
+	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) {
 		if (compensate==true){
-			SpilloverCompensator comp = new SpilloverCompensator(header);
-			String[] compParameters = comp.getCompDisplayNames(header);
-			String[] allParameters = new String[compParameters.length+fileParameterList.length];
-			for (int i=0;i<fileParameterList.length;i++){
-				allParameters[i]= fileParameterList[i];
+			try{
+				SpilloverCompensator comp = new SpilloverCompensator(header);
+				String[] compParameters = comp.getCompDisplayNames(header);
+				String[] allParameters = new String[compParameters.length+fileParameterList.length];
+				for (int i=0;i<fileParameterList.length;i++){
+					allParameters[i]= fileParameterList[i];
+				}
+				for (int j=0; j<compParameters.length;j++){
+					allParameters[fileParameterList.length+j] = compParameters[j];
+				}
+				return allParameters;
+			} catch (Exception e) {
+				return fileParameterList;
 			}
-			for (int j=0; j<compParameters.length;j++){
-				allParameters[fileParameterList.length+j] = compParameters[j];
-			}
-			return allParameters;
+
 		} else {
 			return fileParameterList;
 		}
@@ -243,30 +254,53 @@ public class FCSFileReader {
 	}
 
 	public void readColumnEventData() throws Exception {
-		Hashtable<String, double[]> allData = new Hashtable<String, double[]>();
+		Hashtable<String, FCSVector> allData = new Hashtable<String, FCSVector>();
 		String[] columnNames = columnStore.getColumnNames();
 		//Initialize file parameters
 		FCSFile.seek(beginData);
 		for (String name: columnNames){
-			double[] column = new double[columnStore.getRowCount()];
-			allData.put(name, column);
+			FCSVector vector = new FCSVector(name);
+			vector.setSize(columnStore.getRowCount());
+			allData.put(name, vector);
 		}		
 		
-		// Setup the spillover compensator
-		SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
-				
-		// Read the rows of data and put them in the right columns
+		if (compensateOnRead == true){
+			try {
+				SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
+				allData = readAndCompensateColumns(allData, compensator);
+			} catch (Exception e){
+				allData = readColumns(allData);
+			}
+
+		} else {
+			allData = readColumns(allData);
+		}
+		columnStore.setData(allData);
+	}
+
+	private Hashtable<String, FCSVector> readColumns(Hashtable<String, FCSVector> allData) throws IOException {
 		for (int i=0; i<columnStore.getRowCount(); i++){
 			double[] row = readRow();
 			for (int j=0; j<fileParameterList.length;j++){
-				allData.get(fileParameterList[j])[i] = row[j];
+				allData.get(fileParameterList[j]).setValue(i,row[j]);
+			}
+		}
+		return allData;
+	}
+
+	private Hashtable<String, FCSVector> readAndCompensateColumns(Hashtable<String, FCSVector> allData,
+			SpilloverCompensator compensator) throws IOException {
+		for (int i=0; i<columnStore.getRowCount(); i++){
+			double[] row = readRow();
+			for (int j=0; j<fileParameterList.length;j++){
+				allData.get(fileParameterList[j]).setValue(i,row[j]);
 			}
 			double[] compRow = compensator.compensateRow(row);
 			for (int k=0;k<compParameterList.length;k++){
-				allData.get(compParameterList[k])[i] = compRow[k];
+				allData.get(compParameterList[k]).setValue(i, compRow[k]);
 			}
 		}
-		columnStore.setData(allData);
+		return allData;
 	}
 
 	public boolean hasCompParameters() {

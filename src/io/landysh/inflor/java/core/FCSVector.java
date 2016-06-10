@@ -24,6 +24,12 @@ public class FCSVector implements NamedVector {
 		uuid = UUID.randomUUID().toString();
 	}
 	
+	public FCSVector(String name, double[] data){
+		parameterName = name;
+		this.data = data;
+		uuid = UUID.randomUUID().toString();
+	}
+	
 	public FCSVector(){
 		//Empty constructor to be used with .load(bytes)
 	}
@@ -46,20 +52,25 @@ public class FCSVector implements NamedVector {
 		}
 		return buffer.toString();
 	}
-	public void save(FileOutputStream out) throws IOException {
-			byte[] bytes = this.getBytes();
-			out.write(bytes);
-			out.flush();
-			
-	}
-	private byte[] getBytes() {
-		// TODO
-		return null;
-	}
+	
+//	public void save(FileOutputStream out) throws IOException {
+//			byte[] bytes = this.getBytes();
+//			out.write(bytes);
+//			out.flush();
+//			
+//	}
+	
+	
+//	private byte[] getBytes() {
+//		
+//		return null;
+//	}
+	
+	
 	public void setData(double[] newData){
 		data = newData;
-		bytes = getBytes();
-		checksum = updateChecksum(bytes);
+//		bytes = getBytes();
+//		checksum = updateChecksum(bytes);
 	}
 	@Override
 	public String getName() {
@@ -98,5 +109,17 @@ public class FCSVector implements NamedVector {
 	public void setKeywords(Hashtable<String, String> keywords) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setValue(int i, double d) {
+		this.data[i] = d;
+	}
+
+	public void setSize(int rowCount) {
+		this.data = new double[rowCount];
+	}
+	
+	public int getSize() {
+		return this.data.length;
 	}
 }

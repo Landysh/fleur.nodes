@@ -2,6 +2,7 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.CancelledKeyException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -29,6 +30,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.core.FCSFileReader;
+import io.landysh.inflor.java.core.FCSUtils;
 import io.landysh.inflor.java.core.SpilloverCompensator;
 
 /**
@@ -71,35 +73,23 @@ public class ReadFCSTableNodeModel extends NodeModel {
 		logger.info("Starting Execution");
 		// get table specs
 		FCSFileReader FCSReader;
-		BufferedDataContainer header = null;
-		BufferedDataContainer data = null;
+		BufferedDataContainer headerTable = null;
+		BufferedDataContainer dataTable = null;
+
+
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
-			ColumnStore columnStore = FCSReader.getColumnStore();
 			Hashtable <String, String> keywords = FCSReader.getHeader();
+			
+			
+			ColumnStore columnStore = FCSReader.getColumnStore();
 			DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
+			
 			// Read header section
-			header = exec.createDataContainer(tableSpecs[0]);
-			Enumeration<String> enumKey = keywords.keys();
-			int i = 0;
-			while (enumKey.hasMoreElements()) {
-				String key = enumKey.nextElement();
-				String val = keywords.get(key);
-				RowKey rowKey = new RowKey("Row " + i);
-				// the cells of the current row, the types of the cells must match
-				// the column spec (see above)
-				DataCell[] keywordCells = new DataCell[2];
-				keywordCells[0] = new StringCell(key);
-				keywordCells[1] = new StringCell(val);
-				DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
-				header.addRowToTable(keywordRow);
-				i++;
-				if (key.equals("0") && val.equals("0"))
-					keywords.remove(key);
-			}
-			header.close();
-
-			// a quick breath before we move on.
+			headerTable = exec.createDataContainer(tableSpecs[0]);
+			readHeader(headerTable, keywords);
+			
+			// check in with the boss before we move on.
 			exec.checkCanceled();
 			exec.setProgress(0.01, "Header read.");
 			
@@ -107,7 +97,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
 			SpilloverCompensator compensator = new SpilloverCompensator(keywords);
 			
 			// Read data section
-			data = exec.createDataContainer(tableSpecs[1]);
+			dataTable = exec.createDataContainer(tableSpecs[1]);
 			FCSReader.initRowReader();
 			for (Integer j = 0; j<columnStore.getRowCount(); j++) {
 				RowKey rowKey = new RowKey(j.toString());
@@ -133,23 +123,44 @@ public class ReadFCSTableNodeModel extends NodeModel {
 						dataCells[columnStore.getColumnCount()+l] = new DoubleCell(FCSCompRow[l]);
 					}
 				}
-				//dataCells[frame.parameterCount+frame.compParameters.length] = new DoubleCell(new Double(j));
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
-				data.addRowToTable(dataRow);
+				dataTable.addRowToTable(dataRow);
 				if (j % 100 == 0) {
 					exec.checkCanceled();
 					exec.setProgress(j / (double)columnStore.getRowCount(), j + " rows read.");
 				}
 			}
 			// once we are done, we close the container and return its table
-			data.close();
+			dataTable.close();
 		} catch (Exception e) {
 			exec.setMessage("Execution Failed while reading data file.");
 			e.printStackTrace();
 			throw new CanceledExecutionException("Execution Failed while reading data file.");
 		}
 		
-		return new BufferedDataTable[] { header.getTable(), data.getTable() };
+		return new BufferedDataTable[] { headerTable.getTable(), dataTable.getTable() };
+	}
+
+	private void readHeader(BufferedDataContainer header, Hashtable<String, String> keywords) {
+		Enumeration<String> enumKey = keywords.keys(); 
+		int i = 0;
+		while (enumKey.hasMoreElements()) {
+			String key = enumKey.nextElement();
+			String val = keywords.get(key);
+			RowKey rowKey = new RowKey("Row " + i);
+			// the cells of the current row, the types of the cells must match
+			// the column spec (see above)
+			DataCell[] keywordCells = new DataCell[2];
+			keywordCells[0] = new StringCell(key);
+			keywordCells[1] = new StringCell(val);
+			DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
+			header.addRowToTable(keywordRow);
+			i++;
+			if (key.equals("0") && val.equals("0"))
+				keywords.remove(key);
+		}
+		header.close();
+		
 	}
 
 	private DataTableSpec[] createPortSpecs(ColumnStore frame) throws InvalidSettingsException {
@@ -170,7 +181,9 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	 */
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
-
+		if(m_FileLocation.getStringValue()==null){
+			throw new InvalidSettingsException("There is no file to read. Please select a valid FCS file.");
+		}
 		DataTableSpec[] specs = null;
 		try {
 			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
@@ -185,13 +198,11 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	}
 
 	private DataTableSpec createDataSpec(ColumnStore columnStore) throws InvalidSettingsException {
-		int parCount = columnStore.getColumnCount();
-		DataColumnSpec[] colSpecs = new DataColumnSpec[parCount];
 		String[] columnNames = columnStore.getColumnNames();
-		int i = 0;
-		while (i<columnNames.length) {
-			colSpecs[i] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
-			i++;
+		DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.length];
+		for (int i=0;i<columnNames.length;i++){
+			int specIndex = FCSUtils.findParameterNumnberByName(columnStore.getKeywords(), columnNames[i])-1;
+			colSpecs[specIndex] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
 		}
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
 		return dataSpec;

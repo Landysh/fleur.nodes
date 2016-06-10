@@ -10,7 +10,6 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
@@ -33,10 +32,6 @@ import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePo
  * @author Landysh Incorportated
  */
 public class DownsampleNodeModel extends NodeModel {
-    
-    // the logger instance
-    private static final NodeLogger logger = NodeLogger
-            .getLogger(DownsampleNodeModel.class);
         
 	//Downsample size
 	static final String CFGKEY_Size = "size";
@@ -46,7 +41,6 @@ public class DownsampleNodeModel extends NodeModel {
 			CFGKEY_Size,
 			DEFAULT_Size
 			);
-	
 	
 	/**
      * Constructor for the node model.
@@ -61,8 +55,7 @@ public class DownsampleNodeModel extends NodeModel {
      * {@inheritDoc}
      */
     @Override
-    protected PortObject[] execute(final PortObject[] inData,
-            final ExecutionContext exec) throws Exception {
+    protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) throws Exception {
     	ColumnStorePortObject inPort = (ColumnStorePortObject) inData[0];
     	ColumnStorePortSpec inSpec = (ColumnStorePortSpec) inPort.getSpec();
     	ColumnStore inColumnStore = inPort.getColumnStore();
@@ -134,6 +127,7 @@ public class DownsampleNodeModel extends NodeModel {
     protected PortObjectSpec[] configure(final PortObjectSpec[] inSpecs)
             throws InvalidSettingsException {
     	ColumnStorePortSpec portSpec = (ColumnStorePortSpec) inSpecs[0];
+
     	ColumnStorePortSpec outSpec = new ColumnStorePortSpec(
     			portSpec.keywords, 
     			portSpec.columnNames, 

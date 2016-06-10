@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import io.landysh.inflor.java.core.FCSFileReader;
+import io.landysh.inflor.java.core.FCSVector;
 
 public class FCSFileReaderTest {
 	//Define Constants  
@@ -36,15 +37,15 @@ public class FCSFileReaderTest {
 	r.readColumnEventData();
 	
 	//Test
-	Hashtable<String, double[]> testData = r.getColumnStore().getData();
+	Hashtable<String, FCSVector> testData = r.getColumnStore().getData();
 	    
 	   double[] fcs = {400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400};
 	   double[] ssc = {300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500};
 	    
 	   //Assert    
 	   for (int i=0; i<fcs.length; i++){
-		  assert(fcs[i] == testData.get("FCS")[i]);
-		  assert(ssc[i] == testData.get("SSC")[i]);
+		  assert(fcs[i] == testData.get("FCS").getData()[i]);
+		  assert(ssc[i] == testData.get("SSC").getData()[i]);
 	   }
 	   System.out.println("FCSFileReaderTest testReadAllData completed (succefully or otherwise)");
 	}
