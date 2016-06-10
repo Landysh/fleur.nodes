@@ -51,7 +51,7 @@ public class FCSUtils {
 	public static Integer findParameterNumnberByName(Hashtable<String, String> keywords, String name) {
 		/**
 		 * Attempts to find the parameter number in a supplied FCS header (keywords).  
-		 * If the parameter name is not found will throw an npe.
+		 * If the parameter name is not it will return null.
 		 */
 		Integer parameterIndex = -1;
 		Integer parameterCount = Integer.parseInt(keywords.get("$PAR"));
@@ -66,8 +66,7 @@ public class FCSUtils {
 		if (parameterIndex!= -1){
 			return parameterIndex;
 		} else {
-			NullPointerException npe = new NullPointerException("Parameter name not found in keywords");
-			throw npe;
+			return null;
 		}
 	}
 

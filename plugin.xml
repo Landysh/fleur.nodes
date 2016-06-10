@@ -19,8 +19,9 @@
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.FindSingletsNodeFactory" id="FilterSingletsTable"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.learnCellCycle.LearnCellCycleNodeFactory" id="ModelCellCycle"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsFrameNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.downsample.DownsampleNodeFactory" id="io.landyish.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsFrameNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.downsample.DownsampleNodeFactory" id="io.landyish.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory" id="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -29,6 +30,14 @@
 
 <extension point="org.knime.core.PortType">
       <portType color="#9B30FF" hidden="false" name="Inflor.AVSPort" objectClass="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject$Serializer" specClass="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec" specSerializer="io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec$Serializer"/>
+</extension>
+<extension point="org.knime.core.DataType">
+   <DataType
+         cellClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell2"
+         factoryClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellFactory">
+      <serializer cellClass="inflor.DataCell:1" serializerClass="inflor.DataCellSerializer1">
+      </serializer>
+   </DataType>
 </extension>
    
 </plugin>
