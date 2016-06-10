@@ -14,7 +14,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortObjectSpecZipInputStream;
 import org.knime.core.node.port.PortObjectSpecZipOutputStream;
 
-import io.landysh.inflor.java.core.FCSSummaryView;
+import io.landysh.inflor.java.core.FCSSummaryPanel;
 
 public class ColumnStorePortSpec implements PortObjectSpec {
 	
@@ -109,7 +109,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 
 	@Override
 	public JComponent[] getViews() {
-        return new JComponent[]{new FCSSummaryView(keywords)};
+        return new JComponent[]{new FCSSummaryPanel(keywords)};
 	}
 
 	public Hashtable<String, String> getKeywords() {

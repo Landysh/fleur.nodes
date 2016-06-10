@@ -24,6 +24,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 import com.google.common.collect.Lists;
 
 import io.landysh.inflor.java.core.ColumnStore;
+import io.landysh.inflor.java.core.FCSSummaryPanel;
+import io.landysh.inflor.java.core.views.ColumnStoreViewFactory;
 
 public class ColumnStorePortObject extends FileStorePortObject {
 	
@@ -141,7 +143,10 @@ public class ColumnStorePortObject extends FileStorePortObject {
 
 	@Override
 	public JComponent[] getViews() {
-		return null;
+		ColumnStore columnStore = m_columnStore.get();
+		JComponent lineageView  = ColumnStoreViewFactory.createLineageView(columnStore);
+		JComponent[] components = new JComponent[] {lineageView};
+		return components;
 	}
 
 	public Hashtable<String, String> getHeader() {

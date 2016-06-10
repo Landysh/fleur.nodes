@@ -9,15 +9,14 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
 
-public class FCSSummaryView extends JPanel {
+public class FCSSummaryPanel extends JPanel {
 
 	/**
-	 * 
+	 *  Provides a simple summary of some keywords in an FCS Header
 	 */
-	//TODO: what is this?
 	private static final long serialVersionUID = 1L;
 		
-	public FCSSummaryView(Hashtable<String, String> header) {
+	public FCSSummaryPanel(Hashtable<String, String> header) {
 		super(new GridBagLayout());
 	    super.setName("FCS Summary");
 		JTable table=new JTable(6,2);
