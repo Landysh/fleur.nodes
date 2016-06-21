@@ -58,7 +58,20 @@ public class ColumnStore {
 		return columnNames;
 	}
 	
-	public void save(FileOutputStream out) throws IOException {
+	public void save(FileOutputStream out) throws IOException{
+		byte[] message = this.save();
+		out.write(message);
+		out.flush();
+	}
+
+	public static ColumnStore load(FileInputStream input) throws Exception {
+		byte[] buffer = new byte[input.available()];
+		input.read(buffer);
+		ColumnStore columnStore = ColumnStore.load(buffer);
+		return columnStore;
+	}
+
+	public byte[] save() {
 		//create the builder
 		AnnotatedVectorsProto.Builder messageBuilder = AnnotatedVectorsProto.newBuilder();
 		
@@ -97,41 +110,9 @@ public class ColumnStore {
 		//build the message
 		AnnotatedVectorsProto AVSProto = messageBuilder.build();
 		byte[] message = AVSProto.toByteArray();
-		out.write(message);
-		out.flush();
+		return message;
 	}
-
-	public static ColumnStore load(FileInputStream input) throws Exception {
-		byte[] buffer = new byte[input.available()];
-		input.read(buffer);
-		AnnotatedVectorsProto message = AnnotatedVectorsProto.parseFrom(buffer);
-		
-		//Load the keywords
-		Hashtable <String, String> keywords = new Hashtable <String, String>();
-		for (int i=0;i<message.getKeywordsCount();i++){
-			Keyword keyword = message.getKeywords(i);
-			String key = keyword.getKey();
-			String value = keyword.getValue();
-			keywords.put(key, value);
-		}
-		ColumnStore columnStore = new ColumnStore(keywords, new String[]{});
-		//Load the vectors
-		int columnCount = message.getVectorsCount();
-		String[] vectorNames = new String[columnCount];
-		// problem is here
-		for (int j=0;j<columnCount;j++){
-			Vector vector = message.getVectors(j);
-			String   key = vector.getName();
-			vectorNames[j] = key;
-			double[] values = new double[vector.getArrayCount()];
-			for (int i=0;i<values.length;i++){
-				values[i] = vector.getArray(i);
-			}
-			columnStore.addColumn(key, values);
-		}
-		return columnStore;
-	}
-
+	
 	public double[] getColumn(String name) {
 		if (name  != null){
 			return columnData.get(name).getData();
@@ -178,5 +159,35 @@ public class ColumnStore {
 
 	public Hashtable<String, FCSVector> getData() {
 		return columnData;
+	}
+
+
+	public static ColumnStore load(byte[] bytes) throws Exception {
+		AnnotatedVectorsProto message = AnnotatedVectorsProto.parseFrom(bytes);
+		
+		//Load the keywords
+		Hashtable <String, String> keywords = new Hashtable <String, String>();
+		for (int i=0;i<message.getKeywordsCount();i++){
+			Keyword keyword = message.getKeywords(i);
+			String key = keyword.getKey();
+			String value = keyword.getValue();
+			keywords.put(key, value);
+		}
+		ColumnStore columnStore = new ColumnStore(keywords, new String[]{});
+		//Load the vectors
+		int columnCount = message.getVectorsCount();
+		String[] vectorNames = new String[columnCount];
+		// problem is here
+		for (int j=0;j<columnCount;j++){
+			Vector vector = message.getVectors(j);
+			String   key = vector.getName();
+			vectorNames[j] = key;
+			double[] values = new double[vector.getArrayCount()];
+			for (int i=0;i<values.length;i++){
+				values[i] = vector.getArray(i);
+			}
+			columnStore.addColumn(key, values);
+		}
+		return columnStore;
 	}
 }

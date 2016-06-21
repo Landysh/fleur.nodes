@@ -1,7 +1,5 @@
 package io.landysh.inflor.java.core;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
@@ -22,6 +20,14 @@ public class FCSVector implements NamedVector {
 	public FCSVector(String name){
 		parameterName = name;
 		uuid = UUID.randomUUID().toString();
+	}
+	
+	public String getUUID(){
+		return this.uuid;
+	}
+	
+	public String getKeyword(String name){
+		return this.keywords.get(name);
 	}
 	
 	public FCSVector(String name, double[] data){
@@ -53,18 +59,14 @@ public class FCSVector implements NamedVector {
 		return buffer.toString();
 	}
 	
-//	public void save(FileOutputStream out) throws IOException {
-//			byte[] bytes = this.getBytes();
-//			out.write(bytes);
-//			out.flush();
-//			
-//	}
+	public byte[] save() {
+			return this.getBytes();
+	}
 	
 	
-//	private byte[] getBytes() {
-//		
-//		return null;
-//	}
+	private byte[] getBytes() {
+		return null;
+	}
 	
 	
 	public void setData(double[] newData){
@@ -91,24 +93,16 @@ public class FCSVector implements NamedVector {
 	public double[] getData() {
 		return data;
 	}
-	@Override
-	public byte[] save() {
-		return bytes;
-	}
+
 	@Override
 	public FCSVector load(byte[] bytes) {
 		// TODO eventually write each column to a separate file.
-	return null;
+		return null;
 	}
 	@Override
 	public Hashtable<String, String> getKeywords() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	@Override
-	public void setKeywords(Hashtable<String, String> keywords) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setValue(int i, double d) {
@@ -121,5 +115,15 @@ public class FCSVector implements NamedVector {
 	
 	public int getSize() {
 		return this.data.length;
+	}
+
+	public int getParameterindex() {
+		return parameterindex;
+	}
+
+	@Override
+	public void setKeywords(Hashtable<String, String> keywords) {
+		// TODO Auto-generated method stub
+		
 	}
 }

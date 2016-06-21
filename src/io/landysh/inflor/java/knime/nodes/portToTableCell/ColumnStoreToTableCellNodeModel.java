@@ -11,6 +11,8 @@ import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.filestore.FileStore;
+import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.data.renderer.DataValueRenderer;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
@@ -25,8 +27,8 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
+import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellFactory;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 import io.landysh.inflor.java.knime.views.CellLineageRenderer;
 
@@ -48,19 +50,35 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
 
     /**
      * {@inheritDoc}
+     * @throws CanceledExecutionException 
      */
     @Override
-    protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) 
-    		throws Exception {
- 
-		DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
+    protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) throws CanceledExecutionException {
+		//create the output container
+    	DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
 		DataTableSpec spec = new DataTableSpec(colSpecs );
 		BufferedDataContainer container = exec.createDataContainer(spec);
-		DataCell[] dataCells = new DataCell[]{ColumnStoreCellFactory.createCell((ColumnStorePortObject) inData[0])};
+				
+		//Create the file store
+		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+		FileStore fs;
+		try {
+			fs = fileStoreFactory.createFileStore("column.store");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new CanceledExecutionException("Unable to create FileStore, cancelling execution.");
+		}
+		
+		//get the data and write it to the container
+		ColumnStore cs = ((ColumnStorePortObject) inData[0]).getColumnStore();
+		DataCell[] dataCells = new DataCell[]{new ColumnStoreCell(fs, cs)};
 		DataRow dataRow = new DefaultRow("Row 0", dataCells);
 		container.addRowToTable(dataRow);
+		
+		//cleanup and create the table
 		container.close();
-		return new BufferedDataTable[]{container.getTable()};
+		BufferedDataTable table = container.getTable();
+		return new BufferedDataTable[]{table};
     }
 
     /**
@@ -120,4 +138,3 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
             final ExecutionMonitor exec) throws IOException,
             CanceledExecutionException { }
 }
-

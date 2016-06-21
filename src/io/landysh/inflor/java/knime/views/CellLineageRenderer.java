@@ -16,7 +16,6 @@ import org.knime.core.data.renderer.DataValueRenderer;
 
 import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 
 public class CellLineageRenderer implements DataValueRenderer
 {
@@ -58,11 +57,10 @@ public class CellLineageRenderer implements DataValueRenderer
 	}
 
 	@Override
-	public Component getRendererComponent(Object obj) {
-		ColumnStoreCell cell = (ColumnStoreCell) obj;
-		ColumnStorePortObject portObject = (ColumnStorePortObject) cell.getPortObject();
-		ColumnStore columns = portObject.getColumnStore();
-		XYDataset dataset = createDataset(columns);
+	public Component getRendererComponent(Object unCastCell) {
+		ColumnStoreCell cell = (ColumnStoreCell) unCastCell;
+		ColumnStore data = cell.getColumnStore();
+		XYDataset dataset = createDataset(data);
 		JFreeChart chart = ChartFactory.createScatterPlot("Foo", "bar", "foobar", dataset);
 		ChartPanel panel = new ChartPanel(chart);
 		return panel;

@@ -109,8 +109,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 		ColumnStorePortSpec spec = new ColumnStorePortSpec(
 				eventsFrame.getKeywords(), 
 				eventsFrame.getColumnNames(), 
-				eventsFrame.getRowCount())
-				;
+				eventsFrame.getRowCount());
 		return spec;
 	}
 	

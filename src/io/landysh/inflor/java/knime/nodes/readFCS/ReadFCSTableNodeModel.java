@@ -2,7 +2,6 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.CancelledKeyException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 

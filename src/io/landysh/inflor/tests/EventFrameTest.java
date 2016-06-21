@@ -1,12 +1,8 @@
 package io.landysh.inflor.tests;
 
-import java.util.Hashtable;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
-
-import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSFileReader;
 
 public class EventFrameTest {
 	//Define Constants  

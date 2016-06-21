@@ -1,8 +1,6 @@
 package io.landysh.inflor.java.knime.nodes.learnCellCycle;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
-import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
-import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 /**
  * <code>NodeDialog</code> for the "ModelCellCycle" Node.

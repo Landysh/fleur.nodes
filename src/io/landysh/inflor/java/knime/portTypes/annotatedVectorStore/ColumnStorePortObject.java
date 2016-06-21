@@ -24,7 +24,6 @@ import org.knime.core.node.port.PortTypeRegistry;
 import com.google.common.collect.Lists;
 
 import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSSummaryPanel;
 import io.landysh.inflor.java.core.views.ColumnStoreViewFactory;
 
 public class ColumnStorePortObject extends FileStorePortObject {
@@ -47,15 +46,19 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	}
 	
     public static final PortType TYPE = PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class);
-	
+
+
+	private static final String COLUMNS_NAME = "column_names";
+	private static final String MODEL_NAME = "column_store_model";
+
  
 	private ColumnStorePortSpec m_spec;
 	private WeakReference<ColumnStore> m_columnStore;
 	private String[] m_columnNames;
 
 	public void save(PortObjectZipOutputStream out) throws IOException {
-        ModelContent content = new ModelContent("FOO");
-        content.addStringArray("BAR", m_columnNames);
+        ModelContent content = new ModelContent(MODEL_NAME);
+        content.addStringArray(COLUMNS_NAME, m_columnNames);
         content.saveToXML(out);
 		
 	}
@@ -66,7 +69,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
             m_columnStore = new WeakReference<ColumnStore>(null);
             ModelContentRO contentRO = ModelContent.loadFromXML(in);
             try {
-            	m_columnNames = contentRO.getStringArray("BAR");
+            	m_columnNames = contentRO.getStringArray(COLUMNS_NAME);
             } catch (InvalidSettingsException ise) {
                 IOException ioe = new IOException("Unable to restore meta information: " + ise.getMessage());
                 ioe.initCause(ise);
@@ -143,7 +146,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
 
 	@Override
 	public JComponent[] getViews() {
-		ColumnStore columnStore = m_columnStore.get();
+		ColumnStore columnStore = getColumnStore();
 		JComponent lineageView  = ColumnStoreViewFactory.createLineageView(columnStore);
 		JComponent[] components = new JComponent[] {lineageView};
 		return components;
