@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Vector;
@@ -24,7 +26,7 @@ public class ColumnStore {
 	/** Store keywords and numeric columns in a persistable object.  
 	 * @param inKeywords some annotation to get started with. Must be a valid FCS header but may be added to later.
 	 */
-	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) throws Exception {
+	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) {
 		this.keywords = keywords;
 		columnData = new Hashtable<String, FCSVector>();
 		for (String name:columnNames){
@@ -162,7 +164,7 @@ public class ColumnStore {
 	}
 
 
-	public static ColumnStore load(byte[] bytes) throws Exception {
+	public static ColumnStore load(byte[] bytes) throws InvalidProtocolBufferException{
 		AnnotatedVectorsProto message = AnnotatedVectorsProto.parseFrom(bytes);
 		
 		//Load the keywords

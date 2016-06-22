@@ -25,6 +25,8 @@ import com.google.common.collect.Lists;
 
 import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.core.views.ColumnStoreViewFactory;
+import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreContent;
 
 public class ColumnStorePortObject extends FileStorePortObject {
 	
@@ -53,8 +55,10 @@ public class ColumnStorePortObject extends FileStorePortObject {
 
  
 	private ColumnStorePortSpec m_spec;
-	private WeakReference<ColumnStore> m_columnStore;
+	private WeakReference<ColumnStoreContent> m_columnStore;
 	private String[] m_columnNames;
+
+
 
 	public void save(PortObjectZipOutputStream out) throws IOException {
         ModelContent content = new ModelContent(MODEL_NAME);
@@ -66,7 +70,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
     private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
             throws IOException, CanceledExecutionException {
             m_spec = (ColumnStorePortSpec)spec;
-            m_columnStore = new WeakReference<ColumnStore>(null);
+            m_columnStore = new WeakReference<ColumnStoreContent>(null);
             ModelContentRO contentRO = ModelContent.loadFromXML(in);
             try {
             	m_columnNames = contentRO.getStringArray(COLUMNS_NAME);
@@ -81,7 +85,8 @@ public class ColumnStorePortObject extends FileStorePortObject {
 			FileStore fileStore) {
        super(Lists.newArrayList(fileStore));
        m_spec = spec;
-       m_columnStore =  new WeakReference<ColumnStore>(vectorStore);
+       ColumnStoreContent content = new ColumnStoreContent(vectorStore);
+       m_columnStore =  new WeakReference<ColumnStoreContent>(content);
        m_columnNames = vectorStore.getColumnNames();
 	}
 	public ColumnStorePortObject() {
@@ -119,22 +124,24 @@ public class ColumnStorePortObject extends FileStorePortObject {
     }
     
     public ColumnStore getColumnStore(){
-    	ColumnStore vectorStore = m_columnStore.get();
-    	if (vectorStore== null){
+    	ColumnStoreContent content = m_columnStore.get();
+    	ColumnStore cs = null;
+    	if (content == null){
     		try{
-    			vectorStore = deserialize();
+    			cs = deserialize();
     		} catch (IOException e){
     			throw new IllegalStateException("Error in deserialization.", e);
     		}
-    		m_columnStore = new WeakReference<ColumnStore>(vectorStore);
+    		ColumnStoreContent newContent = new ColumnStoreContent(cs);
+    		m_columnStore = new WeakReference<ColumnStoreContent>(newContent);
     	}
-    	return vectorStore;
+    	return cs;
     }
     
 	@Override
 	public String getSummary() {
 		Integer pCount = m_columnNames.length;
-		Integer rowCount = m_columnStore.get().getRowCount();
+		Integer rowCount = m_columnStore.get().getColumnStore().getRowCount();
 		String message = "vector set containing " + pCount + " parameters and " + rowCount + " rows ";
 		return message;
 	}
@@ -158,5 +165,10 @@ public class ColumnStorePortObject extends FileStorePortObject {
 
 	public String[] getParameterList() {
 		return m_columnNames;
+	}
+
+	public ColumnStoreCell toTableCell(FileStore fs) {
+		getColumnStore();
+		return m_columnStore.get().toColumnStoreCell(fs);
 	}
 }

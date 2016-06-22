@@ -27,7 +27,6 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 import io.landysh.inflor.java.knime.views.CellLineageRenderer;
@@ -58,7 +57,7 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
     	DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
 		DataTableSpec spec = new DataTableSpec(colSpecs );
 		BufferedDataContainer container = exec.createDataContainer(spec);
-				
+		
 		//Create the file store
 		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 		FileStore fs;
@@ -70,8 +69,8 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
 		}
 		
 		//get the data and write it to the container
-		ColumnStore cs = ((ColumnStorePortObject) inData[0]).getColumnStore();
-		DataCell[] dataCells = new DataCell[]{new ColumnStoreCell(fs, cs)};
+		ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
+		DataCell[] dataCells = new DataCell[]{port.toTableCell(fs)};
 		DataRow dataRow = new DefaultRow("Row 0", dataCells);
 		container.addRowToTable(dataRow);
 		

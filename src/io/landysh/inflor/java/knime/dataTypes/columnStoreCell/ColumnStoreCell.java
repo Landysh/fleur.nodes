@@ -58,7 +58,7 @@ public class ColumnStoreCell extends FileStoreCell {
 
 	@Override
 	public String toString(){
-		return "Foo";
+		return this.m_data.getKeywordValue("$FIL");
 	}
 
 	public ColumnStore getColumnStore() {

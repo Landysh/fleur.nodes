@@ -33,9 +33,9 @@
 </extension>
 <extension point="org.knime.core.DataType">
    <DataType
-         cellClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell2"
+         cellClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell"
          factoryClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellFactory">
-      <serializer cellClass="inflor.DataCell:1" serializerClass="inflor.DataCellSerializer1">
+      <serializer cellClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell" serializerClass="io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell$ColumnStoreCellSerializer">
       </serializer>
    </DataType>
 </extension>

@@ -42,7 +42,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 			DEFAULT_FileLocation);
 	
 	//Compensate while reading
-	static final String KEY_Compensate = "Compensate on read:";
+	static final String  KEY_Compensate 	= "Compensate on read:";
 	static final Boolean DEFAULT_Compensate = false;
 	private final SettingsModelBoolean m_Compensate = new SettingsModelBoolean(KEY_Compensate, DEFAULT_Compensate);
 
