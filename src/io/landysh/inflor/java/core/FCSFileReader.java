@@ -310,4 +310,16 @@ public class FCSFileReader {
 			return false;
 		}
 	}
+
+	public static boolean isValidFCS(String filePath) {
+		boolean isValid = false;
+		try {
+			@SuppressWarnings("unused")
+			FCSFileReader reader = new FCSFileReader(filePath, false);
+			isValid = true;
+		} catch (Exception e) {
+			//noop
+		}
+		return isValid;
+	}
 }

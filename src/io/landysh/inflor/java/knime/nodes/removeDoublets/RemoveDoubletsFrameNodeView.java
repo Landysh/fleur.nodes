@@ -8,14 +8,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeView extends NodeView<RemoveDoubletsNodeModel> {
+public class RemoveDoubletsFrameNodeView extends NodeView<RemoveDoubletsFrameNodeModel> {
 
     /**
      * Creates a new view.
      * 
-     * @param nodeModel The model (class: {@link RemoveDoubletsNodeModel})
+     * @param nodeModel The model (class: {@link RemoveDoubletsFrameNodeModel})
      */
-    protected RemoveDoubletsNodeView(final RemoveDoubletsNodeModel nodeModel) {
+    protected RemoveDoubletsFrameNodeView(final RemoveDoubletsFrameNodeModel nodeModel) {
         super(nodeModel);
         // TODO: generated method stub
     }

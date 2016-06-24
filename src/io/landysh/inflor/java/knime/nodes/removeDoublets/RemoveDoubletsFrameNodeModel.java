@@ -30,7 +30,7 @@ import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePo
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeModel extends NodeModel {
+public class RemoveDoubletsFrameNodeModel extends NodeModel {
     
 	//Area parameter
 	static final String CFGKEY_AreaColumn = "Area Column";
@@ -50,7 +50,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 	/**
      * Constructor for the node model.
      */
-    protected RemoveDoubletsNodeModel() {
+    protected RemoveDoubletsFrameNodeModel() {
     
     	super(new PortType[]{PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class)},
     			new PortType[]{PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class)});

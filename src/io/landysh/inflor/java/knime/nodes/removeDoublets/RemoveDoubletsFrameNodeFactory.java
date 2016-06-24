@@ -10,15 +10,15 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeFactory 
-        extends NodeFactory<RemoveDoubletsNodeModel> {
+public class RemoveDoubletsFrameNodeFactory 
+        extends NodeFactory<RemoveDoubletsFrameNodeModel> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RemoveDoubletsNodeModel createNodeModel() {
-        return new RemoveDoubletsNodeModel();
+    public RemoveDoubletsFrameNodeModel createNodeModel() {
+        return new RemoveDoubletsFrameNodeModel();
     }
 
     /**
@@ -33,9 +33,9 @@ public class RemoveDoubletsNodeFactory
      * {@inheritDoc}
      */
     @Override
-    public NodeView<RemoveDoubletsNodeModel> createNodeView(final int viewIndex,
-            final RemoveDoubletsNodeModel nodeModel) {
-        return new RemoveDoubletsNodeView(nodeModel);
+    public NodeView<RemoveDoubletsFrameNodeModel> createNodeView(final int viewIndex,
+            final RemoveDoubletsFrameNodeModel nodeModel) {
+        return new RemoveDoubletsFrameNodeView(nodeModel);
     }
 
     /**
@@ -51,7 +51,7 @@ public class RemoveDoubletsNodeFactory
      */
     @Override
     public NodeDialogPane createNodeDialogPane() {
-        return new RemoveDoubletsNodeDialog();
+        return new RemoveDoubletsFrameNodeDialog();
     }
 
 }

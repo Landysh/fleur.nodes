@@ -24,7 +24,7 @@ import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePo
  * 
  * @author Aaron Hart
  */
-public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
+public class RemoveDoubletsFrameNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
      * New pane for configuring the FindSingletsFrame node.
@@ -37,14 +37,14 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
     public DialogComponentStringSelection heightComponent;
 
     
-	protected RemoveDoubletsNodeDialog() {
+	protected RemoveDoubletsFrameNodeDialog() {
 		super();
 	    ArrayList<String> defaultChoices = new ArrayList<String>();
 		defaultChoices.add("None");		
 		//Area Selector
 		SettingsModelString m_areaStringSetting = new SettingsModelString(
-				RemoveDoubletsNodeModel.CFGKEY_AreaColumn, 
-				RemoveDoubletsNodeModel.DEFAULT_AreaColumn
+				RemoveDoubletsFrameNodeModel.CFGKEY_AreaColumn, 
+				RemoveDoubletsFrameNodeModel.DEFAULT_AreaColumn
 				);
 		areaComponent = new DialogComponentStringSelection(
 				m_areaStringSetting, 
@@ -55,8 +55,8 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 				
 		//height Selector
 		SettingsModelString m_heightStringSetting = new SettingsModelString(
-				RemoveDoubletsNodeModel.CFGKEY_HeightColumn, 
-				RemoveDoubletsNodeModel.DEFAULT_HeightColumn
+				RemoveDoubletsFrameNodeModel.CFGKEY_HeightColumn, 
+				RemoveDoubletsFrameNodeModel.DEFAULT_HeightColumn
 				);
 		heightComponent = new DialogComponentStringSelection(
 				m_heightStringSetting, 
