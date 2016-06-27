@@ -80,5 +80,5 @@ public class RemoveDoubletsFrameNodeDialog extends DefaultNodeSettingsPane {
 		
 		areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
 		heightComponent.replaceListItems(heightChoices, heightChoices.get(0));
-    }
+    } 
 }
