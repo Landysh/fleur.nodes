@@ -24,6 +24,7 @@
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory" id="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory" id="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory" id="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
