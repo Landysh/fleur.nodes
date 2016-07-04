@@ -7,6 +7,8 @@ import java.util.Hashtable;
 
 import org.ejml.data.DenseMatrix64F;
 
+import io.landysh.inflor.java.core.utils.FCSUtils;
+
 public class SpilloverCompensator {
 	
 	// Compensation details

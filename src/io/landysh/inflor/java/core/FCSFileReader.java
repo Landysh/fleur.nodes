@@ -11,6 +11,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import io.landysh.inflor.java.core.FCSVector.FCSVector;
+import io.landysh.inflor.java.core.utils.FCSUtils;
+
 public class FCSFileReader {
 
 	// From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.

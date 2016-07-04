@@ -12,9 +12,9 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
 import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
-import io.landysh.inflor.java.core.FCSUtils;
 import io.landysh.inflor.java.core.singlets.PuleProperties;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellColumnFilter;
 
 /**

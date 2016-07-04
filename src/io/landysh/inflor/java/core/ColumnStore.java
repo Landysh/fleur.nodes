@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import io.landysh.inflor.java.core.FCSVector.FCSVector;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Vector;
@@ -191,5 +192,11 @@ public class ColumnStore {
 			columnStore.addColumn(key, values);
 		}
 		return columnStore;
+	}
+
+
+	public double[] getVector(String viabilityColumn) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

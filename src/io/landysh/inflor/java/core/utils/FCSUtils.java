@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core;
+package io.landysh.inflor.java.core.utils;
 
 import java.util.Hashtable;
 

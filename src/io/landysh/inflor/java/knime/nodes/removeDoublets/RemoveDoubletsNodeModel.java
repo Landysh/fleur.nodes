@@ -21,8 +21,8 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSUtils;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeModel;
 

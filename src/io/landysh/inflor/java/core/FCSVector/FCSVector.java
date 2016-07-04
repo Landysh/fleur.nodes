@@ -1,9 +1,11 @@
-package io.landysh.inflor.java.core;
+package io.landysh.inflor.java.core.FCSVector;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.UUID;
+
+import io.landysh.inflor.java.core.NamedVector;
 
 public class FCSVector implements NamedVector {
 	
@@ -16,6 +18,9 @@ public class FCSVector implements NamedVector {
 	private byte[]   					bytes;
 	private boolean  					isCompensated;
 	private Hashtable <String, String>  keywords;
+	private double 						displayRangeMin;
+	private double						displayRangeMax;
+	
 	
 	public FCSVector(String name){
 		parameterName = name;
@@ -126,4 +131,8 @@ public class FCSVector implements NamedVector {
 		// TODO Auto-generated method stub
 		
 	}
+	public double getDisplayRangeMax() 						{return displayRangeMax;}	
+	public double getDisplayRangeMin() 						{return displayRangeMin;}
+	public void setDisplayRangeMax(double displayRangeMax) 	{this.displayRangeMax = displayRangeMax;}
+	public void setDisplayRangeMin(double displayRangeMin) 	{this.displayRangeMin = displayRangeMin;}
 }

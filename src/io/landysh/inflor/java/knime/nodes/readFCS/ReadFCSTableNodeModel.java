@@ -29,8 +29,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.core.FCSFileReader;
-import io.landysh.inflor.java.core.FCSUtils;
 import io.landysh.inflor.java.core.SpilloverCompensator;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor 
