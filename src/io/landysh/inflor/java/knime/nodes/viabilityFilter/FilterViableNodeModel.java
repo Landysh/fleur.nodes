@@ -21,7 +21,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 
@@ -65,7 +65,7 @@ public class FilterViableNodeModel extends NodeModel {
 			DataCell[] outCells = new DataCell[inRow.getNumCells()];			
 			ColumnStore columnStore = ((ColumnStoreCell)inRow.getCell(index)).getColumnStore();
         	ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-        	double[] viabilityData = columnStore.getColumn(viabilityColumn);
+        	double[] viabilityData = columnStore.getVector(viabilityColumn);
         	model.buildModel(viabilityData);
         	boolean[] mask = model.scoreModel(viabilityData);
         	

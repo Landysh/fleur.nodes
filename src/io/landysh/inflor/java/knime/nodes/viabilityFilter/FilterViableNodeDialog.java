@@ -1,6 +1,7 @@
 package io.landysh.inflor.java.knime.nodes.viabilityFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -12,9 +13,7 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
 import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
-import io.landysh.inflor.java.core.FCSUtils;
-import io.landysh.inflor.java.core.singlets.PuleProperties;
-import io.landysh.inflor.java.core.singlets.SingletsModel;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellColumnFilter;
 
@@ -89,9 +88,7 @@ public class FilterViableNodeDialog extends DefaultNodeSettingsPane {
     	}
     	
 		String[] vectorNames = FCSUtils.parseParameterList(keywords);
-		ViabilityModel model = new ViabilityModel(vectorNames);
-
-        ArrayList<String> areaChoices = model.findColumns(vectorNames);
+        ArrayList<String> areaChoices = new ArrayList<String>(Arrays.asList(vectorNames));
 		
 		viabilityColumnComponent.replaceListItems(areaChoices, areaChoices.get(0));
     }
