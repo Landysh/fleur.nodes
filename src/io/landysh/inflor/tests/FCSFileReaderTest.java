@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import io.landysh.inflor.java.core.FCSFileReader;
-import io.landysh.inflor.java.core.FCSVector;
+import io.landysh.inflor.java.core.FCSVector.FCSVector;
 
 public class FCSFileReaderTest {
 	//Define Constants  
