@@ -66,7 +66,7 @@ public class FilterViableNodeModel extends NodeModel {
 			ColumnStore columnStore = ((ColumnStoreCell)inRow.getCell(index)).getColumnStore();
         	ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
         	double[] viabilityData = columnStore.getVector(viabilityColumn);
-        	model.buildModel(viabilityData);
+        	model.buildModel(viabilityColumn);
         	boolean[] mask = model.scoreModel(viabilityData);
         	
         	// now create the output row

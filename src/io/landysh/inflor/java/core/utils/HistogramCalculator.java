@@ -22,7 +22,7 @@ public class HistogramCalculator {
 	
 	public double[] createBins(double min, double max, int binCount){
 		double[] bins = new double[binCount];
-		double delta = (max - min)/((double) binCount);
+		double delta = (max - min)/(binCount);
 		for (int i=0;i<=binCount;i++){
 			bins[i]= min;
 			min=min+delta;
@@ -40,7 +40,7 @@ public class HistogramCalculator {
 	}
 	
 	private double[] autoBin(double[] data){
-		int binCount = (int) Math.sqrt((double)data.length);
+		int binCount = (int) Math.sqrt(data.length);
 		double[] bins = createBins(data, binCount);
 		return bins;
 	}
@@ -69,7 +69,7 @@ public class HistogramCalculator {
 		double[] smoothedCounts = new double[counts.length];
 		for (int i=0;i<counts.length;i++){
 			if (i<=windowSize){
-				smoothedCounts[i] = (double) counts[i];
+				smoothedCounts[i] = counts[i];
 			} else {
 				int sum = 0;
 				for (int j=0;j<windowSize;j++){
@@ -104,14 +104,14 @@ public class HistogramCalculator {
 	
 	public Double[] findPeaks(){
 		if (peakList==null){
-			peakFind(smoothCounts(this.counts, windowSize), this.bins);
+			peakFind(smoothCounts(this.counts, this.bins.length/20), this.bins);
 		} 
 		return this.peakList.toArray(new Double[this.peakList.size()]);
 	}
 	
-	public Double[] findValleys(int windowSize){
+	public Double[] findValleys(){
 		if (peakList==null){
-			peakFind(smoothCounts(this.counts, windowSize), this.bins);
+			peakFind(smoothCounts(this.counts, this.bins.length/20), this.bins);
 		} 
 		return this.valleyList.toArray(new Double[this.valleyList.size()]);
 	}
