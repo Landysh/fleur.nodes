@@ -17,7 +17,7 @@ public class ViabilityModel {
 		calc.findPeaks();
 	}
 
-	public boolean[] scoreModel(double[] viabilityData) {
+	public boolean[] scoreModel(FCSVector viabilityData) {
 		// TODO Auto-generated method stub
 		return null;
 	}
