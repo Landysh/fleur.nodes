@@ -5,12 +5,6 @@ public class MLPRegressor {
 	double[][] 	X;
 	double[] 	y;
 	
-	private class Regressor {
-		
-		
-		
-	}
-	
 	public MLPRegressor(double[][] X, double[] y){
 	
 		this.X = X;
