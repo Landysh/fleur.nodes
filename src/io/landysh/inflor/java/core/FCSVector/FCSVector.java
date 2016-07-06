@@ -1,25 +1,19 @@
 package io.landysh.inflor.java.core.FCSVector;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.UUID;
 
-import io.landysh.inflor.java.core.NamedVector;
-
-public class FCSVector implements NamedVector {
+public class FCSVector {
 	
-	private String   					parameterName;
-	private String   					stainName;
-	private int		 					parameterindex;
-	private String   					checksum;
-	private String 	 					uuid;
-	private double[] 					data;
-	private byte[]   					bytes;
-	private boolean  					isCompensated;
-	private Hashtable <String, String>  keywords;
-	private double 						displayRangeMin;
-	private double						displayRangeMax;
+	private String   								parameterName;
+	private String   								stainName;
+	private int		 								parameterindex;
+	private String 	 								uuid;
+	private Hashtable <ParameterType, double[]>		data;
+	private boolean  								isCompensated;
+	private Hashtable <String, String>  			keywords;
+	private double 									displayRangeMin;
+	private double									displayRangeMax;
 	
 	
 	public FCSVector(String name){
@@ -37,49 +31,14 @@ public class FCSVector implements NamedVector {
 	
 	public FCSVector(String name, double[] data){
 		parameterName = name;
-		this.data = data;
+		this.data.put(ParameterType.RAW, data);
 		uuid = UUID.randomUUID().toString();
 	}
 	
-	public FCSVector(){
-		//Empty constructor to be used with .load(bytes)
+	public void setData(double[] newData, ParameterType type){
+		data.put(type,newData);
 	}
 	
-	private String updateChecksum (byte[] inBytes){
-		
-		StringBuffer buffer = null;
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(inBytes);
-			
-		    byte[] SHABytes = messageDigest.digest();
-		    buffer = new StringBuffer();
-		    for (int i = 0; i < bytes.length; i++) {
-		     	buffer.append(Integer.toString((SHABytes[i] & 0xff) + 0x100, 16).substring(1));
-		    }        
-		} catch (NoSuchAlgorithmException e) {
-			// Should never happen in this context. Algorithm is hard coded.
-			e.printStackTrace();
-		}
-		return buffer.toString();
-	}
-	
-	public byte[] save() {
-			return this.getBytes();
-	}
-	
-	
-	private byte[] getBytes() {
-		return null;
-	}
-	
-	
-	public void setData(double[] newData){
-		data = newData;
-//		bytes = getBytes();
-//		checksum = updateChecksum(bytes);
-	}
-	@Override
 	public String getName() {
 		String name;
 		if (isCompensated==true&&stainName!=null){
@@ -94,45 +53,39 @@ public class FCSVector implements NamedVector {
 		return name;
 	}
 	
-	@Override
-	public double[] getData() {
-		return data;
-	}
-
-	@Override
-	public FCSVector load(byte[] bytes) {
-		// TODO eventually write each column to a separate file.
-		return null;
-	}
-	@Override
-	public Hashtable<String, String> getKeywords() {
-		// TODO Auto-generated method stub
-		return null;
+	public double[] getData(ParameterType type) {
+		return data.get(type);
 	}
 
 	public void setValue(int i, double d) {
-		this.data[i] = d;
+		this.data.get(ParameterType.RAW)[i] = d;
 	}
 
 	public void setSize(int rowCount) {
-		this.data = new double[rowCount];
+		this.data.put(ParameterType.RAW, new double[rowCount]);
 	}
 	
 	public int getSize() {
-		return this.data.length;
+		return this.data.get(ParameterType.RAW).length;
 	}
 
 	public int getParameterindex() {
 		return parameterindex;
 	}
 
-	@Override
-	public void setKeywords(Hashtable<String, String> keywords) {
-		// TODO Auto-generated method stub
-		
-	}
 	public double getDisplayRangeMax() 						{return displayRangeMax;}	
 	public double getDisplayRangeMin() 						{return displayRangeMin;}
 	public void setDisplayRangeMax(double displayRangeMax) 	{this.displayRangeMax = displayRangeMax;}
 	public void setDisplayRangeMin(double displayRangeMin) 	{this.displayRangeMin = displayRangeMin;}
+
+	
+	public double[] getData() {
+		double[] array;
+		try {
+			array = data.get(ParameterType.COMP);
+		} catch (NullPointerException e){
+			array = data.get(ParameterType.RAW);
+		}
+		return array;
+	}
 }

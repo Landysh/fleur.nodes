@@ -24,7 +24,7 @@ import io.landysh.inflor.java.core.ColumnStore;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeModel;
+import io.landysh.inflor.java.knime.nodes.readFCSFool.ReadFCSSetNodeModel;
 
 /**
  * This is the model implementation of RemoveDoublets.

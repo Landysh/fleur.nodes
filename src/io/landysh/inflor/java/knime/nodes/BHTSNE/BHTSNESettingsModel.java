@@ -85,7 +85,7 @@ public class BHTSNESettingsModel {
 		m_Features.validateSettings(settings);
 	}
 
-
+	
 }
 
 

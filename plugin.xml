@@ -14,15 +14,15 @@
    -->2
    
 <extension point="org.knime.workbench.repository.nodes">
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSTableNodeFactory" id="ReadFCSTable"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCSFool.ReadFCSTableNodeFactory" id="ReadFCSTable"/>
 	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.calculateTSNE.TSNENodeFactory" id="CalculateTSNE"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCSFool.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.FindSingletsNodeFactory" id="FilterSingletsTable"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.learnCellCycle.LearnCellCycleNodeFactory" id="ModelCellCycle"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsFrameNodeFactory" id="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsFrameNodeFactory"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.downsample.DownsampleNodeFactory" id="io.landyish.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory" id="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory" id="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.readFCSFool.ReadFCSSetNodeFactory" id="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory" id="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory" id="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory"/>

@@ -1,6 +1,3 @@
 package io.landysh.inflor.java.core.FCSVector;
 
-public enum ParameterArguments {
-	RAW
-	
-}
+public enum ParameterType {RAW,COMP;}
