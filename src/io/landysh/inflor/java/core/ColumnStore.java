@@ -8,7 +8,7 @@ import java.util.Hashtable;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import io.landysh.inflor.java.core.FCSVector.FCSVector;
-import io.landysh.inflor.java.core.FCSVector.ParameterType;
+import io.landysh.inflor.java.core.FCSVector.FCSVectorType;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Vector;
@@ -54,7 +54,7 @@ public class ColumnStore {
 
 	public void setData(Hashtable<String, FCSVector> allData) {
 		this.columnData	 = allData;
-		this.rowCount	 = allData.get(getColumnNames()[0]).getData(ParameterType.RAW).length;
+		this.rowCount	 = allData.get(getColumnNames()[0]).getData(FCSVectorType.RAW).length;
 		this.columnCount = getColumnNames().length;
 	}
 
@@ -105,7 +105,7 @@ public class ColumnStore {
 			AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
 			String name = getColumnNames()[i];
 			//Raw data
-			double[] rawArray = columnData.get(name).getData(ParameterType.RAW);
+			double[] rawArray = columnData.get(name).getData(FCSVectorType.RAW);
 			vectorBuilder.setName(name);
 			for (int j = 0; j < rawArray.length; j++) {
 				vectorBuilder.addArray(rawArray[j]);
@@ -123,7 +123,7 @@ public class ColumnStore {
 		return message;
 	}
 
-	public double[] getColumn(String name, ParameterType type) {
+	public double[] getColumn(String name, FCSVectorType type) {
 		if (name != null) {
 			return columnData.get(name).getData(type);
 		} else {
@@ -142,7 +142,7 @@ public class ColumnStore {
 		double[] row = new double[columnCount];
 		int i = 0;
 		for (String name : getColumnNames()) {
-			row[i] = columnData.get(name).getData(ParameterType.RAW)[index];
+			row[i] = columnData.get(name).getData(FCSVectorType.RAW)[index];
 			i++;
 		}
 		return row;
@@ -152,7 +152,7 @@ public class ColumnStore {
 		if (rowCount == -1 || rowCount == data.length) {
 			rowCount = data.length;
 			FCSVector newVector = new FCSVector(name);
-			newVector.setData(data, ParameterType.RAW);
+			newVector.setData(data, FCSVectorType.RAW);
 			columnData.put(name, newVector);
 			columnCount = getColumnCount();
 		} else {
@@ -207,9 +207,9 @@ public class ColumnStore {
 	public double[] getColumn(String xName) {
 		double[] data;
 		try {
-			data = columnData.get(xName).getData(ParameterType.COMP);
+			data = columnData.get(xName).getData(FCSVectorType.COMP);
 		} catch (NullPointerException e){
-			data = columnData.get(xName).getData(ParameterType.RAW);
+			data = columnData.get(xName).getData(FCSVectorType.RAW);
 		}
 		return data;
 	}

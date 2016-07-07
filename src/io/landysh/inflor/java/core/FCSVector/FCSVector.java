@@ -9,7 +9,7 @@ public class FCSVector {
 	private String   								stainName;
 	private int		 								parameterindex;
 	private String 	 								uuid;
-	private Hashtable <ParameterType, double[]>		data;
+	private Hashtable <FCSVectorType, double[]>		data;
 	private boolean  								isCompensated;
 	private Hashtable <String, String>  			keywords;
 	private double 									displayRangeMin;
@@ -31,11 +31,11 @@ public class FCSVector {
 	
 	public FCSVector(String name, double[] data){
 		parameterName = name;
-		this.data.put(ParameterType.RAW, data);
+		this.data.put(FCSVectorType.RAW, data);
 		uuid = UUID.randomUUID().toString();
 	}
 	
-	public void setData(double[] newData, ParameterType type){
+	public void setData(double[] newData, FCSVectorType type){
 		data.put(type,newData);
 	}
 	
@@ -53,20 +53,20 @@ public class FCSVector {
 		return name;
 	}
 	
-	public double[] getData(ParameterType type) {
+	public double[] getData(FCSVectorType type) {
 		return data.get(type);
 	}
 
 	public void setValue(int i, double d) {
-		this.data.get(ParameterType.RAW)[i] = d;
+		this.data.get(FCSVectorType.RAW)[i] = d;
 	}
 
 	public void setSize(int rowCount) {
-		this.data.put(ParameterType.RAW, new double[rowCount]);
+		this.data.put(FCSVectorType.RAW, new double[rowCount]);
 	}
 	
 	public int getSize() {
-		return this.data.get(ParameterType.RAW).length;
+		return this.data.get(FCSVectorType.RAW).length;
 	}
 
 	public int getParameterindex() {
@@ -82,9 +82,9 @@ public class FCSVector {
 	public double[] getData() {
 		double[] array;
 		try {
-			array = data.get(ParameterType.COMP);
+			array = data.get(FCSVectorType.COMP);
 		} catch (NullPointerException e){
-			array = data.get(ParameterType.RAW);
+			array = data.get(FCSVectorType.RAW);
 		}
 		return array;
 	}
