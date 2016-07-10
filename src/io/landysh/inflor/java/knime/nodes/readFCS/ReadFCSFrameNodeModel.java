@@ -66,7 +66,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
 			exec.setProgress(0.1, "header read.");
 			exec.checkCanceled();
-			FCSReader.readColumnEventData();
+			FCSReader.readData();
 			exec.setProgress(0.9, "data read.");
 			ColumnStore columnStore = FCSReader.getColumnStore();
 			ColumnStorePortSpec spec = createPortSpec(columnStore);

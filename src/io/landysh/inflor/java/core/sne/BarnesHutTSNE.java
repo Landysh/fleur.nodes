@@ -11,7 +11,7 @@ public class BarnesHutTSNE {
 	private int currentIter = 0;
 	private int perplexity 	= 40;
 	
-	private double[][] currentData;	
+	private double[][] currentResult;	
 	private Hashtable<Integer, double[][]> interactiveLog;
 	private int interactiveRunIteration=0;
 	
@@ -21,11 +21,12 @@ public class BarnesHutTSNE {
 		this.Y 			= new double[2][this.X[0].length];
 		this.maxIter 	= maxIters;
 		this.perplexity = perplexity;
+		this.Y = 
 		//TODO: other model initialization here
 	}
 	
 	public double[][] getCurrentData(){
-		return currentData;
+		return currentResult;
 	}
 	
 	public double getProgress(){
@@ -36,7 +37,7 @@ public class BarnesHutTSNE {
 		//TODO Any calculation heavy setup.
 		
 		//TODO: Iterate
-		boolean keepGoing = true;
+		boolean keepGoing = false;
 		while (keepGoing == true){
 			advance();
 		}
@@ -45,14 +46,14 @@ public class BarnesHutTSNE {
 	
 	private double[][] advance() {
 		//TODO: implement each step in the iteration process here.	
-		return currentData;
+		return currentResult;
 	}
 
 	public double[][] runInteractively(int updateRate){
 		interactiveLog = new Hashtable<Integer, double[][]>();
 		try {
-			currentData = advance();
-			return currentData;
+			currentResult = advance();
+			return currentResult;
 		} catch (Exception e){
 			throw new RuntimeException("Execution Finished.");
 		}

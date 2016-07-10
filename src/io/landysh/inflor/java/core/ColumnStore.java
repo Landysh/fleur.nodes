@@ -110,8 +110,13 @@ public class ColumnStore {
 			for (int j = 0; j < rawArray.length; j++) {
 				vectorBuilder.addArray(rawArray[j]);
 			}
-			//TODO: Comped data
-			
+			//Comped data
+			double[] compArray = columnData.get(name).getData(FCSVectorType.COMP);
+			if (compArray!=null){
+				for (int k = 0; k < rawArray.length; k++) {
+					vectorBuilder.addCompArray(compArray[k]);
+				}
+			}
 			
 			AnnotatedVectorsProto.Vector v = vectorBuilder.build();
 			messageBuilder.addVectors(v);
@@ -196,6 +201,11 @@ public class ColumnStore {
 				values[i] = vector.getArray(i);
 			}
 			columnStore.addColumn(key, values);
+			if (vector.getCompArrayCount()!=0){
+				for (int k=0;k<vector.getArrayCount();k++){
+					columnStore.getColumn(key, FCSVectorType.COMP)[k] = vector.getCompArray(k);
+				}
+			}
 		}
 		return columnStore;
 	}

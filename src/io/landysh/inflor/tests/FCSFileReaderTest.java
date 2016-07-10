@@ -34,7 +34,7 @@ public class FCSFileReaderTest {
 	public void testReadAllData() throws Exception {
 	//Setup
 	FCSFileReader r = new FCSFileReader(path1, false);
-	r.readColumnEventData();
+	r.readData();
 	
 	//Test
 	Hashtable<String, FCSVector> testData = r.getColumnStore().getData();

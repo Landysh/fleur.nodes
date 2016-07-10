@@ -1,6 +1,3 @@
-package io.landysh.inflor.java.core.proto;
-
-
 message AnnotatedVectorsProto {
   
   repeated string vectorNames = 1;
@@ -15,6 +12,13 @@ message AnnotatedVectorsProto {
   message Vector {
   	required string name = 1;
   	repeated double array = 2;
+  	repeated double compArray = 3;
+  	optional string transformPref = 4;
+  	optional double logicleT = 5;
+  	optional double logicleW = 6;
+  	optional double logicleM = 7;
+  	optional double logicleA = 8;
+  	
 	}
   
   repeated Vector vectors =3;

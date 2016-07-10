@@ -1,6 +1,3 @@
-package io.landysh.inflor.java.core.proto;
-
-
 message NamedVectorsMessage {
   
   required string name = 1;
@@ -9,13 +6,12 @@ message NamedVectorsMessage {
   
   message Keyword {
 	required string key = 1;
-	required string value = 2;
+	optional string  stringValue = 2;
+	optional double  doubleValue = 3;
 	}
   
   repeated Keyword keywords = 4;
-  
-  repeated double data =5;
-
+  repeated double data = 5;
 }
 
 

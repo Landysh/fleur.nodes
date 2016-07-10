@@ -90,7 +90,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
             RowKey key = new RowKey("Row " + i);
         	String pathToFile = filePaths[i];
 			FCSFileReader FCSReader = new FCSFileReader(pathToFile, m_compensate.getBooleanValue());
-			FCSReader.readColumnEventData();
+			FCSReader.readData();
     		ColumnStore columnStore = FCSReader.getColumnStore();
     		String fsName = i+ "ColumnStore.fs";
     		FileStore fileStore = fileStoreFactory.createFileStore(fsName);

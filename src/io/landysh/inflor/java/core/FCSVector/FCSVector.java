@@ -19,6 +19,8 @@ public class FCSVector {
 	public FCSVector(String name){
 		parameterName = name;
 		uuid = UUID.randomUUID().toString();
+		this.data = new Hashtable<FCSVectorType, double[]>	();
+		this.keywords = new Hashtable <String, String>();  
 	}
 	
 	public String getUUID(){
@@ -57,8 +59,12 @@ public class FCSVector {
 		return data.get(type);
 	}
 
-	public void setValue(int i, double d) {
+	public void setRawValue(int i, double d) {
 		this.data.get(FCSVectorType.RAW)[i] = d;
+	}
+	
+	public void setCompValue(int i, double d) {
+		this.data.get(FCSVectorType.COMP)[i] = d;
 	}
 
 	public void setSize(int rowCount) {
@@ -88,4 +94,6 @@ public class FCSVector {
 		}
 		return array;
 	}
+
+
 }

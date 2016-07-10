@@ -19,7 +19,7 @@ public class BHTSNESettingsModel {
 			new SettingsModelIntegerBounded(CFGKEY_Iterations, 
 											DEFAULT_Iterations, 
 											Iterations_MIN, 
-											Iterations_MIN);
+											Iterations_MAX);
 
 	//Perplexity
 	static final String CFGKEY_Perplexity = "Perplexity";
@@ -37,11 +37,10 @@ public class BHTSNESettingsModel {
 	//Input Features
 	static final String CFGKEY_Features = "Input Features";
 	
-	static final String[] DEFAULT_Features = null;
+	static final String[] DEFAULT_Features = {"No Features!"};
 	
 	private final SettingsModelStringArray m_Features = 
 			new SettingsModelStringArray(CFGKEY_Features, DEFAULT_Features);
-	
 	
 	public Integer getIterations() {
 		return m_Iterations.getIntValue();

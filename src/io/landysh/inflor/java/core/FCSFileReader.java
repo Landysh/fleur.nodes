@@ -30,18 +30,30 @@ public class FCSFileReader {
 	private static final int FIRSTBYTE_EndDataOffset = 34;
 	private static final int LASTBYTE_EndDataOffset = 41;
 
+	public static boolean isValidFCS(String filePath) {
+		boolean isValid = false;
+		try {
+			@SuppressWarnings("unused")
+			FCSFileReader reader = new FCSFileReader(filePath, false);
+			isValid = true;
+		} catch (Exception e) {
+			// noop
+		}
+		return isValid;
+	}
 	// file properties
-	public final String 			pathToFile;
-	public final RandomAccessFile 	FCSFile;
-	public final Integer 			beginText;
-	public final Integer 			endText;
-	public final Integer 			beginData;
-	public final String 			dataType;
-	public final Integer[] 			bitMap;
-	public final ColumnStore 		columnStore;
-	public final String[] 			fileParameterList;
-	private final boolean 			compensateOnRead;
-	public String[] 				compParameterList = null;
+	public final String pathToFile;
+	public final RandomAccessFile FCSFile;
+	public final Integer beginText;
+	public final Integer endText;
+	public final Integer beginData;
+	public final String dataType;
+	public final Integer[] bitMap;
+	public final ColumnStore columnStore;
+	public final String[] fileParameterList;
+	private final boolean compensateOnRead;
+
+	public String[] compParameterList = null;
 
 	// Constructor
 	public FCSFileReader(String path_to_file, boolean compensate) throws Exception {
@@ -83,6 +95,75 @@ public class FCSFileReader {
 		dataType = columnStore.getKeywordValue("$DATATYPE");
 	}
 
+	private String calculateSHA(byte[] inBytes) {
+		/**
+		 * Returns the SHA256 checksum of a byte array or the literal string
+		 * "Error" in the case of an exception being thrown during execution
+		 */
+		StringBuffer buffer = null;
+		try {
+			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+			messageDigest.update(inBytes);
+
+			byte[] bytes = messageDigest.digest();
+			buffer = new StringBuffer();
+			for (int i = 0; i < bytes.length; i++) {
+				buffer.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+			}
+
+		} catch (NoSuchAlgorithmException e) {
+			// Should never happen in this context. Algorithm is hard coded.
+			e.printStackTrace();
+		}
+		if (buffer != null) {
+			return buffer.toString();
+		} else {
+			throw new NullPointerException("Could not calculate SHA, byte buffer is null");
+		}
+	}
+
+	public void close() throws IOException {
+		FCSFile.close();
+	}
+
+	private Integer[] createBitMap(Hashtable<String, String> keywords) {
+		// This method reads how many bytes per parameter and returns an integer
+		// array of these values
+		String[] rawParameterNames = FCSUtils.parseParameterList(keywords);
+		Integer[] map = new Integer[rawParameterNames.length];
+		for (int i = 1; i <= map.length; i++) {
+			String key = "$P" + (i) + "B";
+			String value = columnStore.getKeywordValue(key);
+			Integer byteSize = Integer.parseInt(value);
+			map[i - 1] = byteSize;
+		}
+		return map;
+	}
+
+	public ColumnStore getColumnStore() {
+		return columnStore;
+	}
+
+	public Hashtable<String, String> getHeader() {
+		return columnStore.getKeywords();
+	}
+
+	public boolean hasCompParameters() {
+		if (compParameterList != null && compParameterList.length >= 2) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void initRowReader() {
+		try {
+			FCSFile.seek(beginData);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) {
 		if (compensate == true) {
 			try {
@@ -105,30 +186,56 @@ public class FCSFileReader {
 		}
 	}
 
-	public void close() throws IOException {
-		FCSFile.close();
+	private Hashtable<String, FCSVector> readAndCompensateColumns(Hashtable<String, FCSVector> allData,
+			SpilloverCompensator compensator) throws IOException {
+		FCSFile.seek(beginData);
+		for (int i = 0; i < columnStore.getRowCount(); i++) {
+			double[] row = readRow();
+			double[] compRow = compensator.compensateRow(row);
+			for (int j = 0; j < fileParameterList.length; j++) {
+				allData.get(fileParameterList[j]).setRawValue(i, row[j]);
+				for (int k = 0; k < compParameterList.length; k++) {
+					if (compParameterList[k] == fileParameterList[j]){
+						allData.get(compParameterList[k]).setCompValue(i, compRow[k]);
+					}
+				}
+			}
+		}
+		return allData;
 	}
 
-	private Integer[] createBitMap(Hashtable<String, String> keywords) {
-		// This method reads how many bytes per parameter and returns an integer
-		// array of these values
-		String[] rawParameterNames = FCSUtils.parseParameterList(keywords);
-		Integer[] map = new Integer[rawParameterNames.length];
-		for (int i = 1; i <= map.length; i++) {
-			String key = "$P" + (i) + "B";
-			String value = columnStore.getKeywordValue(key);
-			Integer byteSize = Integer.parseInt(value);
-			map[i - 1] = byteSize;
+	public void readData() throws Exception {
+		Hashtable<String, FCSVector> allData = new Hashtable<String, FCSVector>();
+		String[] vectorNames = columnStore.getColumnNames();
+		// Initialize vector store
+		for (String name : vectorNames) {
+			FCSVector vector = new FCSVector(name);
+			vector.setSize(columnStore.getRowCount());
+			allData.put(name, vector);
 		}
-		return map;
+
+		if (compensateOnRead == true) {
+			try {
+				SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
+				allData = readAndCompensateColumns(allData, compensator);
+			} catch (Exception e) {
+				allData = readColumns(allData);
+			}
+
+		} else {
+			allData = readColumns(allData);
+		}
+		columnStore.setData(allData);
 	}
 
-	public void initRowReader() {
-		try {
-			FCSFile.seek(beginData);
-		} catch (IOException e) {
-			e.printStackTrace();
+	private Hashtable<String, FCSVector> readColumns(Hashtable<String, FCSVector> allData) throws IOException {
+		for (int i = 0; i < columnStore.getRowCount(); i++) {
+			double[] row = readRow();
+			for (int j = 0; j < fileParameterList.length; j++) {
+				allData.get(fileParameterList[j]).setRawValue(i, row[j]);
+			}
 		}
+		return allData;
 	}
 
 	public String readFCSVersion(RandomAccessFile raFile)
@@ -146,17 +253,6 @@ public class FCSFileReader {
 			byte[] bytes = new byte[bitMap[i] / 8];
 			FCSFile.read(bytes);
 			row[i] = ByteBuffer.wrap(bytes).getFloat();
-		}
-		return row;
-	}
-
-	private double[] readIntegerRow(double[] row) throws IOException {
-		for (int i = 0; i < row.length; i++) {
-			Short I = null;
-			byte[] bytes = new byte[bitMap[i] / 8];
-			FCSFile.read(bytes);
-			I = ByteBuffer.wrap(bytes).getShort();
-			row[i] = (float) I;
 		}
 		return row;
 	}
@@ -197,31 +293,15 @@ public class FCSFileReader {
 		return header;
 	}
 
-	private String calculateSHA(byte[] inBytes) {
-		/**
-		 * Returns the SHA256 checksum of a byte array or the literal string
-		 * "Error" in the case of an exception being thrown during execution
-		 */
-		StringBuffer buffer = null;
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(inBytes);
-
-			byte[] bytes = messageDigest.digest();
-			buffer = new StringBuffer();
-			for (int i = 0; i < bytes.length; i++) {
-				buffer.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-			}
-
-		} catch (NoSuchAlgorithmException e) {
-			// Should never happen in this context. Algorithm is hard coded.
-			e.printStackTrace();
+	private double[] readIntegerRow(double[] row) throws IOException {
+		for (int i = 0; i < row.length; i++) {
+			Short I = null;
+			byte[] bytes = new byte[bitMap[i] / 8];
+			FCSFile.read(bytes);
+			I = ByteBuffer.wrap(bytes).getShort();
+			row[i] = I;
 		}
-		if (buffer != null) {
-			return buffer.toString();
-		} else {
-			throw new NullPointerException("Could not calculate SHA, byte buffer is null");
-		}
+		return row;
 	}
 
 	private int readOffset(int start, int end) throws IOException {
@@ -247,83 +327,5 @@ public class FCSFileReader {
 			row = readIntegerRow(row);
 		}
 		return row;
-	}
-
-	public Hashtable<String, String> getHeader() {
-		return columnStore.getKeywords();
-	}
-
-	public ColumnStore getColumnStore() {
-		return columnStore;
-	}
-
-	public void readColumnEventData() throws Exception {
-		Hashtable<String, FCSVector> allData = new Hashtable<String, FCSVector>();
-		String[] columnNames = columnStore.getColumnNames();
-		// Initialize file parameters
-		FCSFile.seek(beginData);
-		for (String name : columnNames) {
-			FCSVector vector = new FCSVector(name);
-			vector.setSize(columnStore.getRowCount());
-			allData.put(name, vector);
-		}
-
-		if (compensateOnRead == true) {
-			try {
-				SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
-				allData = readAndCompensateColumns(allData, compensator);
-			} catch (Exception e) {
-				allData = readColumns(allData);
-			}
-
-		} else {
-			allData = readColumns(allData);
-		}
-		columnStore.setData(allData);
-	}
-
-	private Hashtable<String, FCSVector> readColumns(Hashtable<String, FCSVector> allData) throws IOException {
-		for (int i = 0; i < columnStore.getRowCount(); i++) {
-			double[] row = readRow();
-			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).setValue(i, row[j]);
-			}
-		}
-		return allData;
-	}
-
-	private Hashtable<String, FCSVector> readAndCompensateColumns(Hashtable<String, FCSVector> allData,
-			SpilloverCompensator compensator) throws IOException {
-		for (int i = 0; i < columnStore.getRowCount(); i++) {
-			double[] row = readRow();
-			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).setValue(i, row[j]);
-			}
-			double[] compRow = compensator.compensateRow(row);
-			for (int k = 0; k < compParameterList.length; k++) {
-				allData.get(compParameterList[k]).setValue(i, compRow[k]);
-			}
-		}
-		return allData;
-	}
-
-	public boolean hasCompParameters() {
-		if (compParameterList != null && compParameterList.length >= 2) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public static boolean isValidFCS(String filePath) {
-		boolean isValid = false;
-		try {
-			@SuppressWarnings("unused")
-			FCSFileReader reader = new FCSFileReader(filePath, false);
-			isValid = true;
-		} catch (Exception e) {
-			// noop
-		}
-		return isValid;
 	}
 }

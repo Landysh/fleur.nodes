@@ -26,8 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.ejml.data.DenseMatrix64F;
-
-import com.jujutsu.tsne.MatrixOps.MatrixOp;
 /**
  *
  * Author: Leif Jonsson (leif.jonsson@gmail.com)

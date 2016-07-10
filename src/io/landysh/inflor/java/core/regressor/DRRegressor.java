@@ -14,9 +14,7 @@ public class DRRegressor {
 		this.Y = Y;
 	}
 	
-	public void trainDRRModel(double crossValThreshold){
-		double[][] pY = new double[Y.length][Y[0].length];
-		
+	public void trainDRRModel(double crossValThreshold){		
 		for (double[] target:Y){
 			createValidatedModel(X, target, crossValThreshold);
 		}	
@@ -24,6 +22,5 @@ public class DRRegressor {
 
 	private void createValidatedModel(double[][] x2, double[] target, double crossValThreshold) {
 		// TODO Auto-generated method stub
-		
 	}
 }
