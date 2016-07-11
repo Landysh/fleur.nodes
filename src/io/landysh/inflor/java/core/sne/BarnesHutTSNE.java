@@ -21,7 +21,6 @@ public class BarnesHutTSNE {
 		this.Y 			= new double[2][this.X[0].length];
 		this.maxIter 	= maxIters;
 		this.perplexity = perplexity;
-		this.Y = 
 		//TODO: other model initialization here
 	}
 	
