@@ -19,7 +19,8 @@ Bundle-ClassPath: fcsreader.jar,
  lib/orsoncharts-1.4-eval-nofx.jar,
  lib/orsonpdf-1.6-eval.jar,
  lib/protobuf-java-2.6.1.jar,
- lib/Logicle.jar
+ lib/Logicle.jar,
+ lib/jts-1.14.jar
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.knime.workbench.core,
  org.knime.base

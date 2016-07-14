@@ -1,15 +1,15 @@
-package io.landysh.inflor.java.core.gatingML;
+package io.landysh.inflor.java.core.gatingML.gates;
 
 public abstract class AbstractGMLDimension {
 	private String name;
 	private String compensationRef;
 	private String transformationRef;
-	
-	public AbstractGMLDimension(final String name){
+
+	public AbstractGMLDimension(final String name) {
 		this.name = name;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
 
