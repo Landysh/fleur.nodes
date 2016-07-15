@@ -1,25 +1,25 @@
 package io.landysh.inflor.java.core.regressor;
 
 public class MLPRegressor {
-	
-	double[][] 	X;
-	double[] 	y;
-	
-	public MLPRegressor(double[][] X, double[] y){
-	
+
+	double[][] X;
+	double[] y;
+
+	public MLPRegressor(double[][] X, double[] y) {
+
 		this.X = X;
 		this.y = y;
-		
+
 	}
-	
-	public void learn(double t){
-		
+
+	public void learn(double t) {
+
 	}
-	
-	public double[] predict(double[][] x){
-		
+
+	public double[] predict(double[][] x) {
+
 		double[] yp = null;
 		return yp;
 	}
-	
+
 }

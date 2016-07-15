@@ -18,11 +18,8 @@ public class BooleanGate extends AbstractGate {
 	public boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int eventCount) {
 		validate();
 		BooleanAccumulator acc = new BooleanAccumulator(this.operator);
-		boolean[] result = references.values()
-						  			 .parallelStream()
-						  			 .map(g-> g.evaluate(data, eventCount))
-						  			 .reduce(acc)
-						  			 .get();
+		boolean[] result = references.values().parallelStream().map(g -> g.evaluate(data, eventCount)).reduce(acc)
+				.get();
 		return result;
 	}
 

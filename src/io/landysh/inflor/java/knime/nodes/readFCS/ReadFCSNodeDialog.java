@@ -26,10 +26,8 @@ public class ReadFCSNodeDialog extends DefaultNodeSettingsPane {
 
 		addDialogComponent(new DialogComponentFileChooser(new SettingsModelString(
 				ReadFCSTableNodeModel.CFGKEY_FileLocation, ReadFCSTableNodeModel.DEFAULT_FileLocation), "foo", "fcs"));
-		
-		addDialogComponent(new DialogComponentBoolean(
-							new SettingsModelBoolean(
-									ReadFCSTableNodeModel.KEY_Compensate, 
-									ReadFCSTableNodeModel.DEFAULT_Compensate), "Compensate on read"));
+
+		addDialogComponent(new DialogComponentBoolean(new SettingsModelBoolean(ReadFCSTableNodeModel.KEY_Compensate,
+				ReadFCSTableNodeModel.DEFAULT_Compensate), "Compensate on read"));
 	}
 }

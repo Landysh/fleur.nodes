@@ -10,49 +10,47 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class RemoveDoubletsFrameNodeFactory 
-        extends NodeFactory<RemoveDoubletsFrameNodeModel> {
+public class RemoveDoubletsFrameNodeFactory extends NodeFactory<RemoveDoubletsFrameNodeModel> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RemoveDoubletsFrameNodeModel createNodeModel() {
-        return new RemoveDoubletsFrameNodeModel();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RemoveDoubletsFrameNodeModel createNodeModel() {
+		return new RemoveDoubletsFrameNodeModel();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNrNodeViews() {
-        return 1;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getNrNodeViews() {
+		return 1;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeView<RemoveDoubletsFrameNodeModel> createNodeView(final int viewIndex,
-            final RemoveDoubletsFrameNodeModel nodeModel) {
-        return new RemoveDoubletsFrameNodeView(nodeModel);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NodeView<RemoveDoubletsFrameNodeModel> createNodeView(final int viewIndex,
+			final RemoveDoubletsFrameNodeModel nodeModel) {
+		return new RemoveDoubletsFrameNodeView(nodeModel);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasDialog() {
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasDialog() {
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeDialogPane createNodeDialogPane() {
-        return new RemoveDoubletsFrameNodeDialog();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NodeDialogPane createNodeDialogPane() {
+		return new RemoveDoubletsFrameNodeDialog();
+	}
 
 }
-

@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core;
+package io.landysh.inflor.java.core.dataStructures;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,8 +7,6 @@ import java.util.Hashtable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import io.landysh.inflor.java.core.FCSVector.FCSVector;
-import io.landysh.inflor.java.core.FCSVector.FCSVectorType;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword;
 import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectorsProto.Vector;
@@ -53,8 +51,8 @@ public class ColumnStore {
 	}
 
 	public void setData(Hashtable<String, FCSVector> allData) {
-		this.columnData	 = allData;
-		this.rowCount	 = allData.get(getColumnNames()[0]).getData(FCSVectorType.RAW).length;
+		this.columnData = allData;
+		this.rowCount = allData.get(getColumnNames()[0]).getData(FCSVectorType.RAW).length;
 		this.columnCount = getColumnNames().length;
 	}
 
@@ -104,20 +102,20 @@ public class ColumnStore {
 		for (int i = 0; i < size; i++) {
 			AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
 			String name = getColumnNames()[i];
-			//Raw data
+			// Raw data
 			double[] rawArray = columnData.get(name).getData(FCSVectorType.RAW);
 			vectorBuilder.setName(name);
 			for (int j = 0; j < rawArray.length; j++) {
 				vectorBuilder.addArray(rawArray[j]);
 			}
-			//Comped data
+			// Comped data
 			double[] compArray = columnData.get(name).getData(FCSVectorType.COMP);
-			if (compArray!=null){
+			if (compArray != null) {
 				for (int k = 0; k < rawArray.length; k++) {
 					vectorBuilder.addCompArray(compArray[k]);
 				}
 			}
-			
+
 			AnnotatedVectorsProto.Vector v = vectorBuilder.build();
 			messageBuilder.addVectors(v);
 		}
@@ -143,7 +141,7 @@ public class ColumnStore {
 	}
 
 	public double[] getRow(int index) {
-		//TODO Fix to get comped data as well.
+		// TODO Fix to get comped data as well.
 		double[] row = new double[columnCount];
 		int i = 0;
 		for (String name : getColumnNames()) {
@@ -201,8 +199,8 @@ public class ColumnStore {
 				values[i] = vector.getArray(i);
 			}
 			columnStore.addColumn(key, values);
-			if (vector.getCompArrayCount()!=0){
-				for (int k=0;k<vector.getArrayCount();k++){
+			if (vector.getCompArrayCount() != 0) {
+				for (int k = 0; k < vector.getArrayCount(); k++) {
 					columnStore.getColumn(key, FCSVectorType.COMP)[k] = vector.getCompArray(k);
 				}
 			}
@@ -218,7 +216,7 @@ public class ColumnStore {
 		double[] data;
 		try {
 			data = columnData.get(xName).getData(FCSVectorType.COMP);
-		} catch (NullPointerException e){
+		} catch (NullPointerException e) {
 			data = columnData.get(xName).getData(FCSVectorType.RAW);
 		}
 		return data;

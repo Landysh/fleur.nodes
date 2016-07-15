@@ -8,9 +8,9 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class PolygonCalculator {
-	
+
 	Polygon gate;
-	Point   event;
+	Point event;
 	GeometryFactory factory;
 
 	public PolygonCalculator(ArrayList<Double> D1, ArrayList<Double> D2) {
@@ -22,11 +22,11 @@ public class PolygonCalculator {
 		}
 		factory = new GeometryFactory();
 		Coordinate[] points = new Coordinate[D1.size()];
-		for (int i=0;i<points.length;i++){
+		for (int i = 0; i < points.length; i++) {
 			points[i] = new Coordinate(D1.get(i), D2.get(i));
 		}
 		gate = factory.createPolygon(points);
-		event = factory.createPoint( new Coordinate());
+		event = factory.createPoint(new Coordinate());
 	}
 
 	public boolean isInside(double x, double y) {

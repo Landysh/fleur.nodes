@@ -1,14 +1,54 @@
 package io.landysh.inflor.java.core.gatingML.gates.polygonGate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.gatingML.gates.AbstractGMLDimension;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 
 public class PolygonGate extends AbstractGate {
+
+	public class PolygonDimension extends AbstractGMLDimension {
+
+		ArrayList<Double> points;
+
+		public PolygonDimension(String name) {
+			super(name);
+			points = new ArrayList<Double>();
+		}
+
+		public ArrayList<Double> getPoints() {
+			return points;
+		}
+
+		public void addPoint(Double d) {
+			points.add(d);
+		}
+
+		public void updatePoint(int index, Double newValue) {
+			if (index < points.size()) {
+				points.set(index, newValue);
+			} else {
+				String message = "Attempting to update a nonexistent point!";
+				IllegalStateException ise = new IllegalStateException(message);
+				ise.printStackTrace();
+				throw ise;
+			}
+		}
+
+		public void removePoint(int index) {
+			this.points.remove(index);
+			
+		}
+
+		public void setPoints(ArrayList<Double> newPoints) {
+			this.points = newPoints;
+		}
+	}
 
 	PolygonDimension d1;
 	PolygonDimension d2;
@@ -74,26 +114,42 @@ public class PolygonGate extends AbstractGate {
 		}
 	}
 
-	public PolygonDimension getD2() {
-		return d2;
+	public void setDimensions(String d1, String d2) {
+		this.d1 = new PolygonDimension(d1);
+		this.d2 = new PolygonDimension(d2);
+	}
+	
+	public void addPoint(double d1, double d2){
+		this.d1.addPoint(d1);
+		this.d2.addPoint(d2);
 	}
 
-	public void setD2(PolygonDimension dimension) {
-		this.d2 = dimension;
+	public void updatePoint(int index, double d1New, double d2New){
+		this.d1.updatePoint(index, d1New);
+		this.d2.updatePoint(index, d2New);
 	}
-
-	public PolygonDimension getD1() {
-		return d1;
+	
+	public void removePoint(int index){
+		this.d1.removePoint(index);
+		this.d2.removePoint(index);
 	}
-
-	public void setD1(PolygonDimension dimension) {
-		this.d1 = dimension;
-	}
-
+	
+	
 	public ArrayList<String> getDimensionNames() {
 		ArrayList<String> names = new ArrayList<String>();
 		names.add(d1.getName());
 		names.add(d2.getName());
 		return names;
+	}
+
+	public void setPoints(ArrayList<Double> d1Points, ArrayList<Double> d2Points) {
+		this.d1.setPoints(d1Points);
+		this.d2.setPoints(d2Points);
+
+	}
+
+	public Double[] getVertex(int index) {
+		Double[] vertex = new Double[]{this.d1.getPoints().get(index), this.d2.getPoints().get(index)};
+		return vertex;
 	}
 }

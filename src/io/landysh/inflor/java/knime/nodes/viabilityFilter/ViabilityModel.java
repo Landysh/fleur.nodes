@@ -1,12 +1,10 @@
 package io.landysh.inflor.java.knime.nodes.viabilityFilter;
 
-import io.landysh.inflor.java.core.FCSVector.FCSVector;
+import io.landysh.inflor.java.core.dataStructures.FCSVector;
 import io.landysh.inflor.java.core.utils.HistogramCalculator;
 
 public class ViabilityModel {
-	
-	
-	
+
 	public ViabilityModel(String[] columnNames) {
 		// TODO Auto-generated constructor stub
 	}

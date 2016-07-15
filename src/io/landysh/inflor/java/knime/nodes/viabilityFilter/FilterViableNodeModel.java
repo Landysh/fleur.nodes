@@ -20,12 +20,11 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSVector.FCSVector;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSVector;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-
 
 /**
  * This is the model implementation of FilterViable.
@@ -34,132 +33,128 @@ import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
  * @author Landysh Co.
  */
 public class FilterViableNodeModel extends NodeModel {
-    
-    // the logger instance
-    private static final NodeLogger logger = NodeLogger
-            .getLogger(FilterViableNodeModel.class);
-        
+
+	// the logger instance
+	private static final NodeLogger logger = NodeLogger.getLogger(FilterViableNodeModel.class);
+
 	ViabilityFilterSettingsModel m_settings = new ViabilityFilterSettingsModel();
 
-    protected FilterViableNodeModel() {   
-        super(1, 1);
-    }
+	protected FilterViableNodeModel() {
+		super(1, 1);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
-        logger.info("Beginning Execution.");
-		FileStoreFactory fileStoreFactory 	= FileStoreFactory.createWorkflowFileStoreFactory(exec);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws Exception {
+		logger.info("Beginning Execution.");
+		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 
-        // Create the output spec and data container.
-        DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
-        BufferedDataContainer container = exec.createDataContainer(outSpec);
-    	String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
+		// Create the output spec and data container.
+		DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
+		BufferedDataContainer container = exec.createDataContainer(outSpec);
+		String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
 		int index = outSpec.findColumnIndex(columnName);
-        String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
-        
-        int i=0;
-		for (DataRow inRow:inData[0]){
-			DataCell[] outCells = new DataCell[inRow.getNumCells()];			
-			ColumnStore columnStore = ((ColumnStoreCell)inRow.getCell(index)).getColumnStore();
-        	ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-        	FCSVector viabilityData = columnStore.getVector(viabilityColumn);
-        	model.buildModel(viabilityData);
-        	boolean[] mask = model.scoreModel(viabilityData);
-        	
-        	// now create the output row
-    		ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
-    		for (String name:columnStore.getColumnNames()){
-    			double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
-    			outStore.addColumn(name, maskedColumn);
-    		}
-       		String fsName = i + "ColumnStore.fs";
-    		FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-    		ColumnStoreCell fileCell= new ColumnStoreCell(fileStore, columnStore);
+		String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
 
-    		for (int j=0;j<outCells.length;j++){
-    			if (j==index){
-    				outCells[j] = fileCell;
-    			} else {
-    				outCells[j] = inRow.getCell(j);
-    			}
-    		}
+		int i = 0;
+		for (DataRow inRow : inData[0]) {
+			DataCell[] outCells = new DataCell[inRow.getNumCells()];
+			ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
+			FCSVector viabilityData = columnStore.getVector(viabilityColumn);
+			model.buildModel(viabilityData);
+			boolean[] mask = model.scoreModel(viabilityData);
+
+			// now create the output row
+			ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
+			for (String name : columnStore.getColumnNames()) {
+				double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
+				outStore.addColumn(name, maskedColumn);
+			}
+			String fsName = i + "ColumnStore.fs";
+			FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+			ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+
+			for (int j = 0; j < outCells.length; j++) {
+				if (j == index) {
+					outCells[j] = fileCell;
+				} else {
+					outCells[j] = inRow.getCell(j);
+				}
+			}
 			DataRow outRow = new DefaultRow("Row " + i, outCells);
 			container.addRowToTable(outRow);
-    		i++;
-        }
+			i++;
+		}
 		container.close();
-        return new BufferedDataTable[]{container.getTable()};
-    }
+		return new BufferedDataTable[] { container.getTable() };
+	}
 
-    private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
+	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
 		return dataTableSpec;
 	}
 
 	/**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void reset() {}
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
-            throws InvalidSettingsException {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
 
-    	return new DataTableSpec[]{createSpec(inSpecs[0])};
-    }
+		return new DataTableSpec[] { createSpec(inSpecs[0]) };
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveSettingsTo(final NodeSettingsWO settings) {
-        
-        m_settings.saveSettingsTo(settings);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-    }
+		m_settings.saveSettingsTo(settings);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-            throws InvalidSettingsException {        
-        
-    	m_settings.loadSettingsFrom(settings);
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void validateSettings(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
 
-        m_settings.validateSettings(settings);
+		m_settings.loadSettingsFrom(settings);
+	}
 
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {}
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		m_settings.validateSettings(settings);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+	}
 }
-

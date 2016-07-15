@@ -9,8 +9,7 @@ import org.knime.core.data.DataType;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 
-import io.landysh.inflor.java.core.ColumnStore;
-
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 
 public class ColumnStoreCell extends FileStoreCell {
 
@@ -21,43 +20,43 @@ public class ColumnStoreCell extends FileStoreCell {
 			byte[] bytes = cell.getColumnStore().save();
 			output.writeInt(bytes.length);
 			output.write(bytes);
-		}	
+		}
 
 		@Override
 		public ColumnStoreCell deserialize(DataCellDataInput input) throws IOException {
-			try{
+			try {
 				byte[] bytes = new byte[input.readInt()];
 				input.readFully(bytes);
-		        ColumnStore cStore;
+				ColumnStore cStore;
 				cStore = ColumnStore.load(bytes);
 				ColumnStoreCell newCell = new ColumnStoreCell(cStore);
-		        return newCell;
+				return newCell;
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IOException("Error during deserialization");
-			}	
+			}
 		}
-    }
+	}
+
 	/**
-	 *  A cell type matching the functionality of the ColumnStorePortObject.
+	 * A cell type matching the functionality of the ColumnStorePortObject.
 	 */
 	private ColumnStore m_data;
 	private static final long serialVersionUID = 1L;
 	public static final DataType TYPE = DataType.getType(ColumnStoreCell.class, ColumnStoreCell.TYPE);
 
-
 	public ColumnStoreCell(FileStore fs, ColumnStore cStore) {
-			super(fs);
-			this.m_data = cStore;
-		}
+		super(fs);
+		this.m_data = cStore;
+	}
 
 	ColumnStoreCell(ColumnStore cStore) {
-		//Use with deserializer.
+		// Use with deserializer.
 		this.m_data = cStore;
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return this.m_data.getKeywordValue("$FIL");
 	}
 

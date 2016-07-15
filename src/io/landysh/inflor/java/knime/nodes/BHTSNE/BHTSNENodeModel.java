@@ -25,7 +25,6 @@ import org.knime.core.node.port.PortType;
 import io.landysh.inflor.java.core.sne.BarnesHutTSNE;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 
-
 /**
  * This is the model implementation of BHTSNE.
  * 
@@ -33,138 +32,130 @@ import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePo
  * @author Landysh Co.
  */
 public class BHTSNENodeModel extends NodeModel {
-    
-    // the logger instance
-    private static final NodeLogger logger = NodeLogger
-            .getLogger(BHTSNENodeModel.class);
-        
+
+	// the logger instance
+	private static final NodeLogger logger = NodeLogger.getLogger(BHTSNENodeModel.class);
+
 	BHTSNESettingsModel m_settings = new BHTSNESettingsModel();
-    
 
-    /**
-     * Constructor for the node model.
-     */
-    protected BHTSNENodeModel() {
-    
-        super(new PortType[]{ColumnStorePortObject.TYPE}, new PortType[]{BufferedDataTable.TYPE});
-    }
+	/**
+	 * Constructor for the node model.
+	 */
+	protected BHTSNENodeModel() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) throws CanceledExecutionException {
+		super(new PortType[] { ColumnStorePortObject.TYPE }, new PortType[] { BufferedDataTable.TYPE });
+	}
 
-		//get the data and write it to the container
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
+			throws CanceledExecutionException {
+
+		// get the data and write it to the container
 		ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
 		int rowCount = port.getColumnStore().getRowCount();
 		String[] features = m_settings.getFeatures();
 		int maxIters = m_settings.getIterations();
 		int perplexity = m_settings.getPerplexity();
-		
+
 		double[][] X = new double[features.length][rowCount];
-		
-		for (int i=0;i<features.length;i++){
+
+		for (int i = 0; i < features.length; i++) {
 			X[i] = port.getColumnStore().getVector(features[i]).getData();
 		}
 
 		BarnesHutTSNE sne = new BarnesHutTSNE(X, maxIters, perplexity);
-		
+
 		double[][] Y = sne.run();
-		
-		
-		//create the output container
+
+		// create the output container
 		DataTableSpec spec = createSpec(inData[0].getSpec());
 		BufferedDataContainer container = exec.createDataContainer(spec);
-		
-		for (int i=0; i<rowCount;i++){
+
+		for (int i = 0; i < rowCount; i++) {
 			DataCell[] dataCells = new DataCell[X.length + Y.length];
-			for (int j=0;j<X.length;j++){
-				dataCells [j] = new DoubleCell(X[j][i]); 
+			for (int j = 0; j < X.length; j++) {
+				dataCells[j] = new DoubleCell(X[j][i]);
 			}
-			for (int k=0;k<Y.length;k++){
-				dataCells [X.length+k] = new DoubleCell(X[k][i]); 
+			for (int k = 0; k < Y.length; k++) {
+				dataCells[X.length + k] = new DoubleCell(X[k][i]);
 			}
 			DataRow dataRow = new DefaultRow("Row " + i, dataCells);
 			container.addRowToTable(dataRow);
 		}
-		
-		//cleanup and create the table
+
+		// cleanup and create the table
 		container.close();
 		BufferedDataTable table = container.getTable();
-		return new BufferedDataTable[]{table};
-    }
+		return new BufferedDataTable[] { table };
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void reset() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs)
-            throws InvalidSettingsException {
-    	
-        return new DataTableSpec[]{createSpec(inSpecs[0])};
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
 
-    private DataTableSpec createSpec(PortObjectSpec inSpec) {
+		return new DataTableSpec[] { createSpec(inSpecs[0]) };
+	}
+
+	private DataTableSpec createSpec(PortObjectSpec inSpec) {
 		String[] features = m_settings.getFeatures();
-		
+
 		return null;
 	}
 
 	/**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveSettingsTo(final NodeSettingsWO settings) {
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-    	m_settings.save(settings);
-    }
+		m_settings.save(settings);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-    	
-    	m_settings.load(settings);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void validateSettings(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-            
-    	m_settings.validate(settings);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {
-    }
+		m_settings.load(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		m_settings.validate(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+	}
 
 }
-

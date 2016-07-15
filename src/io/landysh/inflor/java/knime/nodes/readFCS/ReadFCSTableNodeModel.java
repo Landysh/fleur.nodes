@@ -27,27 +27,29 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSFileReader;
-import io.landysh.inflor.java.core.SpilloverCompensator;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.fcs.FCSFileReader;
+import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 /**
- * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor 
- * FCSFileReader in the context of a KNIME Source node which produces a standard KNIME data table.
+ * This is the node model implementation for FCSReader (rows). It is designed to
+ * use the Inflor FCSFileReader in the context of a KNIME Source node which
+ * produces a standard KNIME data table.
+ * 
  * @author Aaron Hart
  */
 public class ReadFCSTableNodeModel extends NodeModel {
 
 	private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSTableNodeModel.class);
-	
-	//File Location
+
+	// File Location
 	static final String CFGKEY_FileLocation = "File Location";
 	static final String DEFAULT_FileLocation = null;
 	private final SettingsModelString m_FileLocation = new SettingsModelString(CFGKEY_FileLocation,
 			DEFAULT_FileLocation);
-	
-	//Compensate while reading
+
+	// Compensate while reading
 	static final String KEY_Compensate = "Compensate on read:";
 	static final Boolean DEFAULT_Compensate = false;
 	private final SettingsModelBoolean m_Compensate = new SettingsModelBoolean(KEY_Compensate, DEFAULT_Compensate);
@@ -63,11 +65,12 @@ public class ReadFCSTableNodeModel extends NodeModel {
 
 	/**
 	 * {@inheritDoc}
-	 * @throws CanceledExecutionException 
+	 * 
+	 * @throws CanceledExecutionException
 	 */
 	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec) throws CanceledExecutionException
-			{
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws CanceledExecutionException {
 
 		logger.info("Starting Execution");
 		// get table specs
@@ -75,58 +78,56 @@ public class ReadFCSTableNodeModel extends NodeModel {
 		BufferedDataContainer headerTable = null;
 		BufferedDataContainer dataTable = null;
 
-
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
-			Hashtable <String, String> keywords = FCSReader.getHeader();
-			
-			
+			Hashtable<String, String> keywords = FCSReader.getHeader();
+
 			ColumnStore columnStore = FCSReader.getColumnStore();
 			DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
-			
+
 			// Read header section
 			headerTable = exec.createDataContainer(tableSpecs[0]);
 			readHeader(headerTable, keywords);
-			
+
 			// check in with the boss before we move on.
 			exec.checkCanceled();
 			exec.setProgress(0.01, "Header read.");
-			
-			//Initialize the compensator.
+
+			// Initialize the compensator.
 			SpilloverCompensator compensator = new SpilloverCompensator(keywords);
-			
+
 			// Read data section
 			dataTable = exec.createDataContainer(tableSpecs[1]);
 			FCSReader.initRowReader();
-			for (Integer j = 0; j<columnStore.getRowCount(); j++) {
+			for (Integer j = 0; j < columnStore.getRowCount(); j++) {
 				RowKey rowKey = new RowKey(j.toString());
 				DataCell[] dataCells = null;
-				if(m_Compensate.getBooleanValue()==true){
+				if (m_Compensate.getBooleanValue() == true) {
 					dataCells = new DataCell[columnStore.getColumnCount() + compensator.getCompParameterNames().length];
 				} else {
 					dataCells = new DataCell[columnStore.getColumnCount()];
 				}
 
 				double[] FCSRow = FCSReader.readRow();
-				//for each uncomped parameter
-				int k=0;
-				while ( k<columnStore.getColumnCount()) {
+				// for each uncomped parameter
+				int k = 0;
+				while (k < columnStore.getColumnCount()) {
 					// add uncomped data
 					dataCells[k] = new DoubleCell(FCSRow[k]);
 					k++;
 				}
-				//for each comped parameter
-				if(m_Compensate.getBooleanValue()==true){	
+				// for each comped parameter
+				if (m_Compensate.getBooleanValue() == true) {
 					double[] FCSCompRow = compensator.compensateRow(FCSRow);
-					for (int l=0;l<FCSCompRow.length;l++){
-						dataCells[columnStore.getColumnCount()+l] = new DoubleCell(FCSCompRow[l]);
+					for (int l = 0; l < FCSCompRow.length; l++) {
+						dataCells[columnStore.getColumnCount() + l] = new DoubleCell(FCSCompRow[l]);
 					}
 				}
 				DataRow dataRow = new DefaultRow(rowKey, dataCells);
 				dataTable.addRowToTable(dataRow);
 				if (j % 100 == 0) {
 					exec.checkCanceled();
-					exec.setProgress(j / (double)columnStore.getRowCount(), j + " rows read.");
+					exec.setProgress(j / (double) columnStore.getRowCount(), j + " rows read.");
 				}
 			}
 			// once we are done, we close the container and return its table
@@ -136,12 +137,12 @@ public class ReadFCSTableNodeModel extends NodeModel {
 			e.printStackTrace();
 			throw new CanceledExecutionException("Execution Failed while reading data file.");
 		}
-		
+
 		return new BufferedDataTable[] { headerTable.getTable(), dataTable.getTable() };
 	}
 
 	private void readHeader(BufferedDataContainer header, Hashtable<String, String> keywords) {
-		Enumeration<String> enumKey = keywords.keys(); 
+		Enumeration<String> enumKey = keywords.keys();
 		int i = 0;
 		while (enumKey.hasMoreElements()) {
 			String key = enumKey.nextElement();
@@ -159,7 +160,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
 				keywords.remove(key);
 		}
 		header.close();
-		
+
 	}
 
 	private DataTableSpec[] createPortSpecs(ColumnStore frame) throws InvalidSettingsException {
@@ -173,19 +174,21 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void reset() {}
+	protected void reset() {
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
-		if(m_FileLocation.getStringValue()==null){
+		if (m_FileLocation.getStringValue() == null) {
 			throw new InvalidSettingsException("There is no file to read. Please select a valid FCS file.");
 		}
 		DataTableSpec[] specs = null;
 		try {
-			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
+			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue(),
+					m_Compensate.getBooleanValue());
 			ColumnStore eventsFrame = FCSReader.getColumnStore();
 			specs = createPortSpecs(eventsFrame);
 			FCSReader.close();
@@ -199,8 +202,8 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	private DataTableSpec createDataSpec(ColumnStore columnStore) throws InvalidSettingsException {
 		String[] columnNames = columnStore.getColumnNames();
 		DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.length];
-		for (int i=0;i<columnNames.length;i++){
-			int specIndex = FCSUtils.findParameterNumnberByName(columnStore.getKeywords(), columnNames[i])-1;
+		for (int i = 0; i < columnNames.length; i++) {
+			int specIndex = FCSUtils.findParameterNumnberByName(columnStore.getKeywords(), columnNames[i]) - 1;
 			colSpecs[specIndex] = new DataColumnSpecCreator(columnNames[i], DoubleCell.TYPE).createSpec();
 		}
 		DataTableSpec dataSpec = new DataTableSpec(colSpecs);
@@ -251,13 +254,15 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {}
+			throws IOException, CanceledExecutionException {
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {}
+			throws IOException, CanceledExecutionException {
+	}
 
 }

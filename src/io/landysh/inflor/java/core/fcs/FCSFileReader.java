@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core;
+package io.landysh.inflor.java.core.fcs;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import io.landysh.inflor.java.core.FCSVector.FCSVector;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSVector;
+import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class FCSFileReader {
@@ -41,6 +43,7 @@ public class FCSFileReader {
 		}
 		return isValid;
 	}
+
 	// file properties
 	public final String pathToFile;
 	public final RandomAccessFile FCSFile;
@@ -195,7 +198,7 @@ public class FCSFileReader {
 			for (int j = 0; j < fileParameterList.length; j++) {
 				allData.get(fileParameterList[j]).setRawValue(i, row[j]);
 				for (int k = 0; k < compParameterList.length; k++) {
-					if (compParameterList[k] == fileParameterList[j]){
+					if (compParameterList[k] == fileParameterList[j]) {
 						allData.get(compParameterList[k]).setCompValue(i, compRow[k]);
 					}
 				}

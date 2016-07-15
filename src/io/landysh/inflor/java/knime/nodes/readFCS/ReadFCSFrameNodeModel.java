@@ -20,44 +20,47 @@ import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import io.landysh.inflor.java.core.ColumnStore;
-import io.landysh.inflor.java.core.FCSFileReader;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec;
 
 /**
- * This is the node model implementation for FCSReader. It is designed to use the Inflor 
- * FCSFileReader in the context of a KNIME Source node.
+ * This is the node model implementation for FCSReader. It is designed to use
+ * the Inflor FCSFileReader in the context of a KNIME Source node.
+ * 
  * @author Aaron Hart
  */
 public class ReadFCSFrameNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSFrameNodeModel.class);
-	
+
 	// File location
 	static final String CFGKEY_FileLocation = "File Location";
 	static final String DEFAULT_FileLocation = "";
 	private final SettingsModelString m_FileLocation = new SettingsModelString(CFGKEY_FileLocation,
 			DEFAULT_FileLocation);
-	
-	//Compensate while reading
-	static final String  KEY_Compensate 	= "Compensate on read:";
+
+	// Compensate while reading
+	static final String KEY_Compensate = "Compensate on read:";
 	static final Boolean DEFAULT_Compensate = false;
 	private final SettingsModelBoolean m_Compensate = new SettingsModelBoolean(KEY_Compensate, DEFAULT_Compensate);
 
 	protected ReadFCSFrameNodeModel() {
 		// Port definition for the node
-        super(new PortType[0], new PortType[]{PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class)});
+		super(new PortType[0],
+				new PortType[] { PortTypeRegistry.getInstance().getPortType(ColumnStorePortObject.class) });
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @throws CanceledExecutionException 
+	 * 
+	 * @throws CanceledExecutionException
 	 */
 	@Override
-	 protected PortObject[] execute(final PortObject[] inObjects, final ExecutionContext exec) throws CanceledExecutionException
-			{
+	protected PortObject[] execute(final PortObject[] inObjects, final ExecutionContext exec)
+			throws CanceledExecutionException {
 		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 		logger.info("Starting Execution");
 		FCSFileReader FCSReader;
@@ -71,11 +74,11 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 			ColumnStore columnStore = FCSReader.getColumnStore();
 			ColumnStorePortSpec spec = createPortSpec(columnStore);
 			ColumnStorePortObject port = ColumnStorePortObject.createPortObject(spec, columnStore, filestore);
-			return new PortObject[] {port};
+			return new PortObject[] { port };
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CanceledExecutionException("Execution Failed. See log for details.");
-		}	
+		}
 	}
 
 	/**
@@ -85,16 +88,17 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 	protected void reset() {
 		// TODO something?
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-    protected ColumnStorePortSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
+	protected ColumnStorePortSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
 
 		ColumnStorePortSpec spec = null;
 		try {
-			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
+			FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue(),
+					m_Compensate.getBooleanValue());
 			ColumnStore columnStore = FCSReader.getColumnStore();
 			spec = createPortSpec(columnStore);
 			FCSReader.close();
@@ -102,17 +106,15 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 			e.printStackTrace();
 			throw new InvalidSettingsException("Error while checking file. Check that it exists and is valid.");
 		}
-		return new ColumnStorePortSpec[]{spec};
+		return new ColumnStorePortSpec[] { spec };
 	}
 
 	private ColumnStorePortSpec createPortSpec(ColumnStore eventsFrame) {
-		ColumnStorePortSpec spec = new ColumnStorePortSpec(
-				eventsFrame.getKeywords(), 
-				eventsFrame.getColumnNames(), 
+		ColumnStorePortSpec spec = new ColumnStorePortSpec(eventsFrame.getKeywords(), eventsFrame.getColumnNames(),
 				eventsFrame.getRowCount());
 		return spec;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -128,7 +130,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-		
+
 		m_FileLocation.loadSettingsFrom(settings);
 		m_Compensate.loadSettingsFrom(settings);
 	}
@@ -138,7 +140,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-		
+
 		m_FileLocation.validateSettings(settings);
 		m_Compensate.validateSettings(settings);
 	}
@@ -148,12 +150,14 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {}
+			throws IOException, CanceledExecutionException {
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {}
+			throws IOException, CanceledExecutionException {
+	}
 }

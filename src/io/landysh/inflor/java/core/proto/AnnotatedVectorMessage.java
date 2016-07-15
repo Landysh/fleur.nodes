@@ -4,3225 +4,3312 @@ package io.landysh.inflor.java.core.proto;
 // source: AnnotatedVectorMessage.proto
 
 public final class AnnotatedVectorMessage {
-  private AnnotatedVectorMessage() {}
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-  }
-  public interface AnnotatedVectorsProtoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    com.google.protobuf.ProtocolStringList
-        getVectorNamesList();
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    int getVectorNamesCount();
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    java.lang.String getVectorNames(int index);
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getVectorNamesBytes(int index);
-
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> 
-        getKeywordsList();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index);
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    int getKeywordsCount();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> 
-        getKeywordsOrBuilderList();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(
-        int index);
-
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> 
-        getVectorsList();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index);
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    int getVectorsCount();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> 
-        getVectorsOrBuilderList();
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(
-        int index);
-  }
-  /**
-   * Protobuf type {@code AnnotatedVectorsProto}
-   */
-  public static final class AnnotatedVectorsProto extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:AnnotatedVectorsProto)
-      AnnotatedVectorsProtoOrBuilder {
-    // Use AnnotatedVectorsProto.newBuilder() to construct.
-    private AnnotatedVectorsProto(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private AnnotatedVectorsProto(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final AnnotatedVectorsProto defaultInstance;
-    public static AnnotatedVectorsProto getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public AnnotatedVectorsProto getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
-    }
-    private AnnotatedVectorsProto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                vectorNames_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              vectorNames_.add(bs);
-              break;
-            }
-            case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                keywords_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword>();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              keywords_.add(input.readMessage(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.PARSER, extensionRegistry));
-              break;
-            }
-            case 26: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                vectors_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector>();
-                mutable_bitField0_ |= 0x00000004;
-              }
-              vectors_.add(input.readMessage(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.PARSER, extensionRegistry));
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          vectorNames_ = vectorNames_.getUnmodifiableView();
-        }
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          keywords_ = java.util.Collections.unmodifiableList(keywords_);
-        }
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-          vectors_ = java.util.Collections.unmodifiableList(vectors_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              AnnotatedVectorMessage.AnnotatedVectorsProto.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<AnnotatedVectorsProto> PARSER =
-        new com.google.protobuf.AbstractParser<AnnotatedVectorsProto>() {
-      public AnnotatedVectorsProto parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new AnnotatedVectorsProto(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<AnnotatedVectorsProto> getParserForType() {
-      return PARSER;
-    }
-
-    public interface KeywordOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto.Keyword)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>required string key = 1;</code>
-       */
-      boolean hasKey();
-      /**
-       * <code>required string key = 1;</code>
-       */
-      java.lang.String getKey();
-      /**
-       * <code>required string key = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getKeyBytes();
-
-      /**
-       * <code>required string value = 2;</code>
-       */
-      boolean hasValue();
-      /**
-       * <code>required string value = 2;</code>
-       */
-      java.lang.String getValue();
-      /**
-       * <code>required string value = 2;</code>
-       */
-      com.google.protobuf.ByteString
-          getValueBytes();
-    }
-    /**
-     * Protobuf type {@code AnnotatedVectorsProto.Keyword}
-     */
-    public static final class Keyword extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:AnnotatedVectorsProto.Keyword)
-        KeywordOrBuilder {
-      // Use Keyword.newBuilder() to construct.
-      private Keyword(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-        super(builder);
-        this.unknownFields = builder.getUnknownFields();
-      }
-      private Keyword(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-      private static final Keyword defaultInstance;
-      public static Keyword getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public Keyword getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-          getUnknownFields() {
-        return this.unknownFields;
-      }
-      private Keyword(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        initFields();
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                com.google.protobuf.ByteString bs = input.readBytes();
-                bitField0_ |= 0x00000001;
-                key_ = bs;
-                break;
-              }
-              case 18: {
-                com.google.protobuf.ByteString bs = input.readBytes();
-                bitField0_ |= 0x00000002;
-                value_ = bs;
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder.class);
-      }
-
-      public static com.google.protobuf.Parser<Keyword> PARSER =
-          new com.google.protobuf.AbstractParser<Keyword>() {
-        public Keyword parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Keyword(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<Keyword> getParserForType() {
-        return PARSER;
-      }
-
-      private int bitField0_;
-      public static final int KEY_FIELD_NUMBER = 1;
-      private java.lang.Object key_;
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public boolean hasKey() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public java.lang.String getKey() {
-        java.lang.Object ref = key_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            key_ = s;
-          }
-          return s;
-        }
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getKeyBytes() {
-        java.lang.Object ref = key_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          key_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int VALUE_FIELD_NUMBER = 2;
-      private java.lang.Object value_;
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public boolean hasValue() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public java.lang.String getValue() {
-        java.lang.Object ref = value_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            value_ = s;
-          }
-          return s;
-        }
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getValueBytes() {
-        java.lang.Object ref = value_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          value_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      private void initFields() {
-        key_ = "";
-        value_ = "";
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        if (!hasKey()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        if (!hasValue()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeBytes(1, getKeyBytes());
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          output.writeBytes(2, getValueBytes());
-        }
-        getUnknownFields().writeTo(output);
-      }
-
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(1, getKeyBytes());
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(2, getValueBytes());
-        }
-        size += getUnknownFields().getSerializedSize();
-        memoizedSerializedSize = size;
-        return size;
-      }
-
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code AnnotatedVectorsProto.Keyword}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto.Keyword)
-          AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
-        }
-
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder.class);
-        }
-
-        // Construct using AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          }
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-
-        public Builder clear() {
-          super.clear();
-          key_ = "";
-          bitField0_ = (bitField0_ & ~0x00000001);
-          value_ = "";
-          bitField0_ = (bitField0_ & ~0x00000002);
-          return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getDefaultInstanceForType() {
-          return AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance();
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword build() {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword buildPartial() {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword result = new AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-            to_bitField0_ |= 0x00000001;
-          }
-          result.key_ = key_;
-          if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-            to_bitField0_ |= 0x00000002;
-          }
-          result.value_ = value_;
-          result.bitField0_ = to_bitField0_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword) {
-            return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword other) {
-          if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance()) return this;
-          if (other.hasKey()) {
-            bitField0_ |= 0x00000001;
-            key_ = other.key_;
-            onChanged();
-          }
-          if (other.hasValue()) {
-            bitField0_ |= 0x00000002;
-            value_ = other.value_;
-            onChanged();
-          }
-          this.mergeUnknownFields(other.getUnknownFields());
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          if (!hasKey()) {
-            
-            return false;
-          }
-          if (!hasValue()) {
-            
-            return false;
-          }
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword) e.getUnfinishedMessage();
-            throw e;
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private java.lang.Object key_ = "";
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public boolean hasKey() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public java.lang.String getKey() {
-          java.lang.Object ref = key_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            if (bs.isValidUtf8()) {
-              key_ = s;
-            }
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getKeyBytes() {
-          java.lang.Object ref = key_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            key_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public Builder setKey(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-          key_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public Builder clearKey() {
-          bitField0_ = (bitField0_ & ~0x00000001);
-          key_ = getDefaultInstance().getKey();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string key = 1;</code>
-         */
-        public Builder setKeyBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-          key_ = value;
-          onChanged();
-          return this;
-        }
-
-        private java.lang.Object value_ = "";
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public boolean hasValue() {
-          return ((bitField0_ & 0x00000002) == 0x00000002);
-        }
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public java.lang.String getValue() {
-          java.lang.Object ref = value_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            if (bs.isValidUtf8()) {
-              value_ = s;
-            }
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public com.google.protobuf.ByteString
-            getValueBytes() {
-          java.lang.Object ref = value_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            value_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public Builder setValue(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-          value_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public Builder clearValue() {
-          bitField0_ = (bitField0_ & ~0x00000002);
-          value_ = getDefaultInstance().getValue();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string value = 2;</code>
-         */
-        public Builder setValueBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-          value_ = value;
-          onChanged();
-          return this;
-        }
-
-        // @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto.Keyword)
-      }
-
-      static {
-        defaultInstance = new Keyword(true);
-        defaultInstance.initFields();
-      }
-
-      // @@protoc_insertion_point(class_scope:AnnotatedVectorsProto.Keyword)
-    }
-
-    public interface VectorOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto.Vector)
-        com.google.protobuf.MessageOrBuilder {
-
-      /**
-       * <code>required string name = 1;</code>
-       */
-      boolean hasName();
-      /**
-       * <code>required string name = 1;</code>
-       */
-      java.lang.String getName();
-      /**
-       * <code>required string name = 1;</code>
-       */
-      com.google.protobuf.ByteString
-          getNameBytes();
-
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      java.util.List<java.lang.Double> getArrayList();
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      int getArrayCount();
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      double getArray(int index);
-
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      java.util.List<java.lang.Double> getCompArrayList();
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      int getCompArrayCount();
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      double getCompArray(int index);
-
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      boolean hasTransformPref();
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      java.lang.String getTransformPref();
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      com.google.protobuf.ByteString
-          getTransformPrefBytes();
-
-      /**
-       * <code>optional double logicleT = 5;</code>
-       */
-      boolean hasLogicleT();
-      /**
-       * <code>optional double logicleT = 5;</code>
-       */
-      double getLogicleT();
-
-      /**
-       * <code>optional double logicleW = 6;</code>
-       */
-      boolean hasLogicleW();
-      /**
-       * <code>optional double logicleW = 6;</code>
-       */
-      double getLogicleW();
-
-      /**
-       * <code>optional double logicleM = 7;</code>
-       */
-      boolean hasLogicleM();
-      /**
-       * <code>optional double logicleM = 7;</code>
-       */
-      double getLogicleM();
-
-      /**
-       * <code>optional double logicleA = 8;</code>
-       */
-      boolean hasLogicleA();
-      /**
-       * <code>optional double logicleA = 8;</code>
-       */
-      double getLogicleA();
-    }
-    /**
-     * Protobuf type {@code AnnotatedVectorsProto.Vector}
-     */
-    public static final class Vector extends
-        com.google.protobuf.GeneratedMessage implements
-        // @@protoc_insertion_point(message_implements:AnnotatedVectorsProto.Vector)
-        VectorOrBuilder {
-      // Use Vector.newBuilder() to construct.
-      private Vector(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-        super(builder);
-        this.unknownFields = builder.getUnknownFields();
-      }
-      private Vector(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-      private static final Vector defaultInstance;
-      public static Vector getDefaultInstance() {
-        return defaultInstance;
-      }
-
-      public Vector getDefaultInstanceForType() {
-        return defaultInstance;
-      }
-
-      private final com.google.protobuf.UnknownFieldSet unknownFields;
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet
-          getUnknownFields() {
-        return this.unknownFields;
-      }
-      private Vector(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        initFields();
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              default: {
-                if (!parseUnknownField(input, unknownFields,
-                                       extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-              case 10: {
-                com.google.protobuf.ByteString bs = input.readBytes();
-                bitField0_ |= 0x00000001;
-                name_ = bs;
-                break;
-              }
-              case 17: {
-                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                  array_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000002;
-                }
-                array_.add(input.readDouble());
-                break;
-              }
-              case 18: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
-                  array_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000002;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  array_.add(input.readDouble());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 25: {
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                  compArray_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                compArray_.add(input.readDouble());
-                break;
-              }
-              case 26: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
-                  compArray_ = new java.util.ArrayList<java.lang.Double>();
-                  mutable_bitField0_ |= 0x00000004;
-                }
-                while (input.getBytesUntilLimit() > 0) {
-                  compArray_.add(input.readDouble());
-                }
-                input.popLimit(limit);
-                break;
-              }
-              case 34: {
-                com.google.protobuf.ByteString bs = input.readBytes();
-                bitField0_ |= 0x00000002;
-                transformPref_ = bs;
-                break;
-              }
-              case 41: {
-                bitField0_ |= 0x00000004;
-                logicleT_ = input.readDouble();
-                break;
-              }
-              case 49: {
-                bitField0_ |= 0x00000008;
-                logicleW_ = input.readDouble();
-                break;
-              }
-              case 57: {
-                bitField0_ |= 0x00000010;
-                logicleM_ = input.readDouble();
-                break;
-              }
-              case 65: {
-                bitField0_ |= 0x00000020;
-                logicleA_ = input.readDouble();
-                break;
-              }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(
-              e.getMessage()).setUnfinishedMessage(this);
-        } finally {
-          if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-            array_ = java.util.Collections.unmodifiableList(array_);
-          }
-          if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-            compArray_ = java.util.Collections.unmodifiableList(compArray_);
-          }
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder.class);
-      }
-
-      public static com.google.protobuf.Parser<Vector> PARSER =
-          new com.google.protobuf.AbstractParser<Vector>() {
-        public Vector parsePartialFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws com.google.protobuf.InvalidProtocolBufferException {
-          return new Vector(input, extensionRegistry);
-        }
-      };
-
-      @java.lang.Override
-      public com.google.protobuf.Parser<Vector> getParserForType() {
-        return PARSER;
-      }
-
-      private int bitField0_;
-      public static final int NAME_FIELD_NUMBER = 1;
-      private java.lang.Object name_;
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            name_ = s;
-          }
-          return s;
-        }
-      }
-      /**
-       * <code>required string name = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int ARRAY_FIELD_NUMBER = 2;
-      private java.util.List<java.lang.Double> array_;
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      public java.util.List<java.lang.Double>
-          getArrayList() {
-        return array_;
-      }
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      public int getArrayCount() {
-        return array_.size();
-      }
-      /**
-       * <code>repeated double array = 2;</code>
-       */
-      public double getArray(int index) {
-        return array_.get(index);
-      }
-
-      public static final int COMPARRAY_FIELD_NUMBER = 3;
-      private java.util.List<java.lang.Double> compArray_;
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      public java.util.List<java.lang.Double>
-          getCompArrayList() {
-        return compArray_;
-      }
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      public int getCompArrayCount() {
-        return compArray_.size();
-      }
-      /**
-       * <code>repeated double compArray = 3;</code>
-       */
-      public double getCompArray(int index) {
-        return compArray_.get(index);
-      }
-
-      public static final int TRANSFORMPREF_FIELD_NUMBER = 4;
-      private java.lang.Object transformPref_;
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      public boolean hasTransformPref() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      public java.lang.String getTransformPref() {
-        java.lang.Object ref = transformPref_;
-        if (ref instanceof java.lang.String) {
-          return (java.lang.String) ref;
-        } else {
-          com.google.protobuf.ByteString bs = 
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            transformPref_ = s;
-          }
-          return s;
-        }
-      }
-      /**
-       * <code>optional string transformPref = 4;</code>
-       */
-      public com.google.protobuf.ByteString
-          getTransformPrefBytes() {
-        java.lang.Object ref = transformPref_;
-        if (ref instanceof java.lang.String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          transformPref_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-
-      public static final int LOGICLET_FIELD_NUMBER = 5;
-      private double logicleT_;
-      /**
-       * <code>optional double logicleT = 5;</code>
-       */
-      public boolean hasLogicleT() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional double logicleT = 5;</code>
-       */
-      public double getLogicleT() {
-        return logicleT_;
-      }
-
-      public static final int LOGICLEW_FIELD_NUMBER = 6;
-      private double logicleW_;
-      /**
-       * <code>optional double logicleW = 6;</code>
-       */
-      public boolean hasLogicleW() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional double logicleW = 6;</code>
-       */
-      public double getLogicleW() {
-        return logicleW_;
-      }
-
-      public static final int LOGICLEM_FIELD_NUMBER = 7;
-      private double logicleM_;
-      /**
-       * <code>optional double logicleM = 7;</code>
-       */
-      public boolean hasLogicleM() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
-      }
-      /**
-       * <code>optional double logicleM = 7;</code>
-       */
-      public double getLogicleM() {
-        return logicleM_;
-      }
-
-      public static final int LOGICLEA_FIELD_NUMBER = 8;
-      private double logicleA_;
-      /**
-       * <code>optional double logicleA = 8;</code>
-       */
-      public boolean hasLogicleA() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
-      }
-      /**
-       * <code>optional double logicleA = 8;</code>
-       */
-      public double getLogicleA() {
-        return logicleA_;
-      }
-
-      private void initFields() {
-        name_ = "";
-        array_ = java.util.Collections.emptyList();
-        compArray_ = java.util.Collections.emptyList();
-        transformPref_ = "";
-        logicleT_ = 0D;
-        logicleW_ = 0D;
-        logicleM_ = 0D;
-        logicleA_ = 0D;
-      }
-      private byte memoizedIsInitialized = -1;
-      public final boolean isInitialized() {
-        byte isInitialized = memoizedIsInitialized;
-        if (isInitialized == 1) return true;
-        if (isInitialized == 0) return false;
-
-        if (!hasName()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-        memoizedIsInitialized = 1;
-        return true;
-      }
-
-      public void writeTo(com.google.protobuf.CodedOutputStream output)
-                          throws java.io.IOException {
-        getSerializedSize();
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          output.writeBytes(1, getNameBytes());
-        }
-        for (int i = 0; i < array_.size(); i++) {
-          output.writeDouble(2, array_.get(i));
-        }
-        for (int i = 0; i < compArray_.size(); i++) {
-          output.writeDouble(3, compArray_.get(i));
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          output.writeBytes(4, getTransformPrefBytes());
-        }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          output.writeDouble(5, logicleT_);
-        }
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          output.writeDouble(6, logicleW_);
-        }
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          output.writeDouble(7, logicleM_);
-        }
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          output.writeDouble(8, logicleA_);
-        }
-        getUnknownFields().writeTo(output);
-      }
-
-      private int memoizedSerializedSize = -1;
-      public int getSerializedSize() {
-        int size = memoizedSerializedSize;
-        if (size != -1) return size;
-
-        size = 0;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(1, getNameBytes());
-        }
-        {
-          int dataSize = 0;
-          dataSize = 8 * getArrayList().size();
-          size += dataSize;
-          size += 1 * getArrayList().size();
-        }
-        {
-          int dataSize = 0;
-          dataSize = 8 * getCompArrayList().size();
-          size += dataSize;
-          size += 1 * getCompArrayList().size();
-        }
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(4, getTransformPrefBytes());
-        }
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeDoubleSize(5, logicleT_);
-        }
-        if (((bitField0_ & 0x00000008) == 0x00000008)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeDoubleSize(6, logicleW_);
-        }
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeDoubleSize(7, logicleM_);
-        }
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeDoubleSize(8, logicleA_);
-        }
-        size += getUnknownFields().getSerializedSize();
-        memoizedSerializedSize = size;
-        return size;
-      }
-
-      private static final long serialVersionUID = 0L;
-      @java.lang.Override
-      protected java.lang.Object writeReplace()
-          throws java.io.ObjectStreamException {
-        return super.writeReplace();
-      }
-
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          com.google.protobuf.ByteString data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          com.google.protobuf.ByteString data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(byte[] data)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          byte[] data,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseDelimitedFrom(java.io.InputStream input)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseDelimitedFrom(
-          java.io.InputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseDelimitedFrom(input, extensionRegistry);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          com.google.protobuf.CodedInputStream input)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input);
-      }
-      public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        return PARSER.parseFrom(input, extensionRegistry);
-      }
-
-      public static Builder newBuilder() { return Builder.create(); }
-      public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector prototype) {
-        return newBuilder().mergeFrom(prototype);
-      }
-      public Builder toBuilder() { return newBuilder(this); }
-
-      @java.lang.Override
-      protected Builder newBuilderForType(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        Builder builder = new Builder(parent);
-        return builder;
-      }
-      /**
-       * Protobuf type {@code AnnotatedVectorsProto.Vector}
-       */
-      public static final class Builder extends
-          com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto.Vector)
-          AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder {
-        public static final com.google.protobuf.Descriptors.Descriptor
-            getDescriptor() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
-        }
-
-        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-            internalGetFieldAccessorTable() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable
-              .ensureFieldAccessorsInitialized(
-                  AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder.class);
-        }
-
-        // Construct using AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
-
-        private Builder(
-            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-          super(parent);
-          maybeForceBuilderInitialization();
-        }
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          }
-        }
-        private static Builder create() {
-          return new Builder();
-        }
-
-        public Builder clear() {
-          super.clear();
-          name_ = "";
-          bitField0_ = (bitField0_ & ~0x00000001);
-          array_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-          compArray_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          transformPref_ = "";
-          bitField0_ = (bitField0_ & ~0x00000008);
-          logicleT_ = 0D;
-          bitField0_ = (bitField0_ & ~0x00000010);
-          logicleW_ = 0D;
-          bitField0_ = (bitField0_ & ~0x00000020);
-          logicleM_ = 0D;
-          bitField0_ = (bitField0_ & ~0x00000040);
-          logicleA_ = 0D;
-          bitField0_ = (bitField0_ & ~0x00000080);
-          return this;
-        }
-
-        public Builder clone() {
-          return create().mergeFrom(buildPartial());
-        }
-
-        public com.google.protobuf.Descriptors.Descriptor
-            getDescriptorForType() {
-          return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getDefaultInstanceForType() {
-          return AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance();
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector build() {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector result = buildPartial();
-          if (!result.isInitialized()) {
-            throw newUninitializedMessageException(result);
-          }
-          return result;
-        }
-
-        public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector buildPartial() {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector result = new AnnotatedVectorMessage.AnnotatedVectorsProto.Vector(this);
-          int from_bitField0_ = bitField0_;
-          int to_bitField0_ = 0;
-          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-            to_bitField0_ |= 0x00000001;
-          }
-          result.name_ = name_;
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            array_ = java.util.Collections.unmodifiableList(array_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
-          result.array_ = array_;
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            compArray_ = java.util.Collections.unmodifiableList(compArray_);
-            bitField0_ = (bitField0_ & ~0x00000004);
-          }
-          result.compArray_ = compArray_;
-          if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-            to_bitField0_ |= 0x00000002;
-          }
-          result.transformPref_ = transformPref_;
-          if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-            to_bitField0_ |= 0x00000004;
-          }
-          result.logicleT_ = logicleT_;
-          if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-            to_bitField0_ |= 0x00000008;
-          }
-          result.logicleW_ = logicleW_;
-          if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-            to_bitField0_ |= 0x00000010;
-          }
-          result.logicleM_ = logicleM_;
-          if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-            to_bitField0_ |= 0x00000020;
-          }
-          result.logicleA_ = logicleA_;
-          result.bitField0_ = to_bitField0_;
-          onBuilt();
-          return result;
-        }
-
-        public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto.Vector) {
-            return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto.Vector)other);
-          } else {
-            super.mergeFrom(other);
-            return this;
-          }
-        }
-
-        public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector other) {
-          if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance()) return this;
-          if (other.hasName()) {
-            bitField0_ |= 0x00000001;
-            name_ = other.name_;
-            onChanged();
-          }
-          if (!other.array_.isEmpty()) {
-            if (array_.isEmpty()) {
-              array_ = other.array_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensureArrayIsMutable();
-              array_.addAll(other.array_);
-            }
-            onChanged();
-          }
-          if (!other.compArray_.isEmpty()) {
-            if (compArray_.isEmpty()) {
-              compArray_ = other.compArray_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-            } else {
-              ensureCompArrayIsMutable();
-              compArray_.addAll(other.compArray_);
-            }
-            onChanged();
-          }
-          if (other.hasTransformPref()) {
-            bitField0_ |= 0x00000008;
-            transformPref_ = other.transformPref_;
-            onChanged();
-          }
-          if (other.hasLogicleT()) {
-            setLogicleT(other.getLogicleT());
-          }
-          if (other.hasLogicleW()) {
-            setLogicleW(other.getLogicleW());
-          }
-          if (other.hasLogicleM()) {
-            setLogicleM(other.getLogicleM());
-          }
-          if (other.hasLogicleA()) {
-            setLogicleA(other.getLogicleA());
-          }
-          this.mergeUnknownFields(other.getUnknownFields());
-          return this;
-        }
-
-        public final boolean isInitialized() {
-          if (!hasName()) {
-            
-            return false;
-          }
-          return true;
-        }
-
-        public Builder mergeFrom(
-            com.google.protobuf.CodedInputStream input,
-            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-            throws java.io.IOException {
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parsedMessage = null;
-          try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto.Vector) e.getUnfinishedMessage();
-            throw e;
-          } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
-          return this;
-        }
-        private int bitField0_;
-
-        private java.lang.Object name_ = "";
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public boolean hasName() {
-          return ((bitField0_ & 0x00000001) == 0x00000001);
-        }
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public java.lang.String getName() {
-          java.lang.Object ref = name_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            if (bs.isValidUtf8()) {
-              name_ = s;
-            }
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public com.google.protobuf.ByteString
-            getNameBytes() {
-          java.lang.Object ref = name_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            name_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public Builder setName(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-          name_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public Builder clearName() {
-          bitField0_ = (bitField0_ & ~0x00000001);
-          name_ = getDefaultInstance().getName();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>required string name = 1;</code>
-         */
-        public Builder setNameBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-          name_ = value;
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Double> array_ = java.util.Collections.emptyList();
-        private void ensureArrayIsMutable() {
-          if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-            array_ = new java.util.ArrayList<java.lang.Double>(array_);
-            bitField0_ |= 0x00000002;
-           }
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public java.util.List<java.lang.Double>
-            getArrayList() {
-          return java.util.Collections.unmodifiableList(array_);
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public int getArrayCount() {
-          return array_.size();
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public double getArray(int index) {
-          return array_.get(index);
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public Builder setArray(
-            int index, double value) {
-          ensureArrayIsMutable();
-          array_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public Builder addArray(double value) {
-          ensureArrayIsMutable();
-          array_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public Builder addAllArray(
-            java.lang.Iterable<? extends java.lang.Double> values) {
-          ensureArrayIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, array_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double array = 2;</code>
-         */
-        public Builder clearArray() {
-          array_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-          onChanged();
-          return this;
-        }
-
-        private java.util.List<java.lang.Double> compArray_ = java.util.Collections.emptyList();
-        private void ensureCompArrayIsMutable() {
-          if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-            compArray_ = new java.util.ArrayList<java.lang.Double>(compArray_);
-            bitField0_ |= 0x00000004;
-           }
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public java.util.List<java.lang.Double>
-            getCompArrayList() {
-          return java.util.Collections.unmodifiableList(compArray_);
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public int getCompArrayCount() {
-          return compArray_.size();
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public double getCompArray(int index) {
-          return compArray_.get(index);
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public Builder setCompArray(
-            int index, double value) {
-          ensureCompArrayIsMutable();
-          compArray_.set(index, value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public Builder addCompArray(double value) {
-          ensureCompArrayIsMutable();
-          compArray_.add(value);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public Builder addAllCompArray(
-            java.lang.Iterable<? extends java.lang.Double> values) {
-          ensureCompArrayIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, compArray_);
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>repeated double compArray = 3;</code>
-         */
-        public Builder clearCompArray() {
-          compArray_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          onChanged();
-          return this;
-        }
-
-        private java.lang.Object transformPref_ = "";
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public boolean hasTransformPref() {
-          return ((bitField0_ & 0x00000008) == 0x00000008);
-        }
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public java.lang.String getTransformPref() {
-          java.lang.Object ref = transformPref_;
-          if (!(ref instanceof java.lang.String)) {
-            com.google.protobuf.ByteString bs =
-                (com.google.protobuf.ByteString) ref;
-            java.lang.String s = bs.toStringUtf8();
-            if (bs.isValidUtf8()) {
-              transformPref_ = s;
-            }
-            return s;
-          } else {
-            return (java.lang.String) ref;
-          }
-        }
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public com.google.protobuf.ByteString
-            getTransformPrefBytes() {
-          java.lang.Object ref = transformPref_;
-          if (ref instanceof String) {
-            com.google.protobuf.ByteString b = 
-                com.google.protobuf.ByteString.copyFromUtf8(
-                    (java.lang.String) ref);
-            transformPref_ = b;
-            return b;
-          } else {
-            return (com.google.protobuf.ByteString) ref;
-          }
-        }
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public Builder setTransformPref(
-            java.lang.String value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-          transformPref_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public Builder clearTransformPref() {
-          bitField0_ = (bitField0_ & ~0x00000008);
-          transformPref_ = getDefaultInstance().getTransformPref();
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional string transformPref = 4;</code>
-         */
-        public Builder setTransformPrefBytes(
-            com.google.protobuf.ByteString value) {
-          if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-          transformPref_ = value;
-          onChanged();
-          return this;
-        }
-
-        private double logicleT_ ;
-        /**
-         * <code>optional double logicleT = 5;</code>
-         */
-        public boolean hasLogicleT() {
-          return ((bitField0_ & 0x00000010) == 0x00000010);
-        }
-        /**
-         * <code>optional double logicleT = 5;</code>
-         */
-        public double getLogicleT() {
-          return logicleT_;
-        }
-        /**
-         * <code>optional double logicleT = 5;</code>
-         */
-        public Builder setLogicleT(double value) {
-          bitField0_ |= 0x00000010;
-          logicleT_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional double logicleT = 5;</code>
-         */
-        public Builder clearLogicleT() {
-          bitField0_ = (bitField0_ & ~0x00000010);
-          logicleT_ = 0D;
-          onChanged();
-          return this;
-        }
-
-        private double logicleW_ ;
-        /**
-         * <code>optional double logicleW = 6;</code>
-         */
-        public boolean hasLogicleW() {
-          return ((bitField0_ & 0x00000020) == 0x00000020);
-        }
-        /**
-         * <code>optional double logicleW = 6;</code>
-         */
-        public double getLogicleW() {
-          return logicleW_;
-        }
-        /**
-         * <code>optional double logicleW = 6;</code>
-         */
-        public Builder setLogicleW(double value) {
-          bitField0_ |= 0x00000020;
-          logicleW_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional double logicleW = 6;</code>
-         */
-        public Builder clearLogicleW() {
-          bitField0_ = (bitField0_ & ~0x00000020);
-          logicleW_ = 0D;
-          onChanged();
-          return this;
-        }
-
-        private double logicleM_ ;
-        /**
-         * <code>optional double logicleM = 7;</code>
-         */
-        public boolean hasLogicleM() {
-          return ((bitField0_ & 0x00000040) == 0x00000040);
-        }
-        /**
-         * <code>optional double logicleM = 7;</code>
-         */
-        public double getLogicleM() {
-          return logicleM_;
-        }
-        /**
-         * <code>optional double logicleM = 7;</code>
-         */
-        public Builder setLogicleM(double value) {
-          bitField0_ |= 0x00000040;
-          logicleM_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional double logicleM = 7;</code>
-         */
-        public Builder clearLogicleM() {
-          bitField0_ = (bitField0_ & ~0x00000040);
-          logicleM_ = 0D;
-          onChanged();
-          return this;
-        }
-
-        private double logicleA_ ;
-        /**
-         * <code>optional double logicleA = 8;</code>
-         */
-        public boolean hasLogicleA() {
-          return ((bitField0_ & 0x00000080) == 0x00000080);
-        }
-        /**
-         * <code>optional double logicleA = 8;</code>
-         */
-        public double getLogicleA() {
-          return logicleA_;
-        }
-        /**
-         * <code>optional double logicleA = 8;</code>
-         */
-        public Builder setLogicleA(double value) {
-          bitField0_ |= 0x00000080;
-          logicleA_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <code>optional double logicleA = 8;</code>
-         */
-        public Builder clearLogicleA() {
-          bitField0_ = (bitField0_ & ~0x00000080);
-          logicleA_ = 0D;
-          onChanged();
-          return this;
-        }
-
-        // @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto.Vector)
-      }
-
-      static {
-        defaultInstance = new Vector(true);
-        defaultInstance.initFields();
-      }
-
-      // @@protoc_insertion_point(class_scope:AnnotatedVectorsProto.Vector)
-    }
-
-    public static final int VECTORNAMES_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList vectorNames_;
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    public com.google.protobuf.ProtocolStringList
-        getVectorNamesList() {
-      return vectorNames_;
-    }
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    public int getVectorNamesCount() {
-      return vectorNames_.size();
-    }
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    public java.lang.String getVectorNames(int index) {
-      return vectorNames_.get(index);
-    }
-    /**
-     * <code>repeated string vectorNames = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getVectorNamesBytes(int index) {
-      return vectorNames_.getByteString(index);
-    }
-
-    public static final int KEYWORDS_FIELD_NUMBER = 2;
-    private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> keywords_;
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> getKeywordsList() {
-      return keywords_;
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> 
-        getKeywordsOrBuilderList() {
-      return keywords_;
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    public int getKeywordsCount() {
-      return keywords_.size();
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index) {
-      return keywords_.get(index);
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-     */
-    public AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(
-        int index) {
-      return keywords_.get(index);
-    }
-
-    public static final int VECTORS_FIELD_NUMBER = 3;
-    private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> vectors_;
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> getVectorsList() {
-      return vectors_;
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> 
-        getVectorsOrBuilderList() {
-      return vectors_;
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    public int getVectorsCount() {
-      return vectors_.size();
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index) {
-      return vectors_.get(index);
-    }
-    /**
-     * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-     */
-    public AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(
-        int index) {
-      return vectors_.get(index);
-    }
-
-    private void initFields() {
-      vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      keywords_ = java.util.Collections.emptyList();
-      vectors_ = java.util.Collections.emptyList();
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      for (int i = 0; i < getKeywordsCount(); i++) {
-        if (!getKeywords(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      for (int i = 0; i < getVectorsCount(); i++) {
-        if (!getVectors(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      for (int i = 0; i < vectorNames_.size(); i++) {
-        output.writeBytes(1, vectorNames_.getByteString(i));
-      }
-      for (int i = 0; i < keywords_.size(); i++) {
-        output.writeMessage(2, keywords_.get(i));
-      }
-      for (int i = 0; i < vectors_.size(); i++) {
-        output.writeMessage(3, vectors_.get(i));
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      {
-        int dataSize = 0;
-        for (int i = 0; i < vectorNames_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeBytesSizeNoTag(vectorNames_.getByteString(i));
-        }
-        size += dataSize;
-        size += 1 * getVectorNamesList().size();
-      }
-      for (int i = 0; i < keywords_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, keywords_.get(i));
-      }
-      for (int i = 0; i < vectors_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, vectors_.get(i));
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code AnnotatedVectorsProto}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto)
-        AnnotatedVectorMessage.AnnotatedVectorsProtoOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                AnnotatedVectorMessage.AnnotatedVectorsProto.class, AnnotatedVectorMessage.AnnotatedVectorsProto.Builder.class);
-      }
-
-      // Construct using AnnotatedVectorMessage.AnnotatedVectorsProto.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getKeywordsFieldBuilder();
-          getVectorsFieldBuilder();
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        if (keywordsBuilder_ == null) {
-          keywords_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-        } else {
-          keywordsBuilder_.clear();
-        }
-        if (vectorsBuilder_ == null) {
-          vectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-        } else {
-          vectorsBuilder_.clear();
-        }
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
-      }
-
-      public AnnotatedVectorMessage.AnnotatedVectorsProto getDefaultInstanceForType() {
-        return AnnotatedVectorMessage.AnnotatedVectorsProto.getDefaultInstance();
-      }
-
-      public AnnotatedVectorMessage.AnnotatedVectorsProto build() {
-        AnnotatedVectorMessage.AnnotatedVectorsProto result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public AnnotatedVectorMessage.AnnotatedVectorsProto buildPartial() {
-        AnnotatedVectorMessage.AnnotatedVectorsProto result = new AnnotatedVectorMessage.AnnotatedVectorsProto(this);
-        int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          vectorNames_ = vectorNames_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.vectorNames_ = vectorNames_;
-        if (keywordsBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            keywords_ = java.util.Collections.unmodifiableList(keywords_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
-          result.keywords_ = keywords_;
-        } else {
-          result.keywords_ = keywordsBuilder_.build();
-        }
-        if (vectorsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            vectors_ = java.util.Collections.unmodifiableList(vectors_);
-            bitField0_ = (bitField0_ & ~0x00000004);
-          }
-          result.vectors_ = vectors_;
-        } else {
-          result.vectors_ = vectorsBuilder_.build();
-        }
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto) {
-          return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto other) {
-        if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.getDefaultInstance()) return this;
-        if (!other.vectorNames_.isEmpty()) {
-          if (vectorNames_.isEmpty()) {
-            vectorNames_ = other.vectorNames_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureVectorNamesIsMutable();
-            vectorNames_.addAll(other.vectorNames_);
-          }
-          onChanged();
-        }
-        if (keywordsBuilder_ == null) {
-          if (!other.keywords_.isEmpty()) {
-            if (keywords_.isEmpty()) {
-              keywords_ = other.keywords_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensureKeywordsIsMutable();
-              keywords_.addAll(other.keywords_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.keywords_.isEmpty()) {
-            if (keywordsBuilder_.isEmpty()) {
-              keywordsBuilder_.dispose();
-              keywordsBuilder_ = null;
-              keywords_ = other.keywords_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-              keywordsBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getKeywordsFieldBuilder() : null;
-            } else {
-              keywordsBuilder_.addAllMessages(other.keywords_);
-            }
-          }
-        }
-        if (vectorsBuilder_ == null) {
-          if (!other.vectors_.isEmpty()) {
-            if (vectors_.isEmpty()) {
-              vectors_ = other.vectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-            } else {
-              ensureVectorsIsMutable();
-              vectors_.addAll(other.vectors_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.vectors_.isEmpty()) {
-            if (vectorsBuilder_.isEmpty()) {
-              vectorsBuilder_.dispose();
-              vectorsBuilder_ = null;
-              vectors_ = other.vectors_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-              vectorsBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getVectorsFieldBuilder() : null;
-            } else {
-              vectorsBuilder_.addAllMessages(other.vectors_);
-            }
-          }
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        for (int i = 0; i < getKeywordsCount(); i++) {
-          if (!getKeywords(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        for (int i = 0; i < getVectorsCount(); i++) {
-          if (!getVectors(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        AnnotatedVectorMessage.AnnotatedVectorsProto parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private com.google.protobuf.LazyStringList vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureVectorNamesIsMutable() {
-        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          vectorNames_ = new com.google.protobuf.LazyStringArrayList(vectorNames_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public com.google.protobuf.ProtocolStringList
-          getVectorNamesList() {
-        return vectorNames_.getUnmodifiableView();
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public int getVectorNamesCount() {
-        return vectorNames_.size();
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public java.lang.String getVectorNames(int index) {
-        return vectorNames_.get(index);
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getVectorNamesBytes(int index) {
-        return vectorNames_.getByteString(index);
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public Builder setVectorNames(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureVectorNamesIsMutable();
-        vectorNames_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public Builder addVectorNames(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureVectorNamesIsMutable();
-        vectorNames_.add(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public Builder addAllVectorNames(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureVectorNamesIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, vectorNames_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public Builder clearVectorNames() {
-        vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated string vectorNames = 1;</code>
-       */
-      public Builder addVectorNamesBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureVectorNamesIsMutable();
-        vectorNames_.add(value);
-        onChanged();
-        return this;
-      }
-
-      private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> keywords_ =
-        java.util.Collections.emptyList();
-      private void ensureKeywordsIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          keywords_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword>(keywords_);
-          bitField0_ |= 0x00000002;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> keywordsBuilder_;
-
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> getKeywordsList() {
-        if (keywordsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(keywords_);
-        } else {
-          return keywordsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public int getKeywordsCount() {
-        if (keywordsBuilder_ == null) {
-          return keywords_.size();
-        } else {
-          return keywordsBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index) {
-        if (keywordsBuilder_ == null) {
-          return keywords_.get(index);
-        } else {
-          return keywordsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder setKeywords(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
-        if (keywordsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureKeywordsIsMutable();
-          keywords_.set(index, value);
-          onChanged();
-        } else {
-          keywordsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder setKeywords(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
-        if (keywordsBuilder_ == null) {
-          ensureKeywordsIsMutable();
-          keywords_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          keywordsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder addKeywords(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
-        if (keywordsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureKeywordsIsMutable();
-          keywords_.add(value);
-          onChanged();
-        } else {
-          keywordsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder addKeywords(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
-        if (keywordsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureKeywordsIsMutable();
-          keywords_.add(index, value);
-          onChanged();
-        } else {
-          keywordsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder addKeywords(
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
-        if (keywordsBuilder_ == null) {
-          ensureKeywordsIsMutable();
-          keywords_.add(builderForValue.build());
-          onChanged();
-        } else {
-          keywordsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder addKeywords(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
-        if (keywordsBuilder_ == null) {
-          ensureKeywordsIsMutable();
-          keywords_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          keywordsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder addAllKeywords(
-          java.lang.Iterable<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> values) {
-        if (keywordsBuilder_ == null) {
-          ensureKeywordsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, keywords_);
-          onChanged();
-        } else {
-          keywordsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder clearKeywords() {
-        if (keywordsBuilder_ == null) {
-          keywords_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-          onChanged();
-        } else {
-          keywordsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public Builder removeKeywords(int index) {
-        if (keywordsBuilder_ == null) {
-          ensureKeywordsIsMutable();
-          keywords_.remove(index);
-          onChanged();
-        } else {
-          keywordsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder getKeywordsBuilder(
-          int index) {
-        return getKeywordsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(
-          int index) {
-        if (keywordsBuilder_ == null) {
-          return keywords_.get(index);  } else {
-          return keywordsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> 
-           getKeywordsOrBuilderList() {
-        if (keywordsBuilder_ != null) {
-          return keywordsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(keywords_);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder addKeywordsBuilder() {
-        return getKeywordsFieldBuilder().addBuilder(
-            AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder addKeywordsBuilder(
-          int index) {
-        return getKeywordsFieldBuilder().addBuilder(
-            index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
-       */
-      public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder> 
-           getKeywordsBuilderList() {
-        return getKeywordsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> 
-          getKeywordsFieldBuilder() {
-        if (keywordsBuilder_ == null) {
-          keywordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder>(
-                  keywords_,
-                  ((bitField0_ & 0x00000002) == 0x00000002),
-                  getParentForChildren(),
-                  isClean());
-          keywords_ = null;
-        }
-        return keywordsBuilder_;
-      }
-
-      private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> vectors_ =
-        java.util.Collections.emptyList();
-      private void ensureVectorsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          vectors_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector>(vectors_);
-          bitField0_ |= 0x00000004;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> vectorsBuilder_;
-
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> getVectorsList() {
-        if (vectorsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(vectors_);
-        } else {
-          return vectorsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public int getVectorsCount() {
-        if (vectorsBuilder_ == null) {
-          return vectors_.size();
-        } else {
-          return vectorsBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index) {
-        if (vectorsBuilder_ == null) {
-          return vectors_.get(index);
-        } else {
-          return vectorsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder setVectors(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
-        if (vectorsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureVectorsIsMutable();
-          vectors_.set(index, value);
-          onChanged();
-        } else {
-          vectorsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder setVectors(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
-        if (vectorsBuilder_ == null) {
-          ensureVectorsIsMutable();
-          vectors_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          vectorsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder addVectors(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
-        if (vectorsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureVectorsIsMutable();
-          vectors_.add(value);
-          onChanged();
-        } else {
-          vectorsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder addVectors(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
-        if (vectorsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureVectorsIsMutable();
-          vectors_.add(index, value);
-          onChanged();
-        } else {
-          vectorsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder addVectors(
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
-        if (vectorsBuilder_ == null) {
-          ensureVectorsIsMutable();
-          vectors_.add(builderForValue.build());
-          onChanged();
-        } else {
-          vectorsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder addVectors(
-          int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
-        if (vectorsBuilder_ == null) {
-          ensureVectorsIsMutable();
-          vectors_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          vectorsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder addAllVectors(
-          java.lang.Iterable<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> values) {
-        if (vectorsBuilder_ == null) {
-          ensureVectorsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, vectors_);
-          onChanged();
-        } else {
-          vectorsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder clearVectors() {
-        if (vectorsBuilder_ == null) {
-          vectors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          onChanged();
-        } else {
-          vectorsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public Builder removeVectors(int index) {
-        if (vectorsBuilder_ == null) {
-          ensureVectorsIsMutable();
-          vectors_.remove(index);
-          onChanged();
-        } else {
-          vectorsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder getVectorsBuilder(
-          int index) {
-        return getVectorsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(
-          int index) {
-        if (vectorsBuilder_ == null) {
-          return vectors_.get(index);  } else {
-          return vectorsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> 
-           getVectorsOrBuilderList() {
-        if (vectorsBuilder_ != null) {
-          return vectorsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(vectors_);
-        }
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder addVectorsBuilder() {
-        return getVectorsFieldBuilder().addBuilder(
-            AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder addVectorsBuilder(
-          int index) {
-        return getVectorsFieldBuilder().addBuilder(
-            index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
-       */
-      public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder> 
-           getVectorsBuilderList() {
-        return getVectorsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> 
-          getVectorsFieldBuilder() {
-        if (vectorsBuilder_ == null) {
-          vectorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder>(
-                  vectors_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
-                  getParentForChildren(),
-                  isClean());
-          vectors_ = null;
-        }
-        return vectorsBuilder_;
-      }
-
-      // @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto)
-    }
-
-    static {
-      defaultInstance = new AnnotatedVectorsProto(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:AnnotatedVectorsProto)
-  }
-
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_AnnotatedVectorsProto_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_AnnotatedVectorsProto_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_AnnotatedVectorsProto_Keyword_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_AnnotatedVectorsProto_Vector_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
-  static {
-    java.lang.String[] descriptorData = {
-      "\n\034AnnotatedVectorMessage.proto\"\317\002\n\025Annot" +
-      "atedVectorsProto\022\023\n\013vectorNames\030\001 \003(\t\0220\n" +
-      "\010keywords\030\002 \003(\0132\036.AnnotatedVectorsProto." +
-      "Keyword\022.\n\007vectors\030\003 \003(\0132\035.AnnotatedVect" +
-      "orsProto.Vector\032%\n\007Keyword\022\013\n\003key\030\001 \002(\t\022" +
-      "\r\n\005value\030\002 \002(\t\032\227\001\n\006Vector\022\014\n\004name\030\001 \002(\t\022" +
-      "\r\n\005array\030\002 \003(\001\022\021\n\tcompArray\030\003 \003(\001\022\025\n\rtra" +
-      "nsformPref\030\004 \001(\t\022\020\n\010logicleT\030\005 \001(\001\022\020\n\010lo" +
-      "gicleW\030\006 \001(\001\022\020\n\010logicleM\030\007 \001(\001\022\020\n\010logicl" +
-      "eA\030\010 \001(\001"
-    };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-        }, assigner);
-    internal_static_AnnotatedVectorsProto_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_AnnotatedVectorsProto_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_AnnotatedVectorsProto_descriptor,
-        new java.lang.String[] { "VectorNames", "Keywords", "Vectors", });
-    internal_static_AnnotatedVectorsProto_Keyword_descriptor =
-      internal_static_AnnotatedVectorsProto_descriptor.getNestedTypes().get(0);
-    internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_AnnotatedVectorsProto_Keyword_descriptor,
-        new java.lang.String[] { "Key", "Value", });
-    internal_static_AnnotatedVectorsProto_Vector_descriptor =
-      internal_static_AnnotatedVectorsProto_descriptor.getNestedTypes().get(1);
-    internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_AnnotatedVectorsProto_Vector_descriptor,
-        new java.lang.String[] { "Name", "Array", "CompArray", "TransformPref", "LogicleT", "LogicleW", "LogicleM", "LogicleA", });
-  }
-
-  // @@protoc_insertion_point(outer_class_scope)
+	private AnnotatedVectorMessage() {
+	}
+
+	public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
+	}
+
+	public interface AnnotatedVectorsProtoOrBuilder extends
+			// @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto)
+			com.google.protobuf.MessageOrBuilder {
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		com.google.protobuf.ProtocolStringList getVectorNamesList();
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		int getVectorNamesCount();
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		java.lang.String getVectorNames(int index);
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		com.google.protobuf.ByteString getVectorNamesBytes(int index);
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> getKeywordsList();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index);
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		int getKeywordsCount();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> getKeywordsOrBuilderList();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(int index);
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> getVectorsList();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index);
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		int getVectorsCount();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> getVectorsOrBuilderList();
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(int index);
+	}
+
+	/**
+	 * Protobuf type {@code AnnotatedVectorsProto}
+	 */
+	public static final class AnnotatedVectorsProto extends com.google.protobuf.GeneratedMessage implements
+			// @@protoc_insertion_point(message_implements:AnnotatedVectorsProto)
+			AnnotatedVectorsProtoOrBuilder {
+		// Use AnnotatedVectorsProto.newBuilder() to construct.
+		private AnnotatedVectorsProto(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+			super(builder);
+			this.unknownFields = builder.getUnknownFields();
+		}
+
+		private AnnotatedVectorsProto(boolean noInit) {
+			this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+		}
+
+		private static final AnnotatedVectorsProto defaultInstance;
+
+		public static AnnotatedVectorsProto getDefaultInstance() {
+			return defaultInstance;
+		}
+
+		public AnnotatedVectorsProto getDefaultInstanceForType() {
+			return defaultInstance;
+		}
+
+		private final com.google.protobuf.UnknownFieldSet unknownFields;
+
+		@java.lang.Override
+		public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+			return this.unknownFields;
+		}
+
+		private AnnotatedVectorsProto(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			initFields();
+			int mutable_bitField0_ = 0;
+			com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+					.newBuilder();
+			try {
+				boolean done = false;
+				while (!done) {
+					int tag = input.readTag();
+					switch (tag) {
+					case 0:
+						done = true;
+						break;
+					default: {
+						if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+							done = true;
+						}
+						break;
+					}
+					case 10: {
+						com.google.protobuf.ByteString bs = input.readBytes();
+						if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+							vectorNames_ = new com.google.protobuf.LazyStringArrayList();
+							mutable_bitField0_ |= 0x00000001;
+						}
+						vectorNames_.add(bs);
+						break;
+					}
+					case 18: {
+						if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+							keywords_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword>();
+							mutable_bitField0_ |= 0x00000002;
+						}
+						keywords_.add(input.readMessage(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.PARSER,
+								extensionRegistry));
+						break;
+					}
+					case 26: {
+						if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+							vectors_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector>();
+							mutable_bitField0_ |= 0x00000004;
+						}
+						vectors_.add(input.readMessage(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.PARSER,
+								extensionRegistry));
+						break;
+					}
+					}
+				}
+			} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+				throw e.setUnfinishedMessage(this);
+			} catch (java.io.IOException e) {
+				throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage()).setUnfinishedMessage(this);
+			} finally {
+				if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+					vectorNames_ = vectorNames_.getUnmodifiableView();
+				}
+				if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+					keywords_ = java.util.Collections.unmodifiableList(keywords_);
+				}
+				if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+					vectors_ = java.util.Collections.unmodifiableList(vectors_);
+				}
+				this.unknownFields = unknownFields.build();
+				makeExtensionsImmutable();
+			}
+		}
+
+		public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+			return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
+		}
+
+		protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+			return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_fieldAccessorTable
+					.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.class,
+							AnnotatedVectorMessage.AnnotatedVectorsProto.Builder.class);
+		}
+
+		public static com.google.protobuf.Parser<AnnotatedVectorsProto> PARSER = new com.google.protobuf.AbstractParser<AnnotatedVectorsProto>() {
+			public AnnotatedVectorsProto parsePartialFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return new AnnotatedVectorsProto(input, extensionRegistry);
+			}
+		};
+
+		@java.lang.Override
+		public com.google.protobuf.Parser<AnnotatedVectorsProto> getParserForType() {
+			return PARSER;
+		}
+
+		public interface KeywordOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto.Keyword)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			boolean hasKey();
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			java.lang.String getKey();
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			com.google.protobuf.ByteString getKeyBytes();
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			boolean hasValue();
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			java.lang.String getValue();
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			com.google.protobuf.ByteString getValueBytes();
+		}
+
+		/**
+		 * Protobuf type {@code AnnotatedVectorsProto.Keyword}
+		 */
+		public static final class Keyword extends com.google.protobuf.GeneratedMessage implements
+				// @@protoc_insertion_point(message_implements:AnnotatedVectorsProto.Keyword)
+				KeywordOrBuilder {
+			// Use Keyword.newBuilder() to construct.
+			private Keyword(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+				super(builder);
+				this.unknownFields = builder.getUnknownFields();
+			}
+
+			private Keyword(boolean noInit) {
+				this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+			}
+
+			private static final Keyword defaultInstance;
+
+			public static Keyword getDefaultInstance() {
+				return defaultInstance;
+			}
+
+			public Keyword getDefaultInstanceForType() {
+				return defaultInstance;
+			}
+
+			private final com.google.protobuf.UnknownFieldSet unknownFields;
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private Keyword(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				initFields();
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000001;
+							key_ = bs;
+							break;
+						}
+						case 18: {
+							com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000002;
+							value_ = bs;
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage())
+							.setUnfinishedMessage(this);
+				} finally {
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.class,
+								AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder.class);
+			}
+
+			public static com.google.protobuf.Parser<Keyword> PARSER = new com.google.protobuf.AbstractParser<Keyword>() {
+				public Keyword parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+								throws com.google.protobuf.InvalidProtocolBufferException {
+					return new Keyword(input, extensionRegistry);
+				}
+			};
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<Keyword> getParserForType() {
+				return PARSER;
+			}
+
+			private int bitField0_;
+			public static final int KEY_FIELD_NUMBER = 1;
+			private java.lang.Object key_;
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			public boolean hasKey() {
+				return ((bitField0_ & 0x00000001) == 0x00000001);
+			}
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			public java.lang.String getKey() {
+				java.lang.Object ref = key_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						key_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getKeyBytes() {
+				java.lang.Object ref = key_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					key_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int VALUE_FIELD_NUMBER = 2;
+			private java.lang.Object value_;
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			public boolean hasValue() {
+				return ((bitField0_ & 0x00000002) == 0x00000002);
+			}
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			public java.lang.String getValue() {
+				java.lang.Object ref = value_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						value_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>required string value = 2;</code>
+			 */
+			public com.google.protobuf.ByteString getValueBytes() {
+				java.lang.Object ref = value_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					value_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			private void initFields() {
+				key_ = "";
+				value_ = "";
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				if (!hasKey()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+				if (!hasValue()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				getSerializedSize();
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					output.writeBytes(1, getKeyBytes());
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					output.writeBytes(2, getValueBytes());
+				}
+				getUnknownFields().writeTo(output);
+			}
+
+			private int memoizedSerializedSize = -1;
+
+			public int getSerializedSize() {
+				int size = memoizedSerializedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getKeyBytes());
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(2, getValueBytes());
+				}
+				size += getUnknownFields().getSerializedSize();
+				memoizedSerializedSize = size;
+				return size;
+			}
+
+			private static final long serialVersionUID = 0L;
+
+			@java.lang.Override
+			protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
+				return super.writeReplace();
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
+					com.google.protobuf.ByteString data) throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
+					com.google.protobuf.ByteString data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseDelimitedFrom(
+					java.io.InputStream input) throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseDelimitedFrom(
+					java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
+					com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parseFrom(
+					com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			public static Builder newBuilder() {
+				return Builder.create();
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword prototype) {
+				return newBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return newBuilder(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * Protobuf type {@code AnnotatedVectorsProto.Keyword}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
+					// @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto.Keyword)
+					AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
+				}
+
+				protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable
+							.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.class,
+									AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder.class);
+				}
+
+				// Construct using
+				// AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+					}
+				}
+
+				private static Builder create() {
+					return new Builder();
+				}
+
+				public Builder clear() {
+					super.clear();
+					key_ = "";
+					bitField0_ = (bitField0_ & ~0x00000001);
+					value_ = "";
+					bitField0_ = (bitField0_ & ~0x00000002);
+					return this;
+				}
+
+				public Builder clone() {
+					return create().mergeFrom(buildPartial());
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Keyword_descriptor;
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getDefaultInstanceForType() {
+					return AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance();
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword build() {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword buildPartial() {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword result = new AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword(
+							this);
+					int from_bitField0_ = bitField0_;
+					int to_bitField0_ = 0;
+					if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+						to_bitField0_ |= 0x00000001;
+					}
+					result.key_ = key_;
+					if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+						to_bitField0_ |= 0x00000002;
+					}
+					result.value_ = value_;
+					result.bitField0_ = to_bitField0_;
+					onBuilt();
+					return result;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword) {
+						return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword other) {
+					if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance())
+						return this;
+					if (other.hasKey()) {
+						bitField0_ |= 0x00000001;
+						key_ = other.key_;
+						onChanged();
+					}
+					if (other.hasValue()) {
+						bitField0_ |= 0x00000002;
+						value_ = other.value_;
+						onChanged();
+					}
+					this.mergeUnknownFields(other.getUnknownFields());
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					if (!hasKey()) {
+
+						return false;
+					}
+					if (!hasValue()) {
+
+						return false;
+					}
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword) e.getUnfinishedMessage();
+						throw e;
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private int bitField0_;
+
+				private java.lang.Object key_ = "";
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public boolean hasKey() {
+					return ((bitField0_ & 0x00000001) == 0x00000001);
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public java.lang.String getKey() {
+					java.lang.Object ref = key_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							key_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public com.google.protobuf.ByteString getKeyBytes() {
+					java.lang.Object ref = key_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						key_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder setKey(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					key_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder clearKey() {
+					bitField0_ = (bitField0_ & ~0x00000001);
+					key_ = getDefaultInstance().getKey();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder setKeyBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					key_ = value;
+					onChanged();
+					return this;
+				}
+
+				private java.lang.Object value_ = "";
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public boolean hasValue() {
+					return ((bitField0_ & 0x00000002) == 0x00000002);
+				}
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public java.lang.String getValue() {
+					java.lang.Object ref = value_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							value_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public com.google.protobuf.ByteString getValueBytes() {
+					java.lang.Object ref = value_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						value_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public Builder setValue(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000002;
+					value_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public Builder clearValue() {
+					bitField0_ = (bitField0_ & ~0x00000002);
+					value_ = getDefaultInstance().getValue();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string value = 2;</code>
+				 */
+				public Builder setValueBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000002;
+					value_ = value;
+					onChanged();
+					return this;
+				}
+
+				// @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto.Keyword)
+			}
+
+			static {
+				defaultInstance = new Keyword(true);
+				defaultInstance.initFields();
+			}
+
+			// @@protoc_insertion_point(class_scope:AnnotatedVectorsProto.Keyword)
+		}
+
+		public interface VectorOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:AnnotatedVectorsProto.Vector)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			boolean hasName();
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			java.lang.String getName();
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			com.google.protobuf.ByteString getNameBytes();
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			java.util.List<java.lang.Double> getArrayList();
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			int getArrayCount();
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			double getArray(int index);
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			java.util.List<java.lang.Double> getCompArrayList();
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			int getCompArrayCount();
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			double getCompArray(int index);
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			boolean hasTransformPref();
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			java.lang.String getTransformPref();
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			com.google.protobuf.ByteString getTransformPrefBytes();
+
+			/**
+			 * <code>optional double logicleT = 5;</code>
+			 */
+			boolean hasLogicleT();
+
+			/**
+			 * <code>optional double logicleT = 5;</code>
+			 */
+			double getLogicleT();
+
+			/**
+			 * <code>optional double logicleW = 6;</code>
+			 */
+			boolean hasLogicleW();
+
+			/**
+			 * <code>optional double logicleW = 6;</code>
+			 */
+			double getLogicleW();
+
+			/**
+			 * <code>optional double logicleM = 7;</code>
+			 */
+			boolean hasLogicleM();
+
+			/**
+			 * <code>optional double logicleM = 7;</code>
+			 */
+			double getLogicleM();
+
+			/**
+			 * <code>optional double logicleA = 8;</code>
+			 */
+			boolean hasLogicleA();
+
+			/**
+			 * <code>optional double logicleA = 8;</code>
+			 */
+			double getLogicleA();
+		}
+
+		/**
+		 * Protobuf type {@code AnnotatedVectorsProto.Vector}
+		 */
+		public static final class Vector extends com.google.protobuf.GeneratedMessage implements
+				// @@protoc_insertion_point(message_implements:AnnotatedVectorsProto.Vector)
+				VectorOrBuilder {
+			// Use Vector.newBuilder() to construct.
+			private Vector(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+				super(builder);
+				this.unknownFields = builder.getUnknownFields();
+			}
+
+			private Vector(boolean noInit) {
+				this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+			}
+
+			private static final Vector defaultInstance;
+
+			public static Vector getDefaultInstance() {
+				return defaultInstance;
+			}
+
+			public Vector getDefaultInstanceForType() {
+				return defaultInstance;
+			}
+
+			private final com.google.protobuf.UnknownFieldSet unknownFields;
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return this.unknownFields;
+			}
+
+			private Vector(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				initFields();
+				int mutable_bitField0_ = 0;
+				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000001;
+							name_ = bs;
+							break;
+						}
+						case 17: {
+							if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+								array_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000002;
+							}
+							array_.add(input.readDouble());
+							break;
+						}
+						case 18: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+								array_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000002;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								array_.add(input.readDouble());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 25: {
+							if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+								compArray_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000004;
+							}
+							compArray_.add(input.readDouble());
+							break;
+						}
+						case 26: {
+							int length = input.readRawVarint32();
+							int limit = input.pushLimit(length);
+							if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+								compArray_ = new java.util.ArrayList<java.lang.Double>();
+								mutable_bitField0_ |= 0x00000004;
+							}
+							while (input.getBytesUntilLimit() > 0) {
+								compArray_.add(input.readDouble());
+							}
+							input.popLimit(limit);
+							break;
+						}
+						case 34: {
+							com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000002;
+							transformPref_ = bs;
+							break;
+						}
+						case 41: {
+							bitField0_ |= 0x00000004;
+							logicleT_ = input.readDouble();
+							break;
+						}
+						case 49: {
+							bitField0_ |= 0x00000008;
+							logicleW_ = input.readDouble();
+							break;
+						}
+						case 57: {
+							bitField0_ |= 0x00000010;
+							logicleM_ = input.readDouble();
+							break;
+						}
+						case 65: {
+							bitField0_ |= 0x00000020;
+							logicleA_ = input.readDouble();
+							break;
+						}
+						}
+					}
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage())
+							.setUnfinishedMessage(this);
+				} finally {
+					if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+						array_ = java.util.Collections.unmodifiableList(array_);
+					}
+					if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+						compArray_ = java.util.Collections.unmodifiableList(compArray_);
+					}
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.class,
+								AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder.class);
+			}
+
+			public static com.google.protobuf.Parser<Vector> PARSER = new com.google.protobuf.AbstractParser<Vector>() {
+				public Vector parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+								throws com.google.protobuf.InvalidProtocolBufferException {
+					return new Vector(input, extensionRegistry);
+				}
+			};
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<Vector> getParserForType() {
+				return PARSER;
+			}
+
+			private int bitField0_;
+			public static final int NAME_FIELD_NUMBER = 1;
+			private java.lang.Object name_;
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			public boolean hasName() {
+				return ((bitField0_ & 0x00000001) == 0x00000001);
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			public java.lang.String getName() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						name_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getNameBytes() {
+				java.lang.Object ref = name_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					name_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int ARRAY_FIELD_NUMBER = 2;
+			private java.util.List<java.lang.Double> array_;
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			public java.util.List<java.lang.Double> getArrayList() {
+				return array_;
+			}
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			public int getArrayCount() {
+				return array_.size();
+			}
+
+			/**
+			 * <code>repeated double array = 2;</code>
+			 */
+			public double getArray(int index) {
+				return array_.get(index);
+			}
+
+			public static final int COMPARRAY_FIELD_NUMBER = 3;
+			private java.util.List<java.lang.Double> compArray_;
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			public java.util.List<java.lang.Double> getCompArrayList() {
+				return compArray_;
+			}
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			public int getCompArrayCount() {
+				return compArray_.size();
+			}
+
+			/**
+			 * <code>repeated double compArray = 3;</code>
+			 */
+			public double getCompArray(int index) {
+				return compArray_.get(index);
+			}
+
+			public static final int TRANSFORMPREF_FIELD_NUMBER = 4;
+			private java.lang.Object transformPref_;
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			public boolean hasTransformPref() {
+				return ((bitField0_ & 0x00000002) == 0x00000002);
+			}
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			public java.lang.String getTransformPref() {
+				java.lang.Object ref = transformPref_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						transformPref_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>optional string transformPref = 4;</code>
+			 */
+			public com.google.protobuf.ByteString getTransformPrefBytes() {
+				java.lang.Object ref = transformPref_;
+				if (ref instanceof java.lang.String) {
+					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					transformPref_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			public static final int LOGICLET_FIELD_NUMBER = 5;
+			private double logicleT_;
+
+			/**
+			 * <code>optional double logicleT = 5;</code>
+			 */
+			public boolean hasLogicleT() {
+				return ((bitField0_ & 0x00000004) == 0x00000004);
+			}
+
+			/**
+			 * <code>optional double logicleT = 5;</code>
+			 */
+			public double getLogicleT() {
+				return logicleT_;
+			}
+
+			public static final int LOGICLEW_FIELD_NUMBER = 6;
+			private double logicleW_;
+
+			/**
+			 * <code>optional double logicleW = 6;</code>
+			 */
+			public boolean hasLogicleW() {
+				return ((bitField0_ & 0x00000008) == 0x00000008);
+			}
+
+			/**
+			 * <code>optional double logicleW = 6;</code>
+			 */
+			public double getLogicleW() {
+				return logicleW_;
+			}
+
+			public static final int LOGICLEM_FIELD_NUMBER = 7;
+			private double logicleM_;
+
+			/**
+			 * <code>optional double logicleM = 7;</code>
+			 */
+			public boolean hasLogicleM() {
+				return ((bitField0_ & 0x00000010) == 0x00000010);
+			}
+
+			/**
+			 * <code>optional double logicleM = 7;</code>
+			 */
+			public double getLogicleM() {
+				return logicleM_;
+			}
+
+			public static final int LOGICLEA_FIELD_NUMBER = 8;
+			private double logicleA_;
+
+			/**
+			 * <code>optional double logicleA = 8;</code>
+			 */
+			public boolean hasLogicleA() {
+				return ((bitField0_ & 0x00000020) == 0x00000020);
+			}
+
+			/**
+			 * <code>optional double logicleA = 8;</code>
+			 */
+			public double getLogicleA() {
+				return logicleA_;
+			}
+
+			private void initFields() {
+				name_ = "";
+				array_ = java.util.Collections.emptyList();
+				compArray_ = java.util.Collections.emptyList();
+				transformPref_ = "";
+				logicleT_ = 0D;
+				logicleW_ = 0D;
+				logicleM_ = 0D;
+				logicleA_ = 0D;
+			}
+
+			private byte memoizedIsInitialized = -1;
+
+			public final boolean isInitialized() {
+				byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				if (!hasName()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				getSerializedSize();
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					output.writeBytes(1, getNameBytes());
+				}
+				for (int i = 0; i < array_.size(); i++) {
+					output.writeDouble(2, array_.get(i));
+				}
+				for (int i = 0; i < compArray_.size(); i++) {
+					output.writeDouble(3, compArray_.get(i));
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					output.writeBytes(4, getTransformPrefBytes());
+				}
+				if (((bitField0_ & 0x00000004) == 0x00000004)) {
+					output.writeDouble(5, logicleT_);
+				}
+				if (((bitField0_ & 0x00000008) == 0x00000008)) {
+					output.writeDouble(6, logicleW_);
+				}
+				if (((bitField0_ & 0x00000010) == 0x00000010)) {
+					output.writeDouble(7, logicleM_);
+				}
+				if (((bitField0_ & 0x00000020) == 0x00000020)) {
+					output.writeDouble(8, logicleA_);
+				}
+				getUnknownFields().writeTo(output);
+			}
+
+			private int memoizedSerializedSize = -1;
+
+			public int getSerializedSize() {
+				int size = memoizedSerializedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getNameBytes());
+				}
+				{
+					int dataSize = 0;
+					dataSize = 8 * getArrayList().size();
+					size += dataSize;
+					size += 1 * getArrayList().size();
+				}
+				{
+					int dataSize = 0;
+					dataSize = 8 * getCompArrayList().size();
+					size += dataSize;
+					size += 1 * getCompArrayList().size();
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(4, getTransformPrefBytes());
+				}
+				if (((bitField0_ & 0x00000004) == 0x00000004)) {
+					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(5, logicleT_);
+				}
+				if (((bitField0_ & 0x00000008) == 0x00000008)) {
+					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(6, logicleW_);
+				}
+				if (((bitField0_ & 0x00000010) == 0x00000010)) {
+					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(7, logicleM_);
+				}
+				if (((bitField0_ & 0x00000020) == 0x00000020)) {
+					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(8, logicleA_);
+				}
+				size += getUnknownFields().getSerializedSize();
+				memoizedSerializedSize = size;
+				return size;
+			}
+
+			private static final long serialVersionUID = 0L;
+
+			@java.lang.Override
+			protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
+				return super.writeReplace();
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
+					com.google.protobuf.ByteString data) throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
+					com.google.protobuf.ByteString data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseDelimitedFrom(
+					java.io.InputStream input) throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseDelimitedFrom(
+					java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input, extensionRegistry);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
+					com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parseFrom(
+					com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			public static Builder newBuilder() {
+				return Builder.create();
+			}
+
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector prototype) {
+				return newBuilder().mergeFrom(prototype);
+			}
+
+			public Builder toBuilder() {
+				return newBuilder(this);
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+				Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			/**
+			 * Protobuf type {@code AnnotatedVectorsProto.Vector}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
+					// @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto.Vector)
+					AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder {
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
+				}
+
+				protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable
+							.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.class,
+									AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder.class);
+				}
+
+				// Construct using
+				// AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+					}
+				}
+
+				private static Builder create() {
+					return new Builder();
+				}
+
+				public Builder clear() {
+					super.clear();
+					name_ = "";
+					bitField0_ = (bitField0_ & ~0x00000001);
+					array_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000002);
+					compArray_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+					transformPref_ = "";
+					bitField0_ = (bitField0_ & ~0x00000008);
+					logicleT_ = 0D;
+					bitField0_ = (bitField0_ & ~0x00000010);
+					logicleW_ = 0D;
+					bitField0_ = (bitField0_ & ~0x00000020);
+					logicleM_ = 0D;
+					bitField0_ = (bitField0_ & ~0x00000040);
+					logicleA_ = 0D;
+					bitField0_ = (bitField0_ & ~0x00000080);
+					return this;
+				}
+
+				public Builder clone() {
+					return create().mergeFrom(buildPartial());
+				}
+
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_Vector_descriptor;
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getDefaultInstanceForType() {
+					return AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance();
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector build() {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Vector result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector buildPartial() {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Vector result = new AnnotatedVectorMessage.AnnotatedVectorsProto.Vector(
+							this);
+					int from_bitField0_ = bitField0_;
+					int to_bitField0_ = 0;
+					if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+						to_bitField0_ |= 0x00000001;
+					}
+					result.name_ = name_;
+					if (((bitField0_ & 0x00000002) == 0x00000002)) {
+						array_ = java.util.Collections.unmodifiableList(array_);
+						bitField0_ = (bitField0_ & ~0x00000002);
+					}
+					result.array_ = array_;
+					if (((bitField0_ & 0x00000004) == 0x00000004)) {
+						compArray_ = java.util.Collections.unmodifiableList(compArray_);
+						bitField0_ = (bitField0_ & ~0x00000004);
+					}
+					result.compArray_ = compArray_;
+					if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+						to_bitField0_ |= 0x00000002;
+					}
+					result.transformPref_ = transformPref_;
+					if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+						to_bitField0_ |= 0x00000004;
+					}
+					result.logicleT_ = logicleT_;
+					if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+						to_bitField0_ |= 0x00000008;
+					}
+					result.logicleW_ = logicleW_;
+					if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+						to_bitField0_ |= 0x00000010;
+					}
+					result.logicleM_ = logicleM_;
+					if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+						to_bitField0_ |= 0x00000020;
+					}
+					result.logicleA_ = logicleA_;
+					result.bitField0_ = to_bitField0_;
+					onBuilt();
+					return result;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto.Vector) {
+						return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto.Vector) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector other) {
+					if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance())
+						return this;
+					if (other.hasName()) {
+						bitField0_ |= 0x00000001;
+						name_ = other.name_;
+						onChanged();
+					}
+					if (!other.array_.isEmpty()) {
+						if (array_.isEmpty()) {
+							array_ = other.array_;
+							bitField0_ = (bitField0_ & ~0x00000002);
+						} else {
+							ensureArrayIsMutable();
+							array_.addAll(other.array_);
+						}
+						onChanged();
+					}
+					if (!other.compArray_.isEmpty()) {
+						if (compArray_.isEmpty()) {
+							compArray_ = other.compArray_;
+							bitField0_ = (bitField0_ & ~0x00000004);
+						} else {
+							ensureCompArrayIsMutable();
+							compArray_.addAll(other.compArray_);
+						}
+						onChanged();
+					}
+					if (other.hasTransformPref()) {
+						bitField0_ |= 0x00000008;
+						transformPref_ = other.transformPref_;
+						onChanged();
+					}
+					if (other.hasLogicleT()) {
+						setLogicleT(other.getLogicleT());
+					}
+					if (other.hasLogicleW()) {
+						setLogicleW(other.getLogicleW());
+					}
+					if (other.hasLogicleM()) {
+						setLogicleM(other.getLogicleM());
+					}
+					if (other.hasLogicleA()) {
+						setLogicleA(other.getLogicleA());
+					}
+					this.mergeUnknownFields(other.getUnknownFields());
+					return this;
+				}
+
+				public final boolean isInitialized() {
+					if (!hasName()) {
+
+						return false;
+					}
+					return true;
+				}
+
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Vector parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto.Vector) e.getUnfinishedMessage();
+						throw e;
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				private int bitField0_;
+
+				private java.lang.Object name_ = "";
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public boolean hasName() {
+					return ((bitField0_ & 0x00000001) == 0x00000001);
+				}
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public java.lang.String getName() {
+					java.lang.Object ref = name_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							name_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public com.google.protobuf.ByteString getNameBytes() {
+					java.lang.Object ref = name_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						name_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public Builder setName(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public Builder clearName() {
+					bitField0_ = (bitField0_ & ~0x00000001);
+					name_ = getDefaultInstance().getName();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string name = 1;</code>
+				 */
+				public Builder setNameBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					name_ = value;
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Double> array_ = java.util.Collections.emptyList();
+
+				private void ensureArrayIsMutable() {
+					if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+						array_ = new java.util.ArrayList<java.lang.Double>(array_);
+						bitField0_ |= 0x00000002;
+					}
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public java.util.List<java.lang.Double> getArrayList() {
+					return java.util.Collections.unmodifiableList(array_);
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public int getArrayCount() {
+					return array_.size();
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public double getArray(int index) {
+					return array_.get(index);
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public Builder setArray(int index, double value) {
+					ensureArrayIsMutable();
+					array_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public Builder addArray(double value) {
+					ensureArrayIsMutable();
+					array_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public Builder addAllArray(java.lang.Iterable<? extends java.lang.Double> values) {
+					ensureArrayIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, array_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double array = 2;</code>
+				 */
+				public Builder clearArray() {
+					array_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000002);
+					onChanged();
+					return this;
+				}
+
+				private java.util.List<java.lang.Double> compArray_ = java.util.Collections.emptyList();
+
+				private void ensureCompArrayIsMutable() {
+					if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+						compArray_ = new java.util.ArrayList<java.lang.Double>(compArray_);
+						bitField0_ |= 0x00000004;
+					}
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public java.util.List<java.lang.Double> getCompArrayList() {
+					return java.util.Collections.unmodifiableList(compArray_);
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public int getCompArrayCount() {
+					return compArray_.size();
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public double getCompArray(int index) {
+					return compArray_.get(index);
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public Builder setCompArray(int index, double value) {
+					ensureCompArrayIsMutable();
+					compArray_.set(index, value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public Builder addCompArray(double value) {
+					ensureCompArrayIsMutable();
+					compArray_.add(value);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public Builder addAllCompArray(java.lang.Iterable<? extends java.lang.Double> values) {
+					ensureCompArrayIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, compArray_);
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>repeated double compArray = 3;</code>
+				 */
+				public Builder clearCompArray() {
+					compArray_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+					onChanged();
+					return this;
+				}
+
+				private java.lang.Object transformPref_ = "";
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public boolean hasTransformPref() {
+					return ((bitField0_ & 0x00000008) == 0x00000008);
+				}
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public java.lang.String getTransformPref() {
+					java.lang.Object ref = transformPref_;
+					if (!(ref instanceof java.lang.String)) {
+						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							transformPref_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public com.google.protobuf.ByteString getTransformPrefBytes() {
+					java.lang.Object ref = transformPref_;
+					if (ref instanceof String) {
+						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						transformPref_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public Builder setTransformPref(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000008;
+					transformPref_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public Builder clearTransformPref() {
+					bitField0_ = (bitField0_ & ~0x00000008);
+					transformPref_ = getDefaultInstance().getTransformPref();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional string transformPref = 4;</code>
+				 */
+				public Builder setTransformPrefBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000008;
+					transformPref_ = value;
+					onChanged();
+					return this;
+				}
+
+				private double logicleT_;
+
+				/**
+				 * <code>optional double logicleT = 5;</code>
+				 */
+				public boolean hasLogicleT() {
+					return ((bitField0_ & 0x00000010) == 0x00000010);
+				}
+
+				/**
+				 * <code>optional double logicleT = 5;</code>
+				 */
+				public double getLogicleT() {
+					return logicleT_;
+				}
+
+				/**
+				 * <code>optional double logicleT = 5;</code>
+				 */
+				public Builder setLogicleT(double value) {
+					bitField0_ |= 0x00000010;
+					logicleT_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional double logicleT = 5;</code>
+				 */
+				public Builder clearLogicleT() {
+					bitField0_ = (bitField0_ & ~0x00000010);
+					logicleT_ = 0D;
+					onChanged();
+					return this;
+				}
+
+				private double logicleW_;
+
+				/**
+				 * <code>optional double logicleW = 6;</code>
+				 */
+				public boolean hasLogicleW() {
+					return ((bitField0_ & 0x00000020) == 0x00000020);
+				}
+
+				/**
+				 * <code>optional double logicleW = 6;</code>
+				 */
+				public double getLogicleW() {
+					return logicleW_;
+				}
+
+				/**
+				 * <code>optional double logicleW = 6;</code>
+				 */
+				public Builder setLogicleW(double value) {
+					bitField0_ |= 0x00000020;
+					logicleW_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional double logicleW = 6;</code>
+				 */
+				public Builder clearLogicleW() {
+					bitField0_ = (bitField0_ & ~0x00000020);
+					logicleW_ = 0D;
+					onChanged();
+					return this;
+				}
+
+				private double logicleM_;
+
+				/**
+				 * <code>optional double logicleM = 7;</code>
+				 */
+				public boolean hasLogicleM() {
+					return ((bitField0_ & 0x00000040) == 0x00000040);
+				}
+
+				/**
+				 * <code>optional double logicleM = 7;</code>
+				 */
+				public double getLogicleM() {
+					return logicleM_;
+				}
+
+				/**
+				 * <code>optional double logicleM = 7;</code>
+				 */
+				public Builder setLogicleM(double value) {
+					bitField0_ |= 0x00000040;
+					logicleM_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional double logicleM = 7;</code>
+				 */
+				public Builder clearLogicleM() {
+					bitField0_ = (bitField0_ & ~0x00000040);
+					logicleM_ = 0D;
+					onChanged();
+					return this;
+				}
+
+				private double logicleA_;
+
+				/**
+				 * <code>optional double logicleA = 8;</code>
+				 */
+				public boolean hasLogicleA() {
+					return ((bitField0_ & 0x00000080) == 0x00000080);
+				}
+
+				/**
+				 * <code>optional double logicleA = 8;</code>
+				 */
+				public double getLogicleA() {
+					return logicleA_;
+				}
+
+				/**
+				 * <code>optional double logicleA = 8;</code>
+				 */
+				public Builder setLogicleA(double value) {
+					bitField0_ |= 0x00000080;
+					logicleA_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional double logicleA = 8;</code>
+				 */
+				public Builder clearLogicleA() {
+					bitField0_ = (bitField0_ & ~0x00000080);
+					logicleA_ = 0D;
+					onChanged();
+					return this;
+				}
+
+				// @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto.Vector)
+			}
+
+			static {
+				defaultInstance = new Vector(true);
+				defaultInstance.initFields();
+			}
+
+			// @@protoc_insertion_point(class_scope:AnnotatedVectorsProto.Vector)
+		}
+
+		public static final int VECTORNAMES_FIELD_NUMBER = 1;
+		private com.google.protobuf.LazyStringList vectorNames_;
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		public com.google.protobuf.ProtocolStringList getVectorNamesList() {
+			return vectorNames_;
+		}
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		public int getVectorNamesCount() {
+			return vectorNames_.size();
+		}
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		public java.lang.String getVectorNames(int index) {
+			return vectorNames_.get(index);
+		}
+
+		/**
+		 * <code>repeated string vectorNames = 1;</code>
+		 */
+		public com.google.protobuf.ByteString getVectorNamesBytes(int index) {
+			return vectorNames_.getByteString(index);
+		}
+
+		public static final int KEYWORDS_FIELD_NUMBER = 2;
+		private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> keywords_;
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> getKeywordsList() {
+			return keywords_;
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> getKeywordsOrBuilderList() {
+			return keywords_;
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		public int getKeywordsCount() {
+			return keywords_.size();
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index) {
+			return keywords_.get(index);
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+		 */
+		public AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(int index) {
+			return keywords_.get(index);
+		}
+
+		public static final int VECTORS_FIELD_NUMBER = 3;
+		private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> vectors_;
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> getVectorsList() {
+			return vectors_;
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> getVectorsOrBuilderList() {
+			return vectors_;
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		public int getVectorsCount() {
+			return vectors_.size();
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index) {
+			return vectors_.get(index);
+		}
+
+		/**
+		 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+		 */
+		public AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(int index) {
+			return vectors_.get(index);
+		}
+
+		private void initFields() {
+			vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+			keywords_ = java.util.Collections.emptyList();
+			vectors_ = java.util.Collections.emptyList();
+		}
+
+		private byte memoizedIsInitialized = -1;
+
+		public final boolean isInitialized() {
+			byte isInitialized = memoizedIsInitialized;
+			if (isInitialized == 1)
+				return true;
+			if (isInitialized == 0)
+				return false;
+
+			for (int i = 0; i < getKeywordsCount(); i++) {
+				if (!getKeywords(i).isInitialized()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+			}
+			for (int i = 0; i < getVectorsCount(); i++) {
+				if (!getVectors(i).isInitialized()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+			}
+			memoizedIsInitialized = 1;
+			return true;
+		}
+
+		public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+			getSerializedSize();
+			for (int i = 0; i < vectorNames_.size(); i++) {
+				output.writeBytes(1, vectorNames_.getByteString(i));
+			}
+			for (int i = 0; i < keywords_.size(); i++) {
+				output.writeMessage(2, keywords_.get(i));
+			}
+			for (int i = 0; i < vectors_.size(); i++) {
+				output.writeMessage(3, vectors_.get(i));
+			}
+			getUnknownFields().writeTo(output);
+		}
+
+		private int memoizedSerializedSize = -1;
+
+		public int getSerializedSize() {
+			int size = memoizedSerializedSize;
+			if (size != -1)
+				return size;
+
+			size = 0;
+			{
+				int dataSize = 0;
+				for (int i = 0; i < vectorNames_.size(); i++) {
+					dataSize += com.google.protobuf.CodedOutputStream
+							.computeBytesSizeNoTag(vectorNames_.getByteString(i));
+				}
+				size += dataSize;
+				size += 1 * getVectorNamesList().size();
+			}
+			for (int i = 0; i < keywords_.size(); i++) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, keywords_.get(i));
+			}
+			for (int i = 0; i < vectors_.size(); i++) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, vectors_.get(i));
+			}
+			size += getUnknownFields().getSerializedSize();
+			memoizedSerializedSize = size;
+			return size;
+		}
+
+		private static final long serialVersionUID = 0L;
+
+		@java.lang.Override
+		protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
+			return super.writeReplace();
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(com.google.protobuf.ByteString data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(com.google.protobuf.ByteString data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(byte[] data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(byte[] data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(java.io.InputStream input)
+				throws java.io.IOException {
+			return PARSER.parseFrom(input);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseFrom(input, extensionRegistry);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseDelimitedFrom(java.io.InputStream input)
+				throws java.io.IOException {
+			return PARSER.parseDelimitedFrom(input);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseDelimitedFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseDelimitedFrom(input, extensionRegistry);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(com.google.protobuf.CodedInputStream input)
+				throws java.io.IOException {
+			return PARSER.parseFrom(input);
+		}
+
+		public static AnnotatedVectorMessage.AnnotatedVectorsProto parseFrom(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseFrom(input, extensionRegistry);
+		}
+
+		public static Builder newBuilder() {
+			return Builder.create();
+		}
+
+		public Builder newBuilderForType() {
+			return newBuilder();
+		}
+
+		public static Builder newBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto prototype) {
+			return newBuilder().mergeFrom(prototype);
+		}
+
+		public Builder toBuilder() {
+			return newBuilder(this);
+		}
+
+		@java.lang.Override
+		protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+			Builder builder = new Builder(parent);
+			return builder;
+		}
+
+		/**
+		 * Protobuf type {@code AnnotatedVectorsProto}
+		 */
+		public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
+				// @@protoc_insertion_point(builder_implements:AnnotatedVectorsProto)
+				AnnotatedVectorMessage.AnnotatedVectorsProtoOrBuilder {
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
+			}
+
+			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(AnnotatedVectorMessage.AnnotatedVectorsProto.class,
+								AnnotatedVectorMessage.AnnotatedVectorsProto.Builder.class);
+			}
+
+			// Construct using
+			// AnnotatedVectorMessage.AnnotatedVectorsProto.newBuilder()
+			private Builder() {
+				maybeForceBuilderInitialization();
+			}
+
+			private Builder(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+				super(parent);
+				maybeForceBuilderInitialization();
+			}
+
+			private void maybeForceBuilderInitialization() {
+				if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+					getKeywordsFieldBuilder();
+					getVectorsFieldBuilder();
+				}
+			}
+
+			private static Builder create() {
+				return new Builder();
+			}
+
+			public Builder clear() {
+				super.clear();
+				vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+				bitField0_ = (bitField0_ & ~0x00000001);
+				if (keywordsBuilder_ == null) {
+					keywords_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000002);
+				} else {
+					keywordsBuilder_.clear();
+				}
+				if (vectorsBuilder_ == null) {
+					vectors_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+				} else {
+					vectorsBuilder_.clear();
+				}
+				return this;
+			}
+
+			public Builder clone() {
+				return create().mergeFrom(buildPartial());
+			}
+
+			public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+				return AnnotatedVectorMessage.internal_static_AnnotatedVectorsProto_descriptor;
+			}
+
+			public AnnotatedVectorMessage.AnnotatedVectorsProto getDefaultInstanceForType() {
+				return AnnotatedVectorMessage.AnnotatedVectorsProto.getDefaultInstance();
+			}
+
+			public AnnotatedVectorMessage.AnnotatedVectorsProto build() {
+				AnnotatedVectorMessage.AnnotatedVectorsProto result = buildPartial();
+				if (!result.isInitialized()) {
+					throw newUninitializedMessageException(result);
+				}
+				return result;
+			}
+
+			public AnnotatedVectorMessage.AnnotatedVectorsProto buildPartial() {
+				AnnotatedVectorMessage.AnnotatedVectorsProto result = new AnnotatedVectorMessage.AnnotatedVectorsProto(
+						this);
+				int from_bitField0_ = bitField0_;
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					vectorNames_ = vectorNames_.getUnmodifiableView();
+					bitField0_ = (bitField0_ & ~0x00000001);
+				}
+				result.vectorNames_ = vectorNames_;
+				if (keywordsBuilder_ == null) {
+					if (((bitField0_ & 0x00000002) == 0x00000002)) {
+						keywords_ = java.util.Collections.unmodifiableList(keywords_);
+						bitField0_ = (bitField0_ & ~0x00000002);
+					}
+					result.keywords_ = keywords_;
+				} else {
+					result.keywords_ = keywordsBuilder_.build();
+				}
+				if (vectorsBuilder_ == null) {
+					if (((bitField0_ & 0x00000004) == 0x00000004)) {
+						vectors_ = java.util.Collections.unmodifiableList(vectors_);
+						bitField0_ = (bitField0_ & ~0x00000004);
+					}
+					result.vectors_ = vectors_;
+				} else {
+					result.vectors_ = vectorsBuilder_.build();
+				}
+				onBuilt();
+				return result;
+			}
+
+			public Builder mergeFrom(com.google.protobuf.Message other) {
+				if (other instanceof AnnotatedVectorMessage.AnnotatedVectorsProto) {
+					return mergeFrom((AnnotatedVectorMessage.AnnotatedVectorsProto) other);
+				} else {
+					super.mergeFrom(other);
+					return this;
+				}
+			}
+
+			public Builder mergeFrom(AnnotatedVectorMessage.AnnotatedVectorsProto other) {
+				if (other == AnnotatedVectorMessage.AnnotatedVectorsProto.getDefaultInstance())
+					return this;
+				if (!other.vectorNames_.isEmpty()) {
+					if (vectorNames_.isEmpty()) {
+						vectorNames_ = other.vectorNames_;
+						bitField0_ = (bitField0_ & ~0x00000001);
+					} else {
+						ensureVectorNamesIsMutable();
+						vectorNames_.addAll(other.vectorNames_);
+					}
+					onChanged();
+				}
+				if (keywordsBuilder_ == null) {
+					if (!other.keywords_.isEmpty()) {
+						if (keywords_.isEmpty()) {
+							keywords_ = other.keywords_;
+							bitField0_ = (bitField0_ & ~0x00000002);
+						} else {
+							ensureKeywordsIsMutable();
+							keywords_.addAll(other.keywords_);
+						}
+						onChanged();
+					}
+				} else {
+					if (!other.keywords_.isEmpty()) {
+						if (keywordsBuilder_.isEmpty()) {
+							keywordsBuilder_.dispose();
+							keywordsBuilder_ = null;
+							keywords_ = other.keywords_;
+							bitField0_ = (bitField0_ & ~0x00000002);
+							keywordsBuilder_ = com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders
+									? getKeywordsFieldBuilder() : null;
+						} else {
+							keywordsBuilder_.addAllMessages(other.keywords_);
+						}
+					}
+				}
+				if (vectorsBuilder_ == null) {
+					if (!other.vectors_.isEmpty()) {
+						if (vectors_.isEmpty()) {
+							vectors_ = other.vectors_;
+							bitField0_ = (bitField0_ & ~0x00000004);
+						} else {
+							ensureVectorsIsMutable();
+							vectors_.addAll(other.vectors_);
+						}
+						onChanged();
+					}
+				} else {
+					if (!other.vectors_.isEmpty()) {
+						if (vectorsBuilder_.isEmpty()) {
+							vectorsBuilder_.dispose();
+							vectorsBuilder_ = null;
+							vectors_ = other.vectors_;
+							bitField0_ = (bitField0_ & ~0x00000004);
+							vectorsBuilder_ = com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders
+									? getVectorsFieldBuilder() : null;
+						} else {
+							vectorsBuilder_.addAllMessages(other.vectors_);
+						}
+					}
+				}
+				this.mergeUnknownFields(other.getUnknownFields());
+				return this;
+			}
+
+			public final boolean isInitialized() {
+				for (int i = 0; i < getKeywordsCount(); i++) {
+					if (!getKeywords(i).isInitialized()) {
+
+						return false;
+					}
+				}
+				for (int i = 0; i < getVectorsCount(); i++) {
+					if (!getVectors(i).isInitialized()) {
+
+						return false;
+					}
+				}
+				return true;
+			}
+
+			public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				AnnotatedVectorMessage.AnnotatedVectorsProto parsedMessage = null;
+				try {
+					parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
+					parsedMessage = (AnnotatedVectorMessage.AnnotatedVectorsProto) e.getUnfinishedMessage();
+					throw e;
+				} finally {
+					if (parsedMessage != null) {
+						mergeFrom(parsedMessage);
+					}
+				}
+				return this;
+			}
+
+			private int bitField0_;
+
+			private com.google.protobuf.LazyStringList vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+
+			private void ensureVectorNamesIsMutable() {
+				if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+					vectorNames_ = new com.google.protobuf.LazyStringArrayList(vectorNames_);
+					bitField0_ |= 0x00000001;
+				}
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public com.google.protobuf.ProtocolStringList getVectorNamesList() {
+				return vectorNames_.getUnmodifiableView();
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public int getVectorNamesCount() {
+				return vectorNames_.size();
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public java.lang.String getVectorNames(int index) {
+				return vectorNames_.get(index);
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public com.google.protobuf.ByteString getVectorNamesBytes(int index) {
+				return vectorNames_.getByteString(index);
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public Builder setVectorNames(int index, java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				ensureVectorNamesIsMutable();
+				vectorNames_.set(index, value);
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public Builder addVectorNames(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				ensureVectorNamesIsMutable();
+				vectorNames_.add(value);
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public Builder addAllVectorNames(java.lang.Iterable<java.lang.String> values) {
+				ensureVectorNamesIsMutable();
+				com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vectorNames_);
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public Builder clearVectorNames() {
+				vectorNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+				bitField0_ = (bitField0_ & ~0x00000001);
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated string vectorNames = 1;</code>
+			 */
+			public Builder addVectorNamesBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				ensureVectorNamesIsMutable();
+				vectorNames_.add(value);
+				onChanged();
+				return this;
+			}
+
+			private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> keywords_ = java.util.Collections
+					.emptyList();
+
+			private void ensureKeywordsIsMutable() {
+				if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+					keywords_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword>(
+							keywords_);
+					bitField0_ |= 0x00000002;
+				}
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> keywordsBuilder_;
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> getKeywordsList() {
+				if (keywordsBuilder_ == null) {
+					return java.util.Collections.unmodifiableList(keywords_);
+				} else {
+					return keywordsBuilder_.getMessageList();
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public int getKeywordsCount() {
+				if (keywordsBuilder_ == null) {
+					return keywords_.size();
+				} else {
+					return keywordsBuilder_.getCount();
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword getKeywords(int index) {
+				if (keywordsBuilder_ == null) {
+					return keywords_.get(index);
+				} else {
+					return keywordsBuilder_.getMessage(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder setKeywords(int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
+				if (keywordsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureKeywordsIsMutable();
+					keywords_.set(index, value);
+					onChanged();
+				} else {
+					keywordsBuilder_.setMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder setKeywords(int index,
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.set(index, builderForValue.build());
+					onChanged();
+				} else {
+					keywordsBuilder_.setMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder addKeywords(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
+				if (keywordsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureKeywordsIsMutable();
+					keywords_.add(value);
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder addKeywords(int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword value) {
+				if (keywordsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureKeywordsIsMutable();
+					keywords_.add(index, value);
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder addKeywords(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.add(builderForValue.build());
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder addKeywords(int index,
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder builderForValue) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.add(index, builderForValue.build());
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder addAllKeywords(
+					java.lang.Iterable<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword> values) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, keywords_);
+					onChanged();
+				} else {
+					keywordsBuilder_.addAllMessages(values);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder clearKeywords() {
+				if (keywordsBuilder_ == null) {
+					keywords_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000002);
+					onChanged();
+				} else {
+					keywordsBuilder_.clear();
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public Builder removeKeywords(int index) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.remove(index);
+					onChanged();
+				} else {
+					keywordsBuilder_.remove(index);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder getKeywordsBuilder(int index) {
+				return getKeywordsFieldBuilder().getBuilder(index);
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder getKeywordsOrBuilder(int index) {
+				if (keywordsBuilder_ == null) {
+					return keywords_.get(index);
+				} else {
+					return keywordsBuilder_.getMessageOrBuilder(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> getKeywordsOrBuilderList() {
+				if (keywordsBuilder_ != null) {
+					return keywordsBuilder_.getMessageOrBuilderList();
+				} else {
+					return java.util.Collections.unmodifiableList(keywords_);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder addKeywordsBuilder() {
+				return getKeywordsFieldBuilder()
+						.addBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance());
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder addKeywordsBuilder(int index) {
+				return getKeywordsFieldBuilder().addBuilder(index,
+						AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.getDefaultInstance());
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Keyword keywords = 2;</code>
+			 */
+			public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder> getKeywordsBuilderList() {
+				return getKeywordsFieldBuilder().getBuilderList();
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder> getKeywordsFieldBuilder() {
+				if (keywordsBuilder_ == null) {
+					keywordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword, AnnotatedVectorMessage.AnnotatedVectorsProto.Keyword.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.KeywordOrBuilder>(
+							keywords_, ((bitField0_ & 0x00000002) == 0x00000002), getParentForChildren(), isClean());
+					keywords_ = null;
+				}
+				return keywordsBuilder_;
+			}
+
+			private java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> vectors_ = java.util.Collections
+					.emptyList();
+
+			private void ensureVectorsIsMutable() {
+				if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+					vectors_ = new java.util.ArrayList<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector>(vectors_);
+					bitField0_ |= 0x00000004;
+				}
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> vectorsBuilder_;
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> getVectorsList() {
+				if (vectorsBuilder_ == null) {
+					return java.util.Collections.unmodifiableList(vectors_);
+				} else {
+					return vectorsBuilder_.getMessageList();
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public int getVectorsCount() {
+				if (vectorsBuilder_ == null) {
+					return vectors_.size();
+				} else {
+					return vectorsBuilder_.getCount();
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector getVectors(int index) {
+				if (vectorsBuilder_ == null) {
+					return vectors_.get(index);
+				} else {
+					return vectorsBuilder_.getMessage(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder setVectors(int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
+				if (vectorsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureVectorsIsMutable();
+					vectors_.set(index, value);
+					onChanged();
+				} else {
+					vectorsBuilder_.setMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder setVectors(int index,
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
+				if (vectorsBuilder_ == null) {
+					ensureVectorsIsMutable();
+					vectors_.set(index, builderForValue.build());
+					onChanged();
+				} else {
+					vectorsBuilder_.setMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder addVectors(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
+				if (vectorsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureVectorsIsMutable();
+					vectors_.add(value);
+					onChanged();
+				} else {
+					vectorsBuilder_.addMessage(value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder addVectors(int index, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector value) {
+				if (vectorsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureVectorsIsMutable();
+					vectors_.add(index, value);
+					onChanged();
+				} else {
+					vectorsBuilder_.addMessage(index, value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder addVectors(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
+				if (vectorsBuilder_ == null) {
+					ensureVectorsIsMutable();
+					vectors_.add(builderForValue.build());
+					onChanged();
+				} else {
+					vectorsBuilder_.addMessage(builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder addVectors(int index,
+					AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder builderForValue) {
+				if (vectorsBuilder_ == null) {
+					ensureVectorsIsMutable();
+					vectors_.add(index, builderForValue.build());
+					onChanged();
+				} else {
+					vectorsBuilder_.addMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder addAllVectors(
+					java.lang.Iterable<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.Vector> values) {
+				if (vectorsBuilder_ == null) {
+					ensureVectorsIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vectors_);
+					onChanged();
+				} else {
+					vectorsBuilder_.addAllMessages(values);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder clearVectors() {
+				if (vectorsBuilder_ == null) {
+					vectors_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000004);
+					onChanged();
+				} else {
+					vectorsBuilder_.clear();
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public Builder removeVectors(int index) {
+				if (vectorsBuilder_ == null) {
+					ensureVectorsIsMutable();
+					vectors_.remove(index);
+					onChanged();
+				} else {
+					vectorsBuilder_.remove(index);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder getVectorsBuilder(int index) {
+				return getVectorsFieldBuilder().getBuilder(index);
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder getVectorsOrBuilder(int index) {
+				if (vectorsBuilder_ == null) {
+					return vectors_.get(index);
+				} else {
+					return vectorsBuilder_.getMessageOrBuilder(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public java.util.List<? extends AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> getVectorsOrBuilderList() {
+				if (vectorsBuilder_ != null) {
+					return vectorsBuilder_.getMessageOrBuilderList();
+				} else {
+					return java.util.Collections.unmodifiableList(vectors_);
+				}
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder addVectorsBuilder() {
+				return getVectorsFieldBuilder()
+						.addBuilder(AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance());
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder addVectorsBuilder(int index) {
+				return getVectorsFieldBuilder().addBuilder(index,
+						AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.getDefaultInstance());
+			}
+
+			/**
+			 * <code>repeated .AnnotatedVectorsProto.Vector vectors = 3;</code>
+			 */
+			public java.util.List<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder> getVectorsBuilderList() {
+				return getVectorsFieldBuilder().getBuilderList();
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder> getVectorsFieldBuilder() {
+				if (vectorsBuilder_ == null) {
+					vectorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<AnnotatedVectorMessage.AnnotatedVectorsProto.Vector, AnnotatedVectorMessage.AnnotatedVectorsProto.Vector.Builder, AnnotatedVectorMessage.AnnotatedVectorsProto.VectorOrBuilder>(
+							vectors_, ((bitField0_ & 0x00000004) == 0x00000004), getParentForChildren(), isClean());
+					vectors_ = null;
+				}
+				return vectorsBuilder_;
+			}
+
+			// @@protoc_insertion_point(builder_scope:AnnotatedVectorsProto)
+		}
+
+		static {
+			defaultInstance = new AnnotatedVectorsProto(true);
+			defaultInstance.initFields();
+		}
+
+		// @@protoc_insertion_point(class_scope:AnnotatedVectorsProto)
+	}
+
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_AnnotatedVectorsProto_descriptor;
+	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_AnnotatedVectorsProto_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_AnnotatedVectorsProto_Keyword_descriptor;
+	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable;
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_AnnotatedVectorsProto_Vector_descriptor;
+	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable;
+
+	public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
+		return descriptor;
+	}
+
+	private static com.google.protobuf.Descriptors.FileDescriptor descriptor;
+
+	static {
+		java.lang.String[] descriptorData = { "\n\034AnnotatedVectorMessage.proto\"\317\002\n\025Annot"
+				+ "atedVectorsProto\022\023\n\013vectorNames\030\001 \003(\t\0220\n"
+				+ "\010keywords\030\002 \003(\0132\036.AnnotatedVectorsProto."
+				+ "Keyword\022.\n\007vectors\030\003 \003(\0132\035.AnnotatedVect"
+				+ "orsProto.Vector\032%\n\007Keyword\022\013\n\003key\030\001 \002(\t\022"
+				+ "\r\n\005value\030\002 \002(\t\032\227\001\n\006Vector\022\014\n\004name\030\001 \002(\t\022"
+				+ "\r\n\005array\030\002 \003(\001\022\021\n\tcompArray\030\003 \003(\001\022\025\n\rtra"
+				+ "nsformPref\030\004 \001(\t\022\020\n\010logicleT\030\005 \001(\001\022\020\n\010lo"
+				+ "gicleW\030\006 \001(\001\022\020\n\010logicleM\030\007 \001(\001\022\020\n\010logicl"
+				+ "eA\030\010 \001(\001" };
+		com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner = new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+			public com.google.protobuf.ExtensionRegistry assignDescriptors(
+					com.google.protobuf.Descriptors.FileDescriptor root) {
+				descriptor = root;
+				return null;
+			}
+		};
+		com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(descriptorData,
+				new com.google.protobuf.Descriptors.FileDescriptor[] {}, assigner);
+		internal_static_AnnotatedVectorsProto_descriptor = getDescriptor().getMessageTypes().get(0);
+		internal_static_AnnotatedVectorsProto_fieldAccessorTable = new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+				internal_static_AnnotatedVectorsProto_descriptor,
+				new java.lang.String[] { "VectorNames", "Keywords", "Vectors", });
+		internal_static_AnnotatedVectorsProto_Keyword_descriptor = internal_static_AnnotatedVectorsProto_descriptor
+				.getNestedTypes().get(0);
+		internal_static_AnnotatedVectorsProto_Keyword_fieldAccessorTable = new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+				internal_static_AnnotatedVectorsProto_Keyword_descriptor, new java.lang.String[] { "Key", "Value", });
+		internal_static_AnnotatedVectorsProto_Vector_descriptor = internal_static_AnnotatedVectorsProto_descriptor
+				.getNestedTypes().get(1);
+		internal_static_AnnotatedVectorsProto_Vector_fieldAccessorTable = new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+				internal_static_AnnotatedVectorsProto_Vector_descriptor, new java.lang.String[] { "Name", "Array",
+						"CompArray", "TransformPref", "LogicleT", "LogicleW", "LogicleM", "LogicleA", });
+	}
+
+	// @@protoc_insertion_point(outer_class_scope)
 }

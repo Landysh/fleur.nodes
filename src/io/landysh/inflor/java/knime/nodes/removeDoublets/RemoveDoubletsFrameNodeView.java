@@ -10,39 +10,39 @@ import org.knime.core.node.NodeView;
  */
 public class RemoveDoubletsFrameNodeView extends NodeView<RemoveDoubletsFrameNodeModel> {
 
-    /**
-     * Creates a new view.
-     * 
-     * @param nodeModel The model (class: {@link RemoveDoubletsFrameNodeModel})
-     */
-    protected RemoveDoubletsFrameNodeView(final RemoveDoubletsFrameNodeModel nodeModel) {
-        super(nodeModel);
-        // TODO: generated method stub
-    }
+	/**
+	 * Creates a new view.
+	 * 
+	 * @param nodeModel
+	 *            The model (class: {@link RemoveDoubletsFrameNodeModel})
+	 */
+	protected RemoveDoubletsFrameNodeView(final RemoveDoubletsFrameNodeModel nodeModel) {
+		super(nodeModel);
+		// TODO: generated method stub
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void modelChanged() {
-        // TODO: generated method stub
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void modelChanged() {
+		// TODO: generated method stub
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void onClose() {
-        // TODO: generated method stub
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void onClose() {
+		// TODO: generated method stub
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void onOpen() {
-        // TODO: generated method stub
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void onOpen() {
+		// TODO: generated method stub
+	}
 
 }
-

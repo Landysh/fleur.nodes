@@ -13,29 +13,28 @@ import org.knime.core.node.ExecutionContext;
 import org.knime.core.util.FileUtil;
 
 public class ColumnStoreCellFactory implements FromInputStream {
-	
-    /**
-     * The data type for cells created using this factory.
-     */
-    public static final DataType TYPE = ColumnStoreContent.TYPE;
-	
-    private FileStoreFactory m_fileStoreFactory;
-	
-    public ColumnStoreCellFactory(ExecutionContext exec){
-    	/**
-    	 * Use during node execution.
-    	 */
-    	this.m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-    }
-    
-    public ColumnStoreCellFactory(){
-    	/**
-    	 * Use with views
-    	 */
-    	this.m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
-    }
-    
-    
+
+	/**
+	 * The data type for cells created using this factory.
+	 */
+	public static final DataType TYPE = ColumnStoreContent.TYPE;
+
+	private FileStoreFactory m_fileStoreFactory;
+
+	public ColumnStoreCellFactory(ExecutionContext exec) {
+		/**
+		 * Use during node execution.
+		 */
+		this.m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+	}
+
+	public ColumnStoreCellFactory() {
+		/**
+		 * Use with views
+		 */
+		this.m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+	}
+
 	@Override
 	public DataType getDataType() {
 		return null;
@@ -43,14 +42,14 @@ public class ColumnStoreCellFactory implements FromInputStream {
 
 	@Override
 	public DataCell createCell(InputStream input) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        FileUtil.copy(input, output);
-        output.close();
-        byte[] buffer = output.toByteArray();
-		//Create the file store.
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		FileUtil.copy(input, output);
+		output.close();
+		byte[] buffer = output.toByteArray();
+		// Create the file store.
 		FileStore fs = m_fileStoreFactory.createFileStore("column.store");
-        ColumnStoreCell cell = new ColumnStoreContent(buffer).toColumnStoreCell(fs);
-        return cell;
+		ColumnStoreCell cell = new ColumnStoreContent(buffer).toColumnStoreCell(fs);
+		return cell;
 	}
-	
-}	
+
+}

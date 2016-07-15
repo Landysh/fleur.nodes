@@ -1,4 +1,5 @@
 package io.landysh.inflor.java.knime.views;
+
 import java.awt.Component;
 import java.awt.Dimension;
 
@@ -14,11 +15,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.DataValueRenderer;
 
-import io.landysh.inflor.java.core.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 
-public class CellLineageRenderer implements DataValueRenderer
-{
+public class CellLineageRenderer implements DataValueRenderer {
 
 	public static final String DESCRIPTION = "Cell Lineage View";
 
@@ -37,8 +37,8 @@ public class CellLineageRenderer implements DataValueRenderer
 
 	@Override
 	public boolean accepts(DataColumnSpec spec) {
-		//I guess this checks the spec to see if it is compatible.
-		if (spec.getType() == ColumnStoreCell.TYPE){
+		// I guess this checks the spec to see if it is compatible.
+		if (spec.getType() == ColumnStoreCell.TYPE) {
 			return true;
 		} else {
 			return false;
@@ -67,14 +67,14 @@ public class CellLineageRenderer implements DataValueRenderer
 	}
 
 	private static XYDataset createDataset(ColumnStore columns) {
-	    XYSeriesCollection result = new XYSeriesCollection();
-	    XYSeries series = new XYSeries("Random");
-	    double[] x = columns.getColumn(columns.getColumnNames()[0]);
-	    double[] y = columns.getColumn(columns.getColumnNames()[1]);
-	    for (int i=0;i<100;i++){
-	    	series.add(x[i], y[i]);
-	    	result.addSeries(series);
-	    }
-	    return result;
+		XYSeriesCollection result = new XYSeriesCollection();
+		XYSeries series = new XYSeries("Random");
+		double[] x = columns.getColumn(columns.getColumnNames()[0]);
+		double[] y = columns.getColumn(columns.getColumnNames()[1]);
+		for (int i = 0; i < 100; i++) {
+			series.add(x[i], y[i]);
+			result.addSeries(series);
+		}
+		return result;
 	}
 }
