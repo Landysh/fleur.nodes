@@ -67,7 +67,7 @@ public class PolygonGateTest {
 		Double[] d1Values = { 0., 0., 1., 1. };
 
 		String d2Name = "d2";
-		Double[] d2Values = { 0., 1., 0., 1. };
+		Double[] d2Values = { 0., 1., 1., 0. };
 
 		ConcurrentHashMap<String, double[]> testData = new ConcurrentHashMap<String, double[]>();
 		testData.put(d1Name, new double[] { 0.5 });

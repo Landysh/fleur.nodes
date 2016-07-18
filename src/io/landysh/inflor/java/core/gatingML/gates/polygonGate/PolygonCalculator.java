@@ -25,6 +25,7 @@ public class PolygonCalculator {
 		for (int i = 0; i < points.length; i++) {
 			points[i] = new Coordinate(D1.get(i), D2.get(i));
 		}
+		//TODO: this is wrong.
 		gate = factory.createPolygon(points);
 		event = factory.createPoint(new Coordinate());
 	}
