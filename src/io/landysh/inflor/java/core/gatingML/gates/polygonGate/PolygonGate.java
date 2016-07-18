@@ -1,7 +1,6 @@
 package io.landysh.inflor.java.core.gatingML.gates.polygonGate;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -64,7 +63,7 @@ public class PolygonGate extends AbstractGate {
 		boolean[] result = new boolean[rowCount];
 		double[] d1Data = data.get(d1.getName());
 		double[] d2Data = data.get(d2.getName());
-		for (int i = 0; i < d1Data.length; i++) {
+		for (int i=0; i<d1Data.length; i++) {
 			if (poly.isInside(d1Data[i], d2Data[i]) == true) {
 				result[i] = true;
 			} else {
@@ -145,7 +144,6 @@ public class PolygonGate extends AbstractGate {
 	public void setPoints(ArrayList<Double> d1Points, ArrayList<Double> d2Points) {
 		this.d1.setPoints(d1Points);
 		this.d2.setPoints(d2Points);
-
 	}
 
 	public Double[] getVertex(int index) {
@@ -153,3 +151,4 @@ public class PolygonGate extends AbstractGate {
 		return vertex;
 	}
 }
+//EOF

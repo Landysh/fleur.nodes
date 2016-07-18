@@ -31,6 +31,9 @@ import com.jujutsu.tsne.FastTSne;
 import com.jujutsu.tsne.MatrixOps;
 import com.jujutsu.tsne.TSne;
 
+import org.deeplearning4j.plot.BarnesHutTsne;
+
+
 /**
  * This is the model implementation of the TSNE node for the KNIME Analytics
  * Platform. Calculates a tSNE using library developed by Leif Jonsson:
@@ -92,7 +95,7 @@ public class TSNENodeModel extends NodeModel {
 		data = MatrixOps.centerAndScale(data);
 
 		TSne tsne = new FastTSne();
-
+		
 		double[][] Y = tsne.tsne(data, 2, -1, modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), false);
 
 		DataTableSpec newColSpec = createTableSpec(inData[0].getSpec());

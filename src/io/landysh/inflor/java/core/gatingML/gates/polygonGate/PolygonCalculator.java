@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 public class PolygonCalculator {
 
@@ -14,19 +15,26 @@ public class PolygonCalculator {
 	GeometryFactory factory;
 
 	public PolygonCalculator(ArrayList<Double> D1, ArrayList<Double> D2) {
-		if (D1.size() != D2.size()) {
+		if (D1.size() != D2.size() && D1.size() >= 3) {
 			String message = "d1 and d2 must have the name size";
 			IllegalArgumentException e = new IllegalArgumentException(message);
 			e.printStackTrace();
 			throw e;
 		}
 		factory = new GeometryFactory();
-		Coordinate[] points = new Coordinate[D1.size()];
-		for (int i = 0; i < points.length; i++) {
-			points[i] = new Coordinate(D1.get(i), D2.get(i));
+		
+	    ArrayList<Coordinate> points = new ArrayList<Coordinate>();
+		for (int i = 0; i < D1.size(); i++) {
+			points.add(new Coordinate(D1.get(i), D2.get(i)));
 		}
-		gate = factory.createPolygon(points);
-		event = factory.createPoint(new Coordinate());
+		//Close the loop manually.  Maybe a better way?
+		points.add(new Coordinate(D1.get(0), D2.get(0)));
+		
+		CoordinateArraySequence coords = new CoordinateArraySequence(points.toArray(new Coordinate[points.size()]));
+		//LinearRing ring = factory.createLinearRing();
+		
+	    gate = factory.createPolygon(coords);
+		event = factory.createPoint(new Coordinate(0,0));
 	}
 
 	public boolean isInside(double x, double y) {
@@ -35,3 +43,4 @@ public class PolygonCalculator {
 		return gate.contains(event);
 	}
 }
+//EOF

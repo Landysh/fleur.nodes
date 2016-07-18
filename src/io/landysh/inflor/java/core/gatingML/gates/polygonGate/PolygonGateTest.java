@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests;
+package io.landysh.inflor.java.core.gatingML.gates.polygonGate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Test;
-
-import io.landysh.inflor.java.core.gatingML.gates.polygonGate.PolygonGate;
 
 public class PolygonGateTest {
 
@@ -67,7 +65,7 @@ public class PolygonGateTest {
 		Double[] d1Values = { 0., 0., 1., 1. };
 
 		String d2Name = "d2";
-		Double[] d2Values = { 0., 1., 0., 1. };
+		Double[] d2Values = { 0., 1., 1., 0. };
 
 		ConcurrentHashMap<String, double[]> testData = new ConcurrentHashMap<String, double[]>();
 		testData.put(d1Name, new double[] { 0.5 });
@@ -85,7 +83,7 @@ public class PolygonGateTest {
 		boolean[] result = testGate.evaluate(testData, 1);
 
 		// Assert
-		assertEquals("Evaluated", result, new boolean[] { true });
+		assertEquals("Evaluated", result[0], true);
 		System.out.println("EventFrameTest::testEvaluate completed (succefully or otherwise)");
 	}
 }
