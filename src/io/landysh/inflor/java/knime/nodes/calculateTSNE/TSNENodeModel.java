@@ -31,8 +31,6 @@ import com.jujutsu.tsne.FastTSne;
 import com.jujutsu.tsne.MatrixOps;
 import com.jujutsu.tsne.TSne;
 
-import org.deeplearning4j.plot.BarnesHutTsne;
-
 
 /**
  * This is the model implementation of the TSNE node for the KNIME Analytics
