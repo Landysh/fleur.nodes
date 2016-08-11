@@ -98,31 +98,18 @@ public class FCSFileReader {
 		dataType = columnStore.getKeywordValue("$DATATYPE");
 	}
 
-	private String calculateSHA(byte[] inBytes) {
-		/**
-		 * Returns the SHA256 checksum of a byte array or the literal string
-		 * "Error" in the case of an exception being thrown during execution
-		 */
+	private String calculateSHA(byte[] inBytes) throws NoSuchAlgorithmException {
 		StringBuffer buffer = null;
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(inBytes);
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+		messageDigest.update(inBytes);
 
-			byte[] bytes = messageDigest.digest();
-			buffer = new StringBuffer();
-			for (int i = 0; i < bytes.length; i++) {
-				buffer.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-			}
+		byte[] bytes = messageDigest.digest();
+		buffer = new StringBuffer();
+		for (int i = 0; i < bytes.length; i++) {
+			buffer.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+		}
 
-		} catch (NoSuchAlgorithmException e) {
-			// Should never happen in this context. Algorithm is hard coded.
-			e.printStackTrace();
-		}
-		if (buffer != null) {
-			return buffer.toString();
-		} else {
-			throw new NullPointerException("Could not calculate SHA, byte buffer is null");
-		}
+		return buffer.toString();
 	}
 
 	public void close() throws IOException {
