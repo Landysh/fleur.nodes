@@ -21,8 +21,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/dl4j-examples"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/datavec-examples"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/dl4j-spark-examples"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
