@@ -8,16 +8,26 @@ import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.DataTableSpecCreator;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.container.DataContainer;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
 import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.data.filestore.FileStore;
+import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
+
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSVector;
+import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.knime.nodes.viabilityFilter.ViabilityModel;
+
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -46,8 +56,6 @@ public class CreateGatesNodeModel extends NodeModel {
      * Constructor for the node model.
      */
     protected CreateGatesNodeModel() {
-    
-        // TODO one incoming port and one outgoing port is assumed
         super(1, 1);
         
         m_settings = new GatingModelNodeSettings();
@@ -61,17 +69,48 @@ public class CreateGatesNodeModel extends NodeModel {
     protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
             final ExecutionContext exec) throws Exception {
 
-        // TODO do something here
-        logger.info("Executing Create Gates");
-        inData[0].spliterator();
-        DataContainer container;
-		// once we are done, we close the container and return its table
-        container.close();
-        BufferedDataTable out = container.getTable();
-        return new BufferedDataTable[]{out};
+        logger.info("Executing: Create Gates");
+		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+
+		// Create the output spec and data container.
+		DataTableSpec outSpec = createSpecs(inData[0].getSpec())[0];
+		BufferedDataContainer container = exec.createDataContainer(outSpec);
+		String columnName = m_settings.getSelectedColumn();
+		int index = outSpec.findColumnIndex(columnName);
+
+		int i = 0;
+		for (DataRow inRow : inData[0]) {
+			DataCell[] outCells = new DataCell[inRow.getNumCells()];
+			ColumnStore inStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+
+			// now create the output row
+			ColumnStore outStore = applyGates(inStore);
+			String fsName = i + "ColumnStore.fs";
+			FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+			ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+
+			for (int j = 0; j < outCells.length; j++) {
+				if (j == index) {
+					outCells[j] = fileCell;
+				} else {
+					outCells[j] = inRow.getCell(j);
+				}
+			}
+			DataRow outRow = new DefaultRow("Row " + i, outCells);
+			container.addRowToTable(outRow);
+			i++;
+		}
+		container.close();
+		return new BufferedDataTable[] { container.getTable() };
     }
 
-    /**
+    private ColumnStore applyGates(ColumnStore inStore) {
+		ColumnStore outStore = new ColumnStore(inStore.getKeywords(), inStore.getColumnNames());
+		//TODO
+		return outStore;
+	}
+
+	/**
      * {@inheritDoc}
      */
     @Override
@@ -88,16 +127,18 @@ public class CreateGatesNodeModel extends NodeModel {
     protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
             throws InvalidSettingsException {
         
-        // TODO: check if user settings are available, fit to the incoming
-        // table structure, and the incoming types are feasible for the node
-        // to execute. If the node can execute in its current state return
-        // the spec of its output data table(s) (if you can, otherwise an array
-        // with null elements), or throw an exception with a useful user message
+    	DataTableSpec[] outSpecs = createSpecs(inSpecs[0]);
 
-        return new DataTableSpec[]{inSpecs[0]};
+        return outSpecs;
     }
 
-    /**
+    private DataTableSpec[] createSpecs(DataTableSpec inSpec) {
+    	DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
+    	DataTableSpec outSpec = creator.createSpec();
+    	return new DataTableSpec[] {outSpec};
+	}
+
+	/**
      * {@inheritDoc}
      */
     @Override

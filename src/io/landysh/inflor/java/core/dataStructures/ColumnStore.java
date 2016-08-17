@@ -214,9 +214,8 @@ public class ColumnStore {
 
 	public double[] getColumn(String xName) {
 		double[] data;
-		try {
-			data = columnData.get(xName).getData(FCSVectorType.COMP);
-		} catch (NullPointerException e) {
+		data = columnData.get(xName).getData(FCSVectorType.COMP);
+		if (data==null) {
 			data = columnData.get(xName).getData(FCSVectorType.RAW);
 		}
 		return data;
