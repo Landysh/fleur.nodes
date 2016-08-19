@@ -22,7 +22,8 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import io.landysh.inflor.java.core.sne.BarnesHutTSNE;
+import com.jujutsu.tsne.FastTSne;
+
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 
 /**
@@ -56,19 +57,24 @@ public class BHTSNENodeModel extends NodeModel {
 		// get the data and write it to the container
 		ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
 		int rowCount = port.getColumnStore().getRowCount();
+		
+		//Get the settings we'll need
 		String[] features = m_settings.getFeatures();
 		int maxIters = m_settings.getIterations();
 		int perplexity = m_settings.getPerplexity();
-
+		int pcaDims = m_settings.getPCADims();
+		int outDims = m_settings.getFinalDimensions();
+		
+		//Initialize the data
 		double[][] X = new double[features.length][rowCount];
 
 		for (int i = 0; i < features.length; i++) {
 			X[i] = port.getColumnStore().getVector(features[i]).getData();
 		}
 
-		BarnesHutTSNE sne = new BarnesHutTSNE(X, maxIters, perplexity);
+		FastTSne sne = new FastTSne();
 
-		double[][] Y = sne.run();
+		double[][] Y = sne.tsne(X, outDims, pcaDims, perplexity, maxIters);
 
 		// create the output container
 		DataTableSpec spec = createSpec(inData[0].getSpec());

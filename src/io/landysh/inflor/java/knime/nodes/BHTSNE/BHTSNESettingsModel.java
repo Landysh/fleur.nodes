@@ -77,4 +77,11 @@ public class BHTSNESettingsModel {
 		m_Features.validateSettings(settings);
 	}
 
-}
+	public int getPCADims() {
+		return 5;
+	}
+
+	public int getFinalDimensions() {
+		return 2;
+	}
+};
