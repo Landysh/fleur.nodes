@@ -15,7 +15,7 @@
    
 <extension point="org.knime.workbench.repository.nodes">
 	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSTableNodeFactory" id="ReadFCSTable"/>
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.calculateTSNE.TSNENodeFactory" id="CalculateTSNE"/>
+	<node category-path="/inflor/experimental" factory-class="io.landysh.inflor.java.knime.nodes.calculateTSNE.TSNENodeFactory" id="CalculateTSNE"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.FindSingletsNodeFactory" id="FilterSingletsTable"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.learnCellCycle.LearnCellCycleNodeFactory" id="ModelCellCycle"/>
@@ -26,6 +26,8 @@
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory" id="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory" id="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory" id="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory" id="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
