@@ -5,15 +5,17 @@ import java.util.Arrays;
 public class VectorCalculator {
 
 	private double[] data;
+	private double[] sortedData;
 
 	private double min;
 	private double max;
 
 	public VectorCalculator(double[] data) {
 		this.data = data;
-		Arrays.parallelSort(this.data);
-		this.min = this.data[0];
-		this.max = this.data[this.data.length - 1];
+		this.sortedData = data.clone();
+		Arrays.parallelSort(this.sortedData);
+		this.min = this.sortedData[0];
+		this.max = this.sortedData[this.sortedData.length - 1];
 	}
 
 	public double getMax() {
@@ -25,6 +27,10 @@ public class VectorCalculator {
 	}
 
 	public double[] getSortedData() {
+		return this.sortedData;
+	}
+	
+	public double[] getRawData(){
 		return this.data;
 	}
 }

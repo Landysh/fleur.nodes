@@ -158,3 +158,4 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 			throws IOException, CanceledExecutionException {
 	}
 }
+//EOF

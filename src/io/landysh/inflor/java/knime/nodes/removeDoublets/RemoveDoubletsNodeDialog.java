@@ -122,8 +122,8 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 		ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
 		ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
 
-		areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
-		heightComponent.replaceListItems(heightChoices, heightChoices.get(0));
+		areaComponent.replaceListItems(areaChoices, null);
+		heightComponent.replaceListItems(heightChoices, null);
 
 	}
 
