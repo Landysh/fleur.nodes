@@ -30,6 +30,9 @@ public class GatingModelNodeSettings {
 	private static final String SELECTED_COLUMN_KEY = "Selected Column";
 	private String   selectedColumn;
 	
+	private static final String SELECTED_SAMPLE_KEY = "Selected Sample";
+	private String selectedSample;
+	
 	public void save(NodeSettingsWO settings) {
 		
 		savePlots(settings);
@@ -110,8 +113,17 @@ public class GatingModelNodeSettings {
 	}
 
 	public StringCell getSelectedColumnSettingsModel() {
-		// TODO Auto-generated method stub
+		//TODO:
 		return null;
+	}
+
+	public void setSelectedColumn(String newColumn) {
+		this.selectedColumn = newColumn;
+		
+	}
+
+	public void setSelectedSample(String newValue) {
+		this.selectedSample = newValue;
 	}
 }
 //EOF
