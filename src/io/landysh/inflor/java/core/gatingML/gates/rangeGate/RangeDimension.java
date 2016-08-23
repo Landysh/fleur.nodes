@@ -35,3 +35,4 @@ public class RangeDimension extends AbstractGMLDimension {
 		}
 	}
 }
+//EOF

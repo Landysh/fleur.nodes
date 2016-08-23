@@ -1,12 +1,14 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.gatingML.gates.GatingStrategy;
 import io.landysh.inflor.java.core.plots.AbstractFACSPlot;
@@ -14,12 +16,10 @@ import io.landysh.inflor.java.core.plots.AbstractFACSPlot;
 public class GatingModelNodeSettings {
 	
 	ConcurrentHashMap<String, GatingStrategy> 	m_analyses;
-	ConcurrentHashMap<String, AbstractFACSPlot> m_views;
-
 	
 	private static final String	 ANALYSIS_KEYS = "analyses";
 	
-	private static final String VIEW_KEYS = "views";
+	private static final String PLOT_KEYS_KEY = "views";
 
 	private static final String MODE_KEY = "AnalysisMode";
 	private String  mode = "FILTER";	
@@ -29,9 +29,15 @@ public class GatingModelNodeSettings {
 	
 	private static final String SELECTED_COLUMN_KEY = "Selected Column";
 	private String   selectedColumn;
-	
+	private static final String SELECTED_COLUMN_DEFAULT = "None";
+
 	private static final String SELECTED_SAMPLE_KEY = "Selected Sample";
 	private String selectedSample;
+	
+	private static final String PARAMETER_LIST_KEY = "Parameter List";
+	private String[] paramterList;
+	
+	private Hashtable<String, PlotSpec> plotSpecs;
 	
 	public void save(NodeSettingsWO settings) {
 		
@@ -40,18 +46,19 @@ public class GatingModelNodeSettings {
 		
 		String[] gateListArray = getAnalysisKeys(m_analyses);
 		settings.addStringArray(ANALYSIS_KEYS, gateListArray);
-		String[] viewList = getViewIDs(m_views);
-		settings.addStringArray(VIEW_KEYS, viewList);
-		
+		String[] plotList = getPlotIDs(plotSpecs);
+		settings.addStringArray(PLOT_KEYS_KEY, plotList);
+		settings.addString(SELECTED_SAMPLE_KEY, selectedSample);
+		settings.addStringArray(PARAMETER_LIST_KEY, paramterList);
 		settings.addString(MODE_KEY, mode);
 		settings.addString(GATING_ML_KEY, gml);
 		settings.addString(SELECTED_COLUMN_KEY, selectedColumn);
 	}
 
-	private String[] getViewIDs(ConcurrentHashMap<String, AbstractFACSPlot> plots2) {
+	private String[] getPlotIDs(Hashtable<String, PlotSpec> plotSpecs2) {
 		ArrayList<String> ids = new ArrayList<String>();
-		for (String key:m_views.keySet()){
-			ids.add(m_views.get(key).getId());
+		for (String key:plotSpecs.keySet()){
+			ids.add(plotSpecs.get(key).uuid);
 		}		
 		return ids.toArray(new String[ids.size()]);
 	}
@@ -71,19 +78,19 @@ public class GatingModelNodeSettings {
 	}
 
 	private void savePlots(NodeSettingsWO settings) {
-		for(String key:m_views.keySet()){
-			settings.addString(key, m_views.get(key).toXML().toString());
+		for(String key:plotSpecs.keySet()){
+			settings.addString(key, plotSpecs.get(key).saveToString());
 		}		
 	}
 
 	public void load(NodeSettingsRO settings) throws InvalidSettingsException {
 		
-		m_views = loadViews(settings);
+		plotSpecs = loadPlots(settings);
 		m_analyses = loadAnalyses(settings);
-		
 		mode = settings.getString(MODE_KEY);
 		gml = settings.getString(GATING_ML_KEY);
 		selectedColumn = settings.getString(SELECTED_COLUMN_KEY);
+		paramterList = settings.getStringArray(PARAMETER_LIST_KEY);
 	}
 
 	private ConcurrentHashMap<String, GatingStrategy> loadAnalyses(NodeSettingsRO settings) throws InvalidSettingsException {
@@ -95,11 +102,11 @@ public class GatingModelNodeSettings {
 		return newAnalyses;
 	}
 
-	private ConcurrentHashMap<String, AbstractFACSPlot> loadViews(NodeSettingsRO settings) throws InvalidSettingsException {
-		ConcurrentHashMap <String, AbstractFACSPlot> loadedPlots = new ConcurrentHashMap<String, AbstractFACSPlot>();
-		for (String plotKey:settings.getStringArray(VIEW_KEYS)){
-			AbstractFACSPlot plot = AbstractFACSPlot.load(settings.getString(plotKey));
-			loadedPlots.put(plot.getId(), plot);
+	private Hashtable<String, PlotSpec> loadPlots(NodeSettingsRO settings) throws InvalidSettingsException {
+		Hashtable <String, PlotSpec> loadedPlots = new Hashtable<String, PlotSpec>();
+		for (String plotKey:settings.getStringArray(PLOT_KEYS_KEY)){
+			PlotSpec spec = PlotSpec.load(settings.getString(plotKey));
+			loadedPlots.put(spec.uuid, spec);
 		}
 		return loadedPlots;
 	}
@@ -112,9 +119,9 @@ public class GatingModelNodeSettings {
 		return selectedColumn;
 	}
 
-	public StringCell getSelectedColumnSettingsModel() {
-		//TODO:
-		return null;
+	public SettingsModelString getSelectedColumnSettingsModel() {
+		//TODO: Where is this used?
+		return new SettingsModelString(SELECTED_COLUMN_KEY, SELECTED_COLUMN_DEFAULT);
 	}
 
 	public void setSelectedColumn(String newColumn) {
@@ -124,6 +131,23 @@ public class GatingModelNodeSettings {
 
 	public void setSelectedSample(String newValue) {
 		this.selectedSample = newValue;
+	}
+
+	public String[] getParameterList() {
+		return this.paramterList;
+	}
+
+	public void setParameterList(String[] newValues) {
+		this.paramterList = newValues;
+		
+	}
+
+	public void addPlotSpec(PlotSpec spec) {
+		this.plotSpecs.put(spec.uuid, spec);
+	}
+	
+	public void removePlotSpec(String uuidToRemove) {
+		this.plotSpecs.remove(uuidToRemove);
 	}
 }
 //EOF

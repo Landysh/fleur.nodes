@@ -58,3 +58,4 @@ public class RangeGate extends AbstractGate {
 		}
 	}
 }
+//EOF

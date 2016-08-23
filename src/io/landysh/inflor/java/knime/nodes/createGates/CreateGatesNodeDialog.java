@@ -1,13 +1,20 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
@@ -38,6 +45,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	JComboBox<String> fcsColumnBox;
 	JComboBox<String> selectSampleBox;
 	private JSpinner sampleSizeSpinner;
+	private JPanel analysisPanel;
+	LineageAnalysisPanel lineagePanel;
 
 	
 	protected CreateGatesNodeDialog() {
@@ -76,6 +85,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		selectSampleBox.setSelectedIndex(0);
 		selectSampleBox.addActionListener(new SampleBoxListener(this));
 		optionsPanel.add(selectSampleBox);
+		
 		//Select Sample Size
 		SpinnerNumberModel spinModel = new SpinnerNumberModel(10000, 0, 5000000, 1000);
 		sampleSizeSpinner = new JSpinner(spinModel);
@@ -87,17 +97,20 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	}
 
 	private JPanel createAnalysisArea() {
-		JPanel analysisPanel = new JPanel();
+        JButton addChartButton = new JButton("New plot.");
+        addChartButton.addActionListener(new AddPlotActionListener(this));
+
+		lineagePanel = new LineageAnalysisPanel();
+
+		analysisPanel = new JPanel();
 		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.Y_AXIS));
 		analysisPanel.add(Box.createVerticalGlue());
 		analysisPanel.add(Box.createHorizontalGlue());
-		analysisPanel.setBorder(BorderFactory.createTitledBorder(
-	                BorderFactory.createEtchedBorder(),
-	                "Analyis"));
+		analysisPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Analyis"));
+		analysisPanel.add(lineagePanel);
+        analysisPanel.add(addChartButton);
 		
-        JButton addChart = new JButton("Add chart...");
-        analysisPanel.add(addChart);
-		return analysisPanel;
+        return analysisPanel;
 	}
 
 	@Override
@@ -117,7 +130,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		}
 		
 		//Update Sample List
-		//TODO: This feels lame but should work.
 		String targetColumn = m_Settings.getSelectedColumn();
 		String[] names = input[0].getSpec().getColumnNames();
 		int index = -1;
@@ -125,28 +137,59 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			if (names[i].matches(targetColumn)){
 				index = i;
 			}
+		}	
+		if(index ==-1){
+			throw new NotConfigurableException("target column not in column list");
 		}
+		
 		//now read the sample names;
 		BufferedDataTable table = input[0];
 		selectSampleBox.removeAllItems();
 		selectSampleBox.addItem(DEFAULT_SAMPLE);
+
+		  HashSet <String> set = new HashSet <String>();
+
+		  //convert it back to array.    
 		if (input[0].size()>0){
 			for (DataRow row:table){
 				ColumnStoreCell cell = (ColumnStoreCell) row.getCell(index);
 				selectSampleBox.addItem(cell.getColumnStore().getKeywordValue("$FIL"));
+				List<String> newParameters = new ArrayList<String>(Arrays.asList(cell.getColumnStore().getColumnNames()));
+				set.addAll(newParameters);
 			}
 		}
+		m_Settings.setParameterList(set.toArray(new String[set.size()]));   
 		if (selectSampleBox.getModel().getSize()==1){
 			selectSampleBox.removeAllItems();
 			selectSampleBox.addItem("No Data Available!");
 		}
 		
-		//Load data?
+		//Load sample names.
+		
 	}
 
 	@Override
 	protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
 		m_Settings.save(settings);
+	}
+
+	public void addPlot() {
+		 // figure out the parent to be able to make the dialog modal
+		
+		JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(getPanel());
+        AddPlotDialog dialog = new AddPlotDialog(topFrame, m_Settings);
+        dialog.setVisible(true);
+
+        if (dialog.isOK) {
+            dialog.save();
+            updateLineagePanel();
+        }
+        dialog.dispose();
+	}
+
+	private void updateLineagePanel() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 //EOF
