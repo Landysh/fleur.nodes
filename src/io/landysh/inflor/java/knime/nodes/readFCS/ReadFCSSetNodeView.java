@@ -31,7 +31,7 @@ public class ReadFCSSetNodeView extends NodeView<ReadFCSSetNodeModel> {
 
 		// TODO retrieve the new model from your nodemodel and
 		// update the view.
-		ReadFCSSetNodeModel nodeModel = (ReadFCSSetNodeModel) getNodeModel();
+		final ReadFCSSetNodeModel nodeModel = getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve

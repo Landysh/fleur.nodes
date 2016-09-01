@@ -27,23 +27,25 @@ public class TSNENodeDialog extends DefaultNodeSettingsPane {
 	protected TSNENodeDialog() {
 		super();
 		// Column Filter Panel
-		SettingsModelColumnFilter2 modelColumns = new SettingsModelColumnFilter2(TSNENodeModel.CFGKEY_Columns);
-		DialogComponent diaC = new DialogComponentColumnFilter2(modelColumns, 0);
+		final SettingsModelColumnFilter2 modelColumns = new SettingsModelColumnFilter2(TSNENodeModel.CFGKEY_Columns);
+		final DialogComponent diaC = new DialogComponentColumnFilter2(modelColumns, 0);
 		addDialogComponent(diaC);
 
 		// Iterations
-		SettingsModelIntegerBounded modelIterations = new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_Iterations,
-				TSNENodeModel.DEFAULT_Iterations, TSNENodeModel.MIN_Iterations, TSNENodeModel.MAX_Iterations);
+		final SettingsModelIntegerBounded modelIterations = new SettingsModelIntegerBounded(
+				TSNENodeModel.CFGKEY_Iterations, TSNENodeModel.DEFAULT_Iterations, TSNENodeModel.MIN_Iterations,
+				TSNENodeModel.MAX_Iterations);
 		addDialogComponent(new DialogComponentNumber(modelIterations, "Runtime (Iterations)", 1));
 
 		// Initial PCA Dims
-		SettingsModelIntegerBounded modelInitDims = new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_InitDims,
+		final SettingsModelIntegerBounded modelInitDims = new SettingsModelIntegerBounded(TSNENodeModel.CFGKEY_InitDims,
 				TSNENodeModel.DEFAULT_InitDims, TSNENodeModel.MIN_InitDims, TSNENodeModel.MAX_InitDims);
 		addDialogComponent(new DialogComponentNumber(modelInitDims, "Initial Dimensions", 1));
 
 		// Perplexity
-		SettingsModelDoubleBounded modelPerplexity = new SettingsModelDoubleBounded(TSNENodeModel.CFGKEY_Perplexity,
-				TSNENodeModel.DEFAULT_Perplexity, TSNENodeModel.MIN_Perplexity, TSNENodeModel.MAX_Perplexity);
+		final SettingsModelDoubleBounded modelPerplexity = new SettingsModelDoubleBounded(
+				TSNENodeModel.CFGKEY_Perplexity, TSNENodeModel.DEFAULT_Perplexity, TSNENodeModel.MIN_Perplexity,
+				TSNENodeModel.MAX_Perplexity);
 		addDialogComponent(new DialogComponentNumber(modelPerplexity, "Perplexity", 1));
 	}
 

@@ -20,14 +20,23 @@ public class SingletsModel {
 		widthColumnNames = findColumns(columnNames, PuleProperties.WIDTH);
 	}
 
+	public double[] buildModel(double[] area, double[] height) {
+		final double[] ratioAH = ratio(area, height);
+		// This only really works for homogeneous particles.
+		final double minimum = StatUtils.percentile(ratioAH, 1);
+		final double median = StatUtils.percentile(ratioAH, 50);
+		ratioThreshold = (median - minimum) + median;
+		return ratioAH;
+	}
+
 	public ArrayList<String> findColumns(String[] columnNames, PuleProperties type) {
 		/**
 		 * Applies the regular expressions from the PulseProperties Enum.
 		 */
-		String[] expressions = type.regi();
+		final String[] expressions = type.regi();
 		ArrayList<String> foundColumns = new ArrayList<String>();
-		for (String s : columnNames) {
-			for (String regex : expressions) {
+		for (final String s : columnNames) {
+			for (final String regex : expressions) {
 				if (s.matches(regex)) {
 					foundColumns.add(s);
 				}
@@ -40,17 +49,8 @@ public class SingletsModel {
 		return foundColumns;
 	}
 
-	public double[] buildModel(double[] area, double[] height) {
-		double[] ratioAH = ratio(area, height);
-		// This only really works for homogeneous particles.
-		double minimum = StatUtils.percentile(ratioAH, 1);
-		double median = StatUtils.percentile(ratioAH, 50);
-		ratioThreshold = (median - minimum) + median;
-		return ratioAH;
-	}
-
 	private double[] ratio(double[] a, double[] b) {
-		double[] ratio = new double[a.length];
+		final double[] ratio = new double[a.length];
 		for (int i = 0; i < a.length; i++) {
 			ratio[i] = a[i] / b[i];
 		}
@@ -58,7 +58,7 @@ public class SingletsModel {
 	}
 
 	public boolean[] scoreModel(double[] ratio) {
-		boolean[] mask = new boolean[ratio.length];
+		final boolean[] mask = new boolean[ratio.length];
 		for (int i = 0; i < mask.length; i++) {
 			if (ratio[i] <= ratioThreshold) {
 				mask[i] = true;

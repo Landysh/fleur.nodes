@@ -10,7 +10,7 @@ public class ViabilityModel {
 	}
 
 	public void buildModel(FCSVector viabilityData) {
-		HistogramCalculator calc = new HistogramCalculator(viabilityData.getData(), false);
+		final HistogramCalculator calc = new HistogramCalculator(viabilityData.getData(), false);
 		calc.createBins(viabilityData.getDisplayRangeMin(), viabilityData.getDisplayRangeMax(), 512);
 		calc.findPeaks();
 	}

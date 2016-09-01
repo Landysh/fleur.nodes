@@ -1,6 +1,5 @@
 package io.landysh.inflor.tests;
 
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import io.landysh.inflor.java.core.singlets.SingletsModel;
@@ -22,20 +21,20 @@ public class SingletsModelTest {
 	String[] testParameters3 = { "FSC-A", "APC-A", "PE-Cy7-A", "PerCP-A", "PE-A", "FITC-A", "Time", "SSC-A",
 			"APC-Cy7-A" };
 
-	@Test
-	public void testFindColumnNames() throws Exception {
-		// Setup. Reference future new cases here.
-		SingletsModel model1 = new SingletsModel(testParameters1);
-		SingletsModel model2 = new SingletsModel(testParameters2);
-		SingletsModel model3 = new SingletsModel(testParameters3);
-
-		SingletsModel[] testModels = { model1, model2, model3 };
-
-		System.out.println("SingletsModel testFindColumnNames completed (succefully or otherwise)");
+	public void testCreateVectorPairs() {
 
 	}
 
-	public void testCreateVectorPairs() {
+	@Test
+	public void testFindColumnNames() throws Exception {
+		// Setup. Reference future new cases here.
+		final SingletsModel model1 = new SingletsModel(testParameters1);
+		final SingletsModel model2 = new SingletsModel(testParameters2);
+		final SingletsModel model3 = new SingletsModel(testParameters3);
+
+		final SingletsModel[] testModels = { model1, model2, model3 };
+
+		System.out.println("SingletsModel testFindColumnNames completed (succefully or otherwise)");
 
 	}
 }

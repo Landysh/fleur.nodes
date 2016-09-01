@@ -1,7 +1,7 @@
 package io.landysh.inflor.java.core.gatingML.gates;
 
 public abstract class AbstractGMLDimension {
-	private String name;
+	private final String name;
 	private String compensationRef;
 	private String transformationRef;
 
@@ -9,20 +9,20 @@ public abstract class AbstractGMLDimension {
 		this.name = name;
 	}
 
-	public String getName() {
-		return this.name;
-	}
-
 	public String getCompensationRef() {
 		return compensationRef;
 	}
 
-	public void setCompensationRef(String compensationRef) {
-		this.compensationRef = compensationRef;
+	public String getName() {
+		return name;
 	}
 
 	public String getTransformationRef() {
 		return transformationRef;
+	}
+
+	public void setCompensationRef(String compensationRef) {
+		this.compensationRef = compensationRef;
 	}
 
 	public void setTransformationRef(String transformationRef) {

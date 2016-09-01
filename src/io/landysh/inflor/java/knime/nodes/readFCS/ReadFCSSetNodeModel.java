@@ -49,11 +49,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	// Folder containing FCS Files.
 	static final String CFGKEY_PATH = "Path";
 	static final String DEFAULT_PATH = null;
-	private final SettingsModelString m_path = new SettingsModelString(CFGKEY_PATH, DEFAULT_PATH);
-
 	// Should we compensate?
 	static final String CFGKEY_COMPENSATE = "Compensate";
+
 	static final boolean DEFAULT_COMPENSATE = false;
+	private final SettingsModelString m_path = new SettingsModelString(CFGKEY_PATH, DEFAULT_PATH);
 	private final SettingsModelBoolean m_compensate = new SettingsModelBoolean(CFGKEY_COMPENSATE, DEFAULT_COMPENSATE);
 
 	/**
@@ -67,59 +67,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
-			throws Exception {
-
-		logger.info("Beginning Execution.");
-
-		// Create the output spec and data container.
-		DataTableSpec outSpec = createSpec();
-		BufferedDataContainer container = exec.createDataContainer(outSpec);
-		String[] filePaths = getFilePaths(m_path.getStringValue());
-		int rowCount = filePaths.length;
-
-		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-
-		// Read all the files.
-		for (int i = 0; i < rowCount; i++) {
-			RowKey key = new RowKey("Row " + i);
-			String pathToFile = filePaths[i];
-			FCSFileReader FCSReader = new FCSFileReader(pathToFile, m_compensate.getBooleanValue());
-			FCSReader.readData();
-			ColumnStore columnStore = FCSReader.getColumnStore();
-			String fsName = i + "ColumnStore.fs";
-			FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-			ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
-			DataCell[] cells = new DataCell[] { fileCell };
-
-			DataRow row = new DefaultRow(key, cells);
-			container.addRowToTable(row);
-
-			// check if the execution monitor was canceled
-			exec.checkCanceled();
-			exec.setProgress(i / (double) rowCount, "Reading file " + (i + 1));
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
+		DataTableSpec spec;
+		try {
+			spec = createSpec();
+		} catch (final Exception e) {
+			final InvalidSettingsException ise = new InvalidSettingsException(
+					"Unable to read headers of 1 or more FCS Files.");
+			ise.printStackTrace();
+			throw ise;
 		}
-		// once we are done, we close the container and return its table
-		container.close();
-		BufferedDataTable out = container.getTable();
-		return new BufferedDataTable[] { out };
-	}
-
-	private DataTableSpec createSpec() throws Exception {
-		DataColumnSpec[] colSpecs = new DataColumnSpec[] { createFCSColumnSpec() };
-		DataTableSpec tableSpec = new DataTableSpec(colSpecs);
-		return tableSpec;
-	}
-
-	private DataColumnSpec createFCSColumnSpec() throws Exception {
-		DataColumnSpecCreator creator = new DataColumnSpecCreator("FCS Frame", ColumnStoreCell.TYPE);
-		// Create properties
-		Hashtable<String, String> content = createColumnPropertiesContent();
-		DataColumnProperties properties = new DataColumnProperties(content);
-		creator.setProperties(properties);
-		// Create spec
-		DataColumnSpec dcs = creator.createSpec();
-		return dcs;
+		return new DataTableSpec[] { spec };
 	}
 
 	private Hashtable<String, String> createColumnPropertiesContent() throws Exception {
@@ -127,17 +85,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
 		 * Creates column properties for an FCS Set by looking all of the
 		 * headers and setting shared keyword values.
 		 */
-		Hashtable<String, ArrayList<String>> contentArray = new Hashtable<String, ArrayList<String>>();
-		String[] filePaths = getFilePaths(m_path.getStringValue());
+		final Hashtable<String, ArrayList<String>> contentArray = new Hashtable<String, ArrayList<String>>();
+		final String[] filePaths = getFilePaths(m_path.getStringValue());
 		// For each file
-		for (String path : filePaths) {
-			FCSFileReader FCSReader = new FCSFileReader(path, false);
-			Hashtable<String, String> header = FCSReader.getHeader();
-			Enumeration<String> keys = header.keys();
+		for (final String path : filePaths) {
+			final FCSFileReader FCSReader = new FCSFileReader(path, false);
+			final Hashtable<String, String> header = FCSReader.getHeader();
+			final Enumeration<String> keys = header.keys();
 			// for each keyword
 			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				String value = header.get(key);
+				final String key = keys.nextElement();
+				final String value = header.get(key);
 				// If the keyword has been seen already
 				if (contentArray.containsKey(key)) {
 					// See if the value is new, if it isn't
@@ -149,80 +107,112 @@ public class ReadFCSSetNodeModel extends NodeModel {
 					}
 				} else {
 					// if the keyword is new, add it and its value.
-					ArrayList<String> values = new ArrayList<String>();
+					final ArrayList<String> values = new ArrayList<String>();
 					values.add(value);
 					contentArray.put(key, values);
 				}
 			}
 		}
 		// Now aggregate into a reasonable Hashtable<String String>
-		Hashtable<String, String> content = new Hashtable<String, String>();
-		Enumeration<String> contentKeys = contentArray.keys();
+		final Hashtable<String, String> content = new Hashtable<String, String>();
+		final Enumeration<String> contentKeys = contentArray.keys();
 
 		while (contentKeys.hasMoreElements()) {
-			String key = contentKeys.nextElement();
-			ArrayList<String> values = contentArray.get(key);
+			final String key = contentKeys.nextElement();
+			final ArrayList<String> values = contentArray.get(key);
 			if (values.size() == 1) {
 				content.put(key, values.get(0));
 			} else {
-				String newVal = Joiner.on(',').join(values);
+				final String newVal = Joiner.on(',').join(values);
 				content.put(key, newVal);
 			}
 		}
 		return content;
 	}
 
+	private DataColumnSpec createFCSColumnSpec() throws Exception {
+		final DataColumnSpecCreator creator = new DataColumnSpecCreator("FCS Frame", ColumnStoreCell.TYPE);
+		// Create properties
+		final Hashtable<String, String> content = createColumnPropertiesContent();
+		final DataColumnProperties properties = new DataColumnProperties(content);
+		creator.setProperties(properties);
+		// Create spec
+		final DataColumnSpec dcs = creator.createSpec();
+		return dcs;
+	}
+
+	private DataTableSpec createSpec() throws Exception {
+		final DataColumnSpec[] colSpecs = new DataColumnSpec[] { createFCSColumnSpec() };
+		final DataTableSpec tableSpec = new DataTableSpec(colSpecs);
+		return tableSpec;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws Exception {
+
+		logger.info("Beginning Execution.");
+
+		// Create the output spec and data container.
+		final DataTableSpec outSpec = createSpec();
+		final BufferedDataContainer container = exec.createDataContainer(outSpec);
+		final String[] filePaths = getFilePaths(m_path.getStringValue());
+		final int rowCount = filePaths.length;
+
+		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+
+		// Read all the files.
+		for (int i = 0; i < rowCount; i++) {
+			final RowKey key = new RowKey("Row " + i);
+			final String pathToFile = filePaths[i];
+			final FCSFileReader FCSReader = new FCSFileReader(pathToFile, m_compensate.getBooleanValue());
+			FCSReader.readData();
+			final ColumnStore columnStore = FCSReader.getColumnStore();
+			final String fsName = i + "ColumnStore.fs";
+			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+			final DataCell[] cells = new DataCell[] { fileCell };
+
+			final DataRow row = new DefaultRow(key, cells);
+			container.addRowToTable(row);
+
+			// check if the execution monitor was canceled
+			exec.checkCanceled();
+			exec.setProgress(i / (double) rowCount, "Reading file " + (i + 1));
+		}
+		// once we are done, we close the container and return its table
+		container.close();
+		final BufferedDataTable out = container.getTable();
+		return new BufferedDataTable[] { out };
+	}
+
 	private String[] getFilePaths(String dirPath) {
 		/**
 		 * Returns a list of valid FCS Files from the chose directory.
 		 */
-		File folder = new File(dirPath);
-		File[] files = folder.listFiles();
-		ArrayList<String> validFiles = new ArrayList<String>();
-		for (int i = 0; i < files.length; i++) {
-			String filePath = files[i].getAbsolutePath();
+		final File folder = new File(dirPath);
+		final File[] files = folder.listFiles();
+		final ArrayList<String> validFiles = new ArrayList<String>();
+		for (final File file : files) {
+			final String filePath = file.getAbsolutePath();
 			if (FCSFileReader.isValidFCS(filePath) == true) {
 				validFiles.add(filePath);
-			} else if (files[i].isDirectory()) {
-				System.out.println("Directory " + files[i].getName());
+			} else if (file.isDirectory()) {
+				System.out.println("Directory " + file.getName());
 			}
 		}
-		return (String[]) validFiles.toArray(new String[validFiles.size()]);
+		return validFiles.toArray(new String[validFiles.size()]);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void reset() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
-		DataTableSpec spec;
-		try {
-			spec = createSpec();
-		} catch (Exception e) {
-			InvalidSettingsException ise = new InvalidSettingsException(
-					"Unable to read headers of 1 or more FCS Files.");
-			ise.printStackTrace();
-			throw ise;
-		}
-		return new DataTableSpec[] { spec };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
-		m_path.saveSettingsTo(settings);
-		// m_selectedKeywords.saveSettingsTo(settings);
-		m_compensate.saveSettingsTo(settings);
-		// m_selectedFiles.saveSettingsTo(settings);
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
 	}
 
 	/**
@@ -241,20 +231,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-
-		m_path.validateSettings(settings);
-		// m_selectedKeywords.validateSettings(settings);
-		m_compensate.validateSettings(settings);
-		// m_selectedFiles.validateSettings(settings);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
+	protected void reset() {
 	}
 
 	/**
@@ -263,5 +240,28 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+		m_path.saveSettingsTo(settings);
+		// m_selectedKeywords.saveSettingsTo(settings);
+		m_compensate.saveSettingsTo(settings);
+		// m_selectedFiles.saveSettingsTo(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		m_path.validateSettings(settings);
+		// m_selectedKeywords.validateSettings(settings);
+		m_compensate.validateSettings(settings);
+		// m_selectedFiles.validateSettings(settings);
 	}
 }

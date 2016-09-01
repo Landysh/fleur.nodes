@@ -34,9 +34,9 @@ import io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeModel;
  */
 public class RemoveDoubletsNodeModel extends NodeModel {
 
-	RemoveDoubletsSettingsModel m_settings = new RemoveDoubletsSettingsModel();
-
 	private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSSetNodeModel.class);
+
+	RemoveDoubletsSettingsModel m_settings = new RemoveDoubletsSettingsModel();
 
 	/**
 	 * Constructor for the node model.
@@ -49,53 +49,9 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
-			throws Exception {
-
-		logger.info("Beginning Execution.");
-		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-
-		// Create the output spec and data container.
-		DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
-		BufferedDataContainer container = exec.createDataContainer(outSpec);
-		String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
-		int index = outSpec.findColumnIndex(columnName);
-		String areaColumn = m_settings.getAreaColumnSettingsModel().getStringValue();
-		String heightColumn = m_settings.getHeightColumnSettingsModel().getStringValue();
-
-		int i = 0;
-		for (DataRow inRow : inData[0]) {
-			DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
-			SingletsModel model = new SingletsModel(columnStore.getColumnNames());
-			double[] areaData = columnStore.getColumn(areaColumn);
-			double[] heightData = columnStore.getColumn(heightColumn);
-			double[] ratio = model.buildModel(areaData, heightData);
-			boolean[] mask = model.scoreModel(ratio);
-
-			// now create the output row
-			ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
-			for (String name : columnStore.getColumnNames()) {
-				double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
-				outStore.addColumn(name, maskedColumn);
-			}
-			String fsName = i + "ColumnStore.fs";
-			FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-			ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
-
-			for (int j = 0; j < outCells.length; j++) {
-				if (j == index) {
-					outCells[j] = fileCell;
-				} else {
-					outCells[j] = inRow.getCell(j);
-				}
-			}
-			DataRow outRow = new DefaultRow("Row " + i, outCells);
-			container.addRowToTable(outRow);
-			i++;
-		}
-		container.close();
-		return new BufferedDataTable[] { container.getTable() };
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
+		final DataTableSpec spec = createSpec(inSpecs[0]);
+		return new DataTableSpec[] { spec };
 	}
 
 	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
@@ -106,40 +62,53 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void reset() {
-	}
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws Exception {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
-		DataTableSpec spec = createSpec(inSpecs[0]);
-		return new DataTableSpec[] { spec };
-	}
+		logger.info("Beginning Execution.");
+		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
-		m_settings.save(settings);
-	}
+		// Create the output spec and data container.
+		final DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
+		final BufferedDataContainer container = exec.createDataContainer(outSpec);
+		final String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
+		final int index = outSpec.findColumnIndex(columnName);
+		final String areaColumn = m_settings.getAreaColumnSettingsModel().getStringValue();
+		final String heightColumn = m_settings.getHeightColumnSettingsModel().getStringValue();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-		m_settings.load(settings);
-	}
+		int i = 0;
+		for (final DataRow inRow : inData[0]) {
+			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
+			final ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			final SingletsModel model = new SingletsModel(columnStore.getColumnNames());
+			final double[] areaData = columnStore.getColumn(areaColumn);
+			final double[] heightData = columnStore.getColumn(heightColumn);
+			final double[] ratio = model.buildModel(areaData, heightData);
+			final boolean[] mask = model.scoreModel(ratio);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-		m_settings.validate(settings);
+			// now create the output row
+			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
+			for (final String name : columnStore.getColumnNames()) {
+				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
+				outStore.addColumn(name, maskedColumn);
+			}
+			final String fsName = i + "ColumnStore.fs";
+			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+
+			for (int j = 0; j < outCells.length; j++) {
+				if (j == index) {
+					outCells[j] = fileCell;
+				} else {
+					outCells[j] = inRow.getCell(j);
+				}
+			}
+			final DataRow outRow = new DefaultRow("Row " + i, outCells);
+			container.addRowToTable(outRow);
+			i++;
+		}
+		container.close();
+		return new BufferedDataTable[] { container.getTable() };
 	}
 
 	/**
@@ -154,8 +123,39 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+		m_settings.load(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+		m_settings.save(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+		m_settings.validate(settings);
+	}
 }
-//EOF
+// EOF

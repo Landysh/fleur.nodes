@@ -5,23 +5,23 @@ import java.util.concurrent.ExecutionException;
 
 //UnderConstruction, do not use.
 public interface VectorStore {
-	void setName(String s);
-
-	void setData(Double[] data);
-
-	void setKeywords(Hashtable<String, String> keywords);
+	Object deserialize(byte[] bytes);
 
 	void finalize() throws ExecutionException;
 
 	String getChecksum() throws ExecutionException;
 
+	double[] getData() throws ExecutionException;
+
 	String getName() throws ExecutionException;
 
 	String getUUID() throws ExecutionException;
 
-	double[] getData() throws ExecutionException;
-
 	byte[] serialize();
 
-	Object deserialize(byte[] bytes);
+	void setData(Double[] data);
+
+	void setKeywords(Hashtable<String, String> keywords);
+
+	void setName(String s);
 }

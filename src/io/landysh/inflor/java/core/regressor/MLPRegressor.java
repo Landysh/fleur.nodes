@@ -18,7 +18,7 @@ public class MLPRegressor {
 
 	public double[] predict(double[][] x) {
 
-		double[] yp = null;
+		final double[] yp = null;
 		return yp;
 	}
 

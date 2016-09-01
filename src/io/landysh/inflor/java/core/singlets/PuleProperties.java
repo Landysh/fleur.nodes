@@ -10,6 +10,6 @@ public enum PuleProperties {
 	}
 
 	public String[] regi() {
-		return this.regi;
+		return regi;
 	}
 }

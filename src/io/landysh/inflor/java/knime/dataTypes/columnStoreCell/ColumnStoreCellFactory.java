@@ -19,37 +19,37 @@ public class ColumnStoreCellFactory implements FromInputStream {
 	 */
 	public static final DataType TYPE = ColumnStoreContent.TYPE;
 
-	private FileStoreFactory m_fileStoreFactory;
-
-	public ColumnStoreCellFactory(ExecutionContext exec) {
-		/**
-		 * Use during node execution.
-		 */
-		this.m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-	}
+	private final FileStoreFactory m_fileStoreFactory;
 
 	public ColumnStoreCellFactory() {
 		/**
 		 * Use with views
 		 */
-		this.m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+		m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+	}
+
+	public ColumnStoreCellFactory(ExecutionContext exec) {
+		/**
+		 * Use during node execution.
+		 */
+		m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+	}
+
+	@Override
+	public DataCell createCell(InputStream input) throws IOException {
+		final ByteArrayOutputStream output = new ByteArrayOutputStream();
+		FileUtil.copy(input, output);
+		output.close();
+		final byte[] buffer = output.toByteArray();
+		// Create the file store.
+		final FileStore fs = m_fileStoreFactory.createFileStore("column.store");
+		final ColumnStoreCell cell = new ColumnStoreContent(buffer).toColumnStoreCell(fs);
+		return cell;
 	}
 
 	@Override
 	public DataType getDataType() {
 		return null;
-	}
-
-	@Override
-	public DataCell createCell(InputStream input) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		FileUtil.copy(input, output);
-		output.close();
-		byte[] buffer = output.toByteArray();
-		// Create the file store.
-		FileStore fs = m_fileStoreFactory.createFileStore("column.store");
-		ColumnStoreCell cell = new ColumnStoreContent(buffer).toColumnStoreCell(fs);
-		return cell;
 	}
 
 }

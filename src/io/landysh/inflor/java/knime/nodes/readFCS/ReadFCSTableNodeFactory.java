@@ -15,16 +15,16 @@ public class ReadFCSTableNodeFactory extends NodeFactory<ReadFCSTableNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReadFCSTableNodeModel createNodeModel() {
-		return new ReadFCSTableNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new ReadFCSNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public ReadFCSTableNodeModel createNodeModel() {
+		return new ReadFCSTableNodeModel();
 	}
 
 	/**
@@ -39,16 +39,16 @@ public class ReadFCSTableNodeFactory extends NodeFactory<ReadFCSTableNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new ReadFCSNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

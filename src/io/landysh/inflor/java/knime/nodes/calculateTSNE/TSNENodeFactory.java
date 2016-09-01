@@ -16,16 +16,16 @@ public class TSNENodeFactory extends NodeFactory<TSNENodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public TSNENodeModel createNodeModel() {
-		return new TSNENodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new TSNENodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public TSNENodeModel createNodeModel() {
+		return new TSNENodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class TSNENodeFactory extends NodeFactory<TSNENodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new TSNENodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

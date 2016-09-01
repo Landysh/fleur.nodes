@@ -34,17 +34,17 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	public static final class Serializer extends PortObjectSerializer<ColumnStorePortObject> {
 
 		@Override
-		public void savePortObject(final ColumnStorePortObject portObject, final PortObjectZipOutputStream out,
-				final ExecutionMonitor exec) throws IOException, CanceledExecutionException {
-			portObject.save(out);
+		public ColumnStorePortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec,
+				ExecutionMonitor exec) throws IOException, CanceledExecutionException {
+			final ColumnStorePortObject avsPortObject = new ColumnStorePortObject();
+			avsPortObject.load(in, spec);
+			return avsPortObject;
 		}
 
 		@Override
-		public ColumnStorePortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec,
-				ExecutionMonitor exec) throws IOException, CanceledExecutionException {
-			ColumnStorePortObject avsPortObject = new ColumnStorePortObject();
-			avsPortObject.load(in, spec);
-			return avsPortObject;
+		public void savePortObject(final ColumnStorePortObject portObject, final PortObjectZipOutputStream out,
+				final ExecutionMonitor exec) throws IOException, CanceledExecutionException {
+			portObject.save(out);
 		}
 	}
 
@@ -53,49 +53,12 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	private static final String COLUMNS_NAME = "column_names";
 	private static final String MODEL_NAME = "column_store_model";
 
-	private ColumnStorePortSpec m_spec;
-	private WeakReference<ColumnStoreContent> m_columnStore;
-	private String[] m_columnNames;
-
-	public void save(PortObjectZipOutputStream out) throws IOException {
-		ModelContent content = new ModelContent(MODEL_NAME);
-		content.addStringArray(COLUMNS_NAME, m_columnNames);
-		content.saveToXML(out);
-
-	}
-
-	private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
-			throws IOException, CanceledExecutionException {
-		m_spec = (ColumnStorePortSpec) spec;
-		m_columnStore = new WeakReference<ColumnStoreContent>(null);
-		ModelContentRO contentRO = ModelContent.loadFromXML(in);
-		try {
-			m_columnNames = contentRO.getStringArray(COLUMNS_NAME);
-		} catch (InvalidSettingsException ise) {
-			IOException ioe = new IOException("Unable to restore meta information: " + ise.getMessage());
-			ioe.initCause(ise);
-			throw ioe;
-		}
-	}
-
-	public ColumnStorePortObject(ColumnStorePortSpec spec, ColumnStore vectorStore, FileStore fileStore) {
-		super(Lists.newArrayList(fileStore));
-		m_spec = spec;
-		ColumnStoreContent content = new ColumnStoreContent(vectorStore);
-		m_columnStore = new WeakReference<ColumnStoreContent>(content);
-		m_columnNames = vectorStore.getColumnNames();
-	}
-
-	public ColumnStorePortObject() {
-		// to be used in conjunction only with .load().
-	}
-
 	public static ColumnStorePortObject createPortObject(final ColumnStorePortSpec spec, final ColumnStore columnStore,
 			final FileStore fileStore) {
 		final ColumnStorePortObject portObject = new ColumnStorePortObject(spec, columnStore, fileStore);
 		try {
 			serialize(columnStore, fileStore);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException("Something went wrong during serialization.", e);
 		}
 		return portObject;
@@ -108,13 +71,31 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		}
 	}
 
+	private ColumnStorePortSpec m_spec;
+
+	private WeakReference<ColumnStoreContent> m_columnStore;
+
+	private String[] m_columnNames;
+
+	public ColumnStorePortObject() {
+		// to be used in conjunction only with .load().
+	}
+
+	public ColumnStorePortObject(ColumnStorePortSpec spec, ColumnStore vectorStore, FileStore fileStore) {
+		super(Lists.newArrayList(fileStore));
+		m_spec = spec;
+		final ColumnStoreContent content = new ColumnStoreContent(vectorStore);
+		m_columnStore = new WeakReference<ColumnStoreContent>(content);
+		m_columnNames = vectorStore.getColumnNames();
+	}
+
 	private ColumnStore deserialize() throws IOException {
 		final File file = getFileStore(0).getFile();
 		ColumnStore vectorStore;
 		try {
-			FileInputStream input = new FileInputStream(file);
+			final FileInputStream input = new FileInputStream(file);
 			vectorStore = ColumnStore.load(input);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			throw new IOException();
 		}
@@ -122,39 +103,18 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	}
 
 	public ColumnStore getColumnStore() {
-		ColumnStoreContent content = m_columnStore.get();
+		final ColumnStoreContent content = m_columnStore.get();
 		ColumnStore cs = null;
 		if (content == null) {
 			try {
 				cs = deserialize();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new IllegalStateException("Error in deserialization.", e);
 			}
-			ColumnStoreContent newContent = new ColumnStoreContent(cs);
+			final ColumnStoreContent newContent = new ColumnStoreContent(cs);
 			m_columnStore = new WeakReference<ColumnStoreContent>(newContent);
 		}
 		return cs;
-	}
-
-	@Override
-	public String getSummary() {
-		Integer pCount = m_columnNames.length;
-		Integer rowCount = m_columnStore.get().getColumnStore().getRowCount();
-		String message = "vector set containing " + pCount + " parameters and " + rowCount + " rows ";
-		return message;
-	}
-
-	@Override
-	public PortObjectSpec getSpec() {
-		return m_spec;
-	}
-
-	@Override
-	public JComponent[] getViews() {
-		ColumnStore columnStore = getColumnStore();
-		JComponent lineageView = ColumnStoreViewFactory.createLineageView(columnStore);
-		JComponent[] components = new JComponent[] { lineageView };
-		return components;
 	}
 
 	public Hashtable<String, String> getHeader() {
@@ -163,6 +123,48 @@ public class ColumnStorePortObject extends FileStorePortObject {
 
 	public String[] getParameterList() {
 		return m_columnNames;
+	}
+
+	@Override
+	public PortObjectSpec getSpec() {
+		return m_spec;
+	}
+
+	@Override
+	public String getSummary() {
+		final Integer pCount = m_columnNames.length;
+		final Integer rowCount = m_columnStore.get().getColumnStore().getRowCount();
+		final String message = "vector set containing " + pCount + " parameters and " + rowCount + " rows ";
+		return message;
+	}
+
+	@Override
+	public JComponent[] getViews() {
+		final ColumnStore columnStore = getColumnStore();
+		final JComponent lineageView = ColumnStoreViewFactory.createLineageView(columnStore);
+		final JComponent[] components = new JComponent[] { lineageView };
+		return components;
+	}
+
+	private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
+			throws IOException, CanceledExecutionException {
+		m_spec = (ColumnStorePortSpec) spec;
+		m_columnStore = new WeakReference<ColumnStoreContent>(null);
+		final ModelContentRO contentRO = ModelContent.loadFromXML(in);
+		try {
+			m_columnNames = contentRO.getStringArray(COLUMNS_NAME);
+		} catch (final InvalidSettingsException ise) {
+			final IOException ioe = new IOException("Unable to restore meta information: " + ise.getMessage());
+			ioe.initCause(ise);
+			throw ioe;
+		}
+	}
+
+	public void save(PortObjectZipOutputStream out) throws IOException {
+		final ModelContent content = new ModelContent(MODEL_NAME);
+		content.addStringArray(COLUMNS_NAME, m_columnNames);
+		content.saveToXML(out);
+
 	}
 
 	public ColumnStoreCell toTableCell(FileStore fs) {

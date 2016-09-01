@@ -30,19 +30,19 @@ import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellCol
  */
 public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 
-	private RemoveDoubletsSettingsModel m_settings = new RemoveDoubletsSettingsModel();
+	private static final String AREA_LABEL = "Area Parameter";
+
+	private static final String HEIGHT_LABEL = "Height Parameter";
+	private static final String COLUMN_LABEL = "Input Column";
+	private final RemoveDoubletsSettingsModel m_settings = new RemoveDoubletsSettingsModel();
 
 	public DialogComponentStringSelection areaComponent;
 	public DialogComponentStringSelection heightComponent;
 	public DialogComponentColumnNameSelection columnSelectionComponent;
 
-	private static final String AREA_LABEL = "Area Parameter";
-	private static final String HEIGHT_LABEL = "Height Parameter";
-	private static final String COLUMN_LABEL = "Input Column";
-
 	protected RemoveDoubletsNodeDialog() {
 		super();
-		ArrayList<String> defaultChoices = new ArrayList<String>();
+		final ArrayList<String> defaultChoices = new ArrayList<String>();
 		defaultChoices.add("None");
 
 		// Input column selector
@@ -62,13 +62,31 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
-	protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
-		try {
-			m_settings.load(settings);
-		} catch (Exception e) {
-			throw new NotConfigurableException("Unable to load settings.");
+	public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
+			throws NotConfigurableException {
+		final DataTableSpec spec = specs[0];
+		final String name = m_settings.getSelectedColumnSettingsModel().getStringValue();
+
+		final DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
+		final Enumeration<String> keys = properties.properties();
+		final Hashtable<String, String> keywords = new Hashtable<String, String>();
+		while (keys.hasMoreElements()) {
+			final String key = keys.nextElement();
+			final String value = properties.getProperty(key);
+			keywords.put(key, value);
 		}
+
+		final String[] vectorNames = FCSUtils.parseParameterList(keywords);
+		final SingletsModel model = new SingletsModel(vectorNames);
+
+		final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
+		final ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
+
+		areaComponent.replaceListItems(areaChoices, null);
+		heightComponent.replaceListItems(heightChoices, null);
+
 	}
 
 	// protected void loadSettingsFrom(NodeSettingsRO settings,
@@ -100,31 +118,13 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 	// }
 	// }
 
-	/** {@inheritDoc} */
 	@Override
-	public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
-			throws NotConfigurableException {
-		DataTableSpec spec = specs[0];
-		String name = m_settings.getSelectedColumnSettingsModel().getStringValue();
-
-		DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
-		Enumeration<String> keys = properties.properties();
-		Hashtable<String, String> keywords = new Hashtable<String, String>();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
-			String value = properties.getProperty(key);
-			keywords.put(key, value);
+	protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
+		try {
+			m_settings.load(settings);
+		} catch (final Exception e) {
+			throw new NotConfigurableException("Unable to load settings.");
 		}
-
-		String[] vectorNames = FCSUtils.parseParameterList(keywords);
-		SingletsModel model = new SingletsModel(vectorNames);
-
-		ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
-		ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
-
-		areaComponent.replaceListItems(areaChoices, null);
-		heightComponent.replaceListItems(heightChoices, null);
-
 	}
 
 }

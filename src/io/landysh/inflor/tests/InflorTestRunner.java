@@ -6,8 +6,8 @@ import org.junit.runner.notification.Failure;
 
 public class InflorTestRunner {
 	public static void main(String[] args) {
-		Result result = JUnitCore.runClasses(InflorTestSuite.class);
-		for (Failure failure : result.getFailures()) {
+		final Result result = JUnitCore.runClasses(InflorTestSuite.class);
+		for (final Failure failure : result.getFailures()) {
 			System.out.println(failure.toString());
 		}
 	}

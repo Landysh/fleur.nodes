@@ -1,4 +1,4 @@
-/* @(#)$RCSfile$ 
+/* @(#)$RCSfile$
  * $Revision$ $Date$ $Author$
  *
  */
@@ -18,6 +18,15 @@ import org.osgi.framework.BundleContext;
 public class ReadFCSNodePlugin extends Plugin {
 	// The shared instance.
 	private static ReadFCSNodePlugin plugin;
+
+	/**
+	 * Returns the shared instance.
+	 * 
+	 * @return Singleton instance of the Plugin
+	 */
+	public static ReadFCSNodePlugin getDefault() {
+		return plugin;
+	}
 
 	/**
 	 * The constructor.
@@ -53,15 +62,6 @@ public class ReadFCSNodePlugin extends Plugin {
 	public void stop(final BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
-	}
-
-	/**
-	 * Returns the shared instance.
-	 * 
-	 * @return Singleton instance of the Plugin
-	 */
-	public static ReadFCSNodePlugin getDefault() {
-		return plugin;
 	}
 
 }

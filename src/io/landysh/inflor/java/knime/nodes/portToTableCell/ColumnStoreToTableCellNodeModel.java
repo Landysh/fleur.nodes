@@ -47,6 +47,18 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
 
 	/**
 	 * {@inheritDoc}
+	 */
+	@Override
+	protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
+		final DataColumnSpecCreator colSpec = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE);
+		colSpec.setProperties(new DataColumnProperties(Collections
+				.singletonMap(DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
+		final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
+		return new DataTableSpec[] { spec };
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * 
 	 * @throws CanceledExecutionException
 	 */
@@ -54,70 +66,30 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
 	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
 			throws CanceledExecutionException {
 		// create the output container
-		DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
-		DataTableSpec spec = new DataTableSpec(colSpecs);
-		BufferedDataContainer container = exec.createDataContainer(spec);
+		final DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
+		final DataTableSpec spec = new DataTableSpec(colSpecs);
+		final BufferedDataContainer container = exec.createDataContainer(spec);
 
 		// Create the file store
-		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 		FileStore fs;
 		try {
 			fs = fileStoreFactory.createFileStore("column.store");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			throw new CanceledExecutionException("Unable to create FileStore, cancelling execution.");
 		}
 
 		// get the data and write it to the container
-		ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
-		DataCell[] dataCells = new DataCell[] { port.toTableCell(fs) };
-		DataRow dataRow = new DefaultRow("Row 0", dataCells);
+		final ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
+		final DataCell[] dataCells = new DataCell[] { port.toTableCell(fs) };
+		final DataRow dataRow = new DefaultRow("Row 0", dataCells);
 		container.addRowToTable(dataRow);
 
 		// cleanup and create the table
 		container.close();
-		BufferedDataTable table = container.getTable();
+		final BufferedDataTable table = container.getTable();
 		return new BufferedDataTable[] { table };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void reset() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
-		DataColumnSpecCreator colSpec = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE);
-		colSpec.setProperties(new DataColumnProperties(Collections
-				.singletonMap(DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
-		org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
-		return new DataTableSpec[] { spec };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
 	}
 
 	/**
@@ -132,7 +104,35 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
 	}
 }

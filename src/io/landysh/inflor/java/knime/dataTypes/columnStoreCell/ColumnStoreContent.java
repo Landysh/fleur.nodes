@@ -14,27 +14,18 @@ import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 
 public class ColumnStoreContent {
 
-	private ColumnStore m_data = null;
-
-	public ColumnStoreContent(byte[] buffer) throws InvalidProtocolBufferException {
-		this.m_data = ColumnStore.load(buffer);
-	}
-
-	public ColumnStoreContent(ColumnStore vectorStore) {
-		this.m_data = vectorStore;
-	}
-
 	public static final class CellSerializer implements DataCellSerializer<ColumnStoreCell> {
 
+		@Override
 		public ColumnStoreCell deserialize(DataCellDataInput input) throws IOException {
 			try {
-				byte[] bytes = new byte[input.readInt()];
+				final byte[] bytes = new byte[input.readInt()];
 				input.readFully(bytes);
 				ColumnStore cStore;
 				cStore = ColumnStore.load(bytes);
-				ColumnStoreCell newCell = new ColumnStoreCell(cStore);
+				final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
 				return newCell;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				throw new IOException("Error during deserialization");
 			}
@@ -42,7 +33,7 @@ public class ColumnStoreContent {
 
 		@Override
 		public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
-			byte[] bytes = cell.getColumnStore().save();
+			final byte[] bytes = cell.getColumnStore().save();
 			output.writeInt(bytes.length);
 			output.write(bytes);
 		}
@@ -50,11 +41,21 @@ public class ColumnStoreContent {
 
 	public static final DataType TYPE = DataType.getType(ColumnStoreCell.class);
 
-	public ColumnStoreCell toColumnStoreCell(FileStore fs) {
-		return new ColumnStoreCell(fs, m_data);
+	private ColumnStore m_data = null;
+
+	public ColumnStoreContent(byte[] buffer) throws InvalidProtocolBufferException {
+		m_data = ColumnStore.load(buffer);
+	}
+
+	public ColumnStoreContent(ColumnStore vectorStore) {
+		m_data = vectorStore;
 	}
 
 	public ColumnStore getColumnStore() {
-		return this.m_data;
+		return m_data;
+	}
+
+	public ColumnStoreCell toColumnStoreCell(FileStore fs) {
+		return new ColumnStoreCell(fs, m_data);
 	}
 }

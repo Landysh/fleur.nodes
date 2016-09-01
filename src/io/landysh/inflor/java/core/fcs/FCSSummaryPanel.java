@@ -19,8 +19,8 @@ public class FCSSummaryPanel extends JPanel {
 	public FCSSummaryPanel(Hashtable<String, String> header) {
 		super(new GridBagLayout());
 		super.setName("FCS Summary");
-		JTable table = new JTable(6, 2);
-		JTableHeader tableHeader = new JTableHeader();
+		final JTable table = new JTable(6, 2);
+		final JTableHeader tableHeader = new JTableHeader();
 
 		table.setTableHeader(tableHeader);
 		table.setValueAt("Event Count", 0, 0);
@@ -41,7 +41,7 @@ public class FCSSummaryPanel extends JPanel {
 		table.setValueAt("Acquisition End", 5, 0);
 		table.setValueAt(header.get("$ETIM"), 5, 1);
 
-		GridBagConstraints gbc = new GridBagConstraints();
+		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridx = 0;
 		gbc.weightx = 1;

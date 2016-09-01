@@ -55,8 +55,8 @@ public class BHTSNENodeDialog extends DefaultNodeSettingsPane {
 	@Override
 	public void loadAdditionalSettingsFrom(final NodeSettingsRO settings, final PortObjectSpec[] specs)
 			throws NotConfigurableException {
-		ColumnStorePortSpec spec = (ColumnStorePortSpec) specs[0];
-		String[] vectorNames = spec.columnNames;
+		final ColumnStorePortSpec spec = (ColumnStorePortSpec) specs[0];
+		final String[] vectorNames = spec.columnNames;
 		m_settings.getFeaturesModel().setStringArrayValue(vectorNames);
 		featuresComponent.replaceListItems(Arrays.asList(vectorNames), vectorNames[0]);
 	}

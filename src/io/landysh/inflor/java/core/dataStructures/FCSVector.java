@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class FCSVector {
 
-	private String parameterName;
+	private final String parameterName;
 	private String stainName;
 	private int parameterindex;
-	private String uuid;
+	private final String uuid;
 	private Hashtable<FCSVectorType, double[]> data;
 	private boolean isCompensated;
 	private Hashtable<String, String> keywords;
@@ -18,16 +18,8 @@ public class FCSVector {
 	public FCSVector(String name) {
 		parameterName = name;
 		uuid = UUID.randomUUID().toString();
-		this.data = new Hashtable<FCSVectorType, double[]>();
-		this.keywords = new Hashtable<String, String>();
-	}
-
-	public String getUUID() {
-		return this.uuid;
-	}
-
-	public String getKeyword(String name) {
-		return this.keywords.get(name);
+		data = new Hashtable<FCSVectorType, double[]>();
+		keywords = new Hashtable<String, String>();
 	}
 
 	public FCSVector(String name, double[] data) {
@@ -36,8 +28,30 @@ public class FCSVector {
 		uuid = UUID.randomUUID().toString();
 	}
 
-	public void setData(double[] newData, FCSVectorType type) {
-		data.put(type, newData);
+	public double[] getData() {
+		double[] array;
+		try {
+			array = data.get(FCSVectorType.COMP);
+		} catch (final NullPointerException e) {
+			array = data.get(FCSVectorType.RAW);
+		}
+		return array;
+	}
+
+	public double[] getData(FCSVectorType type) {
+		return data.get(type);
+	}
+
+	public double getDisplayRangeMax() {
+		return displayRangeMax;
+	}
+
+	public double getDisplayRangeMin() {
+		return displayRangeMin;
+	}
+
+	public String getKeyword(String name) {
+		return keywords.get(name);
 	}
 
 	public String getName() {
@@ -54,36 +68,24 @@ public class FCSVector {
 		return name;
 	}
 
-	public double[] getData(FCSVectorType type) {
-		return data.get(type);
-	}
-
-	public void setRawValue(int i, double d) {
-		this.data.get(FCSVectorType.RAW)[i] = d;
-	}
-
-	public void setCompValue(int i, double d) {
-		this.data.get(FCSVectorType.COMP)[i] = d;
-	}
-
-	public void setSize(int rowCount) {
-		this.data.put(FCSVectorType.RAW, new double[rowCount]);
-	}
-
-	public int getSize() {
-		return this.data.get(FCSVectorType.RAW).length;
-	}
-
 	public int getParameterindex() {
 		return parameterindex;
 	}
 
-	public double getDisplayRangeMax() {
-		return displayRangeMax;
+	public int getSize() {
+		return data.get(FCSVectorType.RAW).length;
 	}
 
-	public double getDisplayRangeMin() {
-		return displayRangeMin;
+	public String getUUID() {
+		return uuid;
+	}
+
+	public void setCompValue(int i, double d) {
+		data.get(FCSVectorType.COMP)[i] = d;
+	}
+
+	public void setData(double[] newData, FCSVectorType type) {
+		data.put(type, newData);
 	}
 
 	public void setDisplayRangeMax(double displayRangeMax) {
@@ -94,14 +96,12 @@ public class FCSVector {
 		this.displayRangeMin = displayRangeMin;
 	}
 
-	public double[] getData() {
-		double[] array;
-		try {
-			array = data.get(FCSVectorType.COMP);
-		} catch (NullPointerException e) {
-			array = data.get(FCSVectorType.RAW);
-		}
-		return array;
+	public void setRawValue(int i, double d) {
+		data.get(FCSVectorType.RAW)[i] = d;
+	}
+
+	public void setSize(int rowCount) {
+		data.put(FCSVectorType.RAW, new double[rowCount]);
 	}
 
 }

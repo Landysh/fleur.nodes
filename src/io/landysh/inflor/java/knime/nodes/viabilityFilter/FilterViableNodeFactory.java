@@ -16,16 +16,16 @@ public class FilterViableNodeFactory extends NodeFactory<FilterViableNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public FilterViableNodeModel createNodeModel() {
-		return new FilterViableNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new FilterViableNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public FilterViableNodeModel createNodeModel() {
+		return new FilterViableNodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class FilterViableNodeFactory extends NodeFactory<FilterViableNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new FilterViableNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

@@ -16,16 +16,16 @@ public class DownsampleNodeFactory extends NodeFactory<DownsampleNodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DownsampleNodeModel createNodeModel() {
-		return new DownsampleNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new DownsampleNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public DownsampleNodeModel createNodeModel() {
+		return new DownsampleNodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class DownsampleNodeFactory extends NodeFactory<DownsampleNodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new DownsampleNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

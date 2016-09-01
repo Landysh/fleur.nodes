@@ -7,7 +7,7 @@ public class BooleanAccumulator implements BinaryOperator<boolean[]> {
 	BooleanOperator operator;
 
 	public BooleanAccumulator(BooleanOperator op) {
-		this.operator = op;
+		operator = op;
 	}
 
 	@Override
@@ -24,20 +24,8 @@ public class BooleanAccumulator implements BinaryOperator<boolean[]> {
 		}
 	}
 
-	private boolean[] applyOR(boolean[] t, boolean[] u) {
-		boolean[] result = new boolean[t.length];
-		for (int i = 0; i < t.length; i++) {
-			if (t[i] == true || u[i] == true) {
-				result[i] = true;
-			} else {
-				result[i] = false;
-			}
-		}
-		return result;
-	}
-
 	private boolean[] applyAND(boolean[] t, boolean[] u) {
-		boolean[] result = new boolean[t.length];
+		final boolean[] result = new boolean[t.length];
 		for (int i = 0; i < t.length; i++) {
 			if (t[i] == true && u[i] == true) {
 				result[i] = true;
@@ -49,12 +37,24 @@ public class BooleanAccumulator implements BinaryOperator<boolean[]> {
 	}
 
 	private boolean[] applyNOT(boolean[] t, boolean[] u) {
-		boolean[] result = new boolean[t.length];
+		final boolean[] result = new boolean[t.length];
 		for (int i = 0; i < t.length; i++) {
 			if (t[i] == true || u[i] == true) {
 				result[i] = false;
 			} else {
 				result[i] = true;
+			}
+		}
+		return result;
+	}
+
+	private boolean[] applyOR(boolean[] t, boolean[] u) {
+		final boolean[] result = new boolean[t.length];
+		for (int i = 0; i < t.length; i++) {
+			if (t[i] == true || u[i] == true) {
+				result[i] = true;
+			} else {
+				result[i] = false;
 			}
 		}
 		return result;

@@ -30,7 +30,7 @@ public class ColumnStoreToTableCellNodeView extends NodeView<ColumnStoreToTableC
 
 		// TODO retrieve the new model from your nodemodel and
 		// update the view.
-		ColumnStoreToTableCellNodeModel nodeModel = (ColumnStoreToTableCellNodeModel) getNodeModel();
+		final ColumnStoreToTableCellNodeModel nodeModel = getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve

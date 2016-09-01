@@ -51,27 +51,39 @@ public class DownsampleNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected PortObjectSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
+		final ColumnStorePortSpec portSpec = (ColumnStorePortSpec) inSpecs[0];
+
+		final ColumnStorePortSpec outSpec = new ColumnStorePortSpec(portSpec.keywords, portSpec.columnNames,
+				portSpec.getRowCount());
+		return new ColumnStorePortSpec[] { outSpec };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) throws Exception {
-		ColumnStorePortObject inPort = (ColumnStorePortObject) inData[0];
-		ColumnStorePortSpec inSpec = (ColumnStorePortSpec) inPort.getSpec();
-		ColumnStore inColumnStore = inPort.getColumnStore();
-		int inSize = inColumnStore.getRowCount();
-		int downSize = m_Size.getIntValue();
-		ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), inColumnStore.getColumnNames());
+		final ColumnStorePortObject inPort = (ColumnStorePortObject) inData[0];
+		final ColumnStorePortSpec inSpec = (ColumnStorePortSpec) inPort.getSpec();
+		final ColumnStore inColumnStore = inPort.getColumnStore();
+		final int inSize = inColumnStore.getRowCount();
+		final int downSize = m_Size.getIntValue();
+		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), inColumnStore.getColumnNames());
 		if (downSize >= inSize) {
 			outStore.setData(inColumnStore.getData());
 		} else {
-			boolean[] mask = getShuffledMask(inSize, downSize);
-			for (String name : inColumnStore.getColumnNames()) {
-				double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getColumn(name));
+			final boolean[] mask = getShuffledMask(inSize, downSize);
+			for (final String name : inColumnStore.getColumnNames()) {
+				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getColumn(name));
 				outStore.addColumn(name, maskedColumn);
 			}
 		}
 
-		ColumnStorePortSpec outSpec = getSpec(inSpec);
-		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-		FileStore filestore = fileStoreFactory.createFileStore("column.store");
-		ColumnStorePortObject outPort = ColumnStorePortObject.createPortObject(outSpec, outStore, filestore);
+		final ColumnStorePortSpec outSpec = getSpec(inSpec);
+		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+		final FileStore filestore = fileStoreFactory.createFileStore("column.store");
+		final ColumnStorePortObject outPort = ColumnStorePortObject.createPortObject(outSpec, outStore, filestore);
 
 		return new ColumnStorePortObject[] { outPort };
 	}
@@ -83,17 +95,17 @@ public class DownsampleNodeModel extends NodeModel {
 		 * The_modern_algorithm
 		 */
 		// make an array of indices
-		int[] indices = new int[inSize];
+		final int[] indices = new int[inSize];
 		for (int i = 0; i < inSize; i++) {
 			indices[i] = i;
 		}
 		// Init random number
-		Random rand = new Random((long) -1);
-		boolean[] mask = new boolean[inSize];
+		final Random rand = new Random(-1);
+		final boolean[] mask = new boolean[inSize];
 		// The knuthy part
 		for (int i = 0; i < downSize; i++) {
-			int pos = i + rand.nextInt(inSize - i);
-			int temp = indices[pos];
+			final int pos = i + rand.nextInt(inSize - i);
+			final int temp = indices[pos];
 			indices[pos] = indices[i];
 			indices[i] = temp;
 			mask[temp] = true;
@@ -102,7 +114,7 @@ public class DownsampleNodeModel extends NodeModel {
 	}
 
 	private ColumnStorePortSpec getSpec(ColumnStorePortSpec inSpec) {
-		ColumnStorePortSpec outSpec = new ColumnStorePortSpec(inSpec.keywords, inSpec.columnNames,
+		final ColumnStorePortSpec outSpec = new ColumnStorePortSpec(inSpec.keywords, inSpec.columnNames,
 				inSpec.getRowCount());
 		return outSpec;
 	}
@@ -111,31 +123,8 @@ public class DownsampleNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
-		// Also data handled in load/saveInternals will be erased here.
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected PortObjectSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
-		ColumnStorePortSpec portSpec = (ColumnStorePortSpec) inSpecs[0];
-
-		ColumnStorePortSpec outSpec = new ColumnStorePortSpec(portSpec.keywords, portSpec.columnNames,
-				portSpec.getRowCount());
-		return new ColumnStorePortSpec[] { outSpec };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
-
-		m_Size.saveSettingsTo(settings);
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
 
 	}
 
@@ -152,21 +141,10 @@ public class DownsampleNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-		if (m_Size.getIntValue() >= 1) {
-			m_Size.validateSettings(settings);
-		} else {
-			throw new InvalidSettingsException("Downsample size must be greater than 1");
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-
+	protected void reset() {
+		// TODO Code executed on reset.
+		// Models build during execute are cleared here.
+		// Also data handled in load/saveInternals will be erased here.
 	}
 
 	/**
@@ -176,6 +154,28 @@ public class DownsampleNodeModel extends NodeModel {
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+
+		m_Size.saveSettingsTo(settings);
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+		if (m_Size.getIntValue() >= 1) {
+			m_Size.validateSettings(settings);
+		} else {
+			throw new InvalidSettingsException("Downsample size must be greater than 1");
+		}
 	}
 
 }

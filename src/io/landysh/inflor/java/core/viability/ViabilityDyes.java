@@ -11,6 +11,6 @@ public enum ViabilityDyes {
 	}
 
 	public String[] regi() {
-		return this.regi;
+		return regi;
 	}
 }

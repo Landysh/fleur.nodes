@@ -38,16 +38,16 @@ public class RemoveDoubletsFrameNodeDialog extends DefaultNodeSettingsPane {
 
 	protected RemoveDoubletsFrameNodeDialog() {
 		super();
-		ArrayList<String> defaultChoices = new ArrayList<String>();
+		final ArrayList<String> defaultChoices = new ArrayList<String>();
 		defaultChoices.add("None");
 		// Area Selector
-		SettingsModelString m_areaStringSetting = new SettingsModelString(
+		final SettingsModelString m_areaStringSetting = new SettingsModelString(
 				RemoveDoubletsFrameNodeModel.CFGKEY_AreaColumn, RemoveDoubletsFrameNodeModel.DEFAULT_AreaColumn);
 		areaComponent = new DialogComponentStringSelection(m_areaStringSetting, AREA_LABEL, defaultChoices);
 		addDialogComponent(areaComponent);
 
 		// height Selector
-		SettingsModelString m_heightStringSetting = new SettingsModelString(
+		final SettingsModelString m_heightStringSetting = new SettingsModelString(
 				RemoveDoubletsFrameNodeModel.CFGKEY_HeightColumn, RemoveDoubletsFrameNodeModel.DEFAULT_HeightColumn);
 		heightComponent = new DialogComponentStringSelection(m_heightStringSetting, HEIGHT_LABEL, defaultChoices);
 		addDialogComponent(heightComponent);
@@ -58,12 +58,12 @@ public class RemoveDoubletsFrameNodeDialog extends DefaultNodeSettingsPane {
 	@Override
 	public void loadAdditionalSettingsFrom(final NodeSettingsRO settings, final PortObjectSpec[] specs)
 			throws NotConfigurableException {
-		ColumnStorePortSpec spec = (ColumnStorePortSpec) specs[0];
-		String[] vectorNames = spec.columnNames;
-		SingletsModel model = new SingletsModel(vectorNames);
+		final ColumnStorePortSpec spec = (ColumnStorePortSpec) specs[0];
+		final String[] vectorNames = spec.columnNames;
+		final SingletsModel model = new SingletsModel(vectorNames);
 
-		ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
-		ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
+		final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
+		final ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
 
 		areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
 		heightComponent.replaceListItems(heightChoices, heightChoices.get(0));

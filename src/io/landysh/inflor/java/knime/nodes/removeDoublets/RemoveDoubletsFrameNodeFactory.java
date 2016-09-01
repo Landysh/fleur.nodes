@@ -16,16 +16,16 @@ public class RemoveDoubletsFrameNodeFactory extends NodeFactory<RemoveDoubletsFr
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RemoveDoubletsFrameNodeModel createNodeModel() {
-		return new RemoveDoubletsFrameNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new RemoveDoubletsFrameNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public RemoveDoubletsFrameNodeModel createNodeModel() {
+		return new RemoveDoubletsFrameNodeModel();
 	}
 
 	/**
@@ -41,16 +41,16 @@ public class RemoveDoubletsFrameNodeFactory extends NodeFactory<RemoveDoubletsFr
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new RemoveDoubletsFrameNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

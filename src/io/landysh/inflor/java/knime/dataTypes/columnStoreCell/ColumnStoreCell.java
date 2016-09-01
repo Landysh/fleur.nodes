@@ -16,51 +16,51 @@ public class ColumnStoreCell extends FileStoreCell {
 	public static final class ColumnStoreCellSerializer implements DataCellSerializer<ColumnStoreCell> {
 
 		@Override
-		public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
-			byte[] bytes = cell.getColumnStore().save();
-			output.writeInt(bytes.length);
-			output.write(bytes);
-		}
-
-		@Override
 		public ColumnStoreCell deserialize(DataCellDataInput input) throws IOException {
 			try {
-				byte[] bytes = new byte[input.readInt()];
+				final byte[] bytes = new byte[input.readInt()];
 				input.readFully(bytes);
 				ColumnStore cStore;
 				cStore = ColumnStore.load(bytes);
-				ColumnStoreCell newCell = new ColumnStoreCell(cStore);
+				final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
 				return newCell;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				throw new IOException("Error during deserialization");
 			}
 		}
+
+		@Override
+		public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
+			final byte[] bytes = cell.getColumnStore().save();
+			output.writeInt(bytes.length);
+			output.write(bytes);
+		}
 	}
 
+	private static final long serialVersionUID = 1L;
+	public static final DataType TYPE = DataType.getType(ColumnStoreCell.class, ColumnStoreCell.TYPE);
 	/**
 	 * A cell type matching the functionality of the ColumnStorePortObject.
 	 */
-	private ColumnStore m_data;
-	private static final long serialVersionUID = 1L;
-	public static final DataType TYPE = DataType.getType(ColumnStoreCell.class, ColumnStoreCell.TYPE);
-
-	public ColumnStoreCell(FileStore fs, ColumnStore cStore) {
-		super(fs);
-		this.m_data = cStore;
-	}
+	private final ColumnStore m_data;
 
 	ColumnStoreCell(ColumnStore cStore) {
 		// Use with deserializer.
-		this.m_data = cStore;
+		m_data = cStore;
+	}
+
+	public ColumnStoreCell(FileStore fs, ColumnStore cStore) {
+		super(fs);
+		m_data = cStore;
+	}
+
+	public ColumnStore getColumnStore() {
+		return m_data;
 	}
 
 	@Override
 	public String toString() {
-		return this.m_data.getKeywordValue("$FIL");
-	}
-
-	public ColumnStore getColumnStore() {
-		return this.m_data;
+		return m_data.getKeywordValue("$FIL");
 	}
 }

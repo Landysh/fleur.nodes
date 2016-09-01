@@ -4,1357 +4,40 @@ package io.landysh.inflor.java.core.proto;
 // source: NamedVectorMessage.proto
 
 public final class NamedVectorMessage {
-	private NamedVectorMessage() {
-	}
-
-	public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
-	}
-
-	public interface NamedVectorsMessageOrBuilder extends
-			// @@protoc_insertion_point(interface_extends:NamedVectorsMessage)
-			com.google.protobuf.MessageOrBuilder {
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		boolean hasName();
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		java.lang.String getName();
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		com.google.protobuf.ByteString getNameBytes();
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		boolean hasUuid();
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		java.lang.String getUuid();
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		com.google.protobuf.ByteString getUuidBytes();
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		boolean hasChecksum();
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		java.lang.String getChecksum();
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		com.google.protobuf.ByteString getChecksumBytes();
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList();
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index);
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		int getKeywordsCount();
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList();
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index);
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		java.util.List<java.lang.Double> getDataList();
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		int getDataCount();
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		double getData(int index);
-	}
-
 	/**
 	 * Protobuf type {@code NamedVectorsMessage}
 	 */
 	public static final class NamedVectorsMessage extends com.google.protobuf.GeneratedMessage implements
 			// @@protoc_insertion_point(message_implements:NamedVectorsMessage)
 			NamedVectorsMessageOrBuilder {
-		// Use NamedVectorsMessage.newBuilder() to construct.
-		private NamedVectorsMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-			super(builder);
-			this.unknownFields = builder.getUnknownFields();
-		}
-
-		private NamedVectorsMessage(boolean noInit) {
-			this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-		}
-
-		private static final NamedVectorsMessage defaultInstance;
-
-		public static NamedVectorsMessage getDefaultInstance() {
-			return defaultInstance;
-		}
-
-		public NamedVectorsMessage getDefaultInstanceForType() {
-			return defaultInstance;
-		}
-
-		private final com.google.protobuf.UnknownFieldSet unknownFields;
-
-		@java.lang.Override
-		public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-			return this.unknownFields;
-		}
-
-		private NamedVectorsMessage(com.google.protobuf.CodedInputStream input,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-						throws com.google.protobuf.InvalidProtocolBufferException {
-			initFields();
-			int mutable_bitField0_ = 0;
-			com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
-					.newBuilder();
-			try {
-				boolean done = false;
-				while (!done) {
-					int tag = input.readTag();
-					switch (tag) {
-					case 0:
-						done = true;
-						break;
-					default: {
-						if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-							done = true;
-						}
-						break;
-					}
-					case 10: {
-						com.google.protobuf.ByteString bs = input.readBytes();
-						bitField0_ |= 0x00000001;
-						name_ = bs;
-						break;
-					}
-					case 18: {
-						com.google.protobuf.ByteString bs = input.readBytes();
-						bitField0_ |= 0x00000002;
-						uuid_ = bs;
-						break;
-					}
-					case 26: {
-						com.google.protobuf.ByteString bs = input.readBytes();
-						bitField0_ |= 0x00000004;
-						checksum_ = bs;
-						break;
-					}
-					case 34: {
-						if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-							keywords_ = new java.util.ArrayList<NamedVectorMessage.NamedVectorsMessage.Keyword>();
-							mutable_bitField0_ |= 0x00000008;
-						}
-						keywords_.add(input.readMessage(NamedVectorMessage.NamedVectorsMessage.Keyword.PARSER,
-								extensionRegistry));
-						break;
-					}
-					case 41: {
-						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-							data_ = new java.util.ArrayList<java.lang.Double>();
-							mutable_bitField0_ |= 0x00000010;
-						}
-						data_.add(input.readDouble());
-						break;
-					}
-					case 42: {
-						int length = input.readRawVarint32();
-						int limit = input.pushLimit(length);
-						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
-							data_ = new java.util.ArrayList<java.lang.Double>();
-							mutable_bitField0_ |= 0x00000010;
-						}
-						while (input.getBytesUntilLimit() > 0) {
-							data_.add(input.readDouble());
-						}
-						input.popLimit(limit);
-						break;
-					}
-					}
-				}
-			} catch (com.google.protobuf.InvalidProtocolBufferException e) {
-				throw e.setUnfinishedMessage(this);
-			} catch (java.io.IOException e) {
-				throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage()).setUnfinishedMessage(this);
-			} finally {
-				if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-					keywords_ = java.util.Collections.unmodifiableList(keywords_);
-				}
-				if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-					data_ = java.util.Collections.unmodifiableList(data_);
-				}
-				this.unknownFields = unknownFields.build();
-				makeExtensionsImmutable();
-			}
-		}
-
-		public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-			return NamedVectorMessage.internal_static_NamedVectorsMessage_descriptor;
-		}
-
-		protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
-			return NamedVectorMessage.internal_static_NamedVectorsMessage_fieldAccessorTable
-					.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.class,
-							NamedVectorMessage.NamedVectorsMessage.Builder.class);
-		}
-
-		public static com.google.protobuf.Parser<NamedVectorsMessage> PARSER = new com.google.protobuf.AbstractParser<NamedVectorsMessage>() {
-			public NamedVectorsMessage parsePartialFrom(com.google.protobuf.CodedInputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-							throws com.google.protobuf.InvalidProtocolBufferException {
-				return new NamedVectorsMessage(input, extensionRegistry);
-			}
-		};
-
-		@java.lang.Override
-		public com.google.protobuf.Parser<NamedVectorsMessage> getParserForType() {
-			return PARSER;
-		}
-
-		public interface KeywordOrBuilder extends
-				// @@protoc_insertion_point(interface_extends:NamedVectorsMessage.Keyword)
-				com.google.protobuf.MessageOrBuilder {
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			boolean hasKey();
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			java.lang.String getKey();
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			com.google.protobuf.ByteString getKeyBytes();
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			boolean hasStringValue();
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			java.lang.String getStringValue();
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			com.google.protobuf.ByteString getStringValueBytes();
-
-			/**
-			 * <code>optional double doubleValue = 3;</code>
-			 */
-			boolean hasDoubleValue();
-
-			/**
-			 * <code>optional double doubleValue = 3;</code>
-			 */
-			double getDoubleValue();
-		}
-
-		/**
-		 * Protobuf type {@code NamedVectorsMessage.Keyword}
-		 */
-		public static final class Keyword extends com.google.protobuf.GeneratedMessage implements
-				// @@protoc_insertion_point(message_implements:NamedVectorsMessage.Keyword)
-				KeywordOrBuilder {
-			// Use Keyword.newBuilder() to construct.
-			private Keyword(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-				super(builder);
-				this.unknownFields = builder.getUnknownFields();
-			}
-
-			private Keyword(boolean noInit) {
-				this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-			}
-
-			private static final Keyword defaultInstance;
-
-			public static Keyword getDefaultInstance() {
-				return defaultInstance;
-			}
-
-			public Keyword getDefaultInstanceForType() {
-				return defaultInstance;
-			}
-
-			private final com.google.protobuf.UnknownFieldSet unknownFields;
-
-			@java.lang.Override
-			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-				return this.unknownFields;
-			}
-
-			private Keyword(com.google.protobuf.CodedInputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-							throws com.google.protobuf.InvalidProtocolBufferException {
-				initFields();
-				int mutable_bitField0_ = 0;
-				com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
-						.newBuilder();
-				try {
-					boolean done = false;
-					while (!done) {
-						int tag = input.readTag();
-						switch (tag) {
-						case 0:
-							done = true;
-							break;
-						default: {
-							if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-								done = true;
-							}
-							break;
-						}
-						case 10: {
-							com.google.protobuf.ByteString bs = input.readBytes();
-							bitField0_ |= 0x00000001;
-							key_ = bs;
-							break;
-						}
-						case 18: {
-							com.google.protobuf.ByteString bs = input.readBytes();
-							bitField0_ |= 0x00000002;
-							stringValue_ = bs;
-							break;
-						}
-						case 25: {
-							bitField0_ |= 0x00000004;
-							doubleValue_ = input.readDouble();
-							break;
-						}
-						}
-					}
-				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
-					throw e.setUnfinishedMessage(this);
-				} catch (java.io.IOException e) {
-					throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage())
-							.setUnfinishedMessage(this);
-				} finally {
-					this.unknownFields = unknownFields.build();
-					makeExtensionsImmutable();
-				}
-			}
-
-			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-				return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
-			}
-
-			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
-				return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable
-						.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.Keyword.class,
-								NamedVectorMessage.NamedVectorsMessage.Keyword.Builder.class);
-			}
-
-			public static com.google.protobuf.Parser<Keyword> PARSER = new com.google.protobuf.AbstractParser<Keyword>() {
-				public Keyword parsePartialFrom(com.google.protobuf.CodedInputStream input,
-						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-								throws com.google.protobuf.InvalidProtocolBufferException {
-					return new Keyword(input, extensionRegistry);
-				}
-			};
-
-			@java.lang.Override
-			public com.google.protobuf.Parser<Keyword> getParserForType() {
-				return PARSER;
-			}
-
-			private int bitField0_;
-			public static final int KEY_FIELD_NUMBER = 1;
-			private java.lang.Object key_;
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			public boolean hasKey() {
-				return ((bitField0_ & 0x00000001) == 0x00000001);
-			}
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			public java.lang.String getKey() {
-				java.lang.Object ref = key_;
-				if (ref instanceof java.lang.String) {
-					return (java.lang.String) ref;
-				} else {
-					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-					java.lang.String s = bs.toStringUtf8();
-					if (bs.isValidUtf8()) {
-						key_ = s;
-					}
-					return s;
-				}
-			}
-
-			/**
-			 * <code>required string key = 1;</code>
-			 */
-			public com.google.protobuf.ByteString getKeyBytes() {
-				java.lang.Object ref = key_;
-				if (ref instanceof java.lang.String) {
-					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-							.copyFromUtf8((java.lang.String) ref);
-					key_ = b;
-					return b;
-				} else {
-					return (com.google.protobuf.ByteString) ref;
-				}
-			}
-
-			public static final int STRINGVALUE_FIELD_NUMBER = 2;
-			private java.lang.Object stringValue_;
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			public boolean hasStringValue() {
-				return ((bitField0_ & 0x00000002) == 0x00000002);
-			}
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			public java.lang.String getStringValue() {
-				java.lang.Object ref = stringValue_;
-				if (ref instanceof java.lang.String) {
-					return (java.lang.String) ref;
-				} else {
-					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-					java.lang.String s = bs.toStringUtf8();
-					if (bs.isValidUtf8()) {
-						stringValue_ = s;
-					}
-					return s;
-				}
-			}
-
-			/**
-			 * <code>optional string stringValue = 2;</code>
-			 */
-			public com.google.protobuf.ByteString getStringValueBytes() {
-				java.lang.Object ref = stringValue_;
-				if (ref instanceof java.lang.String) {
-					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-							.copyFromUtf8((java.lang.String) ref);
-					stringValue_ = b;
-					return b;
-				} else {
-					return (com.google.protobuf.ByteString) ref;
-				}
-			}
-
-			public static final int DOUBLEVALUE_FIELD_NUMBER = 3;
-			private double doubleValue_;
-
-			/**
-			 * <code>optional double doubleValue = 3;</code>
-			 */
-			public boolean hasDoubleValue() {
-				return ((bitField0_ & 0x00000004) == 0x00000004);
-			}
-
-			/**
-			 * <code>optional double doubleValue = 3;</code>
-			 */
-			public double getDoubleValue() {
-				return doubleValue_;
-			}
-
-			private void initFields() {
-				key_ = "";
-				stringValue_ = "";
-				doubleValue_ = 0D;
-			}
-
-			private byte memoizedIsInitialized = -1;
-
-			public final boolean isInitialized() {
-				byte isInitialized = memoizedIsInitialized;
-				if (isInitialized == 1)
-					return true;
-				if (isInitialized == 0)
-					return false;
-
-				if (!hasKey()) {
-					memoizedIsInitialized = 0;
-					return false;
-				}
-				memoizedIsInitialized = 1;
-				return true;
-			}
-
-			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-				getSerializedSize();
-				if (((bitField0_ & 0x00000001) == 0x00000001)) {
-					output.writeBytes(1, getKeyBytes());
-				}
-				if (((bitField0_ & 0x00000002) == 0x00000002)) {
-					output.writeBytes(2, getStringValueBytes());
-				}
-				if (((bitField0_ & 0x00000004) == 0x00000004)) {
-					output.writeDouble(3, doubleValue_);
-				}
-				getUnknownFields().writeTo(output);
-			}
-
-			private int memoizedSerializedSize = -1;
-
-			public int getSerializedSize() {
-				int size = memoizedSerializedSize;
-				if (size != -1)
-					return size;
-
-				size = 0;
-				if (((bitField0_ & 0x00000001) == 0x00000001)) {
-					size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getKeyBytes());
-				}
-				if (((bitField0_ & 0x00000002) == 0x00000002)) {
-					size += com.google.protobuf.CodedOutputStream.computeBytesSize(2, getStringValueBytes());
-				}
-				if (((bitField0_ & 0x00000004) == 0x00000004)) {
-					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(3, doubleValue_);
-				}
-				size += getUnknownFields().getSerializedSize();
-				memoizedSerializedSize = size;
-				return size;
-			}
-
-			private static final long serialVersionUID = 0L;
-
-			@java.lang.Override
-			protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
-				return super.writeReplace();
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(com.google.protobuf.ByteString data)
-					throws com.google.protobuf.InvalidProtocolBufferException {
-				return PARSER.parseFrom(data);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(com.google.protobuf.ByteString data,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-							throws com.google.protobuf.InvalidProtocolBufferException {
-				return PARSER.parseFrom(data, extensionRegistry);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(byte[] data)
-					throws com.google.protobuf.InvalidProtocolBufferException {
-				return PARSER.parseFrom(data);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(byte[] data,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-							throws com.google.protobuf.InvalidProtocolBufferException {
-				return PARSER.parseFrom(data, extensionRegistry);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(java.io.InputStream input)
-					throws java.io.IOException {
-				return PARSER.parseFrom(input);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(java.io.InputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-				return PARSER.parseFrom(input, extensionRegistry);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseDelimitedFrom(java.io.InputStream input)
-					throws java.io.IOException {
-				return PARSER.parseDelimitedFrom(input);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseDelimitedFrom(java.io.InputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-				return PARSER.parseDelimitedFrom(input, extensionRegistry);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(
-					com.google.protobuf.CodedInputStream input) throws java.io.IOException {
-				return PARSER.parseFrom(input);
-			}
-
-			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(
-					com.google.protobuf.CodedInputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-				return PARSER.parseFrom(input, extensionRegistry);
-			}
-
-			public static Builder newBuilder() {
-				return Builder.create();
-			}
-
-			public Builder newBuilderForType() {
-				return newBuilder();
-			}
-
-			public static Builder newBuilder(NamedVectorMessage.NamedVectorsMessage.Keyword prototype) {
-				return newBuilder().mergeFrom(prototype);
-			}
-
-			public Builder toBuilder() {
-				return newBuilder(this);
-			}
-
-			@java.lang.Override
-			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-				Builder builder = new Builder(parent);
-				return builder;
-			}
-
-			/**
-			 * Protobuf type {@code NamedVectorsMessage.Keyword}
-			 */
-			public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
-					// @@protoc_insertion_point(builder_implements:NamedVectorsMessage.Keyword)
-					NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder {
-				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
-				}
-
-				protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
-					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable
-							.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.Keyword.class,
-									NamedVectorMessage.NamedVectorsMessage.Keyword.Builder.class);
-				}
-
-				// Construct using
-				// NamedVectorMessage.NamedVectorsMessage.Keyword.newBuilder()
-				private Builder() {
-					maybeForceBuilderInitialization();
-				}
-
-				private Builder(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-					super(parent);
-					maybeForceBuilderInitialization();
-				}
-
-				private void maybeForceBuilderInitialization() {
-					if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-					}
-				}
-
-				private static Builder create() {
-					return new Builder();
-				}
-
-				public Builder clear() {
-					super.clear();
-					key_ = "";
-					bitField0_ = (bitField0_ & ~0x00000001);
-					stringValue_ = "";
-					bitField0_ = (bitField0_ & ~0x00000002);
-					doubleValue_ = 0D;
-					bitField0_ = (bitField0_ & ~0x00000004);
-					return this;
-				}
-
-				public Builder clone() {
-					return create().mergeFrom(buildPartial());
-				}
-
-				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
-				}
-
-				public NamedVectorMessage.NamedVectorsMessage.Keyword getDefaultInstanceForType() {
-					return NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance();
-				}
-
-				public NamedVectorMessage.NamedVectorsMessage.Keyword build() {
-					NamedVectorMessage.NamedVectorsMessage.Keyword result = buildPartial();
-					if (!result.isInitialized()) {
-						throw newUninitializedMessageException(result);
-					}
-					return result;
-				}
-
-				public NamedVectorMessage.NamedVectorsMessage.Keyword buildPartial() {
-					NamedVectorMessage.NamedVectorsMessage.Keyword result = new NamedVectorMessage.NamedVectorsMessage.Keyword(
-							this);
-					int from_bitField0_ = bitField0_;
-					int to_bitField0_ = 0;
-					if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-						to_bitField0_ |= 0x00000001;
-					}
-					result.key_ = key_;
-					if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-						to_bitField0_ |= 0x00000002;
-					}
-					result.stringValue_ = stringValue_;
-					if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-						to_bitField0_ |= 0x00000004;
-					}
-					result.doubleValue_ = doubleValue_;
-					result.bitField0_ = to_bitField0_;
-					onBuilt();
-					return result;
-				}
-
-				public Builder mergeFrom(com.google.protobuf.Message other) {
-					if (other instanceof NamedVectorMessage.NamedVectorsMessage.Keyword) {
-						return mergeFrom((NamedVectorMessage.NamedVectorsMessage.Keyword) other);
-					} else {
-						super.mergeFrom(other);
-						return this;
-					}
-				}
-
-				public Builder mergeFrom(NamedVectorMessage.NamedVectorsMessage.Keyword other) {
-					if (other == NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance())
-						return this;
-					if (other.hasKey()) {
-						bitField0_ |= 0x00000001;
-						key_ = other.key_;
-						onChanged();
-					}
-					if (other.hasStringValue()) {
-						bitField0_ |= 0x00000002;
-						stringValue_ = other.stringValue_;
-						onChanged();
-					}
-					if (other.hasDoubleValue()) {
-						setDoubleValue(other.getDoubleValue());
-					}
-					this.mergeUnknownFields(other.getUnknownFields());
-					return this;
-				}
-
-				public final boolean isInitialized() {
-					if (!hasKey()) {
-
-						return false;
-					}
-					return true;
-				}
-
-				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
-						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-					NamedVectorMessage.NamedVectorsMessage.Keyword parsedMessage = null;
-					try {
-						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-					} catch (com.google.protobuf.InvalidProtocolBufferException e) {
-						parsedMessage = (NamedVectorMessage.NamedVectorsMessage.Keyword) e.getUnfinishedMessage();
-						throw e;
-					} finally {
-						if (parsedMessage != null) {
-							mergeFrom(parsedMessage);
-						}
-					}
-					return this;
-				}
-
-				private int bitField0_;
-
-				private java.lang.Object key_ = "";
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public boolean hasKey() {
-					return ((bitField0_ & 0x00000001) == 0x00000001);
-				}
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public java.lang.String getKey() {
-					java.lang.Object ref = key_;
-					if (!(ref instanceof java.lang.String)) {
-						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-						java.lang.String s = bs.toStringUtf8();
-						if (bs.isValidUtf8()) {
-							key_ = s;
-						}
-						return s;
-					} else {
-						return (java.lang.String) ref;
-					}
-				}
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public com.google.protobuf.ByteString getKeyBytes() {
-					java.lang.Object ref = key_;
-					if (ref instanceof String) {
-						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-								.copyFromUtf8((java.lang.String) ref);
-						key_ = b;
-						return b;
-					} else {
-						return (com.google.protobuf.ByteString) ref;
-					}
-				}
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public Builder setKey(java.lang.String value) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					bitField0_ |= 0x00000001;
-					key_ = value;
-					onChanged();
-					return this;
-				}
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public Builder clearKey() {
-					bitField0_ = (bitField0_ & ~0x00000001);
-					key_ = getDefaultInstance().getKey();
-					onChanged();
-					return this;
-				}
-
-				/**
-				 * <code>required string key = 1;</code>
-				 */
-				public Builder setKeyBytes(com.google.protobuf.ByteString value) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					bitField0_ |= 0x00000001;
-					key_ = value;
-					onChanged();
-					return this;
-				}
-
-				private java.lang.Object stringValue_ = "";
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public boolean hasStringValue() {
-					return ((bitField0_ & 0x00000002) == 0x00000002);
-				}
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public java.lang.String getStringValue() {
-					java.lang.Object ref = stringValue_;
-					if (!(ref instanceof java.lang.String)) {
-						com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-						java.lang.String s = bs.toStringUtf8();
-						if (bs.isValidUtf8()) {
-							stringValue_ = s;
-						}
-						return s;
-					} else {
-						return (java.lang.String) ref;
-					}
-				}
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public com.google.protobuf.ByteString getStringValueBytes() {
-					java.lang.Object ref = stringValue_;
-					if (ref instanceof String) {
-						com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-								.copyFromUtf8((java.lang.String) ref);
-						stringValue_ = b;
-						return b;
-					} else {
-						return (com.google.protobuf.ByteString) ref;
-					}
-				}
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public Builder setStringValue(java.lang.String value) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					bitField0_ |= 0x00000002;
-					stringValue_ = value;
-					onChanged();
-					return this;
-				}
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public Builder clearStringValue() {
-					bitField0_ = (bitField0_ & ~0x00000002);
-					stringValue_ = getDefaultInstance().getStringValue();
-					onChanged();
-					return this;
-				}
-
-				/**
-				 * <code>optional string stringValue = 2;</code>
-				 */
-				public Builder setStringValueBytes(com.google.protobuf.ByteString value) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					bitField0_ |= 0x00000002;
-					stringValue_ = value;
-					onChanged();
-					return this;
-				}
-
-				private double doubleValue_;
-
-				/**
-				 * <code>optional double doubleValue = 3;</code>
-				 */
-				public boolean hasDoubleValue() {
-					return ((bitField0_ & 0x00000004) == 0x00000004);
-				}
-
-				/**
-				 * <code>optional double doubleValue = 3;</code>
-				 */
-				public double getDoubleValue() {
-					return doubleValue_;
-				}
-
-				/**
-				 * <code>optional double doubleValue = 3;</code>
-				 */
-				public Builder setDoubleValue(double value) {
-					bitField0_ |= 0x00000004;
-					doubleValue_ = value;
-					onChanged();
-					return this;
-				}
-
-				/**
-				 * <code>optional double doubleValue = 3;</code>
-				 */
-				public Builder clearDoubleValue() {
-					bitField0_ = (bitField0_ & ~0x00000004);
-					doubleValue_ = 0D;
-					onChanged();
-					return this;
-				}
-
-				// @@protoc_insertion_point(builder_scope:NamedVectorsMessage.Keyword)
-			}
-
-			static {
-				defaultInstance = new Keyword(true);
-				defaultInstance.initFields();
-			}
-
-			// @@protoc_insertion_point(class_scope:NamedVectorsMessage.Keyword)
-		}
-
-		private int bitField0_;
-		public static final int NAME_FIELD_NUMBER = 1;
-		private java.lang.Object name_;
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		public boolean hasName() {
-			return ((bitField0_ & 0x00000001) == 0x00000001);
-		}
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		public java.lang.String getName() {
-			java.lang.Object ref = name_;
-			if (ref instanceof java.lang.String) {
-				return (java.lang.String) ref;
-			} else {
-				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-				java.lang.String s = bs.toStringUtf8();
-				if (bs.isValidUtf8()) {
-					name_ = s;
-				}
-				return s;
-			}
-		}
-
-		/**
-		 * <code>required string name = 1;</code>
-		 */
-		public com.google.protobuf.ByteString getNameBytes() {
-			java.lang.Object ref = name_;
-			if (ref instanceof java.lang.String) {
-				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-				name_ = b;
-				return b;
-			} else {
-				return (com.google.protobuf.ByteString) ref;
-			}
-		}
-
-		public static final int UUID_FIELD_NUMBER = 2;
-		private java.lang.Object uuid_;
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		public boolean hasUuid() {
-			return ((bitField0_ & 0x00000002) == 0x00000002);
-		}
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		public java.lang.String getUuid() {
-			java.lang.Object ref = uuid_;
-			if (ref instanceof java.lang.String) {
-				return (java.lang.String) ref;
-			} else {
-				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-				java.lang.String s = bs.toStringUtf8();
-				if (bs.isValidUtf8()) {
-					uuid_ = s;
-				}
-				return s;
-			}
-		}
-
-		/**
-		 * <code>required string uuid = 2;</code>
-		 */
-		public com.google.protobuf.ByteString getUuidBytes() {
-			java.lang.Object ref = uuid_;
-			if (ref instanceof java.lang.String) {
-				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-				uuid_ = b;
-				return b;
-			} else {
-				return (com.google.protobuf.ByteString) ref;
-			}
-		}
-
-		public static final int CHECKSUM_FIELD_NUMBER = 3;
-		private java.lang.Object checksum_;
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		public boolean hasChecksum() {
-			return ((bitField0_ & 0x00000004) == 0x00000004);
-		}
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		public java.lang.String getChecksum() {
-			java.lang.Object ref = checksum_;
-			if (ref instanceof java.lang.String) {
-				return (java.lang.String) ref;
-			} else {
-				com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-				java.lang.String s = bs.toStringUtf8();
-				if (bs.isValidUtf8()) {
-					checksum_ = s;
-				}
-				return s;
-			}
-		}
-
-		/**
-		 * <code>required string checksum = 3;</code>
-		 */
-		public com.google.protobuf.ByteString getChecksumBytes() {
-			java.lang.Object ref = checksum_;
-			if (ref instanceof java.lang.String) {
-				com.google.protobuf.ByteString b = com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-				checksum_ = b;
-				return b;
-			} else {
-				return (com.google.protobuf.ByteString) ref;
-			}
-		}
-
-		public static final int KEYWORDS_FIELD_NUMBER = 4;
-		private java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> keywords_;
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList() {
-			return keywords_;
-		}
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		public java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList() {
-			return keywords_;
-		}
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		public int getKeywordsCount() {
-			return keywords_.size();
-		}
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		public NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index) {
-			return keywords_.get(index);
-		}
-
-		/**
-		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-		 */
-		public NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index) {
-			return keywords_.get(index);
-		}
-
-		public static final int DATA_FIELD_NUMBER = 5;
-		private java.util.List<java.lang.Double> data_;
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		public java.util.List<java.lang.Double> getDataList() {
-			return data_;
-		}
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		public int getDataCount() {
-			return data_.size();
-		}
-
-		/**
-		 * <code>repeated double data = 5;</code>
-		 */
-		public double getData(int index) {
-			return data_.get(index);
-		}
-
-		private void initFields() {
-			name_ = "";
-			uuid_ = "";
-			checksum_ = "";
-			keywords_ = java.util.Collections.emptyList();
-			data_ = java.util.Collections.emptyList();
-		}
-
-		private byte memoizedIsInitialized = -1;
-
-		public final boolean isInitialized() {
-			byte isInitialized = memoizedIsInitialized;
-			if (isInitialized == 1)
-				return true;
-			if (isInitialized == 0)
-				return false;
-
-			if (!hasName()) {
-				memoizedIsInitialized = 0;
-				return false;
-			}
-			if (!hasUuid()) {
-				memoizedIsInitialized = 0;
-				return false;
-			}
-			if (!hasChecksum()) {
-				memoizedIsInitialized = 0;
-				return false;
-			}
-			for (int i = 0; i < getKeywordsCount(); i++) {
-				if (!getKeywords(i).isInitialized()) {
-					memoizedIsInitialized = 0;
-					return false;
-				}
-			}
-			memoizedIsInitialized = 1;
-			return true;
-		}
-
-		public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-			getSerializedSize();
-			if (((bitField0_ & 0x00000001) == 0x00000001)) {
-				output.writeBytes(1, getNameBytes());
-			}
-			if (((bitField0_ & 0x00000002) == 0x00000002)) {
-				output.writeBytes(2, getUuidBytes());
-			}
-			if (((bitField0_ & 0x00000004) == 0x00000004)) {
-				output.writeBytes(3, getChecksumBytes());
-			}
-			for (int i = 0; i < keywords_.size(); i++) {
-				output.writeMessage(4, keywords_.get(i));
-			}
-			for (int i = 0; i < data_.size(); i++) {
-				output.writeDouble(5, data_.get(i));
-			}
-			getUnknownFields().writeTo(output);
-		}
-
-		private int memoizedSerializedSize = -1;
-
-		public int getSerializedSize() {
-			int size = memoizedSerializedSize;
-			if (size != -1)
-				return size;
-
-			size = 0;
-			if (((bitField0_ & 0x00000001) == 0x00000001)) {
-				size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getNameBytes());
-			}
-			if (((bitField0_ & 0x00000002) == 0x00000002)) {
-				size += com.google.protobuf.CodedOutputStream.computeBytesSize(2, getUuidBytes());
-			}
-			if (((bitField0_ & 0x00000004) == 0x00000004)) {
-				size += com.google.protobuf.CodedOutputStream.computeBytesSize(3, getChecksumBytes());
-			}
-			for (int i = 0; i < keywords_.size(); i++) {
-				size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, keywords_.get(i));
-			}
-			{
-				int dataSize = 0;
-				dataSize = 8 * getDataList().size();
-				size += dataSize;
-				size += 1 * getDataList().size();
-			}
-			size += getUnknownFields().getSerializedSize();
-			memoizedSerializedSize = size;
-			return size;
-		}
-
-		private static final long serialVersionUID = 0L;
-
-		@java.lang.Override
-		protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
-			return super.writeReplace();
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.ByteString data)
-				throws com.google.protobuf.InvalidProtocolBufferException {
-			return PARSER.parseFrom(data);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.ByteString data,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-						throws com.google.protobuf.InvalidProtocolBufferException {
-			return PARSER.parseFrom(data, extensionRegistry);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(byte[] data)
-				throws com.google.protobuf.InvalidProtocolBufferException {
-			return PARSER.parseFrom(data);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(byte[] data,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-						throws com.google.protobuf.InvalidProtocolBufferException {
-			return PARSER.parseFrom(data, extensionRegistry);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(java.io.InputStream input)
-				throws java.io.IOException {
-			return PARSER.parseFrom(input);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(java.io.InputStream input,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-			return PARSER.parseFrom(input, extensionRegistry);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseDelimitedFrom(java.io.InputStream input)
-				throws java.io.IOException {
-			return PARSER.parseDelimitedFrom(input);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseDelimitedFrom(java.io.InputStream input,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-			return PARSER.parseDelimitedFrom(input, extensionRegistry);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.CodedInputStream input)
-				throws java.io.IOException {
-			return PARSER.parseFrom(input);
-		}
-
-		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.CodedInputStream input,
-				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-			return PARSER.parseFrom(input, extensionRegistry);
-		}
-
-		public static Builder newBuilder() {
-			return Builder.create();
-		}
-
-		public Builder newBuilderForType() {
-			return newBuilder();
-		}
-
-		public static Builder newBuilder(NamedVectorMessage.NamedVectorsMessage prototype) {
-			return newBuilder().mergeFrom(prototype);
-		}
-
-		public Builder toBuilder() {
-			return newBuilder(this);
-		}
-
-		@java.lang.Override
-		protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-			Builder builder = new Builder(parent);
-			return builder;
-		}
-
 		/**
 		 * Protobuf type {@code NamedVectorsMessage}
 		 */
 		public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
 				// @@protoc_insertion_point(builder_implements:NamedVectorsMessage)
 				NamedVectorMessage.NamedVectorsMessageOrBuilder {
+			private static Builder create() {
+				return new Builder();
+			}
+
 			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
 				return NamedVectorMessage.internal_static_NamedVectorsMessage_descriptor;
 			}
 
-			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
-				return NamedVectorMessage.internal_static_NamedVectorsMessage_fieldAccessorTable
-						.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.class,
-								NamedVectorMessage.NamedVectorsMessage.Builder.class);
-			}
+			private int bitField0_;
+
+			private java.lang.Object name_ = "";
+
+			private java.lang.Object uuid_ = "";
+
+			private java.lang.Object checksum_ = "";
+
+			private java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> keywords_ = java.util.Collections
+					.emptyList();
+
+			private com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> keywordsBuilder_;
+
+			private java.util.List<java.lang.Double> data_ = java.util.Collections.emptyList();
 
 			// Construct using
 			// NamedVectorMessage.NamedVectorsMessage.newBuilder()
@@ -1367,58 +50,133 @@ public final class NamedVectorMessage {
 				maybeForceBuilderInitialization();
 			}
 
-			private void maybeForceBuilderInitialization() {
-				if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-					getKeywordsFieldBuilder();
-				}
-			}
-
-			private static Builder create() {
-				return new Builder();
-			}
-
-			public Builder clear() {
-				super.clear();
-				name_ = "";
-				bitField0_ = (bitField0_ & ~0x00000001);
-				uuid_ = "";
-				bitField0_ = (bitField0_ & ~0x00000002);
-				checksum_ = "";
-				bitField0_ = (bitField0_ & ~0x00000004);
-				if (keywordsBuilder_ == null) {
-					keywords_ = java.util.Collections.emptyList();
-					bitField0_ = (bitField0_ & ~0x00000008);
-				} else {
-					keywordsBuilder_.clear();
-				}
-				data_ = java.util.Collections.emptyList();
-				bitField0_ = (bitField0_ & ~0x00000010);
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			public Builder addAllData(java.lang.Iterable<? extends java.lang.Double> values) {
+				ensureDataIsMutable();
+				com.google.protobuf.AbstractMessageLite.Builder.addAll(values, data_);
+				onChanged();
 				return this;
 			}
 
-			public Builder clone() {
-				return create().mergeFrom(buildPartial());
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder addAllKeywords(
+					java.lang.Iterable<? extends NamedVectorMessage.NamedVectorsMessage.Keyword> values) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, keywords_);
+					onChanged();
+				} else {
+					keywordsBuilder_.addAllMessages(values);
+				}
+				return this;
 			}
 
-			public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-				return NamedVectorMessage.internal_static_NamedVectorsMessage_descriptor;
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			public Builder addData(double value) {
+				ensureDataIsMutable();
+				data_.add(value);
+				onChanged();
+				return this;
 			}
 
-			public NamedVectorMessage.NamedVectorsMessage getDefaultInstanceForType() {
-				return NamedVectorMessage.NamedVectorsMessage.getDefaultInstance();
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder addKeywords(int index, NamedVectorMessage.NamedVectorsMessage.Keyword value) {
+				if (keywordsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureKeywordsIsMutable();
+					keywords_.add(index, value);
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(index, value);
+				}
+				return this;
 			}
 
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder addKeywords(int index,
+					NamedVectorMessage.NamedVectorsMessage.Keyword.Builder builderForValue) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.add(index, builderForValue.build());
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(index, builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder addKeywords(NamedVectorMessage.NamedVectorsMessage.Keyword value) {
+				if (keywordsBuilder_ == null) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					ensureKeywordsIsMutable();
+					keywords_.add(value);
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(value);
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder addKeywords(NamedVectorMessage.NamedVectorsMessage.Keyword.Builder builderForValue) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.add(builderForValue.build());
+					onChanged();
+				} else {
+					keywordsBuilder_.addMessage(builderForValue.build());
+				}
+				return this;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder addKeywordsBuilder() {
+				return getKeywordsFieldBuilder()
+						.addBuilder(NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance());
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder addKeywordsBuilder(int index) {
+				return getKeywordsFieldBuilder().addBuilder(index,
+						NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance());
+			}
+
+			@Override
 			public NamedVectorMessage.NamedVectorsMessage build() {
-				NamedVectorMessage.NamedVectorsMessage result = buildPartial();
+				final NamedVectorMessage.NamedVectorsMessage result = buildPartial();
 				if (!result.isInitialized()) {
 					throw newUninitializedMessageException(result);
 				}
 				return result;
 			}
 
+			@Override
 			public NamedVectorMessage.NamedVectorsMessage buildPartial() {
-				NamedVectorMessage.NamedVectorsMessage result = new NamedVectorMessage.NamedVectorsMessage(this);
-				int from_bitField0_ = bitField0_;
+				final NamedVectorMessage.NamedVectorsMessage result = new NamedVectorMessage.NamedVectorsMessage(this);
+				final int from_bitField0_ = bitField0_;
 				int to_bitField0_ = 0;
 				if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
 					to_bitField0_ |= 0x00000001;
@@ -1451,6 +209,396 @@ public final class NamedVectorMessage {
 				return result;
 			}
 
+			@Override
+			public Builder clear() {
+				super.clear();
+				name_ = "";
+				bitField0_ = (bitField0_ & ~0x00000001);
+				uuid_ = "";
+				bitField0_ = (bitField0_ & ~0x00000002);
+				checksum_ = "";
+				bitField0_ = (bitField0_ & ~0x00000004);
+				if (keywordsBuilder_ == null) {
+					keywords_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+				} else {
+					keywordsBuilder_.clear();
+				}
+				data_ = java.util.Collections.emptyList();
+				bitField0_ = (bitField0_ & ~0x00000010);
+				return this;
+			}
+
+			/**
+			 * <code>required string checksum = 3;</code>
+			 */
+			public Builder clearChecksum() {
+				bitField0_ = (bitField0_ & ~0x00000004);
+				checksum_ = getDefaultInstance().getChecksum();
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			public Builder clearData() {
+				data_ = java.util.Collections.emptyList();
+				bitField0_ = (bitField0_ & ~0x00000010);
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public Builder clearKeywords() {
+				if (keywordsBuilder_ == null) {
+					keywords_ = java.util.Collections.emptyList();
+					bitField0_ = (bitField0_ & ~0x00000008);
+					onChanged();
+				} else {
+					keywordsBuilder_.clear();
+				}
+				return this;
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			public Builder clearName() {
+				bitField0_ = (bitField0_ & ~0x00000001);
+				name_ = getDefaultInstance().getName();
+				onChanged();
+				return this;
+			}
+
+			/**
+			 * <code>required string uuid = 2;</code>
+			 */
+			public Builder clearUuid() {
+				bitField0_ = (bitField0_ & ~0x00000002);
+				uuid_ = getDefaultInstance().getUuid();
+				onChanged();
+				return this;
+			}
+
+			@Override
+			public Builder clone() {
+				return create().mergeFrom(buildPartial());
+			}
+
+			private void ensureDataIsMutable() {
+				if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+					data_ = new java.util.ArrayList<java.lang.Double>(data_);
+					bitField0_ |= 0x00000010;
+				}
+			}
+
+			private void ensureKeywordsIsMutable() {
+				if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+					keywords_ = new java.util.ArrayList<NamedVectorMessage.NamedVectorsMessage.Keyword>(keywords_);
+					bitField0_ |= 0x00000008;
+				}
+			}
+
+			/**
+			 * <code>required string checksum = 3;</code>
+			 */
+			@Override
+			public java.lang.String getChecksum() {
+				final java.lang.Object ref = checksum_;
+				if (!(ref instanceof java.lang.String)) {
+					final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					final java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						checksum_ = s;
+					}
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>required string checksum = 3;</code>
+			 */
+			@Override
+			public com.google.protobuf.ByteString getChecksumBytes() {
+				final java.lang.Object ref = checksum_;
+				if (ref instanceof String) {
+					final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					checksum_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			@Override
+			public double getData(int index) {
+				return data_.get(index);
+			}
+
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			@Override
+			public int getDataCount() {
+				return data_.size();
+			}
+
+			/**
+			 * <code>repeated double data = 5;</code>
+			 */
+			@Override
+			public java.util.List<java.lang.Double> getDataList() {
+				return java.util.Collections.unmodifiableList(data_);
+			}
+
+			@Override
+			public NamedVectorMessage.NamedVectorsMessage getDefaultInstanceForType() {
+				return NamedVectorMessage.NamedVectorsMessage.getDefaultInstance();
+			}
+
+			@Override
+			public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+				return NamedVectorMessage.internal_static_NamedVectorsMessage_descriptor;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			@Override
+			public NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index) {
+				if (keywordsBuilder_ == null) {
+					return keywords_.get(index);
+				} else {
+					return keywordsBuilder_.getMessage(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder getKeywordsBuilder(int index) {
+				return getKeywordsFieldBuilder().getBuilder(index);
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword.Builder> getKeywordsBuilderList() {
+				return getKeywordsFieldBuilder().getBuilderList();
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			@Override
+			public int getKeywordsCount() {
+				if (keywordsBuilder_ == null) {
+					return keywords_.size();
+				} else {
+					return keywordsBuilder_.getCount();
+				}
+			}
+
+			private com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsFieldBuilder() {
+				if (keywordsBuilder_ == null) {
+					keywordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder>(
+							keywords_, ((bitField0_ & 0x00000008) == 0x00000008), getParentForChildren(), isClean());
+					keywords_ = null;
+				}
+				return keywordsBuilder_;
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			@Override
+			public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList() {
+				if (keywordsBuilder_ == null) {
+					return java.util.Collections.unmodifiableList(keywords_);
+				} else {
+					return keywordsBuilder_.getMessageList();
+				}
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			@Override
+			public NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index) {
+				if (keywordsBuilder_ == null) {
+					return keywords_.get(index);
+				} else {
+					return keywordsBuilder_.getMessageOrBuilder(index);
+				}
+			}
+
+			/**
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 */
+			@Override
+			public java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList() {
+				if (keywordsBuilder_ != null) {
+					return keywordsBuilder_.getMessageOrBuilderList();
+				} else {
+					return java.util.Collections.unmodifiableList(keywords_);
+				}
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			@Override
+			public java.lang.String getName() {
+				final java.lang.Object ref = name_;
+				if (!(ref instanceof java.lang.String)) {
+					final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					final java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						name_ = s;
+					}
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			@Override
+			public com.google.protobuf.ByteString getNameBytes() {
+				final java.lang.Object ref = name_;
+				if (ref instanceof String) {
+					final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					name_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>required string uuid = 2;</code>
+			 */
+			@Override
+			public java.lang.String getUuid() {
+				final java.lang.Object ref = uuid_;
+				if (!(ref instanceof java.lang.String)) {
+					final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					final java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						uuid_ = s;
+					}
+					return s;
+				} else {
+					return (java.lang.String) ref;
+				}
+			}
+
+			/**
+			 * <code>required string uuid = 2;</code>
+			 */
+			@Override
+			public com.google.protobuf.ByteString getUuidBytes() {
+				final java.lang.Object ref = uuid_;
+				if (ref instanceof String) {
+					final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					uuid_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			/**
+			 * <code>required string checksum = 3;</code>
+			 */
+			@Override
+			public boolean hasChecksum() {
+				return ((bitField0_ & 0x00000004) == 0x00000004);
+			}
+
+			/**
+			 * <code>required string name = 1;</code>
+			 */
+			@Override
+			public boolean hasName() {
+				return ((bitField0_ & 0x00000001) == 0x00000001);
+			}
+
+			/**
+			 * <code>required string uuid = 2;</code>
+			 */
+			@Override
+			public boolean hasUuid() {
+				return ((bitField0_ & 0x00000002) == 0x00000002);
+			}
+
+			@Override
+			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+				return NamedVectorMessage.internal_static_NamedVectorsMessage_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.class,
+								NamedVectorMessage.NamedVectorsMessage.Builder.class);
+			}
+
+			@Override
+			public final boolean isInitialized() {
+				if (!hasName()) {
+
+					return false;
+				}
+				if (!hasUuid()) {
+
+					return false;
+				}
+				if (!hasChecksum()) {
+
+					return false;
+				}
+				for (int i = 0; i < getKeywordsCount(); i++) {
+					if (!getKeywords(i).isInitialized()) {
+
+						return false;
+					}
+				}
+				return true;
+			}
+
+			private void maybeForceBuilderInitialization() {
+				if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+					getKeywordsFieldBuilder();
+				}
+			}
+
+			@Override
+			public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				NamedVectorMessage.NamedVectorsMessage parsedMessage = null;
+				try {
+					parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+				} catch (final com.google.protobuf.InvalidProtocolBufferException e) {
+					parsedMessage = (NamedVectorMessage.NamedVectorsMessage) e.getUnfinishedMessage();
+					throw e;
+				} finally {
+					if (parsedMessage != null) {
+						mergeFrom(parsedMessage);
+					}
+				}
+				return this;
+			}
+
+			@Override
 			public Builder mergeFrom(com.google.protobuf.Message other) {
 				if (other instanceof NamedVectorMessage.NamedVectorsMessage) {
 					return mergeFrom((NamedVectorMessage.NamedVectorsMessage) other);
@@ -1513,243 +661,22 @@ public final class NamedVectorMessage {
 					}
 					onChanged();
 				}
-				this.mergeUnknownFields(other.getUnknownFields());
+				mergeUnknownFields(other.getUnknownFields());
 				return this;
 			}
 
-			public final boolean isInitialized() {
-				if (!hasName()) {
-
-					return false;
-				}
-				if (!hasUuid()) {
-
-					return false;
-				}
-				if (!hasChecksum()) {
-
-					return false;
-				}
-				for (int i = 0; i < getKeywordsCount(); i++) {
-					if (!getKeywords(i).isInitialized()) {
-
-						return false;
-					}
-				}
-				return true;
-			}
-
-			public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
-					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
-				NamedVectorMessage.NamedVectorsMessage parsedMessage = null;
-				try {
-					parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-				} catch (com.google.protobuf.InvalidProtocolBufferException e) {
-					parsedMessage = (NamedVectorMessage.NamedVectorsMessage) e.getUnfinishedMessage();
-					throw e;
-				} finally {
-					if (parsedMessage != null) {
-						mergeFrom(parsedMessage);
-					}
-				}
-				return this;
-			}
-
-			private int bitField0_;
-
-			private java.lang.Object name_ = "";
-
 			/**
-			 * <code>required string name = 1;</code>
+			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
 			 */
-			public boolean hasName() {
-				return ((bitField0_ & 0x00000001) == 0x00000001);
-			}
-
-			/**
-			 * <code>required string name = 1;</code>
-			 */
-			public java.lang.String getName() {
-				java.lang.Object ref = name_;
-				if (!(ref instanceof java.lang.String)) {
-					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-					java.lang.String s = bs.toStringUtf8();
-					if (bs.isValidUtf8()) {
-						name_ = s;
-					}
-					return s;
+			public Builder removeKeywords(int index) {
+				if (keywordsBuilder_ == null) {
+					ensureKeywordsIsMutable();
+					keywords_.remove(index);
+					onChanged();
 				} else {
-					return (java.lang.String) ref;
+					keywordsBuilder_.remove(index);
 				}
-			}
-
-			/**
-			 * <code>required string name = 1;</code>
-			 */
-			public com.google.protobuf.ByteString getNameBytes() {
-				java.lang.Object ref = name_;
-				if (ref instanceof String) {
-					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-							.copyFromUtf8((java.lang.String) ref);
-					name_ = b;
-					return b;
-				} else {
-					return (com.google.protobuf.ByteString) ref;
-				}
-			}
-
-			/**
-			 * <code>required string name = 1;</code>
-			 */
-			public Builder setName(java.lang.String value) {
-				if (value == null) {
-					throw new NullPointerException();
-				}
-				bitField0_ |= 0x00000001;
-				name_ = value;
-				onChanged();
 				return this;
-			}
-
-			/**
-			 * <code>required string name = 1;</code>
-			 */
-			public Builder clearName() {
-				bitField0_ = (bitField0_ & ~0x00000001);
-				name_ = getDefaultInstance().getName();
-				onChanged();
-				return this;
-			}
-
-			/**
-			 * <code>required string name = 1;</code>
-			 */
-			public Builder setNameBytes(com.google.protobuf.ByteString value) {
-				if (value == null) {
-					throw new NullPointerException();
-				}
-				bitField0_ |= 0x00000001;
-				name_ = value;
-				onChanged();
-				return this;
-			}
-
-			private java.lang.Object uuid_ = "";
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public boolean hasUuid() {
-				return ((bitField0_ & 0x00000002) == 0x00000002);
-			}
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public java.lang.String getUuid() {
-				java.lang.Object ref = uuid_;
-				if (!(ref instanceof java.lang.String)) {
-					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-					java.lang.String s = bs.toStringUtf8();
-					if (bs.isValidUtf8()) {
-						uuid_ = s;
-					}
-					return s;
-				} else {
-					return (java.lang.String) ref;
-				}
-			}
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public com.google.protobuf.ByteString getUuidBytes() {
-				java.lang.Object ref = uuid_;
-				if (ref instanceof String) {
-					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-							.copyFromUtf8((java.lang.String) ref);
-					uuid_ = b;
-					return b;
-				} else {
-					return (com.google.protobuf.ByteString) ref;
-				}
-			}
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public Builder setUuid(java.lang.String value) {
-				if (value == null) {
-					throw new NullPointerException();
-				}
-				bitField0_ |= 0x00000002;
-				uuid_ = value;
-				onChanged();
-				return this;
-			}
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public Builder clearUuid() {
-				bitField0_ = (bitField0_ & ~0x00000002);
-				uuid_ = getDefaultInstance().getUuid();
-				onChanged();
-				return this;
-			}
-
-			/**
-			 * <code>required string uuid = 2;</code>
-			 */
-			public Builder setUuidBytes(com.google.protobuf.ByteString value) {
-				if (value == null) {
-					throw new NullPointerException();
-				}
-				bitField0_ |= 0x00000002;
-				uuid_ = value;
-				onChanged();
-				return this;
-			}
-
-			private java.lang.Object checksum_ = "";
-
-			/**
-			 * <code>required string checksum = 3;</code>
-			 */
-			public boolean hasChecksum() {
-				return ((bitField0_ & 0x00000004) == 0x00000004);
-			}
-
-			/**
-			 * <code>required string checksum = 3;</code>
-			 */
-			public java.lang.String getChecksum() {
-				java.lang.Object ref = checksum_;
-				if (!(ref instanceof java.lang.String)) {
-					com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-					java.lang.String s = bs.toStringUtf8();
-					if (bs.isValidUtf8()) {
-						checksum_ = s;
-					}
-					return s;
-				} else {
-					return (java.lang.String) ref;
-				}
-			}
-
-			/**
-			 * <code>required string checksum = 3;</code>
-			 */
-			public com.google.protobuf.ByteString getChecksumBytes() {
-				java.lang.Object ref = checksum_;
-				if (ref instanceof String) {
-					com.google.protobuf.ByteString b = com.google.protobuf.ByteString
-							.copyFromUtf8((java.lang.String) ref);
-					checksum_ = b;
-					return b;
-				} else {
-					return (com.google.protobuf.ByteString) ref;
-				}
 			}
 
 			/**
@@ -1768,16 +695,6 @@ public final class NamedVectorMessage {
 			/**
 			 * <code>required string checksum = 3;</code>
 			 */
-			public Builder clearChecksum() {
-				bitField0_ = (bitField0_ & ~0x00000004);
-				checksum_ = getDefaultInstance().getChecksum();
-				onChanged();
-				return this;
-			}
-
-			/**
-			 * <code>required string checksum = 3;</code>
-			 */
 			public Builder setChecksumBytes(com.google.protobuf.ByteString value) {
 				if (value == null) {
 					throw new NullPointerException();
@@ -1788,49 +705,14 @@ public final class NamedVectorMessage {
 				return this;
 			}
 
-			private java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> keywords_ = java.util.Collections
-					.emptyList();
-
-			private void ensureKeywordsIsMutable() {
-				if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-					keywords_ = new java.util.ArrayList<NamedVectorMessage.NamedVectorsMessage.Keyword>(keywords_);
-					bitField0_ |= 0x00000008;
-				}
-			}
-
-			private com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> keywordsBuilder_;
-
 			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 * <code>repeated double data = 5;</code>
 			 */
-			public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList() {
-				if (keywordsBuilder_ == null) {
-					return java.util.Collections.unmodifiableList(keywords_);
-				} else {
-					return keywordsBuilder_.getMessageList();
-				}
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public int getKeywordsCount() {
-				if (keywordsBuilder_ == null) {
-					return keywords_.size();
-				} else {
-					return keywordsBuilder_.getCount();
-				}
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index) {
-				if (keywordsBuilder_ == null) {
-					return keywords_.get(index);
-				} else {
-					return keywordsBuilder_.getMessage(index);
-				}
+			public Builder setData(int index, double value) {
+				ensureDataIsMutable();
+				data_.set(index, value);
+				onChanged();
+				return this;
 			}
 
 			/**
@@ -1866,238 +748,53 @@ public final class NamedVectorMessage {
 			}
 
 			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+			 * <code>required string name = 1;</code>
 			 */
-			public Builder addKeywords(NamedVectorMessage.NamedVectorsMessage.Keyword value) {
-				if (keywordsBuilder_ == null) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					ensureKeywordsIsMutable();
-					keywords_.add(value);
-					onChanged();
-				} else {
-					keywordsBuilder_.addMessage(value);
+			public Builder setName(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
 				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder addKeywords(int index, NamedVectorMessage.NamedVectorsMessage.Keyword value) {
-				if (keywordsBuilder_ == null) {
-					if (value == null) {
-						throw new NullPointerException();
-					}
-					ensureKeywordsIsMutable();
-					keywords_.add(index, value);
-					onChanged();
-				} else {
-					keywordsBuilder_.addMessage(index, value);
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder addKeywords(NamedVectorMessage.NamedVectorsMessage.Keyword.Builder builderForValue) {
-				if (keywordsBuilder_ == null) {
-					ensureKeywordsIsMutable();
-					keywords_.add(builderForValue.build());
-					onChanged();
-				} else {
-					keywordsBuilder_.addMessage(builderForValue.build());
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder addKeywords(int index,
-					NamedVectorMessage.NamedVectorsMessage.Keyword.Builder builderForValue) {
-				if (keywordsBuilder_ == null) {
-					ensureKeywordsIsMutable();
-					keywords_.add(index, builderForValue.build());
-					onChanged();
-				} else {
-					keywordsBuilder_.addMessage(index, builderForValue.build());
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder addAllKeywords(
-					java.lang.Iterable<? extends NamedVectorMessage.NamedVectorsMessage.Keyword> values) {
-				if (keywordsBuilder_ == null) {
-					ensureKeywordsIsMutable();
-					com.google.protobuf.AbstractMessageLite.Builder.addAll(values, keywords_);
-					onChanged();
-				} else {
-					keywordsBuilder_.addAllMessages(values);
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder clearKeywords() {
-				if (keywordsBuilder_ == null) {
-					keywords_ = java.util.Collections.emptyList();
-					bitField0_ = (bitField0_ & ~0x00000008);
-					onChanged();
-				} else {
-					keywordsBuilder_.clear();
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public Builder removeKeywords(int index) {
-				if (keywordsBuilder_ == null) {
-					ensureKeywordsIsMutable();
-					keywords_.remove(index);
-					onChanged();
-				} else {
-					keywordsBuilder_.remove(index);
-				}
-				return this;
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder getKeywordsBuilder(int index) {
-				return getKeywordsFieldBuilder().getBuilder(index);
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index) {
-				if (keywordsBuilder_ == null) {
-					return keywords_.get(index);
-				} else {
-					return keywordsBuilder_.getMessageOrBuilder(index);
-				}
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList() {
-				if (keywordsBuilder_ != null) {
-					return keywordsBuilder_.getMessageOrBuilderList();
-				} else {
-					return java.util.Collections.unmodifiableList(keywords_);
-				}
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder addKeywordsBuilder() {
-				return getKeywordsFieldBuilder()
-						.addBuilder(NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance());
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public NamedVectorMessage.NamedVectorsMessage.Keyword.Builder addKeywordsBuilder(int index) {
-				return getKeywordsFieldBuilder().addBuilder(index,
-						NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance());
-			}
-
-			/**
-			 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
-			 */
-			public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword.Builder> getKeywordsBuilderList() {
-				return getKeywordsFieldBuilder().getBuilderList();
-			}
-
-			private com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsFieldBuilder() {
-				if (keywordsBuilder_ == null) {
-					keywordsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<NamedVectorMessage.NamedVectorsMessage.Keyword, NamedVectorMessage.NamedVectorsMessage.Keyword.Builder, NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder>(
-							keywords_, ((bitField0_ & 0x00000008) == 0x00000008), getParentForChildren(), isClean());
-					keywords_ = null;
-				}
-				return keywordsBuilder_;
-			}
-
-			private java.util.List<java.lang.Double> data_ = java.util.Collections.emptyList();
-
-			private void ensureDataIsMutable() {
-				if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-					data_ = new java.util.ArrayList<java.lang.Double>(data_);
-					bitField0_ |= 0x00000010;
-				}
-			}
-
-			/**
-			 * <code>repeated double data = 5;</code>
-			 */
-			public java.util.List<java.lang.Double> getDataList() {
-				return java.util.Collections.unmodifiableList(data_);
-			}
-
-			/**
-			 * <code>repeated double data = 5;</code>
-			 */
-			public int getDataCount() {
-				return data_.size();
-			}
-
-			/**
-			 * <code>repeated double data = 5;</code>
-			 */
-			public double getData(int index) {
-				return data_.get(index);
-			}
-
-			/**
-			 * <code>repeated double data = 5;</code>
-			 */
-			public Builder setData(int index, double value) {
-				ensureDataIsMutable();
-				data_.set(index, value);
+				bitField0_ |= 0x00000001;
+				name_ = value;
 				onChanged();
 				return this;
 			}
 
 			/**
-			 * <code>repeated double data = 5;</code>
+			 * <code>required string name = 1;</code>
 			 */
-			public Builder addData(double value) {
-				ensureDataIsMutable();
-				data_.add(value);
+			public Builder setNameBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				bitField0_ |= 0x00000001;
+				name_ = value;
 				onChanged();
 				return this;
 			}
 
 			/**
-			 * <code>repeated double data = 5;</code>
+			 * <code>required string uuid = 2;</code>
 			 */
-			public Builder addAllData(java.lang.Iterable<? extends java.lang.Double> values) {
-				ensureDataIsMutable();
-				com.google.protobuf.AbstractMessageLite.Builder.addAll(values, data_);
+			public Builder setUuid(java.lang.String value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				bitField0_ |= 0x00000002;
+				uuid_ = value;
 				onChanged();
 				return this;
 			}
 
 			/**
-			 * <code>repeated double data = 5;</code>
+			 * <code>required string uuid = 2;</code>
 			 */
-			public Builder clearData() {
-				data_ = java.util.Collections.emptyList();
-				bitField0_ = (bitField0_ & ~0x00000010);
+			public Builder setUuidBytes(com.google.protobuf.ByteString value) {
+				if (value == null) {
+					throw new NullPointerException();
+				}
+				bitField0_ |= 0x00000002;
+				uuid_ = value;
 				onChanged();
 				return this;
 			}
@@ -2105,33 +802,1425 @@ public final class NamedVectorMessage {
 			// @@protoc_insertion_point(builder_scope:NamedVectorsMessage)
 		}
 
+		/**
+		 * Protobuf type {@code NamedVectorsMessage.Keyword}
+		 */
+		public static final class Keyword extends com.google.protobuf.GeneratedMessage implements
+				// @@protoc_insertion_point(message_implements:NamedVectorsMessage.Keyword)
+				KeywordOrBuilder {
+			/**
+			 * Protobuf type {@code NamedVectorsMessage.Keyword}
+			 */
+			public static final class Builder extends com.google.protobuf.GeneratedMessage.Builder<Builder>implements
+					// @@protoc_insertion_point(builder_implements:NamedVectorsMessage.Keyword)
+					NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder {
+				private static Builder create() {
+					return new Builder();
+				}
+
+				public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
+				}
+
+				private int bitField0_;
+
+				private java.lang.Object key_ = "";
+
+				private java.lang.Object stringValue_ = "";
+
+				private double doubleValue_;
+
+				// Construct using
+				// NamedVectorMessage.NamedVectorsMessage.Keyword.newBuilder()
+				private Builder() {
+					maybeForceBuilderInitialization();
+				}
+
+				private Builder(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+					super(parent);
+					maybeForceBuilderInitialization();
+				}
+
+				@Override
+				public NamedVectorMessage.NamedVectorsMessage.Keyword build() {
+					final NamedVectorMessage.NamedVectorsMessage.Keyword result = buildPartial();
+					if (!result.isInitialized()) {
+						throw newUninitializedMessageException(result);
+					}
+					return result;
+				}
+
+				@Override
+				public NamedVectorMessage.NamedVectorsMessage.Keyword buildPartial() {
+					final NamedVectorMessage.NamedVectorsMessage.Keyword result = new NamedVectorMessage.NamedVectorsMessage.Keyword(
+							this);
+					final int from_bitField0_ = bitField0_;
+					int to_bitField0_ = 0;
+					if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+						to_bitField0_ |= 0x00000001;
+					}
+					result.key_ = key_;
+					if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+						to_bitField0_ |= 0x00000002;
+					}
+					result.stringValue_ = stringValue_;
+					if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+						to_bitField0_ |= 0x00000004;
+					}
+					result.doubleValue_ = doubleValue_;
+					result.bitField0_ = to_bitField0_;
+					onBuilt();
+					return result;
+				}
+
+				@Override
+				public Builder clear() {
+					super.clear();
+					key_ = "";
+					bitField0_ = (bitField0_ & ~0x00000001);
+					stringValue_ = "";
+					bitField0_ = (bitField0_ & ~0x00000002);
+					doubleValue_ = 0D;
+					bitField0_ = (bitField0_ & ~0x00000004);
+					return this;
+				}
+
+				/**
+				 * <code>optional double doubleValue = 3;</code>
+				 */
+				public Builder clearDoubleValue() {
+					bitField0_ = (bitField0_ & ~0x00000004);
+					doubleValue_ = 0D;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder clearKey() {
+					bitField0_ = (bitField0_ & ~0x00000001);
+					key_ = getDefaultInstance().getKey();
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				public Builder clearStringValue() {
+					bitField0_ = (bitField0_ & ~0x00000002);
+					stringValue_ = getDefaultInstance().getStringValue();
+					onChanged();
+					return this;
+				}
+
+				@Override
+				public Builder clone() {
+					return create().mergeFrom(buildPartial());
+				}
+
+				@Override
+				public NamedVectorMessage.NamedVectorsMessage.Keyword getDefaultInstanceForType() {
+					return NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance();
+				}
+
+				@Override
+				public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
+				}
+
+				/**
+				 * <code>optional double doubleValue = 3;</code>
+				 */
+				@Override
+				public double getDoubleValue() {
+					return doubleValue_;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				@Override
+				public java.lang.String getKey() {
+					final java.lang.Object ref = key_;
+					if (!(ref instanceof java.lang.String)) {
+						final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						final java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							key_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				@Override
+				public com.google.protobuf.ByteString getKeyBytes() {
+					final java.lang.Object ref = key_;
+					if (ref instanceof String) {
+						final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						key_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				@Override
+				public java.lang.String getStringValue() {
+					final java.lang.Object ref = stringValue_;
+					if (!(ref instanceof java.lang.String)) {
+						final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+						final java.lang.String s = bs.toStringUtf8();
+						if (bs.isValidUtf8()) {
+							stringValue_ = s;
+						}
+						return s;
+					} else {
+						return (java.lang.String) ref;
+					}
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				@Override
+				public com.google.protobuf.ByteString getStringValueBytes() {
+					final java.lang.Object ref = stringValue_;
+					if (ref instanceof String) {
+						final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+								.copyFromUtf8((java.lang.String) ref);
+						stringValue_ = b;
+						return b;
+					} else {
+						return (com.google.protobuf.ByteString) ref;
+					}
+				}
+
+				/**
+				 * <code>optional double doubleValue = 3;</code>
+				 */
+				@Override
+				public boolean hasDoubleValue() {
+					return ((bitField0_ & 0x00000004) == 0x00000004);
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				@Override
+				public boolean hasKey() {
+					return ((bitField0_ & 0x00000001) == 0x00000001);
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				@Override
+				public boolean hasStringValue() {
+					return ((bitField0_ & 0x00000002) == 0x00000002);
+				}
+
+				@Override
+				protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+					return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable
+							.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.Keyword.class,
+									NamedVectorMessage.NamedVectorsMessage.Keyword.Builder.class);
+				}
+
+				@Override
+				public final boolean isInitialized() {
+					if (!hasKey()) {
+
+						return false;
+					}
+					return true;
+				}
+
+				private void maybeForceBuilderInitialization() {
+					if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+					}
+				}
+
+				@Override
+				public Builder mergeFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+					NamedVectorMessage.NamedVectorsMessage.Keyword parsedMessage = null;
+					try {
+						parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+					} catch (final com.google.protobuf.InvalidProtocolBufferException e) {
+						parsedMessage = (NamedVectorMessage.NamedVectorsMessage.Keyword) e.getUnfinishedMessage();
+						throw e;
+					} finally {
+						if (parsedMessage != null) {
+							mergeFrom(parsedMessage);
+						}
+					}
+					return this;
+				}
+
+				@Override
+				public Builder mergeFrom(com.google.protobuf.Message other) {
+					if (other instanceof NamedVectorMessage.NamedVectorsMessage.Keyword) {
+						return mergeFrom((NamedVectorMessage.NamedVectorsMessage.Keyword) other);
+					} else {
+						super.mergeFrom(other);
+						return this;
+					}
+				}
+
+				public Builder mergeFrom(NamedVectorMessage.NamedVectorsMessage.Keyword other) {
+					if (other == NamedVectorMessage.NamedVectorsMessage.Keyword.getDefaultInstance())
+						return this;
+					if (other.hasKey()) {
+						bitField0_ |= 0x00000001;
+						key_ = other.key_;
+						onChanged();
+					}
+					if (other.hasStringValue()) {
+						bitField0_ |= 0x00000002;
+						stringValue_ = other.stringValue_;
+						onChanged();
+					}
+					if (other.hasDoubleValue()) {
+						setDoubleValue(other.getDoubleValue());
+					}
+					mergeUnknownFields(other.getUnknownFields());
+					return this;
+				}
+
+				/**
+				 * <code>optional double doubleValue = 3;</code>
+				 */
+				public Builder setDoubleValue(double value) {
+					bitField0_ |= 0x00000004;
+					doubleValue_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder setKey(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					key_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>required string key = 1;</code>
+				 */
+				public Builder setKeyBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000001;
+					key_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				public Builder setStringValue(java.lang.String value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000002;
+					stringValue_ = value;
+					onChanged();
+					return this;
+				}
+
+				/**
+				 * <code>optional string stringValue = 2;</code>
+				 */
+				public Builder setStringValueBytes(com.google.protobuf.ByteString value) {
+					if (value == null) {
+						throw new NullPointerException();
+					}
+					bitField0_ |= 0x00000002;
+					stringValue_ = value;
+					onChanged();
+					return this;
+				}
+
+				// @@protoc_insertion_point(builder_scope:NamedVectorsMessage.Keyword)
+			}
+
+			private static final Keyword defaultInstance;
+
+			public static com.google.protobuf.Parser<Keyword> PARSER = new com.google.protobuf.AbstractParser<Keyword>() {
+				@Override
+				public Keyword parsePartialFrom(com.google.protobuf.CodedInputStream input,
+						com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+								throws com.google.protobuf.InvalidProtocolBufferException {
+					return new Keyword(input, extensionRegistry);
+				}
+			};
+
+			public static final int KEY_FIELD_NUMBER = 1;
+
+			public static final int STRINGVALUE_FIELD_NUMBER = 2;
+
+			public static final int DOUBLEVALUE_FIELD_NUMBER = 3;
+
+			private static final long serialVersionUID = 0L;
+
+			static {
+				defaultInstance = new Keyword(true);
+				defaultInstance.initFields();
+			}
+
+			public static Keyword getDefaultInstance() {
+				return defaultInstance;
+			}
+
+			public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+				return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_descriptor;
+			}
+
+			public static Builder newBuilder() {
+				return Builder.create();
+			}
+
+			public static Builder newBuilder(NamedVectorMessage.NamedVectorsMessage.Keyword prototype) {
+				return newBuilder().mergeFrom(prototype);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseDelimitedFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseDelimitedFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseDelimitedFrom(input, extensionRegistry);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(byte[] data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(byte[] data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(com.google.protobuf.ByteString data)
+					throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(com.google.protobuf.ByteString data,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return PARSER.parseFrom(data, extensionRegistry);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(
+					com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(
+					com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(java.io.InputStream input)
+					throws java.io.IOException {
+				return PARSER.parseFrom(input);
+			}
+
+			public static NamedVectorMessage.NamedVectorsMessage.Keyword parseFrom(java.io.InputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+				return PARSER.parseFrom(input, extensionRegistry);
+			}
+
+			private final com.google.protobuf.UnknownFieldSet unknownFields;
+
+			private int bitField0_;
+			private java.lang.Object key_;
+
+			private java.lang.Object stringValue_;
+
+			private double doubleValue_;
+
+			private byte memoizedIsInitialized = -1;
+
+			private int memoizedSerializedSize = -1;
+
+			private Keyword(boolean noInit) {
+				unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+			}
+
+			private Keyword(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				initFields();
+				final int mutable_bitField0_ = 0;
+				final com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+						.newBuilder();
+				try {
+					boolean done = false;
+					while (!done) {
+						final int tag = input.readTag();
+						switch (tag) {
+						case 0:
+							done = true;
+							break;
+						default: {
+							if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+								done = true;
+							}
+							break;
+						}
+						case 10: {
+							final com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000001;
+							key_ = bs;
+							break;
+						}
+						case 18: {
+							final com.google.protobuf.ByteString bs = input.readBytes();
+							bitField0_ |= 0x00000002;
+							stringValue_ = bs;
+							break;
+						}
+						case 25: {
+							bitField0_ |= 0x00000004;
+							doubleValue_ = input.readDouble();
+							break;
+						}
+						}
+					}
+				} catch (final com.google.protobuf.InvalidProtocolBufferException e) {
+					throw e.setUnfinishedMessage(this);
+				} catch (final java.io.IOException e) {
+					throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage())
+							.setUnfinishedMessage(this);
+				} finally {
+					this.unknownFields = unknownFields.build();
+					makeExtensionsImmutable();
+				}
+			}
+
+			// Use Keyword.newBuilder() to construct.
+			private Keyword(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+				super(builder);
+				unknownFields = builder.getUnknownFields();
+			}
+
+			@Override
+			public Keyword getDefaultInstanceForType() {
+				return defaultInstance;
+			}
+
+			/**
+			 * <code>optional double doubleValue = 3;</code>
+			 */
+			@Override
+			public double getDoubleValue() {
+				return doubleValue_;
+			}
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			@Override
+			public java.lang.String getKey() {
+				final java.lang.Object ref = key_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					final java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						key_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			@Override
+			public com.google.protobuf.ByteString getKeyBytes() {
+				final java.lang.Object ref = key_;
+				if (ref instanceof java.lang.String) {
+					final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					key_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			@java.lang.Override
+			public com.google.protobuf.Parser<Keyword> getParserForType() {
+				return PARSER;
+			}
+
+			@Override
+			public int getSerializedSize() {
+				int size = memoizedSerializedSize;
+				if (size != -1)
+					return size;
+
+				size = 0;
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getKeyBytes());
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					size += com.google.protobuf.CodedOutputStream.computeBytesSize(2, getStringValueBytes());
+				}
+				if (((bitField0_ & 0x00000004) == 0x00000004)) {
+					size += com.google.protobuf.CodedOutputStream.computeDoubleSize(3, doubleValue_);
+				}
+				size += getUnknownFields().getSerializedSize();
+				memoizedSerializedSize = size;
+				return size;
+			}
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			@Override
+			public java.lang.String getStringValue() {
+				final java.lang.Object ref = stringValue_;
+				if (ref instanceof java.lang.String) {
+					return (java.lang.String) ref;
+				} else {
+					final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+					final java.lang.String s = bs.toStringUtf8();
+					if (bs.isValidUtf8()) {
+						stringValue_ = s;
+					}
+					return s;
+				}
+			}
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			@Override
+			public com.google.protobuf.ByteString getStringValueBytes() {
+				final java.lang.Object ref = stringValue_;
+				if (ref instanceof java.lang.String) {
+					final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+							.copyFromUtf8((java.lang.String) ref);
+					stringValue_ = b;
+					return b;
+				} else {
+					return (com.google.protobuf.ByteString) ref;
+				}
+			}
+
+			@java.lang.Override
+			public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+				return unknownFields;
+			}
+
+			/**
+			 * <code>optional double doubleValue = 3;</code>
+			 */
+			@Override
+			public boolean hasDoubleValue() {
+				return ((bitField0_ & 0x00000004) == 0x00000004);
+			}
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			@Override
+			public boolean hasKey() {
+				return ((bitField0_ & 0x00000001) == 0x00000001);
+			}
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			@Override
+			public boolean hasStringValue() {
+				return ((bitField0_ & 0x00000002) == 0x00000002);
+			}
+
+			private void initFields() {
+				key_ = "";
+				stringValue_ = "";
+				doubleValue_ = 0D;
+			}
+
+			@Override
+			protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+				return NamedVectorMessage.internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable
+						.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.Keyword.class,
+								NamedVectorMessage.NamedVectorsMessage.Keyword.Builder.class);
+			}
+
+			@Override
+			public final boolean isInitialized() {
+				final byte isInitialized = memoizedIsInitialized;
+				if (isInitialized == 1)
+					return true;
+				if (isInitialized == 0)
+					return false;
+
+				if (!hasKey()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+				memoizedIsInitialized = 1;
+				return true;
+			}
+
+			@Override
+			public Builder newBuilderForType() {
+				return newBuilder();
+			}
+
+			@java.lang.Override
+			protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+				final Builder builder = new Builder(parent);
+				return builder;
+			}
+
+			@Override
+			public Builder toBuilder() {
+				return newBuilder(this);
+			}
+
+			@java.lang.Override
+			protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
+				return super.writeReplace();
+			}
+
+			@Override
+			public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+				getSerializedSize();
+				if (((bitField0_ & 0x00000001) == 0x00000001)) {
+					output.writeBytes(1, getKeyBytes());
+				}
+				if (((bitField0_ & 0x00000002) == 0x00000002)) {
+					output.writeBytes(2, getStringValueBytes());
+				}
+				if (((bitField0_ & 0x00000004) == 0x00000004)) {
+					output.writeDouble(3, doubleValue_);
+				}
+				getUnknownFields().writeTo(output);
+			}
+
+			// @@protoc_insertion_point(class_scope:NamedVectorsMessage.Keyword)
+		}
+
+		public interface KeywordOrBuilder extends
+				// @@protoc_insertion_point(interface_extends:NamedVectorsMessage.Keyword)
+				com.google.protobuf.MessageOrBuilder {
+
+			/**
+			 * <code>optional double doubleValue = 3;</code>
+			 */
+			double getDoubleValue();
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			java.lang.String getKey();
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			com.google.protobuf.ByteString getKeyBytes();
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			java.lang.String getStringValue();
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			com.google.protobuf.ByteString getStringValueBytes();
+
+			/**
+			 * <code>optional double doubleValue = 3;</code>
+			 */
+			boolean hasDoubleValue();
+
+			/**
+			 * <code>required string key = 1;</code>
+			 */
+			boolean hasKey();
+
+			/**
+			 * <code>optional string stringValue = 2;</code>
+			 */
+			boolean hasStringValue();
+		}
+
+		private static final NamedVectorsMessage defaultInstance;
+
+		public static com.google.protobuf.Parser<NamedVectorsMessage> PARSER = new com.google.protobuf.AbstractParser<NamedVectorsMessage>() {
+			@Override
+			public NamedVectorsMessage parsePartialFrom(com.google.protobuf.CodedInputStream input,
+					com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+							throws com.google.protobuf.InvalidProtocolBufferException {
+				return new NamedVectorsMessage(input, extensionRegistry);
+			}
+		};
+
+		public static final int NAME_FIELD_NUMBER = 1;
+
+		public static final int UUID_FIELD_NUMBER = 2;
+
+		public static final int CHECKSUM_FIELD_NUMBER = 3;
+
+		public static final int KEYWORDS_FIELD_NUMBER = 4;
+
+		public static final int DATA_FIELD_NUMBER = 5;
+
+		private static final long serialVersionUID = 0L;
+
 		static {
 			defaultInstance = new NamedVectorsMessage(true);
 			defaultInstance.initFields();
 		}
 
+		public static NamedVectorsMessage getDefaultInstance() {
+			return defaultInstance;
+		}
+
+		public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+			return NamedVectorMessage.internal_static_NamedVectorsMessage_descriptor;
+		}
+
+		public static Builder newBuilder() {
+			return Builder.create();
+		}
+
+		public static Builder newBuilder(NamedVectorMessage.NamedVectorsMessage prototype) {
+			return newBuilder().mergeFrom(prototype);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseDelimitedFrom(java.io.InputStream input)
+				throws java.io.IOException {
+			return PARSER.parseDelimitedFrom(input);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseDelimitedFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseDelimitedFrom(input, extensionRegistry);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(byte[] data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(byte[] data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.ByteString data)
+				throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.ByteString data,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			return PARSER.parseFrom(data, extensionRegistry);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.CodedInputStream input)
+				throws java.io.IOException {
+			return PARSER.parseFrom(input);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseFrom(input, extensionRegistry);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(java.io.InputStream input)
+				throws java.io.IOException {
+			return PARSER.parseFrom(input);
+		}
+
+		public static NamedVectorMessage.NamedVectorsMessage parseFrom(java.io.InputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry) throws java.io.IOException {
+			return PARSER.parseFrom(input, extensionRegistry);
+		}
+
+		private final com.google.protobuf.UnknownFieldSet unknownFields;
+
+		private int bitField0_;
+
+		private java.lang.Object name_;
+
+		private java.lang.Object uuid_;
+
+		private java.lang.Object checksum_;
+		private java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> keywords_;
+
+		private java.util.List<java.lang.Double> data_;
+
+		private byte memoizedIsInitialized = -1;
+
+		private int memoizedSerializedSize = -1;
+
+		private NamedVectorsMessage(boolean noInit) {
+			unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+		}
+
+		private NamedVectorsMessage(com.google.protobuf.CodedInputStream input,
+				com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+						throws com.google.protobuf.InvalidProtocolBufferException {
+			initFields();
+			int mutable_bitField0_ = 0;
+			final com.google.protobuf.UnknownFieldSet.Builder unknownFields = com.google.protobuf.UnknownFieldSet
+					.newBuilder();
+			try {
+				boolean done = false;
+				while (!done) {
+					final int tag = input.readTag();
+					switch (tag) {
+					case 0:
+						done = true;
+						break;
+					default: {
+						if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+							done = true;
+						}
+						break;
+					}
+					case 10: {
+						final com.google.protobuf.ByteString bs = input.readBytes();
+						bitField0_ |= 0x00000001;
+						name_ = bs;
+						break;
+					}
+					case 18: {
+						final com.google.protobuf.ByteString bs = input.readBytes();
+						bitField0_ |= 0x00000002;
+						uuid_ = bs;
+						break;
+					}
+					case 26: {
+						final com.google.protobuf.ByteString bs = input.readBytes();
+						bitField0_ |= 0x00000004;
+						checksum_ = bs;
+						break;
+					}
+					case 34: {
+						if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+							keywords_ = new java.util.ArrayList<NamedVectorMessage.NamedVectorsMessage.Keyword>();
+							mutable_bitField0_ |= 0x00000008;
+						}
+						keywords_.add(input.readMessage(NamedVectorMessage.NamedVectorsMessage.Keyword.PARSER,
+								extensionRegistry));
+						break;
+					}
+					case 41: {
+						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+							data_ = new java.util.ArrayList<java.lang.Double>();
+							mutable_bitField0_ |= 0x00000010;
+						}
+						data_.add(input.readDouble());
+						break;
+					}
+					case 42: {
+						final int length = input.readRawVarint32();
+						final int limit = input.pushLimit(length);
+						if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+							data_ = new java.util.ArrayList<java.lang.Double>();
+							mutable_bitField0_ |= 0x00000010;
+						}
+						while (input.getBytesUntilLimit() > 0) {
+							data_.add(input.readDouble());
+						}
+						input.popLimit(limit);
+						break;
+					}
+					}
+				}
+			} catch (final com.google.protobuf.InvalidProtocolBufferException e) {
+				throw e.setUnfinishedMessage(this);
+			} catch (final java.io.IOException e) {
+				throw new com.google.protobuf.InvalidProtocolBufferException(e.getMessage()).setUnfinishedMessage(this);
+			} finally {
+				if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+					keywords_ = java.util.Collections.unmodifiableList(keywords_);
+				}
+				if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+					data_ = java.util.Collections.unmodifiableList(data_);
+				}
+				this.unknownFields = unknownFields.build();
+				makeExtensionsImmutable();
+			}
+		}
+
+		// Use NamedVectorsMessage.newBuilder() to construct.
+		private NamedVectorsMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+			super(builder);
+			unknownFields = builder.getUnknownFields();
+		}
+
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		@Override
+		public java.lang.String getChecksum() {
+			final java.lang.Object ref = checksum_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				final java.lang.String s = bs.toStringUtf8();
+				if (bs.isValidUtf8()) {
+					checksum_ = s;
+				}
+				return s;
+			}
+		}
+
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		@Override
+		public com.google.protobuf.ByteString getChecksumBytes() {
+			final java.lang.Object ref = checksum_;
+			if (ref instanceof java.lang.String) {
+				final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+						.copyFromUtf8((java.lang.String) ref);
+				checksum_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		@Override
+		public double getData(int index) {
+			return data_.get(index);
+		}
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		@Override
+		public int getDataCount() {
+			return data_.size();
+		}
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		@Override
+		public java.util.List<java.lang.Double> getDataList() {
+			return data_;
+		}
+
+		@Override
+		public NamedVectorsMessage getDefaultInstanceForType() {
+			return defaultInstance;
+		}
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		@Override
+		public NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index) {
+			return keywords_.get(index);
+		}
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		@Override
+		public int getKeywordsCount() {
+			return keywords_.size();
+		}
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		@Override
+		public java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList() {
+			return keywords_;
+		}
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		@Override
+		public NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index) {
+			return keywords_.get(index);
+		}
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		@Override
+		public java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList() {
+			return keywords_;
+		}
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		@Override
+		public java.lang.String getName() {
+			final java.lang.Object ref = name_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				final java.lang.String s = bs.toStringUtf8();
+				if (bs.isValidUtf8()) {
+					name_ = s;
+				}
+				return s;
+			}
+		}
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		@Override
+		public com.google.protobuf.ByteString getNameBytes() {
+			final java.lang.Object ref = name_;
+			if (ref instanceof java.lang.String) {
+				final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+						.copyFromUtf8((java.lang.String) ref);
+				name_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		@java.lang.Override
+		public com.google.protobuf.Parser<NamedVectorsMessage> getParserForType() {
+			return PARSER;
+		}
+
+		@Override
+		public int getSerializedSize() {
+			int size = memoizedSerializedSize;
+			if (size != -1)
+				return size;
+
+			size = 0;
+			if (((bitField0_ & 0x00000001) == 0x00000001)) {
+				size += com.google.protobuf.CodedOutputStream.computeBytesSize(1, getNameBytes());
+			}
+			if (((bitField0_ & 0x00000002) == 0x00000002)) {
+				size += com.google.protobuf.CodedOutputStream.computeBytesSize(2, getUuidBytes());
+			}
+			if (((bitField0_ & 0x00000004) == 0x00000004)) {
+				size += com.google.protobuf.CodedOutputStream.computeBytesSize(3, getChecksumBytes());
+			}
+			for (int i = 0; i < keywords_.size(); i++) {
+				size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, keywords_.get(i));
+			}
+			{
+				int dataSize = 0;
+				dataSize = 8 * getDataList().size();
+				size += dataSize;
+				size += 1 * getDataList().size();
+			}
+			size += getUnknownFields().getSerializedSize();
+			memoizedSerializedSize = size;
+			return size;
+		}
+
+		@java.lang.Override
+		public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+			return unknownFields;
+		}
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		@Override
+		public java.lang.String getUuid() {
+			final java.lang.Object ref = uuid_;
+			if (ref instanceof java.lang.String) {
+				return (java.lang.String) ref;
+			} else {
+				final com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+				final java.lang.String s = bs.toStringUtf8();
+				if (bs.isValidUtf8()) {
+					uuid_ = s;
+				}
+				return s;
+			}
+		}
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		@Override
+		public com.google.protobuf.ByteString getUuidBytes() {
+			final java.lang.Object ref = uuid_;
+			if (ref instanceof java.lang.String) {
+				final com.google.protobuf.ByteString b = com.google.protobuf.ByteString
+						.copyFromUtf8((java.lang.String) ref);
+				uuid_ = b;
+				return b;
+			} else {
+				return (com.google.protobuf.ByteString) ref;
+			}
+		}
+
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		@Override
+		public boolean hasChecksum() {
+			return ((bitField0_ & 0x00000004) == 0x00000004);
+		}
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		@Override
+		public boolean hasName() {
+			return ((bitField0_ & 0x00000001) == 0x00000001);
+		}
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		@Override
+		public boolean hasUuid() {
+			return ((bitField0_ & 0x00000002) == 0x00000002);
+		}
+
+		private void initFields() {
+			name_ = "";
+			uuid_ = "";
+			checksum_ = "";
+			keywords_ = java.util.Collections.emptyList();
+			data_ = java.util.Collections.emptyList();
+		}
+
+		@Override
+		protected com.google.protobuf.GeneratedMessage.FieldAccessorTable internalGetFieldAccessorTable() {
+			return NamedVectorMessage.internal_static_NamedVectorsMessage_fieldAccessorTable
+					.ensureFieldAccessorsInitialized(NamedVectorMessage.NamedVectorsMessage.class,
+							NamedVectorMessage.NamedVectorsMessage.Builder.class);
+		}
+
+		@Override
+		public final boolean isInitialized() {
+			final byte isInitialized = memoizedIsInitialized;
+			if (isInitialized == 1)
+				return true;
+			if (isInitialized == 0)
+				return false;
+
+			if (!hasName()) {
+				memoizedIsInitialized = 0;
+				return false;
+			}
+			if (!hasUuid()) {
+				memoizedIsInitialized = 0;
+				return false;
+			}
+			if (!hasChecksum()) {
+				memoizedIsInitialized = 0;
+				return false;
+			}
+			for (int i = 0; i < getKeywordsCount(); i++) {
+				if (!getKeywords(i).isInitialized()) {
+					memoizedIsInitialized = 0;
+					return false;
+				}
+			}
+			memoizedIsInitialized = 1;
+			return true;
+		}
+
+		@Override
+		public Builder newBuilderForType() {
+			return newBuilder();
+		}
+
+		@java.lang.Override
+		protected Builder newBuilderForType(com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+			final Builder builder = new Builder(parent);
+			return builder;
+		}
+
+		@Override
+		public Builder toBuilder() {
+			return newBuilder(this);
+		}
+
+		@java.lang.Override
+		protected java.lang.Object writeReplace() throws java.io.ObjectStreamException {
+			return super.writeReplace();
+		}
+
+		@Override
+		public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+			getSerializedSize();
+			if (((bitField0_ & 0x00000001) == 0x00000001)) {
+				output.writeBytes(1, getNameBytes());
+			}
+			if (((bitField0_ & 0x00000002) == 0x00000002)) {
+				output.writeBytes(2, getUuidBytes());
+			}
+			if (((bitField0_ & 0x00000004) == 0x00000004)) {
+				output.writeBytes(3, getChecksumBytes());
+			}
+			for (int i = 0; i < keywords_.size(); i++) {
+				output.writeMessage(4, keywords_.get(i));
+			}
+			for (int i = 0; i < data_.size(); i++) {
+				output.writeDouble(5, data_.get(i));
+			}
+			getUnknownFields().writeTo(output);
+		}
+
 		// @@protoc_insertion_point(class_scope:NamedVectorsMessage)
 	}
 
-	private static final com.google.protobuf.Descriptors.Descriptor internal_static_NamedVectorsMessage_descriptor;
-	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_NamedVectorsMessage_fieldAccessorTable;
-	private static final com.google.protobuf.Descriptors.Descriptor internal_static_NamedVectorsMessage_Keyword_descriptor;
-	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable;
+	public interface NamedVectorsMessageOrBuilder extends
+			// @@protoc_insertion_point(interface_extends:NamedVectorsMessage)
+			com.google.protobuf.MessageOrBuilder {
 
-	public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
-		return descriptor;
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		java.lang.String getChecksum();
+
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		com.google.protobuf.ByteString getChecksumBytes();
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		double getData(int index);
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		int getDataCount();
+
+		/**
+		 * <code>repeated double data = 5;</code>
+		 */
+		java.util.List<java.lang.Double> getDataList();
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		NamedVectorMessage.NamedVectorsMessage.Keyword getKeywords(int index);
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		int getKeywordsCount();
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		java.util.List<NamedVectorMessage.NamedVectorsMessage.Keyword> getKeywordsList();
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder getKeywordsOrBuilder(int index);
+
+		/**
+		 * <code>repeated .NamedVectorsMessage.Keyword keywords = 4;</code>
+		 */
+		java.util.List<? extends NamedVectorMessage.NamedVectorsMessage.KeywordOrBuilder> getKeywordsOrBuilderList();
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		java.lang.String getName();
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		com.google.protobuf.ByteString getNameBytes();
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		java.lang.String getUuid();
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		com.google.protobuf.ByteString getUuidBytes();
+
+		/**
+		 * <code>required string checksum = 3;</code>
+		 */
+		boolean hasChecksum();
+
+		/**
+		 * <code>required string name = 1;</code>
+		 */
+		boolean hasName();
+
+		/**
+		 * <code>required string uuid = 2;</code>
+		 */
+		boolean hasUuid();
 	}
 
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_NamedVectorsMessage_descriptor;
+
+	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_NamedVectorsMessage_fieldAccessorTable;
+
+	private static final com.google.protobuf.Descriptors.Descriptor internal_static_NamedVectorsMessage_Keyword_descriptor;
+	private static com.google.protobuf.GeneratedMessage.FieldAccessorTable internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable;
 	private static com.google.protobuf.Descriptors.FileDescriptor descriptor;
 
 	static {
-		java.lang.String[] descriptorData = { "\n\030NamedVectorMessage.proto\"\303\001\n\023NamedVect"
+		final java.lang.String[] descriptorData = { "\n\030NamedVectorMessage.proto\"\303\001\n\023NamedVect"
 				+ "orsMessage\022\014\n\004name\030\001 \002(\t\022\014\n\004uuid\030\002 \002(\t\022\020"
 				+ "\n\010checksum\030\003 \002(\t\022.\n\010keywords\030\004 \003(\0132\034.Nam"
 				+ "edVectorsMessage.Keyword\022\014\n\004data\030\005 \003(\001\032@"
 				+ "\n\007Keyword\022\013\n\003key\030\001 \002(\t\022\023\n\013stringValue\030\002 "
 				+ "\001(\t\022\023\n\013doubleValue\030\003 \001(\001" };
-		com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner = new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+		final com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner = new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+			@Override
 			public com.google.protobuf.ExtensionRegistry assignDescriptors(
 					com.google.protobuf.Descriptors.FileDescriptor root) {
 				descriptor = root;
@@ -2149,6 +2238,16 @@ public final class NamedVectorMessage {
 		internal_static_NamedVectorsMessage_Keyword_fieldAccessorTable = new com.google.protobuf.GeneratedMessage.FieldAccessorTable(
 				internal_static_NamedVectorsMessage_Keyword_descriptor,
 				new java.lang.String[] { "Key", "StringValue", "DoubleValue", });
+	}
+
+	public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
+		return descriptor;
+	}
+
+	public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
+	}
+
+	private NamedVectorMessage() {
 	}
 
 	// @@protoc_insertion_point(outer_class_scope)

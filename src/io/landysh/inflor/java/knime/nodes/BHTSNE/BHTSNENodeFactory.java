@@ -16,16 +16,16 @@ public class BHTSNENodeFactory extends NodeFactory<BHTSNENodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BHTSNENodeModel createNodeModel() {
-		return new BHTSNENodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new BHTSNENodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public BHTSNENodeModel createNodeModel() {
+		return new BHTSNENodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class BHTSNENodeFactory extends NodeFactory<BHTSNENodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new BHTSNENodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

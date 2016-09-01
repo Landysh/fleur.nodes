@@ -13,18 +13,18 @@ public class EventFrameTest {
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
-		String testKey = "key";
-		String testVal = "value";
-		String column1 = "c1";
-		String column2 = "c2";
+		final String testKey = "key";
+		final String testVal = "value";
+		final String column1 = "c1";
+		final String column2 = "c2";
 
-		Hashtable <String, String> header = new Hashtable<String, String>();
+		final Hashtable<String, String> header = new Hashtable<String, String>();
 		header.put(testKey, testVal);
 		// Test
-		ColumnStore cs = new ColumnStore(header, new String[] {column1, column2});
-		
-		boolean contains1 = cs.getData().keySet().contains(column1);
-		boolean contains2 = cs.getData().keySet().contains(column2);
+		final ColumnStore cs = new ColumnStore(header, new String[] { column1, column2 });
+
+		final boolean contains1 = cs.getData().keySet().contains(column1);
+		final boolean contains2 = cs.getData().keySet().contains(column2);
 
 		// Assert
 		assertEquals("My First Message", testVal, cs.getKeywords().get(testKey));

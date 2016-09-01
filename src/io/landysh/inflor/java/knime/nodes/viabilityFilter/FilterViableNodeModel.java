@@ -47,36 +47,49 @@ public class FilterViableNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
+
+		return new DataTableSpec[] { createSpec(inSpecs[0]) };
+	}
+
+	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
+		return dataTableSpec;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
 			throws Exception {
 		logger.info("Beginning Execution.");
-		FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 
 		// Create the output spec and data container.
-		DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
-		BufferedDataContainer container = exec.createDataContainer(outSpec);
-		String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
-		int index = outSpec.findColumnIndex(columnName);
-		String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
+		final DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
+		final BufferedDataContainer container = exec.createDataContainer(outSpec);
+		final String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
+		final int index = outSpec.findColumnIndex(columnName);
+		final String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
 
 		int i = 0;
-		for (DataRow inRow : inData[0]) {
-			DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
-			ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-			FCSVector viabilityData = columnStore.getVector(viabilityColumn);
+		for (final DataRow inRow : inData[0]) {
+			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
+			final ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			final ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
+			final FCSVector viabilityData = columnStore.getVector(viabilityColumn);
 			model.buildModel(viabilityData);
-			boolean[] mask = model.scoreModel(viabilityData);
+			final boolean[] mask = model.scoreModel(viabilityData);
 
 			// now create the output row
-			ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
-			for (String name : columnStore.getColumnNames()) {
-				double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
+			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
+			for (final String name : columnStore.getColumnNames()) {
+				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
 				outStore.addColumn(name, maskedColumn);
 			}
-			String fsName = i + "ColumnStore.fs";
-			FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-			ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+			final String fsName = i + "ColumnStore.fs";
+			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
 
 			for (int j = 0; j < outCells.length; j++) {
 				if (j == index) {
@@ -85,7 +98,7 @@ public class FilterViableNodeModel extends NodeModel {
 					outCells[j] = inRow.getCell(j);
 				}
 			}
-			DataRow outRow = new DefaultRow("Row " + i, outCells);
+			final DataRow outRow = new DefaultRow("Row " + i, outCells);
 			container.addRowToTable(outRow);
 			i++;
 		}
@@ -93,8 +106,21 @@ public class FilterViableNodeModel extends NodeModel {
 		return new BufferedDataTable[] { container.getTable() };
 	}
 
-	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
-		return dataTableSpec;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		m_settings.loadSettingsFrom(settings);
 	}
 
 	/**
@@ -108,9 +134,8 @@ public class FilterViableNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
-
-		return new DataTableSpec[] { createSpec(inSpecs[0]) };
+	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
 	}
 
 	/**
@@ -127,34 +152,9 @@ public class FilterViableNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-
-		m_settings.loadSettingsFrom(settings);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
 
 		m_settings.validateSettings(settings);
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
 	}
 }

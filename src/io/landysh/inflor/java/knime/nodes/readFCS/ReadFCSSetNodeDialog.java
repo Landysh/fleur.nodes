@@ -28,16 +28,16 @@ public class ReadFCSSetNodeDialog extends DefaultNodeSettingsPane {
 	protected ReadFCSSetNodeDialog() {
 		super();
 		// Path to files.
-		SettingsModelString pathModel = new SettingsModelString(ReadFCSSetNodeModel.CFGKEY_PATH,
+		final SettingsModelString pathModel = new SettingsModelString(ReadFCSSetNodeModel.CFGKEY_PATH,
 				ReadFCSSetNodeModel.DEFAULT_PATH);
-		DialogComponentFileChooser pathComponent = new DialogComponentFileChooser(pathModel, "ReadFCSSetPathHistory",
-				JFileChooser.OPEN_DIALOG, true);
+		final DialogComponentFileChooser pathComponent = new DialogComponentFileChooser(pathModel,
+				"ReadFCSSetPathHistory", JFileChooser.OPEN_DIALOG, true);
 		addDialogComponent(pathComponent);
 
 		// Compensate on read?
-		SettingsModelBoolean compModel = new SettingsModelBoolean(ReadFCSSetNodeModel.CFGKEY_COMPENSATE,
+		final SettingsModelBoolean compModel = new SettingsModelBoolean(ReadFCSSetNodeModel.CFGKEY_COMPENSATE,
 				ReadFCSSetNodeModel.DEFAULT_COMPENSATE);
-		DialogComponentBoolean compComponent = new DialogComponentBoolean(compModel, "Compensate?");
+		final DialogComponentBoolean compComponent = new DialogComponentBoolean(compModel, "Compensate?");
 		addDialogComponent(compComponent);
 
 	}

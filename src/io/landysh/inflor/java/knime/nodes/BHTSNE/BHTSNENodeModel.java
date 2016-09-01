@@ -51,72 +51,13 @@ public class BHTSNENodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
-			throws CanceledExecutionException {
-
-		// get the data and write it to the container
-		ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
-		int rowCount = port.getColumnStore().getRowCount();
-		
-		//Get the settings we'll need
-		String[] features = m_settings.getFeatures();
-		int maxIters = m_settings.getIterations();
-		int perplexity = m_settings.getPerplexity();
-		int pcaDims = m_settings.getPCADims();
-		int outDims = m_settings.getFinalDimensions();
-		
-		//Initialize the data
-		double[][] X = new double[features.length][rowCount];
-
-		for (int i = 0; i < features.length; i++) {
-			X[i] = port.getColumnStore().getVector(features[i]).getData();
-		}
-
-		FastTSne sne = new FastTSne();
-
-		double[][] Y = sne.tsne(X, outDims, pcaDims, perplexity, maxIters);
-
-		// create the output container
-		DataTableSpec spec = createSpec(inData[0].getSpec());
-		BufferedDataContainer container = exec.createDataContainer(spec);
-
-		for (int i = 0; i < rowCount; i++) {
-			DataCell[] dataCells = new DataCell[X.length + Y.length];
-			for (int j = 0; j < X.length; j++) {
-				dataCells[j] = new DoubleCell(X[j][i]);
-			}
-			for (int k = 0; k < Y.length; k++) {
-				dataCells[X.length + k] = new DoubleCell(X[k][i]);
-			}
-			DataRow dataRow = new DefaultRow("Row " + i, dataCells);
-			container.addRowToTable(dataRow);
-		}
-
-		// cleanup and create the table
-		container.close();
-		BufferedDataTable table = container.getTable();
-		return new BufferedDataTable[] { table };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void reset() {
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
 
 		return new DataTableSpec[] { createSpec(inSpecs[0]) };
 	}
 
 	private DataTableSpec createSpec(PortObjectSpec inSpec) {
-		String[] features = m_settings.getFeatures();
+		final String[] features = m_settings.getFeatures();
 
 		return null;
 	}
@@ -125,9 +66,59 @@ public class BHTSNENodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
+	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
+			throws CanceledExecutionException {
 
-		m_settings.save(settings);
+		// get the data and write it to the container
+		final ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
+		final int rowCount = port.getColumnStore().getRowCount();
+
+		// Get the settings we'll need
+		final String[] features = m_settings.getFeatures();
+		final int maxIters = m_settings.getIterations();
+		final int perplexity = m_settings.getPerplexity();
+		final int pcaDims = m_settings.getPCADims();
+		final int outDims = m_settings.getFinalDimensions();
+
+		// Initialize the data
+		final double[][] X = new double[features.length][rowCount];
+
+		for (int i = 0; i < features.length; i++) {
+			X[i] = port.getColumnStore().getVector(features[i]).getData();
+		}
+
+		final FastTSne sne = new FastTSne();
+
+		final double[][] Y = sne.tsne(X, outDims, pcaDims, perplexity, maxIters);
+
+		// create the output container
+		final DataTableSpec spec = createSpec(inData[0].getSpec());
+		final BufferedDataContainer container = exec.createDataContainer(spec);
+
+		for (int i = 0; i < rowCount; i++) {
+			final DataCell[] dataCells = new DataCell[X.length + Y.length];
+			for (int j = 0; j < X.length; j++) {
+				dataCells[j] = new DoubleCell(X[j][i]);
+			}
+			for (int k = 0; k < Y.length; k++) {
+				dataCells[X.length + k] = new DoubleCell(X[k][i]);
+			}
+			final DataRow dataRow = new DefaultRow("Row " + i, dataCells);
+			container.addRowToTable(dataRow);
+		}
+
+		// cleanup and create the table
+		container.close();
+		final BufferedDataTable table = container.getTable();
+		return new BufferedDataTable[] { table };
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
 	}
 
 	/**
@@ -143,17 +134,8 @@ public class BHTSNENodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+	protected void reset() {
 
-		m_settings.validate(settings);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
 	}
 
 	/**
@@ -162,6 +144,24 @@ public class BHTSNENodeModel extends NodeModel {
 	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+
+		m_settings.save(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		m_settings.validate(settings);
 	}
 
 }

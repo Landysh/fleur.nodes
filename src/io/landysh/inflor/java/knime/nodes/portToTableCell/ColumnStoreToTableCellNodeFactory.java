@@ -15,16 +15,16 @@ public class ColumnStoreToTableCellNodeFactory extends NodeFactory<ColumnStoreTo
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ColumnStoreToTableCellNodeModel createNodeModel() {
-		return new ColumnStoreToTableCellNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new ColumnStoreToTableCellNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public ColumnStoreToTableCellNodeModel createNodeModel() {
+		return new ColumnStoreToTableCellNodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class ColumnStoreToTableCellNodeFactory extends NodeFactory<ColumnStoreTo
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new ColumnStoreToTableCellNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

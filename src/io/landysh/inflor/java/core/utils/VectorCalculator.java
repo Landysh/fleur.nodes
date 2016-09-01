@@ -4,33 +4,33 @@ import java.util.Arrays;
 
 public class VectorCalculator {
 
-	private double[] data;
-	private double[] sortedData;
+	private final double[] data;
+	private final double[] sortedData;
 
-	private double min;
-	private double max;
+	private final double min;
+	private final double max;
 
 	public VectorCalculator(double[] data) {
 		this.data = data;
-		this.sortedData = data.clone();
-		Arrays.parallelSort(this.sortedData);
-		this.min = this.sortedData[0];
-		this.max = this.sortedData[this.sortedData.length - 1];
+		sortedData = data.clone();
+		Arrays.parallelSort(sortedData);
+		min = sortedData[0];
+		max = sortedData[sortedData.length - 1];
 	}
 
 	public double getMax() {
-		return this.max;
+		return max;
 	}
 
 	public double getMin() {
-		return this.min;
+		return min;
+	}
+
+	public double[] getRawData() {
+		return data;
 	}
 
 	public double[] getSortedData() {
-		return this.sortedData;
-	}
-	
-	public double[] getRawData(){
-		return this.data;
+		return sortedData;
 	}
 }

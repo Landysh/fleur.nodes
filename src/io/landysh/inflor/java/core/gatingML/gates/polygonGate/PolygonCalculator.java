@@ -16,25 +16,26 @@ public class PolygonCalculator {
 
 	public PolygonCalculator(ArrayList<Double> D1, ArrayList<Double> D2) {
 		if (D1.size() != D2.size() && D1.size() >= 3) {
-			String message = "d1 and d2 must have the name size";
-			IllegalArgumentException e = new IllegalArgumentException(message);
+			final String message = "d1 and d2 must have the name size";
+			final IllegalArgumentException e = new IllegalArgumentException(message);
 			e.printStackTrace();
 			throw e;
 		}
 		factory = new GeometryFactory();
-		
-	    ArrayList<Coordinate> points = new ArrayList<Coordinate>();
+
+		final ArrayList<Coordinate> points = new ArrayList<Coordinate>();
 		for (int i = 0; i < D1.size(); i++) {
 			points.add(new Coordinate(D1.get(i), D2.get(i)));
 		}
-		//Close the loop manually.  Maybe a better way?
+		// Close the loop manually. Maybe a better way?
 		points.add(new Coordinate(D1.get(0), D2.get(0)));
-		
-		CoordinateArraySequence coords = new CoordinateArraySequence(points.toArray(new Coordinate[points.size()]));
-		//LinearRing ring = factory.createLinearRing();
-		
-	    gate = factory.createPolygon(coords);
-		event = factory.createPoint(new Coordinate(0,0));
+
+		final CoordinateArraySequence coords = new CoordinateArraySequence(
+				points.toArray(new Coordinate[points.size()]));
+		// LinearRing ring = factory.createLinearRing();
+
+		gate = factory.createPolygon(coords);
+		event = factory.createPoint(new Coordinate(0, 0));
 	}
 
 	public boolean isInside(double x, double y) {
@@ -43,4 +44,4 @@ public class PolygonCalculator {
 		return gate.contains(event);
 	}
 }
-//EOF
+// EOF

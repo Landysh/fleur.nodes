@@ -16,16 +16,16 @@ public class ReadFCSSetNodeFactory extends NodeFactory<ReadFCSSetNodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReadFCSSetNodeModel createNodeModel() {
-		return new ReadFCSSetNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new ReadFCSSetNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public ReadFCSSetNodeModel createNodeModel() {
+		return new ReadFCSSetNodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class ReadFCSSetNodeFactory extends NodeFactory<ReadFCSSetNodeModel> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new ReadFCSSetNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

@@ -16,16 +16,16 @@ public class ReadFCSFrameNodeFactory extends NodeFactory<ReadFCSFrameNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReadFCSFrameNodeModel createNodeModel() {
-		return new ReadFCSFrameNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new ReadFCSNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public ReadFCSFrameNodeModel createNodeModel() {
+		return new ReadFCSFrameNodeModel();
 	}
 
 	/**
@@ -40,16 +40,16 @@ public class ReadFCSFrameNodeFactory extends NodeFactory<ReadFCSFrameNodeModel> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new ReadFCSNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }

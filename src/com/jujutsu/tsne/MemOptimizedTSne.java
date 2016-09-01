@@ -27,45 +27,47 @@ import org.ejml.data.DenseMatrix64F;
  */
 public class MemOptimizedTSne extends FastTSne {
 
+	@Override
 	public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity, int max_iter,
 			boolean use_pca) {
 		System.out.println("X:Shape is = " + X.length + " x " + X[0].length);
 		System.out.println("Running MemOptimized TSne.");
 		// Initialize variables
 		if (use_pca && X[0].length > initial_dims) {
-			PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
+			final PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
 			X = pca.pca(X, initial_dims);
 			System.out.println("X:Shape after PCA is = " + X.length + " x " + X[0].length);
 		}
-		int n = X.length;
+		final int n = X.length;
 		double momentum = .5;
-		double initial_momentum = 0.5;
-		double final_momentum = 0.8;
-		int eta = 500;
-		double min_gain = 0.01;
-		DenseMatrix64F Y = new DenseMatrix64F(mo.rnorm(n, no_dims));
-		DenseMatrix64F Ysqlmul = new DenseMatrix64F(Y.numRows, Y.numRows); // Ysqlmul
-																			// =
-																			// n
-																			// x
-																			// n
-		DenseMatrix64F dY = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 0.0));
-		DenseMatrix64F iY = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 0.0));
-		DenseMatrix64F gains = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 1.0));
-		DenseMatrix64F btNeg = new DenseMatrix64F(n, no_dims);
-		DenseMatrix64F bt = new DenseMatrix64F(n, no_dims);
+		final double initial_momentum = 0.5;
+		final double final_momentum = 0.8;
+		final int eta = 500;
+		final double min_gain = 0.01;
+		final DenseMatrix64F Y = new DenseMatrix64F(mo.rnorm(n, no_dims));
+		final DenseMatrix64F Ysqlmul = new DenseMatrix64F(Y.numRows, Y.numRows); // Ysqlmul
+		// =
+		// n
+		// x
+		// n
+		final DenseMatrix64F dY = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 0.0));
+		final DenseMatrix64F iY = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 0.0));
+		final DenseMatrix64F gains = new DenseMatrix64F(mo.fillMatrix(n, no_dims, 1.0));
+		final DenseMatrix64F btNeg = new DenseMatrix64F(n, no_dims);
+		final DenseMatrix64F bt = new DenseMatrix64F(n, no_dims);
 
 		// Compute P-values
-		DenseMatrix64F P = new DenseMatrix64F(x2p(X, 1e-5, perplexity).P); // P
-																			// =
-																			// n
-																			// x
-																			// n
-		DenseMatrix64F Psized = new DenseMatrix64F(P.numRows, P.numCols); // L =
-																			// n
-																			// x
-																			// n
-		DenseMatrix64F diag = new DenseMatrix64F(mo.fillMatrix(Psized.numRows, Psized.numCols, 0.0));
+		final DenseMatrix64F P = new DenseMatrix64F(x2p(X, 1e-5, perplexity).P); // P
+		// =
+		// n
+		// x
+		// n
+		final DenseMatrix64F Psized = new DenseMatrix64F(P.numRows, P.numCols); // L
+																				// =
+		// n
+		// x
+		// n
+		final DenseMatrix64F diag = new DenseMatrix64F(mo.fillMatrix(Psized.numRows, Psized.numCols, 0.0));
 
 		transpose(P, Psized);
 		addEquals(P, Psized);
@@ -76,12 +78,15 @@ public class MemOptimizedTSne extends FastTSne {
 
 		System.out.println("Y:Shape is = " + Y.getNumRows() + " x " + Y.getNumCols());
 
-		DenseMatrix64F sqed = new DenseMatrix64F(Y.numRows, Y.numCols); // sqed
-																		// = n x
-																		// n
-		DenseMatrix64F sum_Y = new DenseMatrix64F(1, Y.numRows);
-		DenseMatrix64F Q = new DenseMatrix64F(P.numRows, P.numCols); // Q = n x
-																		// n
+		final DenseMatrix64F sqed = new DenseMatrix64F(Y.numRows, Y.numCols); // sqed
+		// = n x
+		// n
+		final DenseMatrix64F sum_Y = new DenseMatrix64F(1, Y.numRows);
+		final DenseMatrix64F Q = new DenseMatrix64F(P.numRows, P.numCols); // Q
+																			// =
+																			// n
+																			// x
+																			// n
 
 		for (int iter = 0; iter < max_iter; iter++) {
 			// Compute pairwise affinities
@@ -102,8 +107,8 @@ public class MemOptimizedTSne extends FastTSne {
 			// Compute gradient
 			subtract(P, Q, Psized);
 			elementMult(Psized, Ysqlmul);
-			DenseMatrix64F rowsum = sumRows(Psized, null); // rowsum = nx1
-			double[] rsum = new double[rowsum.numRows];
+			final DenseMatrix64F rowsum = sumRows(Psized, null); // rowsum = nx1
+			final double[] rsum = new double[rowsum.numRows];
 			for (int i = 0; i < rsum.length; i++) {
 				rsum[i] = rowsum.get(i, 0);
 			}
@@ -118,13 +123,13 @@ public class MemOptimizedTSne extends FastTSne {
 			else
 				momentum = final_momentum;
 
-			boolean[][] boolMtrx = mo.equal(biggerThan(dY, 0.0), biggerThan(iY, 0.0));
+			final boolean[][] boolMtrx = mo.equal(biggerThan(dY, 0.0), biggerThan(iY, 0.0));
 
 			setData(btNeg, mo.abs(mo.negate(boolMtrx)));
 			setData(bt, mo.abs(boolMtrx));
 
-			DenseMatrix64F gainsSmall = new DenseMatrix64F(gains);
-			DenseMatrix64F gainsBig = new DenseMatrix64F(gains);
+			final DenseMatrix64F gainsSmall = new DenseMatrix64F(gains);
+			final DenseMatrix64F gainsBig = new DenseMatrix64F(gains);
 			add(gainsSmall, 0.2);
 			scale(0.8, gainsBig);
 
@@ -135,24 +140,24 @@ public class MemOptimizedTSne extends FastTSne {
 			assignAllLessThan(gains, min_gain, min_gain);
 
 			scale(momentum, iY);
-			DenseMatrix64F gainsdY = new DenseMatrix64F(gains.numRows, dY.numCols);
+			final DenseMatrix64F gainsdY = new DenseMatrix64F(gains.numRows, dY.numCols);
 			elementMult(gains, dY, gainsdY);
 			scale(eta, gainsdY);
 			subtractEquals(iY, gainsdY);
 			addEquals(Y, iY);
-			DenseMatrix64F colMeanY = colMean(Y, 0);
-			DenseMatrix64F meanTile = tile(colMeanY, n, 1);
+			final DenseMatrix64F colMeanY = colMean(Y, 0);
+			final DenseMatrix64F meanTile = tile(colMeanY, n, 1);
 			subtractEquals(Y, meanTile);
 
 			// Compute current value of the cost function
 			if (iter % 100 == 0) {
-				DenseMatrix64F Pdiv = new DenseMatrix64F(P);
+				final DenseMatrix64F Pdiv = new DenseMatrix64F(P);
 				elementDiv(Pdiv, Q);
 				elementLog(Pdiv, Psized);
 				replaceNaN(Psized, Double.MIN_VALUE);
 				elementMult(Psized, P);
 				replaceNaN(Psized, Double.MIN_VALUE);
-				double C = elementSum(Psized);
+				final double C = elementSum(Psized);
 				System.out.println("Iteration " + iter + ": error is " + C);
 			} else if (iter % 10 == 0) {
 				System.out.println("Iteration " + iter);

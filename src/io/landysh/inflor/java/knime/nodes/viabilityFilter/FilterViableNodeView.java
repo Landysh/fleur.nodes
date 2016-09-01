@@ -31,7 +31,7 @@ public class FilterViableNodeView extends NodeView<FilterViableNodeModel> {
 
 		// TODO retrieve the new model from your nodemodel and
 		// update the view.
-		FilterViableNodeModel nodeModel = (FilterViableNodeModel) getNodeModel();
+		final FilterViableNodeModel nodeModel = getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve

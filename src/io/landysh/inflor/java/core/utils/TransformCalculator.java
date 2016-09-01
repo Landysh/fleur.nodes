@@ -2,10 +2,10 @@ package io.landysh.inflor.java.core.utils;
 
 import java.util.Arrays;
 
-import edu.stanford.facs.logicle.FastLogicle;
-
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+
+import edu.stanford.facs.logicle.FastLogicle;
 
 public class TransformCalculator {
 
@@ -16,51 +16,51 @@ public class TransformCalculator {
 
 	private FastLogicle logicleTransform;
 
+	public double[] centered(double[] X) {
+		final double[] Y = X.clone();
+		// TODO
+		return Y;
+	}
+
+	private double estimateW(double[] X, double T, double M) {
+		/**
+		 * Based on the 5th percentile method suggested by Parks/Moore.
+		 */
+		final double lowerBound = new Percentile().evaluate(X, LOGICLE_W_PERCENTILE);
+		final double W = (M - Math.log10(T / Math.abs(lowerBound))) / 2;
+		return W;
+	}
+
 	public double[] linear(double[] X, double m, double b) {
-		double[] Y = X.clone();
+		final double[] Y = X.clone();
 		for (double d : Y) {
 			d = m * d + b;
 		}
 		return X;
 	}
 
-	public double[] logStream(double[] X) {
-		double[] Y = X.clone();
-		MathLogConsumer doLog10 = new MathLogConsumer();
-		Arrays.stream(Y).forEach(doLog10);
-		return Y;
-	}
-
 	public double[] log(double[] X) {
-		double[] Y = X.clone();
+		final double[] Y = X.clone();
 		for (double d : Y) {
 			d = Math.log10(d);
 		}
 		return Y;
 	}
 
-	public double[] logicle(double[] X, double T, double W, double M, double A) {
-		double[] Y = X.clone();
-		this.logicleTransform = new FastLogicle(T, W, M, A);
-		for (double d : Y) {
-			d = logicleTransform.scale(d);
-		}
-		return Y;
-	}
-
-	public double[] logicle(double[] X, double T, double W, double M) {
-		double[] Y = logicle(X, T, W, M, DEFAULT_A);
-		return Y;
-	}
-
-	public double[] logicle(double[] X, double T, double W) {
-		double[] Y = logicle(X, T, W, DEFAULT_M);
+	public double[] logicle(double[] X) {
+		final double t = StatUtils.max(X);
+		final double[] Y = logicle(X, t);
 		return Y;
 	}
 
 	public double[] logicle(double[] X, double T) {
-		double W = estimateW(X, T, DEFAULT_M);
-		double[] Y = logicle(X, T, W);
+		final double W = estimateW(X, T, DEFAULT_M);
+		final double[] Y = logicle(X, T, W);
+		return Y;
+	}
+
+	public double[] logicle(double[] X, double T, double W) {
+		final double[] Y = logicle(X, T, W, DEFAULT_M);
 		return Y;
 	}
 
@@ -70,37 +70,37 @@ public class TransformCalculator {
 		 * needed to differentiate from 'double[] logicle (double[] X, double T,
 		 * double W){...}'
 		 */
-		double W = estimateW(X, T, M);
-		double[] Y = logicle(X, T, W, M);
+		final double W = estimateW(X, T, M);
+		final double[] Y = logicle(X, T, W, M);
 		return Y;
 	}
 
-	public double[] logicle(double[] X) {
-		double t = StatUtils.max(X);
-		double[] Y = logicle(X, t);
+	public double[] logicle(double[] X, double T, double W, double M) {
+		final double[] Y = logicle(X, T, W, M, DEFAULT_A);
 		return Y;
 	}
 
-	private double estimateW(double[] X, double T, double M) {
-		/**
-		 * Based on the 5th percentile method suggested by Parks/Moore.
-		 */
-		double lowerBound = new Percentile().evaluate(X, LOGICLE_W_PERCENTILE);
-		double W = (M - Math.log10(T / Math.abs(lowerBound))) / 2;
-		return W;
+	public double[] logicle(double[] X, double T, double W, double M, double A) {
+		final double[] Y = X.clone();
+		logicleTransform = new FastLogicle(T, W, M, A);
+		for (double d : Y) {
+			d = logicleTransform.scale(d);
+		}
+		return Y;
 	}
 
 	public double[] logicleInverse(double[] X) {
-		double[] Y = X.clone();
+		final double[] Y = X.clone();
 		for (double d : Y) {
 			d = logicleTransform.inverse(d);
 		}
 		return Y;
 	}
 
-	public double[] centered(double[] X) {
-		double[] Y = X.clone();
-		// TODO
+	public double[] logStream(double[] X) {
+		final double[] Y = X.clone();
+		final MathLogConsumer doLog10 = new MathLogConsumer();
+		Arrays.stream(Y).forEach(doLog10);
 		return Y;
 	}
 }

@@ -1,8 +1,9 @@
 package io.landysh.inflor.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Hashtable;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import io.landysh.inflor.java.core.dataStructures.FCSVector;
@@ -16,7 +17,7 @@ public class FCSFileReaderTest {
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
-		FCSFileReader r = new FCSFileReader(path1, false);
+		final FCSFileReader r = new FCSFileReader(path1, false);
 
 		// Test
 
@@ -34,14 +35,14 @@ public class FCSFileReaderTest {
 	@Test
 	public void testReadAllData() throws Exception {
 		// Setup
-		FCSFileReader r = new FCSFileReader(path1, false);
+		final FCSFileReader r = new FCSFileReader(path1, false);
 		r.readData();
 
 		// Test
-		Hashtable<String, FCSVector> testData = r.getColumnStore().getData();
+		final Hashtable<String, FCSVector> testData = r.getColumnStore().getData();
 
-		double[] fcs = { 400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400 };
-		double[] ssc = { 300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500 };
+		final double[] fcs = { 400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400 };
+		final double[] ssc = { 300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500 };
 
 		// Assert
 		for (int i = 0; i < fcs.length; i++) {

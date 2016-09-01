@@ -22,17 +22,16 @@ public class CellLineageRenderer implements DataValueRenderer {
 
 	public static final String DESCRIPTION = "Cell Lineage View";
 
-	@Override
-	public Component getTableCellRendererComponent(JTable arg0, Object arg1, boolean arg2, boolean arg3, int arg4,
-			int arg5) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Component getListCellRendererComponent(JList arg0, Object arg1, int arg2, boolean arg3, boolean arg4) {
-		// TODO Auto-generated method stub
-		return null;
+	private static XYDataset createDataset(ColumnStore columns) {
+		final XYSeriesCollection result = new XYSeriesCollection();
+		final XYSeries series = new XYSeries("Random");
+		final double[] x = columns.getColumn(columns.getColumnNames()[0]);
+		final double[] y = columns.getColumn(columns.getColumnNames()[1]);
+		for (int i = 0; i < 100; i++) {
+			series.add(x[i], y[i]);
+			result.addSeries(series);
+		}
+		return result;
 	}
 
 	@Override
@@ -51,30 +50,31 @@ public class CellLineageRenderer implements DataValueRenderer {
 	}
 
 	@Override
+	public Component getListCellRendererComponent(JList arg0, Object arg1, int arg2, boolean arg3, boolean arg4) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public Dimension getPreferredSize() {
-		Dimension dim = new Dimension(300, 300);
+		final Dimension dim = new Dimension(300, 300);
 		return dim;
 	}
 
 	@Override
 	public Component getRendererComponent(Object unCastCell) {
-		ColumnStoreCell cell = (ColumnStoreCell) unCastCell;
-		ColumnStore data = cell.getColumnStore();
-		XYDataset dataset = createDataset(data);
-		JFreeChart chart = ChartFactory.createScatterPlot("Foo", "bar", "foobar", dataset);
-		ChartPanel panel = new ChartPanel(chart);
+		final ColumnStoreCell cell = (ColumnStoreCell) unCastCell;
+		final ColumnStore data = cell.getColumnStore();
+		final XYDataset dataset = createDataset(data);
+		final JFreeChart chart = ChartFactory.createScatterPlot("Foo", "bar", "foobar", dataset);
+		final ChartPanel panel = new ChartPanel(chart);
 		return panel;
 	}
 
-	private static XYDataset createDataset(ColumnStore columns) {
-		XYSeriesCollection result = new XYSeriesCollection();
-		XYSeries series = new XYSeries("Random");
-		double[] x = columns.getColumn(columns.getColumnNames()[0]);
-		double[] y = columns.getColumn(columns.getColumnNames()[1]);
-		for (int i = 0; i < 100; i++) {
-			series.add(x[i], y[i]);
-			result.addSeries(series);
-		}
-		return result;
+	@Override
+	public Component getTableCellRendererComponent(JTable arg0, Object arg1, boolean arg2, boolean arg3, int arg4,
+			int arg5) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -43,31 +43,6 @@ public class LearnCellCyclyNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
-			throws Exception {
-
-		// TODO do something here
-		logger.info("Node Model Stub... this is not yet implemented !");
-
-		BufferedDataTable stats = null;
-		BufferedDataTable data = null;
-		return new BufferedDataTable[] { stats, data };
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
-		// Also data handled in load/saveInternals will be erased here.
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
 
 		// TODO: check if user settings are available, fit to the incoming
@@ -76,69 +51,49 @@ public class LearnCellCyclyNodeModel extends NodeModel {
 		// the spec of its output data table(s) (if you can, otherwise an array
 		// with null elements), or throw an exception with a useful user message
 
-		DataTableSpec statSpec = createStatSpec();
-		DataTableSpec dataSpec = createDataSpec(inSpecs[0]);
+		final DataTableSpec statSpec = createStatSpec();
+		final DataTableSpec dataSpec = createDataSpec(inSpecs[0]);
 
 		return new DataTableSpec[] { statSpec, dataSpec };
 	}
 
 	private DataTableSpec createDataSpec(DataTableSpec inSpec) {
-		DataTableSpec newColSpec = createTableSpec(inSpec);
-		DataTableSpec outSpec = new DataTableSpec(inSpec, newColSpec);
+		final DataTableSpec newColSpec = createTableSpec(inSpec);
+		final DataTableSpec outSpec = new DataTableSpec(inSpec, newColSpec);
 
 		return outSpec;
 	}
 
+	private DataTableSpec createStatSpec() {
+		final DataColumnSpec[] colSpecs = new DataColumnSpec[2];
+		colSpecs[0] = new DataColumnSpecCreator("Property", StringCell.TYPE).createSpec();
+		colSpecs[1] = new DataColumnSpecCreator("Value", StringCell.TYPE).createSpec();
+		final DataTableSpec tableSpec = new DataTableSpec(colSpecs);
+		return tableSpec;
+	}
+
 	private DataTableSpec createTableSpec(DataTableSpec inSpec) {
-		DataColumnSpec[] colSpecs = new DataColumnSpec[1];
+		final DataColumnSpec[] colSpecs = new DataColumnSpec[1];
 		colSpecs[0] = new DataColumnSpecCreator("CC_Singlets", StringCell.TYPE).createSpec();
 
-		DataTableSpec spec = new DataTableSpec(colSpecs);
+		final DataTableSpec spec = new DataTableSpec(colSpecs);
 
 		return spec;
 	}
 
-	private DataTableSpec createStatSpec() {
-		DataColumnSpec[] colSpecs = new DataColumnSpec[2];
-		colSpecs[0] = new DataColumnSpecCreator("Property", StringCell.TYPE).createSpec();
-		colSpecs[1] = new DataColumnSpecCreator("Value", StringCell.TYPE).createSpec();
-		DataTableSpec tableSpec = new DataTableSpec(colSpecs);
-		return tableSpec;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws Exception {
 
-		// TODO save user settings to the config object.
+		// TODO do something here
+		logger.info("Node Model Stub... this is not yet implemented !");
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-
-		// TODO load (valid) settings from the config object.
-		// It can be safely assumed that the settings are valided by the
-		// method below.
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-
-		// TODO check if the settings could be applied to our model
-		// e.g. if the count is in a certain range (which is ensured by the
-		// SettingsModel).
-		// Do not actually set any values of any member variables.
-
+		final BufferedDataTable stats = null;
+		final BufferedDataTable data = null;
+		return new BufferedDataTable[] { stats, data };
 	}
 
 	/**
@@ -161,6 +116,28 @@ public class LearnCellCyclyNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		// TODO load (valid) settings from the config object.
+		// It can be safely assumed that the settings are valided by the
+		// method below.
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+		// TODO Code executed on reset.
+		// Models build during execute are cleared here.
+		// Also data handled in load/saveInternals will be erased here.
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
 			throws IOException, CanceledExecutionException {
 
@@ -170,6 +147,29 @@ public class LearnCellCyclyNodeModel extends NodeModel {
 		// and user settings saved through saveSettingsTo - is all taken care
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+
+		// TODO save user settings to the config object.
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+
+		// TODO check if the settings could be applied to our model
+		// e.g. if the count is in a certain range (which is ensured by the
+		// SettingsModel).
+		// Do not actually set any values of any member variables.
 
 	}
 

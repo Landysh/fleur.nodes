@@ -11,28 +11,28 @@ public class RangeDimension extends AbstractGMLDimension {
 		super(name);
 	}
 
-	public Double getMin() {
-		return min;
-	}
-
-	public void setMin(Double min) {
-		this.min = min;
+	public boolean evaluate(double value) {
+		if (min <= value && value < max) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public Double getMax() {
 		return max;
 	}
 
+	public Double getMin() {
+		return min;
+	}
+
 	public void setMax(Double max) {
 		this.max = max;
 	}
 
-	public boolean evaluate(double value) {
-		if (this.min <= value && value < this.max) {
-			return true;
-		} else {
-			return false;
-		}
+	public void setMin(Double min) {
+		this.min = min;
 	}
 }
-//EOF
+// EOF

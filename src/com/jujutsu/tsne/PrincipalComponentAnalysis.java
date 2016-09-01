@@ -69,29 +69,13 @@ public class PrincipalComponentAnalysis {
 	private int numComponents;
 
 	// where the data is stored
-	private DenseMatrix64F A = new DenseMatrix64F(1, 1);
+	private final DenseMatrix64F A = new DenseMatrix64F(1, 1);
 	private int sampleIndex;
 
 	// mean values of each element across all the samples
 	double mean[];
 
 	public PrincipalComponentAnalysis() {
-	}
-
-	/**
-	 * Must be called before any other functions. Declares and sets up internal
-	 * data structures.
-	 *
-	 * @param numSamples
-	 *            Number of samples that will be processed.
-	 * @param sampleSize
-	 *            Number of elements in each sample.
-	 */
-	public void setup(int numSamples, int sampleSize) {
-		mean = new double[sampleSize];
-		A.reshape(numSamples, sampleSize, false);
-		sampleIndex = 0;
-		numComponents = -1;
 	}
 
 	/**
@@ -149,58 +133,19 @@ public class PrincipalComponentAnalysis {
 		}
 
 		// Compute SVD and save time by not computing U
-		SingularValueDecomposition<DenseMatrix64F> svd = DecompositionFactory.svd(A.numRows, A.numCols, false, true,
-				false);
+		final SingularValueDecomposition<DenseMatrix64F> svd = DecompositionFactory.svd(A.numRows, A.numCols, false,
+				true, false);
 		if (!svd.decompose(A))
 			throw new RuntimeException("SVD failed");
 
 		V_t = svd.getV(null, true);
-		DenseMatrix64F W = svd.getW(null);
+		final DenseMatrix64F W = svd.getW(null);
 
 		// Singular values are in an arbitrary order initially
 		SingularOps.descendingOrder(null, false, W, V_t, true);
 
 		// strip off unneeded components and find the basis
 		V_t.reshape(numComponents, mean.length, true);
-	}
-
-	/**
-	 * Returns a vector from the PCA's basis.
-	 *
-	 * @param which
-	 *            Which component's vector is to be returned.
-	 * @return Vector from the PCA basis.
-	 */
-	public double[] getBasisVector(int which) {
-		if (which < 0 || which >= numComponents)
-			throw new IllegalArgumentException("Invalid component");
-
-		DenseMatrix64F v = new DenseMatrix64F(1, A.numCols);
-		CommonOps.extract(V_t, which, which + 1, 0, A.numCols, v, 0, 0);
-
-		return v.data;
-	}
-
-	/**
-	 * Converts a vector from sample space into eigen space.
-	 *
-	 * @param sampleData
-	 *            Sample space data.
-	 * @return Eigen space projection.
-	 */
-	public double[] sampleToEigenSpace(double[] sampleData) {
-		if (sampleData.length != A.getNumCols())
-			throw new IllegalArgumentException("Unexpected sample length");
-		DenseMatrix64F mean = DenseMatrix64F.wrap(A.getNumCols(), 1, this.mean);
-
-		DenseMatrix64F s = new DenseMatrix64F(A.getNumCols(), 1, true, sampleData);
-		DenseMatrix64F r = new DenseMatrix64F(numComponents, 1);
-
-		CommonOps.subtract(s, mean, s);
-
-		CommonOps.mult(V_t, s, r);
-
-		return r.data;
 	}
 
 	/**
@@ -214,12 +159,12 @@ public class PrincipalComponentAnalysis {
 		if (eigenData.length != numComponents)
 			throw new IllegalArgumentException("Unexpected sample length");
 
-		DenseMatrix64F s = new DenseMatrix64F(A.getNumCols(), 1);
-		DenseMatrix64F r = DenseMatrix64F.wrap(numComponents, 1, eigenData);
+		final DenseMatrix64F s = new DenseMatrix64F(A.getNumCols(), 1);
+		final DenseMatrix64F r = DenseMatrix64F.wrap(numComponents, 1, eigenData);
 
 		CommonOps.multTransA(V_t, r, s);
 
-		DenseMatrix64F mean = DenseMatrix64F.wrap(A.getNumCols(), 1, this.mean);
+		final DenseMatrix64F mean = DenseMatrix64F.wrap(A.getNumCols(), 1, this.mean);
 		CommonOps.add(s, mean, s);
 
 		return s.data;
@@ -241,16 +186,49 @@ public class PrincipalComponentAnalysis {
 	 * @return Its membership error.
 	 */
 	public double errorMembership(double[] sampleA) {
-		double[] eig = sampleToEigenSpace(sampleA);
-		double[] reproj = eigenToSampleSpace(eig);
+		final double[] eig = sampleToEigenSpace(sampleA);
+		final double[] reproj = eigenToSampleSpace(eig);
 
 		double total = 0;
 		for (int i = 0; i < reproj.length; i++) {
-			double d = sampleA[i] - reproj[i];
+			final double d = sampleA[i] - reproj[i];
 			total += d * d;
 		}
 
 		return Math.sqrt(total);
+	}
+
+	/**
+	 * Returns a vector from the PCA's basis.
+	 *
+	 * @param which
+	 *            Which component's vector is to be returned.
+	 * @return Vector from the PCA basis.
+	 */
+	public double[] getBasisVector(int which) {
+		if (which < 0 || which >= numComponents)
+			throw new IllegalArgumentException("Invalid component");
+
+		final DenseMatrix64F v = new DenseMatrix64F(1, A.numCols);
+		CommonOps.extract(V_t, which, which + 1, 0, A.numCols, v, 0, 0);
+
+		return v.data;
+	}
+
+	public double[][] pca(double[][] matrix, int no_dims) {
+		final double[][] trafoed = new double[matrix.length][matrix[0].length];
+		setup(matrix.length, matrix[0].length);
+		for (final double[] element : matrix) {
+			addSample(element);
+		}
+		computeBasis(no_dims);
+		for (int i = 0; i < matrix.length; i++) {
+			trafoed[i] = sampleToEigenSpace(matrix[i]);
+			for (int j = 0; j < trafoed[i].length; j++) {
+				trafoed[i][j] *= -1;
+			}
+		}
+		return trafoed;
 	}
 
 	/**
@@ -267,27 +245,49 @@ public class PrincipalComponentAnalysis {
 		if (sample.length != A.numCols)
 			throw new IllegalArgumentException("Expected input vector to be in sample space");
 
-		DenseMatrix64F dots = new DenseMatrix64F(numComponents, 1);
-		DenseMatrix64F s = DenseMatrix64F.wrap(A.numCols, 1, sample);
+		final DenseMatrix64F dots = new DenseMatrix64F(numComponents, 1);
+		final DenseMatrix64F s = DenseMatrix64F.wrap(A.numCols, 1, sample);
 
 		CommonOps.mult(V_t, s, dots);
 
 		return NormOps.normF(dots);
 	}
 
-	public double[][] pca(double[][] matrix, int no_dims) {
-		double[][] trafoed = new double[matrix.length][matrix[0].length];
-		setup(matrix.length, matrix[0].length);
-		for (int i = 0; i < matrix.length; i++) {
-			addSample(matrix[i]);
-		}
-		computeBasis(no_dims);
-		for (int i = 0; i < matrix.length; i++) {
-			trafoed[i] = sampleToEigenSpace(matrix[i]);
-			for (int j = 0; j < trafoed[i].length; j++) {
-				trafoed[i][j] *= -1;
-			}
-		}
-		return trafoed;
+	/**
+	 * Converts a vector from sample space into eigen space.
+	 *
+	 * @param sampleData
+	 *            Sample space data.
+	 * @return Eigen space projection.
+	 */
+	public double[] sampleToEigenSpace(double[] sampleData) {
+		if (sampleData.length != A.getNumCols())
+			throw new IllegalArgumentException("Unexpected sample length");
+		final DenseMatrix64F mean = DenseMatrix64F.wrap(A.getNumCols(), 1, this.mean);
+
+		final DenseMatrix64F s = new DenseMatrix64F(A.getNumCols(), 1, true, sampleData);
+		final DenseMatrix64F r = new DenseMatrix64F(numComponents, 1);
+
+		CommonOps.subtract(s, mean, s);
+
+		CommonOps.mult(V_t, s, r);
+
+		return r.data;
+	}
+
+	/**
+	 * Must be called before any other functions. Declares and sets up internal
+	 * data structures.
+	 *
+	 * @param numSamples
+	 *            Number of samples that will be processed.
+	 * @param sampleSize
+	 *            Number of elements in each sample.
+	 */
+	public void setup(int numSamples, int sampleSize) {
+		mean = new double[sampleSize];
+		A.reshape(numSamples, sampleSize, false);
+		sampleIndex = 0;
+		numComponents = -1;
 	}
 }

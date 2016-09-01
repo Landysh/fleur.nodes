@@ -38,23 +38,13 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 	private final static String CFG_COLUMN_NAMES = "vector names";
 	private final static String CFG_RowCount = "row count";
 
-	public Hashtable<String, String> keywords;
-	public String[] columnNames;
-	private int rowCount;
-
-	public ColumnStorePortSpec(Hashtable<String, String> keys, String[] columns, int count) {
-		keywords = keys;
-		columnNames = columns;
-		rowCount = count;
-	}
-
 	public static ColumnStorePortSpec load(PortObjectSpecZipInputStream in) {
 		ModelContentRO model = null;
 		try {
-			ZipEntry zentry = in.getNextEntry();
+			final ZipEntry zentry = in.getNextEntry();
 			assert zentry.getName().equals(CFG_SPEC);
 			model = ModelContent.loadFromXML(in);
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 			LOGGER.error("Internal error: Could not load settings", ioe);
 		}
 		String[] keys = null;
@@ -66,10 +56,10 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 			values = model.getStringArray(CFG_VALUES);
 			newVectorNames = model.getStringArray(CFG_COLUMN_NAMES);
 			newRowCount = model.getInt(CFG_RowCount);
-		} catch (InvalidSettingsException ise) {
+		} catch (final InvalidSettingsException ise) {
 			LOGGER.error("Internal error: Could not load settings", ise);
 		}
-		Hashtable<String, String> newKeywords = new Hashtable<String, String>();
+		final Hashtable<String, String> newKeywords = new Hashtable<String, String>();
 		for (int i = 0; i < keys.length; i++) {
 			newKeywords.put(keys[i], values[i]);
 		}
@@ -78,32 +68,31 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 
 	}
 
-	public void save(PortObjectSpecZipOutputStream out) {
-		// Build the keyword map.
-		String[] keys = new String[keywords.keySet().size()];
-		String[] values = new String[keywords.keySet().size()];
-		int i = 0;
-		for (String key : keywords.keySet()) {
-			keys[i] = key;
-			values[i] = keywords.get(key);
-			i++;
-		}
-		// Create model and add values.
-		ModelContent modelOut = new ModelContent(CFG_SPEC);
-		modelOut.addStringArray(CFG_KEYS, keys);
-		modelOut.addStringArray(CFG_VALUES, values);
-		modelOut.addStringArray(CFG_COLUMN_NAMES, columnNames);
-		modelOut.addInt(CFG_RowCount, rowCount);
-		try {
-			out.putNextEntry(new ZipEntry(CFG_SPEC));
-			modelOut.saveToXML(out);
-		} catch (IOException ioe) {
-			LOGGER.error("Internal error: Could not save settings", ioe);
-		}
-	}
+	public Hashtable<String, String> keywords;
+	public String[] columnNames;
+
+	private int rowCount;
 
 	public ColumnStorePortSpec() {
 		// no op, use with .load
+	}
+
+	public ColumnStorePortSpec(Hashtable<String, String> keys, String[] columns, int count) {
+		keywords = keys;
+		columnNames = columns;
+		rowCount = count;
+	}
+
+	public String[] getColumnNames() {
+		return columnNames;
+	}
+
+	public Hashtable<String, String> getKeywords() {
+		return keywords;
+	}
+
+	public int getRowCount() {
+		return rowCount;
 	}
 
 	@Override
@@ -111,16 +100,28 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 		return new JComponent[] { new FCSSummaryPanel(keywords) };
 	}
 
-	public Hashtable<String, String> getKeywords() {
-		return keywords;
-	}
-
-	public String[] getColumnNames() {
-		return columnNames;
-	}
-
-	public int getRowCount() {
-		return rowCount;
+	public void save(PortObjectSpecZipOutputStream out) {
+		// Build the keyword map.
+		final String[] keys = new String[keywords.keySet().size()];
+		final String[] values = new String[keywords.keySet().size()];
+		int i = 0;
+		for (final String key : keywords.keySet()) {
+			keys[i] = key;
+			values[i] = keywords.get(key);
+			i++;
+		}
+		// Create model and add values.
+		final ModelContent modelOut = new ModelContent(CFG_SPEC);
+		modelOut.addStringArray(CFG_KEYS, keys);
+		modelOut.addStringArray(CFG_VALUES, values);
+		modelOut.addStringArray(CFG_COLUMN_NAMES, columnNames);
+		modelOut.addInt(CFG_RowCount, rowCount);
+		try {
+			out.putNextEntry(new ZipEntry(CFG_SPEC));
+			modelOut.saveToXML(out);
+		} catch (final IOException ioe) {
+			LOGGER.error("Internal error: Could not save settings", ioe);
+		}
 	}
 
 }

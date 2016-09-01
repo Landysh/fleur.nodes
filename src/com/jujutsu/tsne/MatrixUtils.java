@@ -13,14 +13,14 @@ public class MatrixUtils {
 	}
 
 	public static double[][] simpleRead2DMatrix(File file, String columnDelimiter) {
-		List<double[]> rows = new ArrayList<>();
+		final List<double[]> rows = new ArrayList<>();
 
 		try (FileReader fr = new FileReader(file)) {
-			BufferedReader b = new BufferedReader(fr);
+			final BufferedReader b = new BufferedReader(fr);
 			String line;
 			while ((line = b.readLine()) != null && !line.matches("\\s*")) {
-				String[] cols = line.trim().split(columnDelimiter);
-				double[] row = new double[cols.length];
+				final String[] cols = line.trim().split(columnDelimiter);
+				final double[] row = new double[cols.length];
 				for (int j = 0; j < cols.length; j++) {
 					if (!(cols[j].length() == 0)) {
 						row[j] = Double.parseDouble(cols[j].trim());
@@ -29,13 +29,13 @@ public class MatrixUtils {
 				rows.add(row);
 			}
 			b.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 
-		double[][] array = new double[rows.size()][];
+		final double[][] array = new double[rows.size()][];
 		int currentRow = 0;
-		for (double[] ds : rows) {
+		for (final double[] ds : rows) {
 			array[currentRow++] = ds;
 		}
 
@@ -43,20 +43,20 @@ public class MatrixUtils {
 	}
 
 	public static String[] simpleReadLines(File file) {
-		List<String> rows = new ArrayList<>();
+		final List<String> rows = new ArrayList<>();
 
 		try (FileReader fr = new FileReader(file); BufferedReader b = new BufferedReader(fr)) {
 			String line;
 			while ((line = b.readLine()) != null) {
 				rows.add(line.trim());
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 
-		String[] lines = new String[rows.size()];
+		final String[] lines = new String[rows.size()];
 		int currentRow = 0;
-		for (String line : rows) {
+		for (final String line : rows) {
 			lines[currentRow++] = line;
 		}
 

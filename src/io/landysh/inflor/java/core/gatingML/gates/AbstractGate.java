@@ -35,20 +35,13 @@ public abstract class AbstractGate {
 	 */
 	public abstract boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int eventCount);
 
-	/**
-	 * Override to validate the gate definition. If gate is invalid, throw an
-	 * exception.
-	 * 
-	 * @throws IllegalStateException
-	 */
-	public abstract void validate() throws IllegalStateException;
+	public String getId() {
+		return id;
+	}
 
-	/**
-	 * Generate a gating-ML 2.0 compliant XML Element for this gate.
-	 * 
-	 * @return an org.w3c.dom Element.
-	 */
-	public abstract Element toXMLElement();
+	public String getInfo(String name) {
+		return custom_info.get(name);
+	}
 
 	/**
 	 * Used to implement hierarchical gating.
@@ -59,19 +52,26 @@ public abstract class AbstractGate {
 		return parent_id;
 	}
 
+	public String setInfo(String key, String value) {
+		return custom_info.put(key, value);
+	}
+
 	public void setParent_id(String parent_id) {
 		this.parent_id = parent_id;
 	}
 
-	public String getId() {
-		return id;
-	}
+	/**
+	 * Generate a gating-ML 2.0 compliant XML Element for this gate.
+	 * 
+	 * @return an org.w3c.dom Element.
+	 */
+	public abstract Element toXMLElement();
 
-	public String getInfo(String name) {
-		return custom_info.get(name);
-	}
-
-	public String setInfo(String key, String value) {
-		return custom_info.put(key, value);
-	}
+	/**
+	 * Override to validate the gate definition. If gate is invalid, throw an
+	 * exception.
+	 * 
+	 * @throws IllegalStateException
+	 */
+	public abstract void validate() throws IllegalStateException;
 }

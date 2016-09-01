@@ -17,16 +17,16 @@ public class LearnCellCycleNodeFactory extends NodeFactory<LearnCellCyclyNodeMod
 	 * {@inheritDoc}
 	 */
 	@Override
-	public LearnCellCyclyNodeModel createNodeModel() {
-		return new LearnCellCyclyNodeModel();
+	public NodeDialogPane createNodeDialogPane() {
+		return new LearnCellCycleNodeDialog();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int getNrNodeViews() {
-		return 1;
+	public LearnCellCyclyNodeModel createNodeModel() {
+		return new LearnCellCyclyNodeModel();
 	}
 
 	/**
@@ -42,16 +42,16 @@ public class LearnCellCycleNodeFactory extends NodeFactory<LearnCellCyclyNodeMod
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean hasDialog() {
-		return true;
+	public int getNrNodeViews() {
+		return 1;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new LearnCellCycleNodeDialog();
+	public boolean hasDialog() {
+		return true;
 	}
 
 }
