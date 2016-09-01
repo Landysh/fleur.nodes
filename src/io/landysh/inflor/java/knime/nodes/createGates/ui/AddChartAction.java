@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.createGates;
+package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
