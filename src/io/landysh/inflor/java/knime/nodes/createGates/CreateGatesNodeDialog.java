@@ -1,5 +1,7 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
+import java.awt.Container;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,7 +12,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -26,6 +27,7 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import sun.awt.windows.WEmbeddedFrame;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -62,7 +64,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
         m_analyisTab.add(m_analysisArea);
 
         super.addTab("Analysis", m_analyisTab);
-        
     }
     
 	private JPanel createOptionsPanel() {
@@ -142,14 +143,14 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			throw new NotConfigurableException("target column not in column list");
 		}
 		
-		//now read the sample names;
+		//read the sample names;
 		BufferedDataTable table = input[0];
 		selectSampleBox.removeAllItems();
 		selectSampleBox.addItem(DEFAULT_SAMPLE);
 
-		  HashSet <String> set = new HashSet <String>();
+		HashSet <String> set = new HashSet <String>();
 
-		  //convert it back to array.    
+		//convert it back to array.    
 		if (input[0].size()>0){
 			for (DataRow row:table){
 				ColumnStoreCell cell = (ColumnStoreCell) row.getCell(index);
@@ -176,20 +177,35 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	public void addPlot() {
 		 // figure out the parent to be able to make the dialog modal
 		
-		JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(getPanel());
-        AddPlotDialog dialog = new AddPlotDialog(topFrame, m_Settings);
+		//This would be nicer...
+		WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
+        
+        Frame f = null;
+        Container c = getPanel().getParent();
+        while (c != null) {
+            if (c instanceof Frame) {
+                f = (Frame)c;
+                break;
+            }
+            c = c.getParent();
+        }
+
+		AddPlotDialog dialog = new AddPlotDialog(topFrame, m_Settings);
         dialog.setVisible(true);
 
         if (dialog.isOK) {
-            dialog.save();
+        	dialog.save();
             updateLineagePanel();
         }
         dialog.dispose();
 	}
 
 	private void updateLineagePanel() {
-		// TODO Auto-generated method stub
+		// TODO Create Progress Bar
 		
+		// TODO Create plots with swing worker
+		
+		// TODO Make plot visible once ready.
 	}
 }
 //EOF

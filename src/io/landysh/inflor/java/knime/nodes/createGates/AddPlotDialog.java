@@ -1,13 +1,17 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -16,21 +20,21 @@ import javax.swing.JPanel;
 public class AddPlotDialog extends JDialog{
 	
 	/**
-	 * 
+	 * The modal dialog from which new plot definitions will be created.
 	 */
 	
 	private static final long serialVersionUID = 3249082301592821578L;
 	private static final String DEFAULT_PARENT = "UNGATED";
 	private static final String DEFAULT_PLOT_TYPE = "FAKE";
-	private static Frame parent;
-	JPanel previewPanel;
-	JPanel settingsPanel;
-	JPanel contentPanel;
+//	private static final Frame parent;
+	protected JPanel previewPanel;
+	protected JPanel settingsPanel;
+	protected JPanel contentPanel;
 	
 	PlotSpec spec;
 	
-	String[] populationList;
-	String[] parameterList;
+	private final String[] populationList;
+	private final String[] parameterList;
 	
     private JButton m_okButton = null;
     private JButton m_cancelButton = null;
@@ -45,46 +49,87 @@ public class AddPlotDialog extends JDialog{
 	
 
 	public AddPlotDialog(Frame parentFrame, GatingModelNodeSettings settings) {
-        super(parent);
+        //Initialize
+		super(parentFrame);
         this.m_settings = settings;
         setModal(true);
+       
+        //populate the dialog
+        this.populationList = m_settings.getSubsetList();
         this.parameterList = m_settings.getParameterList();
-        this.setTitle("Add a new plot.");
-        this.setContentPane(createContentPane());
-        this.m_okButton = createOkButton();
-        this.m_cancelButton = createCancelButton();
-        this.add(m_okButton);
-        this.add(m_cancelButton);
+        this.setTitle("Add a new plot.");        
+        JPanel content = createContentPanel();
+        this.getContentPane().add(content);
         this.pack();
         this.setLocationRelativeTo(getParent());
 	}
 
 
-	private Container createContentPane() {
+	private JPanel createContentPanel() {
+		//Create the panel
+		contentPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		contentPanel.setBackground(Color.RED);
+		c.anchor = GridBagConstraints.NORTHWEST;
+		//Create children
 		previewPanel = new FakePlot(null);
-		settingsPanel = createSettingsPanel();
-		contentPanel = new JPanel();
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		contentPanel.add(previewPanel);
-		contentPanel.add(settingsPanel);
 		
+		c.gridx = 0;
+		c.gridy = 0;
+		contentPanel.add(previewPanel, c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		Component plotOptionsPanel = createPlotOptionsPanel();
+		contentPanel.add(plotOptionsPanel, c);
+		
+		c.gridx = 0;
+		c.gridy = 2;
+		contentPanel.add(createHorizontalAxisGroup(), c);
+		
+		c.gridx = 0;
+		c.gridy = 3;
+		contentPanel.add(createVerticalAxisGroup(), c);
+		
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        m_okButton = createOkButton();
+        m_cancelButton = createCancelButton();
+        buttonPanel.add(m_okButton);
+        buttonPanel.add(m_cancelButton);
+        
+        
+        GridBagConstraints c2 = new GridBagConstraints();
+        c2.anchor = GridBagConstraints.SOUTHEAST;
+        c2.gridx = 0;
+        c2.gridy = 4;
+		contentPanel.add(buttonPanel, c2);
+        
+		
+		Dimension preferredSize = new Dimension(500, 600);
+		contentPanel.setPreferredSize(preferredSize);
 		return contentPanel;
 	}
 
 
-	private JPanel createSettingsPanel() {
-		settingsPanel = new JPanel();
-		settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.Y_AXIS));
-		settingsPanel.add(createParentSelector());
-		settingsPanel.add(createPlotTypeSelector());
-		settingsPanel.add(createHorizontalAxisGroup());
-		settingsPanel.add(createVerticalAxisGroup());
-		return settingsPanel;
+	   private JPanel createPlotOptionsPanel() {
+		JPanel panel = new JPanel(new FlowLayout());
+		panel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(),
+				"General Options"));
+		parentSelectorBox = createParentSelector();
+		panel.add(parentSelectorBox);
+		plotTypeSelectorBox = createPlotTypeSelector();
+		panel.add(plotTypeSelectorBox);
+		return panel;
 	}
 
-	   private Component createVerticalAxisGroup() {
+
+	private Component createVerticalAxisGroup() {
 			verticalAxisGroup = new JPanel();
-			verticalAxisGroup.setLayout(new BoxLayout(verticalAxisGroup, BoxLayout.X_AXIS));
+			verticalAxisGroup.setLayout(new FlowLayout());
+			verticalAxisGroup.setBorder(BorderFactory.createTitledBorder(
+					BorderFactory.createEtchedBorder(),
+					"Vertical Axis"));
 			String[] verticalOptions = getParameterList();
 			verticalParameterBox = new JComboBox<String>(verticalOptions);
 			verticalParameterBox.setSelectedIndex(guessVerticalValueIndex(verticalOptions));
@@ -95,7 +140,8 @@ public class AddPlotDialog extends JDialog{
 	            
 	            }
 	        });
-			return horizontalParameterBox;
+			verticalAxisGroup.add(verticalParameterBox);
+			return verticalAxisGroup;
 	}
 
 
@@ -106,8 +152,11 @@ public class AddPlotDialog extends JDialog{
 
 	private Component createHorizontalAxisGroup() {
 		horizontalAxisGroup = new JPanel();
-		horizontalAxisGroup.setLayout(new BoxLayout(horizontalAxisGroup, BoxLayout.X_AXIS));
+		horizontalAxisGroup.setLayout(new FlowLayout());
 		String[] horizontalOptions = getParameterList();
+		horizontalAxisGroup.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(),
+				"Horizontal Axis"));
 		horizontalParameterBox = new JComboBox<String>(horizontalOptions);
 		horizontalParameterBox.setSelectedIndex(guessHorizontalValueIndex(horizontalOptions));
 		horizontalParameterBox.addActionListener(new ActionListener() {
@@ -117,7 +166,8 @@ public class AddPlotDialog extends JDialog{
             
             }
         });
-		return horizontalParameterBox;
+		horizontalAxisGroup.add(horizontalParameterBox);
+		return horizontalAxisGroup;
 	}
 
 
@@ -137,7 +187,7 @@ public class AddPlotDialog extends JDialog{
 	}
 
 
-	private Component createPlotTypeSelector() {
+	private JComboBox<String> createPlotTypeSelector() {
 		plotTypeSelectorBox = new JComboBox<String>(new String[] {DEFAULT_PLOT_TYPE});
 		plotTypeSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.addActionListener(new ActionListener() {
@@ -151,7 +201,7 @@ public class AddPlotDialog extends JDialog{
 	}
 
 
-	private Component createParentSelector() {
+	private JComboBox<String> createParentSelector() {
 		parentSelectorBox = new JComboBox<String>(new String[] {DEFAULT_PARENT});
 		parentSelectorBox.setSelectedIndex(0);
 		parentSelectorBox.addActionListener(new ActionListener() {
@@ -171,15 +221,15 @@ public class AddPlotDialog extends JDialog{
      * @return javax.swing.JButton
      */
     private JButton createOkButton() {
-            m_okButton = new JButton();
-            m_okButton.setText("Ok");
-            m_okButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                isOK = true;
-                setVisible(false);
-                }
-            });
+    	m_okButton = new JButton();
+        m_okButton.setText("Ok");
+        m_okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            isOK = true;
+            setVisible(false);
+            }
+        });
         return m_okButton;
     }
 
@@ -195,7 +245,6 @@ public class AddPlotDialog extends JDialog{
         return m_cancelButton;
     }
 	
-
 	public void save() {
 		m_settings.addPlotSpec(spec);
 	}

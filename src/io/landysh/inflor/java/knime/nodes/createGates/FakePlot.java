@@ -1,7 +1,10 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+
+import javax.swing.border.EmptyBorder;
 
 public class FakePlot extends AbstractEventPlot{
 
@@ -12,6 +15,9 @@ public class FakePlot extends AbstractEventPlot{
 
 	public FakePlot(String priorUUID){
 		super(priorUUID);
+		this.setBorder(new EmptyBorder(10, 10, 10, 10));
+		this.setBackground(Color.BLUE);
+		this.setPreferredSize(new Dimension(300,300));
 	}
 	
     @Override
