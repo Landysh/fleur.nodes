@@ -17,13 +17,17 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
 
 import io.landysh.inflor.java.core.plots.FakePlot;
 import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.PlotTypes;
+import io.landysh.inflor.java.core.plots.XYBlockChartDemoColor;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import io.landysh.inflor.java.knime.nodes.createGates.GatingModelNodeSettings;
-import sun.awt.windows.WEmbeddedFrame;
 
 public class AddPlotDialog extends JDialog {
 
@@ -91,45 +95,55 @@ public class AddPlotDialog extends JDialog {
 		// Create the panel
 		contentPanel = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
-		contentPanel.setBackground(Color.RED);
 		gbc.anchor = GridBagConstraints.NORTHWEST;
-		// Create children
-		previewPanel = new FakePlot(null).getPanel();
 		
+		//Preview Planel
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		previewPanel = createPreviewPanel();
+		contentPanel.add(previewPanel, gbc);
+
+		//Plot Options
+		gbc.gridy = 1;
+		final Component plotOptionsPanel = createPlotOptionsPanel();
+		contentPanel.add(plotOptionsPanel, gbc);
+		gbc.gridy = 2;
+		contentPanel.add(createHorizontalAxisGroup(), gbc);
+		gbc.gridy = 3;
+		contentPanel.add(createVerticalAxisGroup(), gbc);
+
+		//ProgressBar
+		gbc.anchor = GridBagConstraints.SOUTHEAST;
+		gbc.gridy = 4;
 		progressBar = new JProgressBar();
 		progressBar.setVisible(false);
+		contentPanel.add(progressBar, gbc);
 		
+		//Button Panel
+		gbc.gridy = 5;
 		final JPanel buttonPanel = new JPanel(new FlowLayout());
 		m_okButton = createOkButton();
 		m_cancelButton = createCancelButton();
 		buttonPanel.add(m_okButton);
 		buttonPanel.add(m_cancelButton);
-
-		//Lay it all out.
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		contentPanel.add(previewPanel, gbc);
-
-		gbc.gridy = 1;
-		final Component plotOptionsPanel = createPlotOptionsPanel();
-		contentPanel.add(plotOptionsPanel, gbc);
-
-		gbc.gridy = 2;
-		contentPanel.add(createHorizontalAxisGroup(), gbc);
-
-		gbc.gridy = 3;
-		contentPanel.add(createVerticalAxisGroup(), gbc);
-
-
-		gbc.anchor = GridBagConstraints.SOUTHEAST;
-		gbc.gridy = 4;
-		contentPanel.add(progressBar, gbc);
 		
-		gbc.gridy = 5;
 		contentPanel.add(buttonPanel, gbc);
-		contentPanel.setPreferredSize(new Dimension(400, 400));
+		contentPanel.setPreferredSize(new Dimension(300, 500));
+		
 		return contentPanel;
 	}
+
+	private JPanel createPreviewPanel() {
+		XYPlot plot = new FakePlot(null);
+		JFreeChart chart = new JFreeChart(plot);
+		chart.removeLegend();
+		ChartPanel panel = new ChartPanel(chart);
+		JPanel panel2 =XYBlockChartDemoColor.createDemoPanel();
+		panel2.setPreferredSize(new Dimension(250, 250));
+		panel.setPreferredSize(new Dimension(250,250));
+		return panel;
+		}
+
 
 	private Component createHorizontalAxisGroup() {
 		horizontalAxisGroup = new JPanel();
@@ -204,7 +218,11 @@ public class AddPlotDialog extends JDialog {
 		plotTypeSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setPlotType((String) plotTypeSelectorBox.getModel().getSelectedItem());
+				if ( plotTypeSelectorBox.getModel().getSelectedItem() =="Fake"){
+					spec.setPlotType(PlotTypes.Fake);{
+						
+					}
+				}
 
 			}
 		});

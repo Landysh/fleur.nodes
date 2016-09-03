@@ -2,9 +2,9 @@ package io.landysh.inflor.java.core.plots;
 
 import java.util.UUID;
 
-import javax.swing.JPanel;
+import org.jfree.chart.plot.XYPlot;
 
-public abstract class AbstractFCSPlot {
+public abstract class AbstractFCSPlot extends XYPlot{
 
 	/**
 	 * @Param newUUID creates a new UUID for this plot definition.
@@ -24,7 +24,5 @@ public abstract class AbstractFCSPlot {
 	}
 	
 	public abstract void update(PlotSpec spec);
-	
-	public abstract JPanel getPanel(); 
-	
+
 }

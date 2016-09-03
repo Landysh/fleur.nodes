@@ -3,19 +3,20 @@ package io.landysh.inflor.java.core.plots;
 import java.util.UUID;
 
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
+import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
 
 public class PlotSpec implements DomainObject {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4083719531521659606L;
-
-	private String parent;
-	private String plotType;
-	private String horizontalAxis;
-	private String verticalAxis;
 	public final String uuid;
-	private String displayName;
+
+	
+	private String      	parent;
+	private PlotTypes   	plotType;
+	private String      	domainAxisName;
+	private String      	rangeAxisName;
+
+
+	private AbstractDisplayTransform domainTransform;
+	private AbstractDisplayTransform rangeTransform;
 
 	/**
 	 * @param priorUUID
@@ -59,7 +60,7 @@ public class PlotSpec implements DomainObject {
 	}
 
 	public void setHorizontalAxis(String newValue) {
-		horizontalAxis = newValue;
+		domainAxisName = newValue;
 
 	}
 
@@ -67,13 +68,41 @@ public class PlotSpec implements DomainObject {
 		this.parent = parent;
 	}
 
-	public void setPlotType(String newValue) {
+	public void setPlotType(PlotTypes newValue) {
 		plotType = newValue;
 	}
 
 	public void setVerticalAxis(String newValue) {
-		verticalAxis = newValue;
+		setRangeAxisName(newValue);
 
+	}
+
+	public PlotTypes getPlotType() {
+		return plotType;
+	}
+
+	public String getDomainName() {
+		return domainAxisName;
+	}
+
+	public String getRangeAxisName() {
+		return rangeAxisName;
+	}
+
+	public void setRangeAxisName(String rangeAxisName) {
+		this.rangeAxisName = rangeAxisName;
+	}
+
+	public AbstractDisplayTransform getDomainTransform() {
+		return this.domainTransform;
+	}
+
+	public AbstractDisplayTransform getRangeTransform() {
+		return rangeTransform;
+	}
+
+	public void setRangeTransform(AbstractDisplayTransform rangeTransform) {
+		this.rangeTransform = rangeTransform;
 	}
 }
 // EOF

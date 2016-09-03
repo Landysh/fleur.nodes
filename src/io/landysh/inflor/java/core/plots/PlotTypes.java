@@ -1,5 +1,6 @@
 package io.landysh.inflor.java.core.plots;
 
-public interface EventPlot {
-
+public enum PlotTypes {
+	Fake,
+	Contour;
 }

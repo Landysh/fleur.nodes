@@ -101,4 +101,12 @@ public class FCSUtils {
 		}
 		return validHeader;
 	}
+
+
+
+	public static Histogram2D create2dHistogram(double[] transformedDomainData, double[] rangeData, int xbins,
+			int ybins) {	
+		
+		return null;
+	}
 }
