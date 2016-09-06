@@ -8,7 +8,9 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import edu.stanford.facs.logicle.FastLogicle;
 
 public class TransformCalculator {
-
+	
+	//TODO: move this code to AbstractTransforms.
+	
 	// As suggested by Parks/Moore.
 	private static final double LOGICLE_W_PERCENTILE = 0.05;
 	private static final double DEFAULT_M = 4.5;

@@ -1,6 +1,7 @@
 package io.landysh.inflor.java.core.plots;
 
 public enum PlotTypes {
-	Fake,
-	Contour;
+	Fake,	
+	Contour, 
+	Scatter
 }

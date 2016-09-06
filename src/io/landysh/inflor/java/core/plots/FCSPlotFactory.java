@@ -9,21 +9,21 @@ import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
-public class PlotFactory {
+public class FCSPlotFactory {
 	private static final int xBins = 512;
 	private static final int yBins = 512;
 	private PlotSpec plotSpec;
 	private XYDataset dataset;
 
-	public PlotFactory(){
+	public FCSPlotFactory(){
 		
 	}
 	
-	public PlotFactory(PlotSpec spec){
+	public FCSPlotFactory(PlotSpec spec){
 		this.setPlotSpec(spec);
 	}
 	
-	public PlotFactory(PlotSpec spec, XYDataset dataset){
+	public FCSPlotFactory(PlotSpec spec, XYDataset dataset){
 		this.setPlotSpec(spec);
 	}
 
@@ -38,26 +38,11 @@ public class PlotFactory {
 	
 	public void setData(ColumnStore columnData) {
 		DefaultXYZDataset dataset = new DefaultXYZDataset();
-	    double[] domainData = columnData.getColumn(plotSpec.getDomainName());
+	    double[] domainData = columnData.getColumn(plotSpec.getDomainAxisName());
 	    double[] rangeData =  columnData.getColumn(plotSpec.getRangeAxisName());
 	    
 	    double[] transformedDomainData = plotSpec.getDomainTransform().transform(rangeData); 
 
 	    this.dataset = dataset;
-	}
-	
-	public AbstractFCSPlot create(){
-		if (plotSpec==null){
-			throw new RuntimeException("Coding error: Plot spec must not be null.");
-		}
-		AbstractFCSPlot returnedPlot = null;
-		if(plotSpec.getPlotType()==PlotTypes.Fake){
-			returnedPlot = new FakePlot(null);
-		} else if (plotSpec.getPlotType()==PlotTypes.Contour){
-			returnedPlot = new ContourPlot(plotSpec, null);
-			returnedPlot.setDataset(dataset);
-		}
-		
-		return returnedPlot;
 	}
 }

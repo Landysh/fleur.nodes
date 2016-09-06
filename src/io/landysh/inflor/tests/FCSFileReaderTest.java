@@ -43,11 +43,14 @@ public class FCSFileReaderTest {
 
 		final double[] fcs = { 400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400 };
 		final double[] ssc = { 300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500 };
+		
+		double[] testFCS = testData.get("FCS").getData();
+		double[] testSSC = testData.get("SSC").getData();
 
 		// Assert
 		for (int i = 0; i < fcs.length; i++) {
-			assert(fcs[i] == testData.get("FCS").getData()[i]);
-			assert(ssc[i] == testData.get("SSC").getData()[i]);
+			assertEquals(fcs[i], testFCS[i], Double.MIN_VALUE);
+			assertEquals(ssc[i], testSSC[i], Double.MIN_VALUE);
 		}
 		System.out.println("FCSFileReaderTest testReadAllData completed (succefully or otherwise)");
 	}

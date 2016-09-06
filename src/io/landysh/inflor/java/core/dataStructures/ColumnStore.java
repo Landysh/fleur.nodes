@@ -13,6 +13,8 @@ import io.landysh.inflor.java.core.proto.AnnotatedVectorMessage.AnnotatedVectors
 
 public class ColumnStore {
 
+	private static final String DEFAULT_PREFFERED_NAME_KEYWORD = "$FIL";
+
 	public static ColumnStore load(byte[] bytes) throws InvalidProtocolBufferException {
 		final AnnotatedVectorsProto message = AnnotatedVectorsProto.parseFrom(bytes);
 
@@ -43,6 +45,7 @@ public class ColumnStore {
 				}
 			}
 		}
+		columnStore.setPreferredName(columnStore.getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
 		return columnStore;
 	}
 
@@ -64,6 +67,16 @@ public class ColumnStore {
 
 	private Integer rowCount = -1;
 
+	private String preferredName;
+
+	public String getPreferredName() {
+		return preferredName;
+	}
+
+	public void setPreferredName(String preferredName) {
+		this.preferredName = preferredName;
+	}
+
 	// minimal constructor, use with .load()
 	public ColumnStore() {
 	}
@@ -75,13 +88,14 @@ public class ColumnStore {
 	 *            some annotation to get started with. Must be a valid FCS
 	 *            header but may be added to later.
 	 */
-	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) {
+ 	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) {
 		this.keywords = keywords;
 		columnData = new Hashtable<String, FCSVector>();
 		for (final String name : columnNames) {
 			columnData.put(name, new FCSVector(name) {
 			});
 		}
+		setPreferredName(getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
 	}
 
 	public void addColumn(String name, double[] data) {
@@ -135,7 +149,14 @@ public class ColumnStore {
 	}
 
 	public String getKeywordValue(String keyword) {
-		return keywords.get(keyword).trim();
+		String result = null;
+		try {
+			result = keywords.get(keyword).trim();
+		} catch (NullPointerException npe) {
+			//No operatoin, just return a null value.
+		}
+		return result;
+		
 	}
 
 	public double[] getRow(int index) {
@@ -221,5 +242,18 @@ public class ColumnStore {
 
 	public void setRowCount(int count) {
 		rowCount = count;
+	}
+	
+	@Override
+	public String toString(){
+		return getPrefferedName();
+	}
+
+	private String getPrefferedName() {
+		String name = UUID;
+		if (this.preferredName != null){
+			name = this.preferredName; 
+		}
+		return name;
 	}
 }

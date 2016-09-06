@@ -17,15 +17,18 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.ContourPlot;
 import io.landysh.inflor.java.core.plots.FakePlot;
 import io.landysh.inflor.java.core.plots.PlotSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
-import io.landysh.inflor.java.core.plots.XYBlockChartDemoColor;
+import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import io.landysh.inflor.java.knime.nodes.createGates.GatingModelNodeSettings;
 
@@ -52,7 +55,7 @@ public class AddPlotDialog extends JDialog {
 	private JButton m_cancelButton = null;
 	public boolean isOK = false;
 	private JComboBox<String> parentSelectorBox;
-	private JComboBox<String> plotTypeSelectorBox;
+	private JComboBox<PlotTypes> plotTypeSelectorBox;
 	private JPanel horizontalAxisGroup;
 	private JComboBox<String> horizontalParameterBox;
 	private JPanel verticalAxisGroup;
@@ -60,11 +63,17 @@ public class AddPlotDialog extends JDialog {
 	private final GatingModelNodeSettings m_settings;
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
+	private AbstractFCSPlot previewPlot;
 
 
 	public AddPlotDialog(Frame topFrame, CreateGatesNodeDialog parent) {
 		// Initialize
 		super(topFrame);
+		spec = new PlotSpec(null);
+		spec.setPlotType(PlotTypes.Fake);
+		spec.setParent(null);
+		spec.setVerticalAxis("Dummy Y");
+		spec.setHorizontalAxis("Dummy X");
 		m_settings = parent.m_Settings;
 		parentDialog = parent;
 		setModal(true);
@@ -93,6 +102,8 @@ public class AddPlotDialog extends JDialog {
 
 	private JPanel createContentPanel() {
 		// Create the panel
+		final Component plotOptionsPanel = createPlotOptionsPanel();
+
 		contentPanel = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -105,7 +116,6 @@ public class AddPlotDialog extends JDialog {
 
 		//Plot Options
 		gbc.gridy = 1;
-		final Component plotOptionsPanel = createPlotOptionsPanel();
 		contentPanel.add(plotOptionsPanel, gbc);
 		gbc.gridy = 2;
 		contentPanel.add(createHorizontalAxisGroup(), gbc);
@@ -133,13 +143,13 @@ public class AddPlotDialog extends JDialog {
 		return contentPanel;
 	}
 
-	private JPanel createPreviewPanel() {
-		XYPlot plot = new FakePlot(null);
-		JFreeChart chart = new JFreeChart(plot);
-		chart.removeLegend();
+	private ChartPanel createPreviewPanel() {
+		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
+		double[] xData = data.getColumn(spec.getDomainAxisName());
+		double[] yData = data.getColumn(spec.getRangeAxisName());		
+		previewPlot = PlotUtils.createPlot(spec);
+		JFreeChart chart = previewPlot.createChart(xData, yData);
 		ChartPanel panel = new ChartPanel(chart);
-		JPanel panel2 =XYBlockChartDemoColor.createDemoPanel();
-		panel2.setPreferredSize(new Dimension(250, 250));
 		panel.setPreferredSize(new Dimension(250,250));
 		return panel;
 		}
@@ -157,7 +167,7 @@ public class AddPlotDialog extends JDialog {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				spec.setHorizontalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
-
+				updatePreviewPlot();
 			}
 		});
 		horizontalAxisGroup.add(horizontalParameterBox);
@@ -175,13 +185,7 @@ public class AddPlotDialog extends JDialog {
 		m_okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				previewPanel.setBackground(Color.GRAY);
-				progressBar.setVisible(true);
-				progressBar.setStringPainted(true);
-				progressBar.setString("Initializing");
-				progressBar.getModel().setValue(1);
-				UpdatePlotWorker updatePlot = new UpdatePlotWorker(previewPanel, progressBar, spec, parentDialog.currentDataSet);
-				updatePlot.execute();
+				updatePreviewPlot();
 				isOK = true;
 				setVisible(false);
 			}
@@ -195,11 +199,26 @@ public class AddPlotDialog extends JDialog {
 		parentSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setParent((String) parentSelectorBox.getModel().getSelectedItem());
-				UpdatePlotWorker worker = new UpdatePlotWorker(previewPanel, progressBar, spec, parentDialog.currentDataSet);
+				//ColumnStore parent = (ColumnStore) parentSelectorBox.getModel().getSelectedItem();
+				//TODO: Figure out how to reference other populations.
+				spec.setParent(null);
+				updatePreviewPlot();
 			}
 		});
 		return parentSelectorBox;
+	}
+
+	protected void updatePreviewPlot() {
+		previewPanel.setBackground(Color.GRAY);
+		progressBar.setVisible(true);
+		progressBar.setStringPainted(true);
+		progressBar.setString("Initializing");
+		progressBar.getModel().setValue(1);
+		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
+		double[] xData = data.getColumn(spec.getDomainAxisName());
+		double[] yData = data.getColumn(spec.getRangeAxisName());		
+		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, spec, xData, yData);
+		worker.execute();
 	}
 
 	private JPanel createPlotOptionsPanel() {
@@ -212,18 +231,15 @@ public class AddPlotDialog extends JDialog {
 		return panel;
 	}
 
-	private JComboBox<String> createPlotTypeSelector() {
-		plotTypeSelectorBox = new JComboBox<String>(new String[] { DEFAULT_PLOT_TYPE });
+	private JComboBox<PlotTypes> createPlotTypeSelector() {
+		plotTypeSelectorBox = new JComboBox<PlotTypes>(PlotTypes.values());
 		plotTypeSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				if ( plotTypeSelectorBox.getModel().getSelectedItem() =="Fake"){
-					spec.setPlotType(PlotTypes.Fake);{
-						
-					}
-				}
-
+				PlotTypes newValue = (PlotTypes) plotTypeSelectorBox.getModel().getSelectedItem();
+				spec.setPlotType(newValue);
+				updatePreviewPlot();
 			}
 		});
 		return plotTypeSelectorBox;
@@ -240,8 +256,8 @@ public class AddPlotDialog extends JDialog {
 		verticalParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setHorizontalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
-
+				spec.setVerticalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
+				updatePreviewPlot();
 			}
 		});
 		verticalAxisGroup.add(verticalParameterBox);

@@ -2,41 +2,43 @@ package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
 import java.util.List;
 
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
-import io.landysh.inflor.java.core.plots.InflorVisDataSet;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import org.jfree.chart.JFreeChart;
 
-public class UpdatePlotWorker extends SwingWorker<Integer, String> {
+import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.PlotUtils;
+
+public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 
 	private JProgressBar progress;
-	private JPanel plot;
 	private PlotSpec plotSpec;
-	private InflorVisDataSet data;
+	double[] X;
+	double[] Y;
 
-	public UpdatePlotWorker(JPanel previewPanel, JProgressBar progressBar, PlotSpec spec, InflorVisDataSet currentDataSet) {
+	public UpdatePlotWorker(JProgressBar progressBar, PlotSpec spec, double[] xData, double[] yData) {
 		//UI Stuff
-		this.plot = previewPanel;
 		this.progress = progressBar;
 		
 		//backgroundData
 		this.plotSpec = spec;
-		this.data = currentDataSet;
+		this.X = xData;
+		this.Y = yData;
 		
 	}
 
 	@Override
-	protected Integer doInBackground() throws Exception {
+	protected JFreeChart doInBackground() throws Exception {
 		// Start
 		publish("Updating plot.");
-
-		//TODO
-		
+		AbstractFCSPlot newPlot = PlotUtils.createPlot(plotSpec);
+		publish("Loading data.");
+		JFreeChart newChart = newPlot.createChart(X,Y);
 		publish("Finished update");
 		setProgress(100);
-		return 1;
+		return newChart;
 	}
 
 	@Override

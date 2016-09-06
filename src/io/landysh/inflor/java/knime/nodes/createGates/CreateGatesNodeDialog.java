@@ -1,8 +1,11 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -24,6 +27,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.plots.InflorVisDataSet;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.AddPlotActionListener;
@@ -52,14 +56,22 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	private final JPanel m_analysisArea;
 
 	public JComboBox<String> fcsColumnBox;
-	public JComboBox<String> selectSampleBox;
+	public JComboBox<ColumnStore> selectSampleBox;
 	private JSpinner sampleSizeSpinner;
 	private JPanel analysisPanel;
 	LineageAnalysisPanel lineagePanel;
+	private Hashtable<String, ColumnStore> data;
+	private ColumnStore overviewStore;
+
+	public Hashtable<String, ColumnStore> getData() {
+		return data;
+	}
 
 	protected CreateGatesNodeDialog() {
 		super();
 		m_Settings = new GatingModelNodeSettings();
+		overviewStore = new ColumnStore();
+		overviewStore.setPreferredName("Summary");
 
 		// Main analysis Tab
 		m_analyisTab = new JPanel();
@@ -111,15 +123,25 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		optionsPanel.add(Box.createHorizontalGlue());
 
 		// Select Input data
+		
+		
+		
 		fcsColumnBox = new JComboBox<String>(new String[] { NO_COLUMNS_AVAILABLE_WARNING });
 		fcsColumnBox.setSelectedIndex(0);
 		fcsColumnBox.addActionListener(new FCSColumnBoxListener(this));
 		optionsPanel.add(fcsColumnBox);
 
 		// Select file
-		selectSampleBox = new JComboBox<String>(new String[] { DEFAULT_SAMPLE });
+		selectSampleBox = new JComboBox<ColumnStore>(new ColumnStore[] { overviewStore });
 		selectSampleBox.setSelectedIndex(-1);
-		selectSampleBox.addActionListener(new SampleBoxListener(this));
+		selectSampleBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		optionsPanel.add(selectSampleBox);
 
 		// Select Sample Size
@@ -156,6 +178,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		
 		loadSettingsFrom(settings, specs);
 		
+		
 		// Update Sample List
 		final String targetColumn = m_Settings.getSelectedColumn();
 		final String[] names = input[0].getSpec().getColumnNames();
@@ -172,27 +195,28 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		// read the sample names;
 		final BufferedDataTable table = input[0];
 		selectSampleBox.removeAllItems();
-		selectSampleBox.addItem(DEFAULT_SAMPLE);
-
-		final HashSet<String> set = new HashSet<String>();
-
+		selectSampleBox.addItem(overviewStore);
+		
+		//Hold on to a reference of the data so we can plot it later.
+		
+		final HashSet<String> parameterSet = new HashSet<String>();
+		
 		// convert it back to array.
 		if (input[0].size() > 0) {
 			for (final DataRow row : table) {
-				final ColumnStoreCell cell = (ColumnStoreCell) row.getCell(fcsColumnIndex);
-				selectSampleBox.addItem(cell.getColumnStore().getKeywordValue("$FIL"));
+				final ColumnStore cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getColumnStore();
+				selectSampleBox.addItem(cStoreData);
 				final List<String> newParameters = new ArrayList<String>(
-						Arrays.asList(cell.getColumnStore().getColumnNames()));
-				set.addAll(newParameters);
+						Arrays.asList(cStoreData.getColumnNames()));
+				parameterSet.addAll(newParameters);
 			}
 		}
-		m_Settings.setParameterList(set.toArray(new String[set.size()]));
+		m_Settings.setParameterList(parameterSet.toArray(new String[parameterSet.size()]));
 		if (selectSampleBox.getModel().getSize() == 1) {
 			selectSampleBox.removeAllItems();
-			selectSampleBox.addItem("No Data Available!");
+			selectSampleBox.setEnabled(false);
+			selectSampleBox.setToolTipText("No FCS Files found");
 		}
-
-
 	}
 
 	@Override
@@ -206,6 +230,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		// TODO Create plots with swing worker
 
 		// TODO Make plot visible once ready.
+	}
+
+	public ColumnStore getSelectedSample() {
+		// TODO Auto-generated method stub
+		return (ColumnStore)this.selectSampleBox.getSelectedItem();
 	}
 }
 // EOF
