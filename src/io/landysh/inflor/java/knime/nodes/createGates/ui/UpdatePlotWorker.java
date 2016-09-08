@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
@@ -17,8 +18,10 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 	private PlotSpec plotSpec;
 	double[] X;
 	double[] Y;
+	ChartPanel chatPanel;
+	private JFreeChart newChart;
 
-	public UpdatePlotWorker(JProgressBar progressBar, PlotSpec spec, double[] xData, double[] yData) {
+	public UpdatePlotWorker(JProgressBar progressBar, ChartPanel chartPanel, PlotSpec spec, double[] xData, double[] yData) {
 		//UI Stuff
 		this.progress = progressBar;
 		
@@ -26,7 +29,7 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 		this.plotSpec = spec;
 		this.X = xData;
 		this.Y = yData;
-		
+		this.chatPanel = chartPanel;
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 		publish("Updating plot.");
 		AbstractFCSPlot newPlot = PlotUtils.createPlot(plotSpec);
 		publish("Loading data.");
-		JFreeChart newChart = newPlot.createChart(X,Y);
+		this.newChart = newPlot.createChart(X,Y);
 		publish("Finished update");
 		setProgress(100);
 		return newChart;
@@ -46,4 +49,11 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 		progress.setString(chunks.get(chunks.size()-1));
 		progress.getModel().setValue(getProgress());
 	}
+	
+	@Override
+	protected void done(){
+		chatPanel.setChart(newChart);
+		progress.setVisible(false);
+	}
+	
 }
