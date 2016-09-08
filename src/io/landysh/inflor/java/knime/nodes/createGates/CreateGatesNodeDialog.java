@@ -14,8 +14,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import org.knime.core.data.DataRow;
@@ -34,7 +32,6 @@ import io.landysh.inflor.java.knime.nodes.createGates.ui.AddPlotActionListener;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.AddPlotDialog;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.FCSColumnBoxListener;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.LineageAnalysisPanel;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.SampleBoxListener;
 import sun.awt.windows.WEmbeddedFrame;
 
 /**
@@ -46,7 +43,6 @@ import sun.awt.windows.WEmbeddedFrame;
 public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
 	private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
-	private static final String DEFAULT_SAMPLE = "Overview";
 
 	public GatingModelNodeSettings m_Settings;
 	
@@ -57,11 +53,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
 	public JComboBox<String> fcsColumnBox;
 	public JComboBox<ColumnStore> selectSampleBox;
-	private JSpinner sampleSizeSpinner;
+	//TODO: Remove this?
+	//	private JSpinner sampleSizeSpinner;
 	private JPanel analysisPanel;
 	LineageAnalysisPanel lineagePanel;
 	private Hashtable<String, ColumnStore> data;
-	private ColumnStore overviewStore;
 
 	public Hashtable<String, ColumnStore> getData() {
 		return data;
@@ -70,8 +66,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	protected CreateGatesNodeDialog() {
 		super();
 		m_Settings = new GatingModelNodeSettings();
-		overviewStore = new ColumnStore();
-		overviewStore.setPreferredName("Summary");
 
 		// Main analysis Tab
 		m_analyisTab = new JPanel();
@@ -89,7 +83,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
 
 		final AddPlotDialog dialog = new AddPlotDialog(topFrame, this);
-		dialog.setVisible(true);
+ 		dialog.setVisible(true);
 
 		if (dialog.isOK) {
 			dialog.save();
@@ -123,16 +117,13 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		optionsPanel.add(Box.createHorizontalGlue());
 
 		// Select Input data
-		
-		
-		
 		fcsColumnBox = new JComboBox<String>(new String[] { NO_COLUMNS_AVAILABLE_WARNING });
 		fcsColumnBox.setSelectedIndex(0);
 		fcsColumnBox.addActionListener(new FCSColumnBoxListener(this));
 		optionsPanel.add(fcsColumnBox);
 
 		// Select file
-		selectSampleBox = new JComboBox<ColumnStore>(new ColumnStore[] { overviewStore });
+		selectSampleBox = new JComboBox<ColumnStore>();
 		selectSampleBox.setSelectedIndex(-1);
 		selectSampleBox.addActionListener(new ActionListener() {
 			
@@ -144,12 +135,12 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		});
 		optionsPanel.add(selectSampleBox);
 
-		// Select Sample Size
-		final SpinnerNumberModel spinModel = new SpinnerNumberModel(10000, 0, 5000000, 1000);
-		sampleSizeSpinner = new JSpinner(spinModel);
-		sampleSizeSpinner.getModel().setValue(10000);
-		sampleSizeSpinner.setName("Sample Size");
-		optionsPanel.add(sampleSizeSpinner);
+//		// Select Sample Size
+//		final SpinnerNumberModel spinModel = new SpinnerNumberModel(10000, 0, 5000000, 1000);
+//		sampleSizeSpinner = new JSpinner(spinModel);
+//		sampleSizeSpinner.getModel().setValue(10000);
+//		sampleSizeSpinner.setName("Sample Size");
+//		optionsPanel.add(sampleSizeSpinner);
 
 		return optionsPanel;
 	}
@@ -195,24 +186,22 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		// read the sample names;
 		final BufferedDataTable table = input[0];
 		selectSampleBox.removeAllItems();
-		selectSampleBox.addItem(overviewStore);
 		
 		//Hold on to a reference of the data so we can plot it later.
 		
 		final HashSet<String> parameterSet = new HashSet<String>();
 		
-		// convert it back to array.
-		if (input[0].size() > 0) {
-			for (final DataRow row : table) {
-				final ColumnStore cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getColumnStore();
-				selectSampleBox.addItem(cStoreData);
-				final List<String> newParameters = new ArrayList<String>(
-						Arrays.asList(cStoreData.getColumnNames()));
-				parameterSet.addAll(newParameters);
-			}
+		for (final DataRow row : table) {
+			final ColumnStore cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getColumnStore();
+			selectSampleBox.addItem(cStoreData);
+			final List<String> newParameters = new ArrayList<String>(
+					Arrays.asList(cStoreData.getColumnNames()));
+			parameterSet.addAll(newParameters);
 		}
+		
 		m_Settings.setParameterList(parameterSet.toArray(new String[parameterSet.size()]));
-		if (selectSampleBox.getModel().getSize() == 1) {
+		
+		if (selectSampleBox.getModel().getSize() == 0) {
 			selectSampleBox.removeAllItems();
 			selectSampleBox.setEnabled(false);
 			selectSampleBox.setToolTipText("No FCS Files found");
@@ -233,7 +222,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	}
 
 	public ColumnStore getSelectedSample() {
-		// TODO Auto-generated method stub
 		return (ColumnStore)this.selectSampleBox.getSelectedItem();
 	}
 }
