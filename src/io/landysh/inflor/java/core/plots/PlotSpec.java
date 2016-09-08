@@ -92,6 +92,10 @@ public class PlotSpec implements DomainObject {
 
 	}
 
+	public PlotSpec() {
+		this(null);
+	}
+
 	public String getParent() {
 		return parent;
 	}
