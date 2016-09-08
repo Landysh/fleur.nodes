@@ -109,4 +109,15 @@ public class FCSUtils {
 		
 		return null;
 	}
+
+	public static Hashtable<String, String> findParameterKeywords(Hashtable <String, String> sourceKeywords, int vectorIndex) {
+		Hashtable <String, String> keywords = new Hashtable<String, String>();
+		String regex = "\\$P" + vectorIndex +"[A-Z]";
+		for (String key:keywords.keySet()){
+			if (key.matches(regex)){
+				keywords.put(key, sourceKeywords.get(key));
+			}
+		}
+		return keywords;
+	}
 }
