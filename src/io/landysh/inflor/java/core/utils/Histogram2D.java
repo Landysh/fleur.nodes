@@ -42,6 +42,11 @@ public class Histogram2D {
 			int xBin = (int)((double) x/xBinWidth);
 			int yBin = (int)((double) y/yBinWidth);
 			int histogramIndex = yBinCount*xBin + yBin;
+			if (histogramIndex < 0){
+				histogramIndex = 0;
+			} else if (histogramIndex > zValues.length-1){
+				histogramIndex = zValues.length-1;
+			} 
 			zValues[histogramIndex]++;
 			mask[0][i] = (double) xBin * xBinWidth;
 			if (zValues[histogramIndex]>maxHistogramHeight){
