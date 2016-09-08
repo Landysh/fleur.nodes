@@ -1,6 +1,5 @@
 package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -17,15 +16,13 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
-import io.landysh.inflor.java.core.plots.ContourPlot;
-import io.landysh.inflor.java.core.plots.FakePlot;
+import io.landysh.inflor.java.core.plots.BoundDisplayTransform;
 import io.landysh.inflor.java.core.plots.PlotSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
@@ -39,17 +36,12 @@ public class AddPlotDialog extends JDialog {
 	 */
 
 	private static final long serialVersionUID = 3249082301592821578L;
-	private static final String DEFAULT_PARENT = "UNGATED";
-	private static final String DEFAULT_PLOT_TYPE = "FAKE";
 	// private static final Frame parent;
 	protected JPanel previewPanel;
 	protected JPanel settingsPanel;
 	protected JPanel contentPanel;
 
 	PlotSpec spec;
-
-	private final String[] populationList;
-	private final String[] parameterList;
 
 	private JButton m_okButton = null;
 	private JButton m_cancelButton = null;
@@ -64,23 +56,23 @@ public class AddPlotDialog extends JDialog {
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
 	private AbstractFCSPlot previewPlot;
+	private ChartPanel chartPanel;
 
 
 	public AddPlotDialog(Frame topFrame, CreateGatesNodeDialog parent) {
 		// Initialize
 		super(topFrame);
-		spec = new PlotSpec(null);
-		spec.setPlotType(PlotTypes.Fake);
-		spec.setParent(null);
-		spec.setVerticalAxis("Dummy Y");
-		spec.setHorizontalAxis("Dummy X");
 		m_settings = parent.m_Settings;
+		spec = new PlotSpec(null);
+		spec.setPlotType(PlotTypes.Scatter);
+		spec.setHorizontalAxis(m_settings.getParameterList()[0]);
+		spec.setVerticalAxis(m_settings.getParameterList()[1]);
+		spec.setDomainTransform(new BoundDisplayTransform(0, 262144));
+		spec.setRangeTransform(new BoundDisplayTransform(0, 262144));
 		parentDialog = parent;
 		setModal(true);
 
 		// populate the dialog
-		populationList = m_settings.getSubsetList();
-		parameterList = m_settings.getParameterList();
 		setTitle("Add a new plot.");
 		final JPanel content = createContentPanel();
 		getContentPane().add(content);
@@ -102,8 +94,9 @@ public class AddPlotDialog extends JDialog {
 
 	private JPanel createContentPanel() {
 		// Create the panel
+		progressBar = new JProgressBar();
 		final Component plotOptionsPanel = createPlotOptionsPanel();
-
+		
 		contentPanel = new JPanel(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -121,38 +114,38 @@ public class AddPlotDialog extends JDialog {
 		contentPanel.add(createHorizontalAxisGroup(), gbc);
 		gbc.gridy = 3;
 		contentPanel.add(createVerticalAxisGroup(), gbc);
-
-		//ProgressBar
-		gbc.anchor = GridBagConstraints.SOUTHEAST;
-		gbc.gridy = 4;
-		progressBar = new JProgressBar();
-		progressBar.setVisible(false);
-		contentPanel.add(progressBar, gbc);
 		
 		//Button Panel
-		gbc.gridy = 5;
+		gbc.anchor = GridBagConstraints.SOUTHEAST;
+		gbc.gridy = 4;
 		final JPanel buttonPanel = new JPanel(new FlowLayout());
 		m_okButton = createOkButton();
 		m_cancelButton = createCancelButton();
 		buttonPanel.add(m_okButton);
 		buttonPanel.add(m_cancelButton);
 		
+		//ProgressBar
+		gbc.gridy = 6;
+		progressBar = new JProgressBar();
+		progressBar.setVisible(false);
+		contentPanel.add(progressBar, gbc);
+		
 		contentPanel.add(buttonPanel, gbc);
-		contentPanel.setPreferredSize(new Dimension(300, 500));
+		contentPanel.setPreferredSize(new Dimension(300, 450));
 		
 		return contentPanel;
 	}
 
 	private ChartPanel createPreviewPanel() {
-		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
-		double[] xData = data.getColumn(spec.getDomainAxisName());
-		double[] yData = data.getColumn(spec.getRangeAxisName());		
+		ColumnStore cStore = (ColumnStore) parentDialog.getSelectedSample();
+		double[] xData = cStore.getColumn(spec.getDomainAxisName());
+		double[] yData = cStore.getColumn(spec.getRangeAxisName());		
 		previewPlot = PlotUtils.createPlot(spec);
 		JFreeChart chart = previewPlot.createChart(xData, yData);
-		ChartPanel panel = new ChartPanel(chart);
-		panel.setPreferredSize(new Dimension(250,250));
-		return panel;
-		}
+		chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(300,250));
+		return chartPanel;
+	}
 
 
 	private Component createHorizontalAxisGroup() {
@@ -163,6 +156,7 @@ public class AddPlotDialog extends JDialog {
 				.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Horizontal Axis"));
 		horizontalParameterBox = new JComboBox<String>(horizontalOptions);
 		horizontalParameterBox.setSelectedIndex(guessHorizontalValueIndex(horizontalOptions));
+		spec.setHorizontalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
 		horizontalParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -194,8 +188,8 @@ public class AddPlotDialog extends JDialog {
 	}
 
 	private JComboBox<String> createParentSelector() {
-		parentSelectorBox = new JComboBox<String>(new String[] { DEFAULT_PARENT });
-		parentSelectorBox.setSelectedIndex(0);
+		parentSelectorBox = new JComboBox<String>(new String[] {});
+		parentSelectorBox.setSelectedIndex(-1);
 		parentSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -209,7 +203,6 @@ public class AddPlotDialog extends JDialog {
 	}
 
 	protected void updatePreviewPlot() {
-		previewPanel.setBackground(Color.GRAY);
 		progressBar.setVisible(true);
 		progressBar.setStringPainted(true);
 		progressBar.setString("Initializing");
@@ -217,7 +210,7 @@ public class AddPlotDialog extends JDialog {
 		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
 		double[] xData = data.getColumn(spec.getDomainAxisName());
 		double[] yData = data.getColumn(spec.getRangeAxisName());		
-		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, spec, xData, yData);
+		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, xData, yData);
 		worker.execute();
 	}
 
@@ -233,7 +226,7 @@ public class AddPlotDialog extends JDialog {
 
 	private JComboBox<PlotTypes> createPlotTypeSelector() {
 		plotTypeSelectorBox = new JComboBox<PlotTypes>(PlotTypes.values());
-		plotTypeSelectorBox.setSelectedIndex(0);
+		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
 		plotTypeSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -253,33 +246,32 @@ public class AddPlotDialog extends JDialog {
 		final String[] verticalOptions = getParameterList();
 		verticalParameterBox = new JComboBox<String>(verticalOptions);
 		verticalParameterBox.setSelectedIndex(guessVerticalValueIndex(verticalOptions));
+		spec.setVerticalAxis((String) verticalParameterBox.getModel().getSelectedItem());
 		verticalParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setVerticalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
+				spec.setVerticalAxis((String) verticalParameterBox.getModel().getSelectedItem());
 				updatePreviewPlot();
 			}
 		});
+
 		verticalAxisGroup.add(verticalParameterBox);
 		return verticalAxisGroup;
 	}
 
 	private String[] getParameterList() {
 		final ArrayList<String> options = new ArrayList<String>();
-		for (final String name : parameterList) {
+		for (final String name : m_settings.getParameterList()) {
 			options.add(name);
 		}
-		options.add("Rank");
 		return options.toArray(new String[options.size()]);
 	}
 
 	private int guessHorizontalValueIndex(String[] horizontalOptions) {
-		// TODO guess better.
 		return 0;
 	}
 
 	private int guessVerticalValueIndex(String[] verticalOptions) {
-		// TODO guess better.
 		return 1;
 	}
 
