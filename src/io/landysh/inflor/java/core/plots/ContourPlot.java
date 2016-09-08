@@ -44,7 +44,7 @@ public class ContourPlot extends AbstractFCSPlot {
 		
 		DefaultXYZDataset plotData = new DefaultXYZDataset();
 		
-		plotData.addSeries(this.uuid, new double[][] {histogram.getXBins(), 
+		plotData.addSeries("Series 1", new double[][] {histogram.getXBins(), 
 			                                          histogram.getYBins(), 
 			                                          histogram.getZValues()});
 		
@@ -81,16 +81,20 @@ public class ContourPlot extends AbstractFCSPlot {
 
 	private Paint[] createColorScale(double maxHeight) {
 		Paint[] colorScale = new Paint[(int)maxHeight+1];
-		//TODO: am I painting too many white rectangles?
-		//colorScale[0] = Color.WHITE;
-		int startHue = 225;
-		int stopHue = 360;
+		float startHue = 180/360f;
+		float stopHue = 1f;
 		if (colorScale.length>1){
-			for (int i=1;i<colorScale.length;i++){
-				int currentHue = (startHue + (i/colorScale.length)*(stopHue-startHue));
-				colorScale[i] = Color.getHSBColor(currentHue, 65, 55);
+			colorScale[0] = Color.WHITE;
+			colorScale[1] = Color.getHSBColor(startHue, 0.6f, 0.6f);
+			for (int i=2;i<colorScale.length;i++){
+				float num = (float)(i-2)/colorScale.length;
+				float delta = (stopHue-startHue);
+				float hueOffset = num*delta;
+				float currentHue = (stopHue - hueOffset);
+				colorScale[i] = Color.getHSBColor(currentHue, 0.6f, 0.6f);
 			}
 		}
 		return colorScale;
 	}
 }
+//EOF
