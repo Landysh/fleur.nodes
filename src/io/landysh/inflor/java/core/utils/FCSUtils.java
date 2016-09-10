@@ -2,6 +2,8 @@ package io.landysh.inflor.java.core.utils;
 
 import java.util.Hashtable;
 
+import io.landysh.inflor.java.core.dataStructures.Histogram2D;
+
 public class FCSUtils {
 
 	public static Integer findParameterNumnberByName(Hashtable<String, String> keywords, String name) {
@@ -69,6 +71,17 @@ public class FCSUtils {
 		}
 		return maskedColumn;
 	}
+	
+	public static int countTrue(boolean[] bools){
+		int count =0;
+		for (boolean bool:bools){
+			if (bool==true){
+				count++;
+			}
+		}
+		return count;
+	}
+	
 
 	public static String[] parseParameterList(Hashtable<String, String> keywords) {
 		/**

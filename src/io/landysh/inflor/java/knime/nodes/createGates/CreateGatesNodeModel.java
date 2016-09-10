@@ -48,7 +48,7 @@ public class CreateGatesNodeModel extends NodeModel {
 	}
 
 	private ColumnStore applyGates(ColumnStore inStore) {
-		final ColumnStore outStore = new ColumnStore(inStore.getKeywords(), inStore.getColumnNames());
+		final ColumnStore outStore = new ColumnStore(inStore.getKeywords(), -1);
 		// TODO
 		return outStore;
 	}

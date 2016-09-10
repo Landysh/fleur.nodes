@@ -22,10 +22,10 @@ import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
-import io.landysh.inflor.java.core.plots.BoundDisplayTransform;
 import io.landysh.inflor.java.core.plots.PlotSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
+import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import io.landysh.inflor.java.knime.nodes.createGates.GatingModelNodeSettings;
 
@@ -65,8 +65,8 @@ public class AddPlotDialog extends JDialog {
 		m_settings = parent.m_Settings;
 		spec = new PlotSpec(null);
 		spec.setPlotType(PlotTypes.Scatter);
-		spec.setHorizontalAxis(m_settings.getParameterList()[0]);
-		spec.setVerticalAxis(m_settings.getParameterList()[1]);
+		spec.setDomainAxisName(m_settings.getParameterList()[0]);
+		spec.setRangeAxisName(m_settings.getParameterList()[1]);
 		spec.setDomainTransform(new BoundDisplayTransform(0, 262144));
 		spec.setRangeTransform(new BoundDisplayTransform(0, 262144));
 		parentDialog = parent;
@@ -156,11 +156,11 @@ public class AddPlotDialog extends JDialog {
 				.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Horizontal Axis"));
 		horizontalParameterBox = new JComboBox<String>(horizontalOptions);
 		horizontalParameterBox.setSelectedIndex(guessHorizontalValueIndex(horizontalOptions));
-		spec.setHorizontalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
+		spec.setDomainAxisName((String) horizontalParameterBox.getModel().getSelectedItem());
 		horizontalParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setHorizontalAxis((String) horizontalParameterBox.getModel().getSelectedItem());
+				spec.setDomainAxisName((String) horizontalParameterBox.getModel().getSelectedItem());
 				updatePreviewPlot();
 			}
 		});
@@ -246,11 +246,11 @@ public class AddPlotDialog extends JDialog {
 		final String[] verticalOptions = getParameterList();
 		verticalParameterBox = new JComboBox<String>(verticalOptions);
 		verticalParameterBox.setSelectedIndex(guessVerticalValueIndex(verticalOptions));
-		spec.setVerticalAxis((String) verticalParameterBox.getModel().getSelectedItem());
+		spec.setRangeAxisName((String) verticalParameterBox.getModel().getSelectedItem());
 		verticalParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setVerticalAxis((String) verticalParameterBox.getModel().getSelectedItem());
+				spec.setRangeAxisName((String) verticalParameterBox.getModel().getSelectedItem());
 				updatePreviewPlot();
 			}
 		});
