@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.plots;
+package io.landysh.inflor.java.core.transforms;
 
 public enum TransformType {
 	Bounded,

@@ -1,9 +1,8 @@
-package io.landysh.inflor.java.core.plots;
+package io.landysh.inflor.java.core.transforms;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import edu.stanford.facs.logicle.FastLogicle;
-import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
 
 public class LogicleTransform extends AbstractDisplayTransform {
 	

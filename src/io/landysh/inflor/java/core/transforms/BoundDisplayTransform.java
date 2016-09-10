@@ -1,6 +1,4 @@
-package io.landysh.inflor.java.core.plots;
-
-import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
+package io.landysh.inflor.java.core.transforms;
 
 public class BoundDisplayTransform extends AbstractDisplayTransform {
 	
