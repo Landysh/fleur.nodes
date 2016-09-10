@@ -5,7 +5,11 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.Range;
 
-import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
+import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
+import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
+import io.landysh.inflor.java.core.transforms.LogicleTransform;
+import io.landysh.inflor.java.core.transforms.LogrithmicDisplayTransform;
+import io.landysh.inflor.java.core.transforms.TransformType;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.ScatterPlot;
 
 public class PlotUtils {
@@ -30,7 +34,8 @@ public class PlotUtils {
 		
 		} else if (type.equals(TransformType.Logrithmic)){
 			LogarithmicAxis axis = new LogarithmicAxis(key);
-			axis.setRange(new Range(0,262144));
+			LogrithmicDisplayTransform logTransform = (LogrithmicDisplayTransform) transform;
+			axis.setRange(new Range(logTransform.getMin(), logTransform.getMax()));
 			axis.setTickMarkInsideLength(0);
 			axis.setTickMarkOutsideLength(2);
 			axis.setExpTickLabelsFlag(true);

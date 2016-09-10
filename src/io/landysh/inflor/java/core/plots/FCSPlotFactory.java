@@ -6,7 +6,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
+import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class FCSPlotFactory {

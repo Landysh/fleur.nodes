@@ -3,7 +3,8 @@ package io.landysh.inflor.java.core.plots;
 import java.util.UUID;
 
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
-import io.landysh.inflor.java.core.utils.AbstractDisplayTransform;
+import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
+import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 
 public class PlotSpec implements DomainObject {
 	private static final int DEFAULT_BIN_COUNT = 256;
@@ -122,7 +123,7 @@ public class PlotSpec implements DomainObject {
 		return null;
 	}
 
-	public void setHorizontalAxis(String newValue) {
+	public void setDomainAxisName(String newValue) {
 		domainAxisName = newValue;
 
 	}
@@ -135,7 +136,7 @@ public class PlotSpec implements DomainObject {
 		plotType = newValue;
 	}
 
-	public void setVerticalAxis(String name) {
+	public void setRangeAxisName(String name) {
 		this.rangeAxisName = name;
 
 	}

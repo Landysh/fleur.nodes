@@ -5,12 +5,13 @@ import java.awt.Paint;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.GrayPaintScale;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.ui.RectangleAnchor;
 
-import io.landysh.inflor.java.core.utils.Histogram2D;
+import io.landysh.inflor.java.core.dataStructures.Histogram2D;
 
 public class ContourPlot extends AbstractFCSPlot {
 	
@@ -56,6 +57,8 @@ public class ContourPlot extends AbstractFCSPlot {
         renderer.setSeriesVisible(0, true);
         double zMaxHeight = histogram.getMaxHistogramHeight();
         Paint[] contourColors = createColorScale(zMaxHeight);
+        
+        
 		LookupPaintScale paintScale = new LookupPaintScale(0, zMaxHeight, Color.gray);
 		double [] scaleValues = new double[contourColors.length];
 		double delta = (zMaxHeight)/(contourColors.length -1);
@@ -65,7 +68,8 @@ public class ContourPlot extends AbstractFCSPlot {
 			scaleValues[i] = value;
 			value = value + delta;
 		}
-		renderer.setPaintScale(paintScale);
+		GrayPaintScale p2 = new GrayPaintScale(0, zMaxHeight);
+		renderer.setPaintScale(p2);
 		
 		//Create the plot
 		plot.setDataset(plotData);
@@ -80,7 +84,9 @@ public class ContourPlot extends AbstractFCSPlot {
 	}
 
 	private Paint[] createColorScale(double maxHeight) {
+		
 		Paint[] colorScale = new Paint[(int)maxHeight+1];
+
 		float startHue = 180/360f;
 		float stopHue = 1f;
 		if (colorScale.length>1){

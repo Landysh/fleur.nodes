@@ -8,6 +8,8 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.ValueAxisPlot;
 import org.jfree.data.Range;
 
+import io.landysh.inflor.java.core.transforms.LogicleTransform;
+
 @SuppressWarnings("serial")
 public class LogicleAxis extends NumberAxis {
 	
