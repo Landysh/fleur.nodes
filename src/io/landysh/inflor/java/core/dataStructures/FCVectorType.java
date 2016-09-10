@@ -1,5 +1,5 @@
 package io.landysh.inflor.java.core.dataStructures;
 
-public enum FCSVectorType {
+public enum FCVectorType {
 	RAW, COMP;
 }

@@ -12,7 +12,8 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCSVector;
+import io.landysh.inflor.java.core.dataStructures.FCParameter;
+import io.landysh.inflor.java.core.dataStructures.FCVectorType;
 import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -87,9 +88,7 @@ public class FCSFileReader {
 		}
 
 		final int rowCount = Integer.parseInt(header.get("$TOT"));
-		final String[] columnNames = parseColumnNames(header, compensate);
-		columnStore = new ColumnStore(header, columnNames);
-		columnStore.setRowCount(rowCount);
+		columnStore = new ColumnStore(header, rowCount);
 
 		// data specific properties
 		beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
@@ -154,39 +153,39 @@ public class FCSFileReader {
 		}
 	}
 
-	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) {
-		if (compensate == true) {
-			try {
-				final SpilloverCompensator comp = new SpilloverCompensator(header);
-				final String[] compParameters = comp.getCompDisplayNames(header);
-				final String[] allParameters = new String[compParameters.length + fileParameterList.length];
-				for (int i = 0; i < fileParameterList.length; i++) {
-					allParameters[i] = fileParameterList[i];
-				}
-				for (int j = 0; j < compParameters.length; j++) {
-					allParameters[fileParameterList.length + j] = compParameters[j];
-				}
-				return allParameters;
-			} catch (final Exception e) {
-				return fileParameterList;
-			}
+//	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) {
+//		if (compensate == true) {
+//			try {
+//				final SpilloverCompensator comp = new SpilloverCompensator(header);
+//				final String[] compParameters = comp.getCompDisplayNames(header);
+//				final String[] allParameters = new String[compParameters.length + fileParameterList.length];
+//				for (int i = 0; i < fileParameterList.length; i++) {
+//					allParameters[i] = fileParameterList[i];
+//				}
+//				for (int j = 0; j < compParameters.length; j++) {
+//					allParameters[fileParameterList.length + j] = compParameters[j];
+//				}
+//				return allParameters;
+//			} catch (final Exception e) {
+//				return fileParameterList;
+//			}
+//
+//		} else {
+//			return fileParameterList;
+//		}
+//	}
 
-		} else {
-			return fileParameterList;
-		}
-	}
-
-	private Hashtable<String, FCSVector> readAndCompensateColumns(Hashtable<String, FCSVector> allData,
+	private Hashtable<String, FCParameter> readAndCompensateColumns(Hashtable<String, FCParameter> allData,
 			SpilloverCompensator compensator) throws IOException {
 		FCSFile.seek(beginData);
 		for (int i = 0; i < columnStore.getRowCount(); i++) {
 			final double[] row = readRow();
 			final double[] compRow = compensator.compensateRow(row);
 			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).setRawValue(i, row[j]);
+				allData.get(fileParameterList[j]).getData(FCVectorType.RAW)[i] = row[j];
 				for (int k = 0; k < compParameterList.length; k++) {
 					if (compParameterList[k] == fileParameterList[j]) {
-						allData.get(compParameterList[k]).setCompValue(i, compRow[k]);
+						allData.get(compParameterList[k]).getData(FCVectorType.COMP)[i] = compRow[k];
 					}
 				}
 			}
@@ -194,24 +193,24 @@ public class FCSFileReader {
 		return allData;
 	}
 
-	private Hashtable<String, FCSVector> readColumns(Hashtable<String, FCSVector> allData) throws IOException {
+	private Hashtable<String, FCParameter> readColumns(Hashtable<String, FCParameter> allData) throws IOException {
 		for (int i = 0; i < columnStore.getRowCount(); i++) {
 			final double[] row = readRow();
 			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).setRawValue(i, row[j]);
+				allData.get(fileParameterList[j]).getData(FCVectorType.RAW)[i]= row[j];
 			}
 		}
 		return allData;
 	}
 
 	public void readData() throws Exception {
-		Hashtable<String, FCSVector> allData = new Hashtable<String, FCSVector>();
-		final String[] vectorNames = columnStore.getColumnNames();
+		Hashtable<String, FCParameter> allData = new Hashtable<String, FCParameter>();
+		//final String[] vectorNames = columnStore.getColumnNames();
+		FCSFile.seek(beginData);
 		// Initialize vector store
-		for (final String name : vectorNames) {
-			final FCSVector vector = new FCSVector(name);
-			vector.setSize(columnStore.getRowCount());
-			allData.put(name, vector);
+		for (final String name : fileParameterList) {
+			final FCParameter newParameter = new FCParameter(name, columnStore.getRowCount());
+			allData.put(name, newParameter);
 		}
 
 		if (compensateOnRead == true) {
@@ -312,7 +311,6 @@ public class FCSFileReader {
 		double[] row = new double[fileParameterList.length];
 		if (dataType.equals("F")) {
 			row = readFloatRow(row);
-
 		} else if (dataType.equals("I")) {
 			row = readIntegerRow(row);
 		}

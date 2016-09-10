@@ -26,8 +26,9 @@ public class ColumnStore {
 			final String value = keyword.getValue();
 			keywords.put(key, value);
 		}
-		final ColumnStore columnStore = new ColumnStore(keywords, new String[] {});
 		// Load the vectors
+		final int rowCount = message.getVectors(0).getArrayCount();
+		final ColumnStore columnStore = new ColumnStore(keywords, rowCount);
 		final int columnCount = message.getVectorsCount();
 		final String[] vectorNames = new String[columnCount];
 		for (int j = 0; j < columnCount; j++) {
@@ -41,7 +42,7 @@ public class ColumnStore {
 			columnStore.addColumn(key, values);
 			if (vector.getCompArrayCount() != 0) {
 				for (int k = 0; k < vector.getArrayCount(); k++) {
-					columnStore.getColumn(key, FCSVectorType.COMP)[k] = vector.getCompArray(k);
+					columnStore.getColumn(key, FCVectorType.COMP)[k] = vector.getCompArray(k);
 				}
 			}
 		}
@@ -60,22 +61,11 @@ public class ColumnStore {
 	public String UUID;
 
 	private Hashtable<String, String> keywords;
-	private Hashtable<String, FCSVector> columnData;
+	private Hashtable<String, FCParameter> columnData;
 
 	// data properties
-	private Integer columnCount;
-
 	private Integer rowCount = -1;
-
 	private String preferredName;
-
-	public String getPreferredName() {
-		return preferredName;
-	}
-
-	public void setPreferredName(String preferredName) {
-		this.preferredName = preferredName;
-	}
 
 	// minimal constructor, use with .load()
 	public ColumnStore() {
@@ -88,45 +78,30 @@ public class ColumnStore {
 	 *            some annotation to get started with. Must be a valid FCS
 	 *            header but may be added to later.
 	 */
- 	public ColumnStore(Hashtable<String, String> keywords, String[] columnNames) {
+	public ColumnStore(Hashtable<String, String> keywords, int rowCount) {
 		this.keywords = keywords;
-		columnData = new Hashtable<String, FCSVector>();
-		for (final String name : columnNames) {
-			columnData.put(name, new FCSVector(name) {
-			});
-		}
-		setPreferredName(getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
+		columnData = new Hashtable<String, FCParameter>();
+		this.rowCount = rowCount;
+		preferredName = getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD);
 	}
 
 	public void addColumn(String name, double[] data) {
-		if (rowCount == -1 || rowCount == data.length) {
-			rowCount = data.length;
-			final FCSVector newVector = new FCSVector(name);
-			newVector.setData(data, FCSVectorType.RAW);
+		if (rowCount == data.length) {
+			final FCParameter newVector = new FCParameter(name, rowCount);
+			newVector.setData(data, FCVectorType.RAW);
 			columnData.put(name, newVector);
-			columnCount = getColumnCount();
 		} else {
 			throw new IllegalStateException("New column does not match frame size: " + rowCount.toString());
 		}
 	}
 
 	public double[] getColumn(String xName) {
-		double[] data;
-		data = columnData.get(xName).getData(FCSVectorType.COMP);
-		if (data == null) {
-			data = columnData.get(xName).getData(FCSVectorType.RAW);
-		}
+		double[] data = columnData.get(xName).getData(FCVectorType.RAW);
 		return data;
 	}
 
-	public double[] getColumn(String name, FCSVectorType type) {
-		if (name != null) {
+	public double[] getColumn(String name, FCVectorType type) {
 			return columnData.get(name).getData(type);
-		} else {
-			final NullPointerException npe = new NullPointerException("Input null.");
-			npe.printStackTrace();
-			throw npe;
-		}
 	}
 
 	public int getColumnCount() {
@@ -140,7 +115,7 @@ public class ColumnStore {
 		return columnNames;
 	}
 
-	public Hashtable<String, FCSVector> getData() {
+	public Hashtable<String, FCParameter> getData() {
 		return columnData;
 	}
 
@@ -153,18 +128,27 @@ public class ColumnStore {
 		try {
 			result = keywords.get(keyword).trim();
 		} catch (NullPointerException npe) {
-			//No operatoin, just return a null value.
+			// No operatoin, just return a null value.
 		}
 		return result;
-		
+
+	}
+
+
+	public String getPrefferedName() {
+		String name = UUID;
+		if (this.preferredName != null) {
+			name = this.preferredName;
+		}
+		return name;
 	}
 
 	public double[] getRow(int index) {
 		// TODO Fix to get comped data as well.
-		final double[] row = new double[columnCount];
+		final double[] row = new double[getColumnCount()];
 		int i = 0;
 		for (final String name : getColumnNames()) {
-			row[i] = columnData.get(name).getData(FCSVectorType.RAW)[index];
+			row[i] = columnData.get(name).getData(FCVectorType.RAW)[index];
 			i++;
 		}
 		return row;
@@ -174,7 +158,7 @@ public class ColumnStore {
 		return rowCount;
 	}
 
-	public FCSVector getVector(String viabilityColumn) {
+	public FCParameter getVector(String viabilityColumn) {
 		return columnData.get(viabilityColumn);
 	}
 
@@ -205,13 +189,13 @@ public class ColumnStore {
 			final AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
 			final String name = getColumnNames()[i];
 			// Raw data
-			final double[] rawArray = columnData.get(name).getData(FCSVectorType.RAW);
+			final double[] rawArray = columnData.get(name).getData(FCVectorType.RAW);
 			vectorBuilder.setName(name);
 			for (final double element : rawArray) {
 				vectorBuilder.addArray(element);
 			}
 			// Comped data
-			final double[] compArray = columnData.get(name).getData(FCSVectorType.COMP);
+			final double[] compArray = columnData.get(name).getData(FCVectorType.COMP);
 			if (compArray != null) {
 				for (int k = 0; k < rawArray.length; k++) {
 					vectorBuilder.addCompArray(compArray[k]);
@@ -234,26 +218,17 @@ public class ColumnStore {
 		out.flush();
 	}
 
-	public void setData(Hashtable<String, FCSVector> allData) {
+	public void setData(Hashtable<String, FCParameter> allData) {
 		columnData = allData;
-		rowCount = allData.get(getColumnNames()[0]).getData(FCSVectorType.RAW).length;
-		columnCount = getColumnNames().length;
+		rowCount = allData.get(getColumnNames()[0]).getData(FCVectorType.RAW).length;
 	}
 
-	public void setRowCount(int count) {
-		rowCount = count;
+	public void setPreferredName(String preferredName) {
+		this.preferredName = preferredName;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getPrefferedName();
-	}
-
-	private String getPrefferedName() {
-		String name = UUID;
-		if (this.preferredName != null){
-			name = this.preferredName; 
-		}
-		return name;
 	}
 }
