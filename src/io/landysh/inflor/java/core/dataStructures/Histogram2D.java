@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.utils;
+package io.landysh.inflor.java.core.dataStructures;
 
 public class Histogram2D {
 	
@@ -10,6 +10,7 @@ public class Histogram2D {
 	private double[] yBins;
 	private double[] xBins;
 	private double maxHistogramHeight;
+	private int usedBinCount;
 	
 	public double getMaxHistogramHeight() {
 		return maxHistogramHeight;
@@ -34,6 +35,7 @@ public class Histogram2D {
 	}
 
 	public double[] populateHistogram(double[] xBins, double[] yBins, double[] zValues, double[] xData, double[] yData, double xBinWidth, double yBinWidth, int yBinCount) {
+		usedBinCount = xBins.length;
 		for (int i=0;i<xData.length;i++){
 			maxHistogramHeight = Double.MIN_VALUE;
 			double x = xData[i];
@@ -48,11 +50,15 @@ public class Histogram2D {
 				histogramIndex = zValues.length-1;
 			} 
 			zValues[histogramIndex]++;
+			if(zValues[histogramIndex]==1){
+				usedBinCount--;
+			}
 			mask[0][i] = (double) xBin * xBinWidth;
 			if (zValues[histogramIndex]>maxHistogramHeight){
 				maxHistogramHeight = zValues[histogramIndex];
 			}
 		}
+		
 		return zValues;
 	}
 
