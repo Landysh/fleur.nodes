@@ -7,10 +7,10 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.java.core.plots.BoundDisplayTransform;
 import io.landysh.inflor.java.core.plots.ContourPlot;
 import io.landysh.inflor.java.core.plots.PlotSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
+import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.ScatterPlot;
 
 @SuppressWarnings("serial")
@@ -20,8 +20,8 @@ public class UI_ScatterPlotTest extends ApplicationFrame {
 		super(title);
 		PlotSpec spec = new PlotSpec(null);
 		spec.setPlotType(PlotTypes.Contour);
-		spec.setHorizontalAxis("FSC");
-		spec.setVerticalAxis("SSC");
+		spec.setDomainAxisName("FSC");
+		spec.setRangeAxisName("SSC");
 		spec.setxBinCount(5);
 		spec.setyBinCount(5);
 		spec.setxMin(0);

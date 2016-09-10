@@ -1,9 +1,10 @@
 package io.landysh.inflor.tests;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
-import io.landysh.inflor.java.core.utils.Histogram2D;
+import io.landysh.inflor.java.core.dataStructures.Histogram2D;
+
+import static org.junit.Assert.assertEquals;
 
 public class Histogram2DTest {
 

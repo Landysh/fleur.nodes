@@ -2,18 +2,21 @@ package io.landysh.inflor.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Hashtable;
-
 import org.junit.Test;
 
-import io.landysh.inflor.java.core.dataStructures.FCSVector;
+//TestDependencies
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCVectorType;
+
+//Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
 	// Define Constants
 
 	String path1 = "src/io/landysh/inflor/tests/extData/int-15_scatter_events.fcs";
-
+	String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
+	
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
@@ -28,30 +31,57 @@ public class FCSFileReaderTest {
 		assertEquals(r.beginData, (Integer) 576);
 		assertEquals(r.dataType, "I");
 		// assertEquals( r.bitMap, new Integer[] {16,16});
-		System.out.println("FCSFileReaderTest testInitialization completed (succefully or otherwise)");
+		System.out.println("FCSFileReaderTest testInitialization completed.");
 
 	}
 
 	@Test
-	public void testReadAllData() throws Exception {
+	public void testReadAllData15ScatterEvents() throws Exception {
 		// Setup
-		final FCSFileReader r = new FCSFileReader(path1, false);
-		r.readData();
+		final FCSFileReader reader = new FCSFileReader(path1, false);
 
 		// Test
-		final Hashtable<String, FCSVector> testData = r.getColumnStore().getData();
+		reader.readData();
+		final ColumnStore dataStore = reader.getColumnStore();
 
-		final double[] fcs = { 400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400 };
-		final double[] ssc = { 300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500 };
+		final double[] fcs = {400,600,300,500,600,500,800,200,300,800,900,400,200,600,400};
+		final double[] ssc = {300,300,600,200,800,500,600,400,100,200,400,800,900,700,500};
 		
-		double[] testFCS = testData.get("FCS").getData();
-		double[] testSSC = testData.get("SSC").getData();
+		double[] testFCS = dataStore.getColumn("FCS", FCVectorType.RAW);
+		double[] testSSC = dataStore.getColumn("SSC", FCVectorType.RAW);
 
 		// Assert
 		for (int i = 0; i < fcs.length; i++) {
 			assertEquals(fcs[i], testFCS[i], Double.MIN_VALUE);
 			assertEquals(ssc[i], testSSC[i], Double.MIN_VALUE);
 		}
-		System.out.println("FCSFileReaderTest testReadAllData completed (succefully or otherwise)");
+		System.out.println("FCSFileReaderTes::testReadAllData15ScatterEvents completed.");
+		
+	}
+	
+	@Test
+	public void testReadAllLogicleDataNoComp() throws Exception {
+		// Setup
+		int trueRowCount = 30000;
+		final double[] trueFSCFirstFew = {400,600,300,500,600,500,800,200,300,800,900,400,200,600,400};
+		final double[] trueSSCFirstFew = {300,300,600,200,800,500,600,400,100,200,400,800,900,700,500};
+		
+		// Test
+		final FCSFileReader reader = new FCSFileReader(logiclePath, false);
+		reader.readData();
+		final ColumnStore dataStore = reader.getColumnStore();
+		final int testRowCount = dataStore.getRowCount();
+
+		
+		double[] testFCS = dataStore.getColumn("FSC-A", FCVectorType.RAW);
+		double[] testSSC = dataStore.getColumn("SSC-A", FCVectorType.RAW);
+
+		// Assert
+		assertEquals("Row count", trueRowCount, testRowCount);
+		for (int i = 0; i < trueFSCFirstFew.length; i++) {
+			assertEquals(trueFSCFirstFew[i], testFCS[i], Double.MIN_VALUE);
+			assertEquals(trueSSCFirstFew[i], testSSC[i], Double.MIN_VALUE);
+		}
+		System.out.println("FCSFileReaderTes::testReadAllLogicleDataNoComp completed.");
 	}
 }
