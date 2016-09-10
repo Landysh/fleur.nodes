@@ -69,7 +69,8 @@ public class DownsampleNodeModel extends NodeModel {
 		final ColumnStore inColumnStore = inPort.getColumnStore();
 		final int inSize = inColumnStore.getRowCount();
 		final int downSize = m_Size.getIntValue();
-		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), inColumnStore.getColumnNames());
+		final int finalSize = downSize >= inSize ? downSize : inSize;
+		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), finalSize);
 		if (downSize >= inSize) {
 			outStore.setData(inColumnStore.getData());
 		} else {

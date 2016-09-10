@@ -1,7 +1,6 @@
 package io.landysh.inflor.java.knime.nodes.viabilityFilter;
 
-import io.landysh.inflor.java.core.dataStructures.FCSVector;
-import io.landysh.inflor.java.core.utils.HistogramCalculator;
+import io.landysh.inflor.java.core.dataStructures.Histogram1D;
 
 public class ViabilityModel {
 
@@ -9,13 +8,12 @@ public class ViabilityModel {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void buildModel(FCSVector viabilityData) {
-		final HistogramCalculator calc = new HistogramCalculator(viabilityData.getData(), false);
-		calc.createBins(viabilityData.getDisplayRangeMin(), viabilityData.getDisplayRangeMax(), 512);
-		calc.findPeaks();
+	public void buildModel(double[] data) {
+		final Histogram1D histogram = new Histogram1D(data, 512);
+		histogram.findPeaks();
 	}
 
-	public boolean[] scoreModel(FCSVector viabilityData) {
+	public boolean[] scoreModel(double[] viabilityData) {
 		// TODO Auto-generated method stub
 		return null;
 	}

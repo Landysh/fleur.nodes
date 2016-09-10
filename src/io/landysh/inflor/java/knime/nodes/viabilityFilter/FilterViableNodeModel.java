@@ -21,7 +21,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCSVector;
+import io.landysh.inflor.java.core.dataStructures.FCParameter;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
@@ -77,12 +77,13 @@ public class FilterViableNodeModel extends NodeModel {
 			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
 			final ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
 			final ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-			final FCSVector viabilityData = columnStore.getVector(viabilityColumn);
+			final double[] viabilityData = columnStore.getVector(viabilityColumn).getData();
 			model.buildModel(viabilityData);
 			final boolean[] mask = model.scoreModel(viabilityData);
 
 			// now create the output row
-			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
+			final int newSize = FCSUtils.countTrue(mask);
+			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), newSize);
 			for (final String name : columnStore.getColumnNames()) {
 				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
 				outStore.addColumn(name, maskedColumn);

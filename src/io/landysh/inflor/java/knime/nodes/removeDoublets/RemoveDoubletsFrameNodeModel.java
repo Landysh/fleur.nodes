@@ -68,18 +68,22 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 	 */
 	@Override
 	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec) throws Exception {
-
+		
+		//get the data
 		final ColumnStorePortObject inPort = (ColumnStorePortObject) inData[0];
 		final ColumnStorePortSpec inSpec = (ColumnStorePortSpec) inPort.getSpec();
 		final ColumnStore inColumnStore = inPort.getColumnStore();
+
+		//Do the modeling
 		final SingletsModel model = new SingletsModel(inSpec.columnNames);
 		final double[] area = inColumnStore.getColumn(m_AreaColumn.getStringValue());
 		final double[] height = inColumnStore.getColumn(m_HeightColumn.getStringValue());
 		final double[] ratio = model.buildModel(area, height);
 		final boolean[] mask = model.scoreModel(ratio);
-
-		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), inColumnStore.getColumnNames());
-
+		
+		//Create the output
+		int newSize = FCSUtils.countTrue(mask);
+		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), newSize);
 		for (final String name : inColumnStore.getColumnNames()) {
 			final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getColumn(name));
 			outStore.addColumn(name, maskedColumn);

@@ -87,7 +87,8 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 			final boolean[] mask = model.scoreModel(ratio);
 
 			// now create the output row
-			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), columnStore.getColumnNames());
+			int newSize = FCSUtils.countTrue(mask);
+			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), newSize);
 			for (final String name : columnStore.getColumnNames()) {
 				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
 				outStore.addColumn(name, maskedColumn);
