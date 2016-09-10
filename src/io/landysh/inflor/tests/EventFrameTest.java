@@ -13,23 +13,23 @@ public class EventFrameTest {
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
-		final String testKey = "key";
-		final String testVal = "value";
-		final String column1 = "c1";
-		final String column2 = "c2";
+		final String trueKey = "key";
+		final String trueValue = "value";
+		final int 	 trueRowCount = 15;
 
 		final Hashtable<String, String> header = new Hashtable<String, String>();
-		header.put(testKey, testVal);
+		header.put(trueKey, trueValue);
+		
 		// Test
-		final ColumnStore cs = new ColumnStore(header, new String[] { column1, column2 });
-
-		final boolean contains1 = cs.getData().keySet().contains(column1);
-		final boolean contains2 = cs.getData().keySet().contains(column2);
-
+		final ColumnStore cs = new ColumnStore(header, trueRowCount);
+		final String testValue = cs.getKeywords().get(trueKey);
+		final int testRowCount = cs.getRowCount(); 
+		String testPrefName = cs.getPrefferedName();
+		
 		// Assert
-		assertEquals("My First Message", testVal, cs.getKeywords().get(testKey));
-		assertEquals("My Second Message", contains1, true);
-		assertEquals("My Third Message", contains2, true);
+		assertEquals("keyword", trueValue, testValue);
+		assertEquals("rowcount", trueRowCount, testRowCount);
+		assertEquals("preferredName", "Foo", testPrefName);
 		System.out.println("EventFrameTest testInitialization completed (succefully or otherwise)");
 	}
 }
