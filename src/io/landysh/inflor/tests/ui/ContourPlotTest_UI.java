@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests;
+package io.landysh.inflor.tests.ui;
 
 import java.awt.Dimension;
 
