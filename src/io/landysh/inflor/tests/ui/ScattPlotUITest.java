@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests;
+package io.landysh.inflor.tests.ui;
 
 import java.awt.Dimension;
 
@@ -8,16 +8,15 @@ import org.jfree.ui.ApplicationFrame;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.plots.ContourPlot;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogrithmicDisplayTransform;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.ScatterPlot;
 
 @SuppressWarnings("serial")
-public class UI_ScattPlotTest extends ApplicationFrame {
-	   public UI_ScattPlotTest(String title) throws Exception {
+public class ScattPlotUITest extends ApplicationFrame {
+	   public ScattPlotUITest(String title) throws Exception {
 		super(title);
 		
 		String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
@@ -25,7 +24,7 @@ public class UI_ScattPlotTest extends ApplicationFrame {
 		reader.readData();
 		final ColumnStore dataStore = reader.getColumnStore();
 
-		PlotSpec spec = new PlotSpec(null);
+		ChartSpec spec = new ChartSpec(null);
 		spec.setPlotType(PlotTypes.Scatter);
 		spec.setDomainAxisName("FSC-A");
 		spec.setRangeAxisName("SSC-A");
@@ -57,7 +56,7 @@ public class UI_ScattPlotTest extends ApplicationFrame {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UI_ScattPlotTest test = new UI_ScattPlotTest("ContourPlotTest");
+		ScattPlotUITest test = new ScattPlotUITest("ContourPlotTest");
 			  test.pack();
 		      test.setVisible(true);
 	}	   
