@@ -3,8 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: io.landysh.inflor;singleton:=true
 Bundle-Version: 0.01
-Bundle-ClassPath: fcsreader.jar,
- lib/commons-math3-3.6.1.jar,
+Bundle-Vendor: %Bundle-Vendor
+Require-Bundle: org.knime.workbench.core,
+ org.knime.base,
+ org.knime.workbench.repository,
+ org.eclipse.core.runtime.compatibility
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.collect
+Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
  lib/EJML-core-0.29.jar,
  lib/EJML-dense64-0.29.jar,
  lib/EJML-denseC64-0.29.jar,
@@ -15,14 +21,13 @@ Bundle-ClassPath: fcsreader.jar,
  lib/jcommon-1.0.23.jar,
  lib/jfreechart-1.0.19.jar,
  lib/jfreesvg-2.0.jar,
+ lib/jgraphx.jar,
+ lib/jts-1.14.jar,
  lib/junit-4.11.jar,
+ lib/Logicle.jar,
  lib/orsoncharts-1.4-eval-nofx.jar,
  lib/orsonpdf-1.6-eval.jar,
  lib/protobuf-java-2.6.1.jar,
- lib/Logicle.jar,
- lib/jts-1.14.jar
-Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: org.knime.workbench.core,
- org.knime.base
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.google.common.collect
+ fcsreader.jar
+Bundle-Activator: io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSNodePlugin
+Bundle-ActivationPolicy: lazy
