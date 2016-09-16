@@ -10,24 +10,20 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.gatingML.gates.GatingStrategy;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.SubsetSpec;
 
 public class GatingModelNodeSettings {
 
 	private static final String ANALYSIS_KEYS = "analyses";
-
 	private static final String PLOT_KEYS_KEY = "views";
-
 	private static final String MODE_KEY = "AnalysisMode";
-
 	private static final String GATING_ML_KEY = "GatingML";
 	private static final String SELECTED_COLUMN_KEY = "Selected Column";
-
 	private static final String SELECTED_COLUMN_DEFAULT = "None";
 	private static final String SELECTED_SAMPLE_KEY = "Selected Sample";
-
 	private static final String PARAMETER_LIST_KEY = "Parameter List";
+	
 	ConcurrentHashMap<String, GatingStrategy> m_analyses;
 	private String mode = "FILTER";
 
@@ -37,11 +33,19 @@ public class GatingModelNodeSettings {
 	private String selectedSample;
 	private String[] paramterList;
 
-	private Hashtable<String, PlotSpec> m_plotSpecs;
+	private Hashtable<String, ChartSpec> chartSpecs;
 	private Hashtable<String, SubsetSpec> m_subsetSpecs;
+	
+	public GatingModelNodeSettings (){
+		chartSpecs = new Hashtable<String, ChartSpec> ();
+		 m_subsetSpecs = new Hashtable<String, SubsetSpec>();
+		 SubsetSpec ungatedSpec = new SubsetSpec();
+		 ungatedSpec.setPrefferedName("Ungated");
+		 m_subsetSpecs.put("Ungated", new SubsetSpec());
+	}
 
-	public void addPlotSpec(PlotSpec spec) {
-		m_plotSpecs.put(spec.uuid, spec);
+	public void addPlotSpec(ChartSpec spec) {
+		chartSpecs.put(spec.UUID, spec);
 	}
 
 	private String[] getAnalysisKeys(ConcurrentHashMap<String, GatingStrategy> plan) {
@@ -56,10 +60,10 @@ public class GatingModelNodeSettings {
 		return paramterList;
 	}
 
-	private String[] getPlotIDs(Hashtable<String, PlotSpec> plotSpecs2) {
+	private String[] getPlotIDs(Hashtable<String, ChartSpec> plotSpecs2) {
 		final ArrayList<String> ids = new ArrayList<String>();
-		for (final String key : m_plotSpecs.keySet()) {
-			ids.add(m_plotSpecs.get(key).uuid);
+		for (final String key : chartSpecs.keySet()) {
+			ids.add(chartSpecs.get(key).UUID);
 		}
 		return ids.toArray(new String[ids.size()]);
 	}
@@ -78,15 +82,14 @@ public class GatingModelNodeSettings {
 		ids.add("Overview");
 		if (m_subsetSpecs != null) {
 			for (final String key : m_subsetSpecs.keySet()) {
-				ids.add(m_subsetSpecs.get(key).uuid);
+				ids.add(m_subsetSpecs.get(key).UUID);
 			}
 		}
 		return ids.toArray(new String[ids.size()]);
 	}
 
 	public void load(NodeSettingsRO settings) throws InvalidSettingsException {
-
-		m_plotSpecs = loadPlots(settings);
+		chartSpecs = loadPlots(settings);
 		m_analyses = loadAnalyses(settings);
 		mode = settings.getString(MODE_KEY);
 		gml = settings.getString(GATING_ML_KEY);
@@ -104,18 +107,18 @@ public class GatingModelNodeSettings {
 		return newAnalyses;
 	}
 
-	private Hashtable<String, PlotSpec> loadPlots(NodeSettingsRO settings) throws InvalidSettingsException {
-		final Hashtable<String, PlotSpec> loadedPlots = new Hashtable<String, PlotSpec>();
+	private Hashtable<String, ChartSpec> loadPlots(NodeSettingsRO settings) throws InvalidSettingsException {
+		final Hashtable<String, ChartSpec> loadedPlots = new Hashtable<String, ChartSpec>();
 		for (final String plotKey : settings.getStringArray(PLOT_KEYS_KEY)) {
-			final PlotSpec spec = new PlotSpec(null);
+			final ChartSpec spec = new ChartSpec(null);
 			spec.loadFromString(settings.getString(plotKey));
-			loadedPlots.put(spec.uuid, spec);
+			loadedPlots.put(spec.UUID, spec);
 		}
 		return loadedPlots;
 	}
 
 	public void removePlotSpec(String uuidToRemove) {
-		m_plotSpecs.remove(uuidToRemove);
+		chartSpecs.remove(uuidToRemove);
 	}
 
 	public void save(NodeSettingsWO settings) {
@@ -125,7 +128,7 @@ public class GatingModelNodeSettings {
 
 		final String[] gateListArray = getAnalysisKeys(m_analyses);
 		settings.addStringArray(ANALYSIS_KEYS, gateListArray);
-		final String[] plotList = getPlotIDs(m_plotSpecs);
+		final String[] plotList = getPlotIDs(chartSpecs);
 		settings.addStringArray(PLOT_KEYS_KEY, plotList);
 		settings.addString(SELECTED_SAMPLE_KEY, selectedSample);
 		settings.addStringArray(PARAMETER_LIST_KEY, paramterList);
@@ -142,8 +145,8 @@ public class GatingModelNodeSettings {
 	}
 
 	private void savePlots(NodeSettingsWO settings) {
-		for (final String key : m_plotSpecs.keySet()) {
-			settings.addString(key, m_plotSpecs.get(key).saveToString());
+		for (final String key : chartSpecs.keySet()) {
+			settings.addString(key, chartSpecs.get(key).saveToString());
 		}
 	}
 
@@ -163,6 +166,18 @@ public class GatingModelNodeSettings {
 
 	public void validate(NodeSettingsRO settings) {
 
+	}
+
+	public Hashtable<String, ChartSpec> getPlotSpecs() {
+		return chartSpecs;
+	}
+
+	public void deleteChart(String id) {
+		chartSpecs.remove(id);
+	}
+
+	public ChartSpec getChartSpec(String id) {
+		return chartSpecs.get(id);
 	}
 }
 // EOF
