@@ -1,5 +1,7 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,11 +12,11 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
@@ -26,12 +28,10 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.plots.InflorVisDataSet;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.AddPlotActionListener;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.AddPlotDialog;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.FCSColumnBoxListener;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.LineageAnalysisPanel;
+import io.landysh.inflor.java.knime.nodes.createGates.ui.CellLineageTree;
+import io.landysh.inflor.java.knime.nodes.createGates.ui.ChartEditorDialog;
 import sun.awt.windows.WEmbeddedFrame;
 
 /**
@@ -45,23 +45,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
 	public GatingModelNodeSettings m_Settings;
-	
-	public InflorVisDataSet currentDataSet;
 
 	JPanel m_analyisTab;
-	private final JPanel m_analysisArea;
-
+	CellLineageTree lineageTree;
 	public JComboBox<String> fcsColumnBox;
 	public JComboBox<ColumnStore> selectSampleBox;
-	//TODO: Remove this?
-	//	private JSpinner sampleSizeSpinner;
-	private JPanel analysisPanel;
-	LineageAnalysisPanel lineagePanel;
-	private Hashtable<String, ColumnStore> data;
-
-	public Hashtable<String, ColumnStore> getData() {
-		return data;
-	}
 
 	protected CreateGatesNodeDialog() {
 		super();
@@ -69,49 +57,100 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
 		// Main analysis Tab
 		m_analyisTab = new JPanel();
-		m_analyisTab.setLayout(new BoxLayout(m_analyisTab, BoxLayout.Y_AXIS));
-		m_analyisTab.add(Box.createVerticalGlue());
-		m_analyisTab.add(createOptionsPanel());
-		m_analysisArea = createAnalysisArea();
-		m_analyisTab.add(m_analysisArea);
+		BorderLayout borderLayout = new BorderLayout();
+		m_analyisTab.setLayout(borderLayout);
+		m_analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
+		
+		final JButton addChartButton = new JButton("Add");
+		addChartButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addChartDialog();
+			}
+		});
 
+		final JButton editChartButton = new JButton("Edit");
+		editChartButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				if (lineageTree.getSelectionCount()==1){
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
+					String id = ((ChartSpec) selectedNode.getUserObject()).UUID;
+					editChartDialog(id);
+					updateLineageTree();
+				}
+			}
+		});
+		
+		final JButton deleteChartButton = new JButton("Delete");
+		deleteChartButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				if (lineageTree.getSelectionCount()==1){
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
+					String id = ((ChartSpec) selectedNode.getUserObject()).UUID;
+					m_Settings.deleteChart(id);
+					updateLineageTree();
+				}
+			}
+		});
+		
+		JPanel plotButtons = new JPanel(new FlowLayout());
+		
+		plotButtons.add(addChartButton);
+		plotButtons.add(editChartButton);
+		plotButtons.add(deleteChartButton);
+
+		m_analyisTab.add(plotButtons, BorderLayout.PAGE_END);
+		
 		super.addTab("Analysis", m_analyisTab);
 	}
 
-	public void addPlot() {
+	public void addChartDialog() {
 		// figure out the parent to be able to make the dialog modal
 		final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
 
-		final AddPlotDialog dialog = new AddPlotDialog(topFrame, this);
+		final ChartEditorDialog dialog = new ChartEditorDialog(topFrame, this);
  		dialog.setVisible(true);
 
 		if (dialog.isOK) {
-			dialog.save();
-			updateLineagePanel();
+			m_Settings.addPlotSpec(dialog.getChartSpec());
+			updateLineageTree();
+		}
+		dialog.dispose();
+	}
+	
+	public void editChartDialog(String id) {
+		// figure out the parent to be able to make the dialog modal
+		final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
+
+		final ChartEditorDialog dialog = new ChartEditorDialog(topFrame, this, id);
+ 		dialog.setVisible(true);
+
+		if (dialog.isOK) {
+			m_Settings.addPlotSpec(dialog.getChartSpec());
+			updateLineageTree();
 		}
 		dialog.dispose();
 	}
 
-	private JPanel createAnalysisArea() {
-		final JButton addChartButton = new JButton("New plot.");
-		addChartButton.addActionListener(new AddPlotActionListener(this));
+	private CellLineageTree createAnalysisArea() {
+		
+		ColumnStore dataStore = (ColumnStore) selectSampleBox.getSelectedItem();
+		Hashtable<String, ChartSpec> chartSpecs = m_Settings.getPlotSpecs();
+		
+		lineageTree = new CellLineageTree();
+		lineageTree.updateLayout(chartSpecs, dataStore);
 
-		lineagePanel = new LineageAnalysisPanel();
-
-		analysisPanel = new JPanel();
-		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.Y_AXIS));
-		analysisPanel.add(Box.createVerticalGlue());
-		analysisPanel.add(Box.createHorizontalGlue());
-		analysisPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Analyis"));
-		analysisPanel.add(lineagePanel);
-		analysisPanel.add(addChartButton);
-
-		return analysisPanel;
+		return lineageTree;
 	}
 
 	private JPanel createOptionsPanel() {
 		final JPanel optionsPanel = new JPanel();
-		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
+		
+		FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
+		
+		optionsPanel.setLayout(layout);
 		optionsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Sample Options"));
 		optionsPanel.add(Box.createVerticalGlue());
 		optionsPanel.add(Box.createHorizontalGlue());
@@ -119,9 +158,17 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		// Select Input data
 		fcsColumnBox = new JComboBox<String>(new String[] { NO_COLUMNS_AVAILABLE_WARNING });
 		fcsColumnBox.setSelectedIndex(0);
-		fcsColumnBox.addActionListener(new FCSColumnBoxListener(this));
+		fcsColumnBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				m_Settings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
+			}
+		});
 		optionsPanel.add(fcsColumnBox);
 
+
+		
+		
 		// Select file
 		selectSampleBox = new JComboBox<ColumnStore>();
 		selectSampleBox.setSelectedIndex(-1);
@@ -129,19 +176,10 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				updateLineageTree();
 			}
 		});
 		optionsPanel.add(selectSampleBox);
-
-//		// Select Sample Size
-//		final SpinnerNumberModel spinModel = new SpinnerNumberModel(10000, 0, 5000000, 1000);
-//		sampleSizeSpinner = new JSpinner(spinModel);
-//		sampleSizeSpinner.getModel().setValue(10000);
-//		sampleSizeSpinner.setName("Sample Size");
-//		optionsPanel.add(sampleSizeSpinner);
-
 		return optionsPanel;
 	}
 	
@@ -159,7 +197,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		if (fcsColumnBox.getModel().getSize() == 0) {
 			fcsColumnBox.addItem(NO_COLUMNS_AVAILABLE_WARNING);
 		}
-	};
+	}
 	
 	@Override
 	protected void loadSettingsFrom(final NodeSettingsRO settings, final BufferedDataTable[] input)
@@ -206,6 +244,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			selectSampleBox.setEnabled(false);
 			selectSampleBox.setToolTipText("No FCS Files found");
 		}
+		
+		updateLineageTree();
 	}
 
 	@Override
@@ -213,16 +253,21 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		m_Settings.save(settings);
 	}
 
-	private void updateLineagePanel() {
-		// TODO Create Progress Bar
-
-		// TODO Create plots with swing worker
-
-		// TODO Make plot visible once ready.
-	}
-
 	public ColumnStore getSelectedSample() {
 		return (ColumnStore)this.selectSampleBox.getSelectedItem();
+	}
+	
+	private void updateLineageTree(){
+		if (lineageTree!=null){
+			m_analyisTab.remove(lineageTree);
+		}
+		lineageTree = createAnalysisArea();
+		m_analyisTab.add(lineageTree, BorderLayout.CENTER);
+		m_analyisTab.revalidate();
+	}
+
+	public GatingModelNodeSettings getSettings() {
+		return m_Settings;
 	}
 }
 // EOF
