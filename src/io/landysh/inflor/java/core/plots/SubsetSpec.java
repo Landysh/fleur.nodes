@@ -1,26 +1,28 @@
 package io.landysh.inflor.java.core.plots;
 
-import java.util.UUID;
-
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 
 public class SubsetSpec implements DomainObject {
-	public final String uuid;
+	public final String UUID;
 	String displayName;
 
 	public SubsetSpec(String priorUUID) {
 		// Create new UUID if needed.
 		if (priorUUID == null) {
-			uuid = UUID.randomUUID().toString();
+			this.UUID = java.util.UUID.randomUUID().toString();
 		} else {
-			uuid = priorUUID;
+			UUID = priorUUID;
 		}
+	}
+
+	public SubsetSpec() {
+		this(null);
 	}
 
 	@Override
 	public String getPrefferedName() {
 		if (displayName == null) {
-			return uuid;
+			return UUID;
 		} else {
 			return displayName;
 		}
@@ -28,7 +30,7 @@ public class SubsetSpec implements DomainObject {
 
 	@Override
 	public String getUUID() {
-		return uuid;
+		return UUID;
 	}
 
 	@Override
@@ -40,5 +42,9 @@ public class SubsetSpec implements DomainObject {
 	public String saveToString() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setPrefferedName(String newName) {
+		displayName = newName;
 	}
 }
