@@ -12,9 +12,9 @@ public abstract class AbstractFCSPlot {
 
 	public final String uuid;
 	protected JFreeChart chart;
-	protected PlotSpec spec;
+	protected ChartSpec spec;
 
-	public AbstractFCSPlot(String priorUUID, PlotSpec spec) {
+	public AbstractFCSPlot(String priorUUID, ChartSpec spec) {
 		// Create new UUID if needed.
 		if (priorUUID == null) {
 			uuid = UUID.randomUUID().toString();
@@ -26,8 +26,9 @@ public abstract class AbstractFCSPlot {
 		
 	}
 	
-	public abstract void update(PlotSpec spec);
+	public abstract void update(ChartSpec spec);
 	
 	public abstract JFreeChart createChart(double[] xData, double[] yData);
+
 
 }

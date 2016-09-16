@@ -16,21 +16,21 @@ import io.landysh.inflor.java.core.dataStructures.Histogram2D;
 public class ContourPlot extends AbstractFCSPlot {
 	
 	XYPlot plot;
-	PlotSpec spec;
+	ChartSpec spec;
 
 	
-	public ContourPlot(PlotSpec spec, String priorUUID) {
+	public ContourPlot(ChartSpec spec, String priorUUID) {
 		super(priorUUID, spec);
 		plot = new XYPlot();
 		this.spec = spec;
 	}
 
-	public ContourPlot(PlotSpec spec) {
+	public ContourPlot(ChartSpec spec) {
 		this(spec, null);
 	}
 
 	@Override
-	public void update(PlotSpec spec) {
+	public void update(ChartSpec spec) {
 		this.spec = spec;
 	}
 
