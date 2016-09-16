@@ -6,7 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.FastScatterPlot;
 
 import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 
 public class ScatterPlot extends AbstractFCSPlot {
@@ -14,16 +14,16 @@ public class ScatterPlot extends AbstractFCSPlot {
 	FastScatterPlot plot = new FastScatterPlot();
 	float[][] fastData;
 	
-	public ScatterPlot(PlotSpec spec, String priorUUID) {
+	public ScatterPlot(ChartSpec spec, String priorUUID) {
 		super(priorUUID, spec);
 	}
 	
-	public ScatterPlot(PlotSpec spec) {
+	public ScatterPlot(ChartSpec spec) {
 		super(null, spec);
 	}
 
 	@Override
-	public void update(PlotSpec spec) {
+	public void update(ChartSpec spec) {
 		// TODO Auto-generated method stub
 
 	}
