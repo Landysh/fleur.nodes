@@ -9,7 +9,7 @@ import org.jfree.ui.ApplicationFrame;
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.plots.ContourPlot;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogrithmicDisplayTransform;
@@ -24,7 +24,7 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 		reader.readData();
 		final ColumnStore dataStore = reader.getColumnStore();
 
-		PlotSpec spec = new PlotSpec(null);
+		ChartSpec spec = new ChartSpec(null);
 		spec.setPlotType(PlotTypes.Contour);
 		spec.setDomainAxisName("FSC-A");
 		spec.setRangeAxisName("SSC-A");

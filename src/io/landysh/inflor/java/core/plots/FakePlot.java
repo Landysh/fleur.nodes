@@ -23,11 +23,11 @@ public class FakePlot extends AbstractFCSPlot {
 	private DefaultXYZDataset dataSet;
 	private ChartPanel panel;
 
-	public FakePlot(PlotSpec spec, String priorUUID) {
+	public FakePlot(ChartSpec spec, String priorUUID) {
 		super(priorUUID, spec);
 	}
 	
-	public FakePlot(PlotSpec spec) {
+	public FakePlot(ChartSpec spec) {
 		super(null, spec);
 	}
 
@@ -43,7 +43,7 @@ public class FakePlot extends AbstractFCSPlot {
 	}
 
 	@Override
-	public void update(PlotSpec spec) {
+	public void update(ChartSpec spec) {
 		// TODO Auto-generated method stub
 	}
 

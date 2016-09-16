@@ -51,7 +51,7 @@ public class PlotUtils {
 		}
 	}
 
-	public static AbstractFCSPlot createPlot(PlotSpec plotSpec) {
+	public static AbstractFCSPlot createPlot(ChartSpec plotSpec) {
 		PlotTypes type = plotSpec.getPlotType();
 		AbstractFCSPlot newPlot = null;		
 		if (type.equals(PlotTypes.Contour)){
@@ -62,5 +62,26 @@ public class PlotUtils {
 			newPlot = new FakePlot(null, null);
 		}
 		return newPlot;
+	}
+
+	public static AbstractDisplayTransform createDefaultTransform(TransformType selectedType) {
+		
+		AbstractDisplayTransform newTransform; 
+		
+		if (selectedType == TransformType.Linear){
+			newTransform = new BoundDisplayTransform(0, 262144);
+		 } else if (selectedType == TransformType.Bounded){
+				newTransform = new BoundDisplayTransform(0, 262144);
+
+		 } else if (selectedType == TransformType.Logrithmic){
+				newTransform = new LogrithmicDisplayTransform(100, 262144);
+
+		 } else if (selectedType == TransformType.Logicle){
+			 newTransform = new LogicleTransform(512);
+		 } else {
+			 //TODO: No use case?
+			 newTransform = null;
+		 }
+		return newTransform;
 	}
 }
