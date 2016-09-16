@@ -9,19 +9,19 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
-import io.landysh.inflor.java.core.plots.PlotSpec;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 
 public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 
 	private JProgressBar progress;
-	private PlotSpec plotSpec;
+	private ChartSpec plotSpec;
 	double[] X;
 	double[] Y;
 	ChartPanel chatPanel;
 	private JFreeChart newChart;
 
-	public UpdatePlotWorker(JProgressBar progressBar, ChartPanel chartPanel, PlotSpec spec, double[] xData, double[] yData) {
+	public UpdatePlotWorker(JProgressBar progressBar, ChartPanel chartPanel, ChartSpec spec, double[] xData, double[] yData) {
 		//UI Stuff
 		this.progress = progressBar;
 		
