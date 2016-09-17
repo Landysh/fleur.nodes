@@ -60,7 +60,7 @@ public class ChartEditorDialog extends JDialog {
 	private CreateGatesNodeDialog parentDialog;
 	private AbstractFCSPlot previewPlot;
 	private ChartPanel chartPanel;
-	private JComboBox<TransformType> horizontalTransformBox;
+	private JComboBox<TransformType> domainTransformBox;
 	private JComboBox<TransformType> rangeTransformBox;
 
 
@@ -111,7 +111,7 @@ public class ChartEditorDialog extends JDialog {
 		parentSelectorBox.setSelectedItem(spec.getParent());
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
 		domainParameterBox.setSelectedItem(spec.getDomainAxisName());
-		horizontalTransformBox.setSelectedItem(spec.getDomainTransform());
+		domainTransformBox.setSelectedItem(spec.getDomainTransform());
 		rangeParameterBox.setSelectedItem(spec.getRangeAxisName());
 		rangeTransformBox.setSelectedItem(spec.getRangeTransform());
 
@@ -207,21 +207,20 @@ public class ChartEditorDialog extends JDialog {
 		
 		//Transform selector
 		final TransformType[] domainTransforms = TransformType.values();
-		horizontalTransformBox = new JComboBox<TransformType>(domainTransforms);
-		horizontalTransformBox.setSelectedItem(spec.getDomainTransform());
-		horizontalTransformBox.addActionListener(new ActionListener() {
+		domainTransformBox = new JComboBox<TransformType>(domainTransforms);
+		domainTransformBox.setSelectedItem(spec.getDomainTransform());
+		domainTransformBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				TransformType selectedType = (TransformType) horizontalTransformBox.getSelectedItem();
+				TransformType selectedType = (TransformType) domainTransformBox.getSelectedItem();
 				AbstractDisplayTransform newTransform = PlotUtils.createDefaultTransform(selectedType);
 				spec.setDomainTransform(newTransform);
 				updatePreviewPlot();
 			}
 		});
-
 		
 		domainAxisGroup.add(domainParameterBox);
-		domainAxisGroup.add(horizontalTransformBox);
+		domainAxisGroup.add(domainTransformBox);
 
 		return domainAxisGroup;
 	}
@@ -305,8 +304,7 @@ public class ChartEditorDialog extends JDialog {
 		
 		final String[] rangeParameters = getParameterList();
 		rangeParameterBox = new JComboBox<String>(rangeParameters);
-		rangeParameterBox.setSelectedIndex(guessVerticalValueIndex(rangeParameters));
-		spec.setRangeAxisName((String) rangeParameterBox.getModel().getSelectedItem());
+		rangeParameterBox.setSelectedItem(spec.getRangeAxisName());
 		rangeParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {

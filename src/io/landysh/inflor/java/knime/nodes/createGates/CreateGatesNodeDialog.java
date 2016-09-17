@@ -264,6 +264,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		lineageTree = createAnalysisArea();
 		m_analyisTab.add(lineageTree, BorderLayout.CENTER);
 		m_analyisTab.revalidate();
+		m_analyisTab.repaint(50L);
 	}
 
 	public GatingModelNodeSettings getSettings() {
