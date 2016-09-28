@@ -1,8 +1,9 @@
 package io.landysh.inflor.java.core.gatingML.gates.booleanGate;
 
+import java.util.BitSet;
 import java.util.function.BinaryOperator;
 
-public class BooleanAccumulator implements BinaryOperator<boolean[]> {
+public class BooleanAccumulator implements BinaryOperator<BitSet> {
 
 	BooleanOperator operator;
 
@@ -11,52 +12,19 @@ public class BooleanAccumulator implements BinaryOperator<boolean[]> {
 	}
 
 	@Override
-	public boolean[] apply(boolean[] t, boolean[] u) {
+	public BitSet apply(BitSet t, BitSet u) {
 
 		if (operator.equals(BooleanOperator.NOT) == true) {
-			return applyNOT(t, u);
+			t.andNot(u);
+			return t;
 
 		} else if (operator.equals(BooleanOperator.AND) == true) {
-			return applyAND(t, u);
+			t.and(u);
+			return t;
 
 		} else {
-			return applyOR(t, u);
+			t.or(u);
+			return t;
 		}
-	}
-
-	private boolean[] applyAND(boolean[] t, boolean[] u) {
-		final boolean[] result = new boolean[t.length];
-		for (int i = 0; i < t.length; i++) {
-			if (t[i] == true && u[i] == true) {
-				result[i] = true;
-			} else {
-				result[i] = false;
-			}
-		}
-		return result;
-	}
-
-	private boolean[] applyNOT(boolean[] t, boolean[] u) {
-		final boolean[] result = new boolean[t.length];
-		for (int i = 0; i < t.length; i++) {
-			if (t[i] == true || u[i] == true) {
-				result[i] = false;
-			} else {
-				result[i] = true;
-			}
-		}
-		return result;
-	}
-
-	private boolean[] applyOR(boolean[] t, boolean[] u) {
-		final boolean[] result = new boolean[t.length];
-		for (int i = 0; i < t.length; i++) {
-			if (t[i] == true || u[i] == true) {
-				result[i] = true;
-			} else {
-				result[i] = false;
-			}
-		}
-		return result;
 	}
 }

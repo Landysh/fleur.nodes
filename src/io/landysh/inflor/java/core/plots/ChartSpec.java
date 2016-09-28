@@ -1,12 +1,17 @@
 package io.landysh.inflor.java.core.plots;
 
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
-import io.landysh.inflor.java.core.dataStructures.FCVectorType;
 import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 
-public class ChartSpec implements DomainObject {
+public class ChartSpec extends DomainObject {
 	
+	/**
+	 * Version 0.1 of the ChartSpec. Once a 1.0 stable release is made any changes that break backward 
+	 * compatibility must increment the serialID
+	 */
+	private static final long serialVersionUID = 7153659120835974973L;
+
 	private static final int DEFAULT_BIN_COUNT = 256;
 	private static final int DEFAULT_SCALE_MINIMUM = 0;
 	private static final int DEFAULT_SCALE_MAXIMUM = 262144;
@@ -14,9 +19,6 @@ public class ChartSpec implements DomainObject {
 	private static final AbstractDisplayTransform DEFAULT_TRANSFORM = 
 			new BoundDisplayTransform(DEFAULT_SCALE_MINIMUM, DEFAULT_SCALE_MAXIMUM);
 	private static final PlotTypes DEFAULT_CHART_TYPE = PlotTypes.Scatter;
-
-	
-	public final String UUID;
 
 	private String      	parent;
 	private PlotTypes   	plotType = DEFAULT_CHART_TYPE;
@@ -29,8 +31,6 @@ public class ChartSpec implements DomainObject {
 	private double 			yMax 	  = DEFAULT_SCALE_MAXIMUM;
 	private double 			xMax	  =	DEFAULT_SCALE_MAXIMUM;
 
-	private FCVectorType domainVectorType = FCVectorType.RAW;
-	private FCVectorType rangeVectorType = FCVectorType.RAW;
 	private AbstractDisplayTransform domainTransform = DEFAULT_TRANSFORM;
 	private AbstractDisplayTransform rangeTransform = DEFAULT_TRANSFORM;
 
@@ -39,39 +39,14 @@ public class ChartSpec implements DomainObject {
 	 *            an id previously generated (eg if the object was previously
 	 *            serialized). Set to null to create a new UUID.
 	 */
-	public ChartSpec(String priorUUID) {
-		// Create new UUID if needed.
-		if (priorUUID == null) {
-			this.UUID = java.util.UUID.randomUUID().toString();
-		} else {
-			UUID = priorUUID;
-		}
-	}
-
 	public ChartSpec() {
-		this(null);
+		super();
 	}
-
+	
 	public String getParent() {
 		return parent;
 	}
 
-	@Override
-	public String getPrefferedName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void loadFromString(String objectString) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public String saveToString() {
-		// TODO figure out how to save this to a nice string.
-		return null;
-	}
 
 	public void setDomainAxisName(String newValue) {
 		domainAxisName = newValue;
@@ -143,17 +118,6 @@ public class ChartSpec implements DomainObject {
 		return yBinCount;
 	}
 
-	public FCVectorType getDomainVectorType() {
-		return domainVectorType;
-	}
-
-	public FCVectorType getRangeVectorType() {
-		return rangeVectorType;
-	}
-
-	public void setRangeVectorType(FCVectorType rangeVectorType) {
-		this.rangeVectorType = rangeVectorType;
-	}
 	public int getyBinCount() {
 		return yBinCount;
 	}
@@ -199,10 +163,7 @@ public class ChartSpec implements DomainObject {
 	}
 
 	public void setxMax(double xMax) {this.xMax = xMax;}
-
-	@Override
-	public String getUUID() {return UUID;}
-
-
+	
+	
 }
 // EOF

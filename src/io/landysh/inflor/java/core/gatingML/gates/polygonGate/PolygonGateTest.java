@@ -4,9 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.BitSet;
+import java.util.Hashtable;
 
 import org.junit.Test;
+
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 
 public class PolygonGateTest {
 
@@ -21,9 +25,9 @@ public class PolygonGateTest {
 		final String d2Name = "d2";
 		final Double[] d2Values = { 0., 1., 1., 0. };
 
-		final ConcurrentHashMap<String, double[]> testData = new ConcurrentHashMap<String, double[]>();
-		testData.put(d1Name, new double[] { 0.5 });
-		testData.put(d2Name, new double[] { 0.5 });
+		final ColumnStore testData = new ColumnStore();
+		testData.addColumn(d1Name, new double[] { 0.5 });
+		testData.addColumn(d2Name, new double[] { 0.5 });
 
 		// Test
 		final PolygonGate testGate = new PolygonGate(id);
@@ -34,10 +38,10 @@ public class PolygonGateTest {
 
 		testGate.validate();
 
-		final boolean[] result = testGate.evaluate(testData, 1);
+		final BitSet result = testGate.evaluate(testData);
 
 		// Assert
-		assertEquals("Evaluated", result[0], true);
+		assertEquals("Evaluated", result.get(0), true);
 		System.out.println("EventFrameTest::testEvaluate completed (succefully or otherwise)");
 	}
 

@@ -1,10 +1,12 @@
 package io.landysh.inflor.java.core.gatingML.gates;
 
+import java.util.BitSet;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
 
 public abstract class AbstractGate {
@@ -33,7 +35,7 @@ public abstract class AbstractGate {
 	 * @return A boolean array of rowCount.length where true corresponds to
 	 *         being in the gate
 	 */
-	public abstract boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int eventCount);
+	public abstract BitSet evaluate(ColumnStore data);
 
 	public String getId() {
 		return id;

@@ -1,11 +1,12 @@
 package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Hashtable;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 
 public class RangeGate extends AbstractGate {
@@ -16,20 +17,23 @@ public class RangeGate extends AbstractGate {
 	}
 
 	@Override
-	public boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int rowCount) {
-		final boolean[] finalResult = new boolean[rowCount];
+	public BitSet evaluate(ColumnStore data) {
+		int rowCount = data.getRowCount();
+		final BitSet finalResult = new BitSet(rowCount);
 
 		for (int i = 0; i < rowCount; i++) {
 			boolean result = true;
 			for (final String name : dimensions.keySet()) {
-				final double value = data.get(name)[i];
+				final double value = data.getDimensionData(name)[i];
 				if (dimensions.get(name).evaluate(value) == false) {
 					result = false;
-					// if one then break.
+					// if one fails then break.
 					break;
 				}
 			}
-			finalResult[i] = result;
+			if (result == true){
+				finalResult.set(i);
+			}
 		}
 		return finalResult;
 	}

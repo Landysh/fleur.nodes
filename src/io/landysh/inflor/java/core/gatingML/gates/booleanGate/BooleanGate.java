@@ -1,9 +1,11 @@
 package io.landysh.inflor.java.core.gatingML.gates.booleanGate;
 
+import java.util.BitSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 
 public class BooleanGate extends AbstractGate {
@@ -17,11 +19,10 @@ public class BooleanGate extends AbstractGate {
 	}
 
 	@Override
-	public boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int eventCount) {
+	public BitSet evaluate(ColumnStore data) {
 		validate();
 		final BooleanAccumulator acc = new BooleanAccumulator(operator);
-		final boolean[] result = references.values().parallelStream().map(g -> g.evaluate(data, eventCount)).reduce(acc)
-				.get();
+		final BitSet result = references.values().parallelStream().map(g -> g.evaluate(data)).reduce(acc).get();
 		return result;
 	}
 
