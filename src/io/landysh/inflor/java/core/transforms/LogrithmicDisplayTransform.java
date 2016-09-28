@@ -2,6 +2,11 @@ package io.landysh.inflor.java.core.transforms;
 
 public class LogrithmicDisplayTransform extends AbstractDisplayTransform {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5678244382085424064L;
+
 	private static final TransformType TYPE = TransformType.Logrithmic;
 	
 	private double min;

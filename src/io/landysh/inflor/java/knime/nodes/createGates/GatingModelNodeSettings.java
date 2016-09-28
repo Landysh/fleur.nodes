@@ -1,158 +1,145 @@
 package io.landysh.inflor.java.knime.nodes.createGates;
 
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import io.landysh.inflor.java.core.gatingML.gates.GatingStrategy;
+import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.plots.ChartSpec;
-import io.landysh.inflor.java.core.plots.SubsetSpec;
+import io.landysh.inflor.java.core.subsets.AbstractSubset;
 
 public class GatingModelNodeSettings {
 
-	private static final String ANALYSIS_KEYS = "analyses";
-	private static final String PLOT_KEYS_KEY = "views";
-	private static final String MODE_KEY = "AnalysisMode";
-	private static final String GATING_ML_KEY = "GatingML";
+	private static final String CHARTS_SETTINGS_KEY  = "Charts";
+	private static final String GATES_SETTINGS_KEY = "Filters";
+	private static final String SUBSETS_SETTINGS_KEY = "Subsets";
+
+	private static final String SELECTED_MODE_KEY = "AnalysisMode";
 	private static final String SELECTED_COLUMN_KEY = "Selected Column";
-	private static final String SELECTED_COLUMN_DEFAULT = "None";
 	private static final String SELECTED_SAMPLE_KEY = "Selected Sample";
-	private static final String PARAMETER_LIST_KEY = "Parameter List";
 	
-	ConcurrentHashMap<String, GatingStrategy> m_analyses;
 	private String mode = "FILTER";
-
-	private String gml;
 	private String selectedColumn;
-
 	private String selectedSample;
-	private String[] paramterList;
-
-	private Hashtable<String, ChartSpec> chartSpecs;
-	private Hashtable<String, SubsetSpec> m_subsetSpecs;
 	
+	private Hashtable<String, ChartSpec> 		m_charts;
+	private Hashtable<String, AbstractSubset>	m_subsets;
+	private Hashtable<String, AbstractGate> 	m_gates;
+
 	public GatingModelNodeSettings (){
-		chartSpecs = new Hashtable<String, ChartSpec> ();
-		 m_subsetSpecs = new Hashtable<String, SubsetSpec>();
-		 SubsetSpec ungatedSpec = new SubsetSpec();
-		 ungatedSpec.setPrefferedName("Ungated");
-		 m_subsetSpecs.put("Ungated", new SubsetSpec());
+		m_charts  = new Hashtable<String, ChartSpec> ();		
+		m_subsets = new Hashtable<String, AbstractSubset>();
+		m_gates   = new Hashtable<String, AbstractGate>();
 	}
 
-	public void addPlotSpec(ChartSpec spec) {
-		chartSpecs.put(spec.UUID, spec);
-	}
+	public void save(NodeSettingsWO settings) throws IOException {
+		
+		settings.addString(SELECTED_SAMPLE_KEY, selectedSample);
+		settings.addString(SELECTED_MODE_KEY, mode);
+		settings.addString(SELECTED_COLUMN_KEY, selectedColumn);
 
-	private String[] getAnalysisKeys(ConcurrentHashMap<String, GatingStrategy> plan) {
-		final ArrayList<String> ids = new ArrayList<String>();
-		for (final String key : plan.keySet()) {
-			ids.add(plan.get(key).getId());
-		}
-		return ids.toArray(new String[ids.size()]);
-	}
-
-	public String[] getParameterList() {
-		return paramterList;
-	}
-
-	private String[] getPlotIDs(Hashtable<String, ChartSpec> plotSpecs2) {
-		final ArrayList<String> ids = new ArrayList<String>();
-		for (final String key : chartSpecs.keySet()) {
-			ids.add(chartSpecs.get(key).UUID);
-		}
-		return ids.toArray(new String[ids.size()]);
-	}
-
-	public String getSelectedColumn() {
-		return selectedColumn;
-	}
-
-	public SettingsModelString getSelectedColumnSettingsModel() {
-		// TODO: Where is this used?
-		return new SettingsModelString(SELECTED_COLUMN_KEY, SELECTED_COLUMN_DEFAULT);
-	}
-
-	public String[] getSubsetList() {
-		final ArrayList<String> ids = new ArrayList<String>();
-		ids.add("Overview");
-		if (m_subsetSpecs != null) {
-			for (final String key : m_subsetSpecs.keySet()) {
-				ids.add(m_subsetSpecs.get(key).UUID);
-			}
-		}
-		return ids.toArray(new String[ids.size()]);
+		saveHashtable(settings, CHARTS_SETTINGS_KEY, m_charts);
+		saveHashtable(settings, GATES_SETTINGS_KEY, m_gates);
+		saveHashtable(settings, SUBSETS_SETTINGS_KEY, m_subsets);
+		
 	}
 
 	public void load(NodeSettingsRO settings) throws InvalidSettingsException {
-		chartSpecs = loadPlots(settings);
-		m_analyses = loadAnalyses(settings);
-		mode = settings.getString(MODE_KEY);
-		gml = settings.getString(GATING_ML_KEY);
+		m_gates = loadFilters(settings);
+		m_charts = loadPlots(settings);
+		m_subsets = loadSubsets(settings);
+		mode = settings.getString(SELECTED_MODE_KEY);
 		selectedColumn = settings.getString(SELECTED_COLUMN_KEY);
-		paramterList = settings.getStringArray(PARAMETER_LIST_KEY);
+		selectedSample = settings.getString(SELECTED_SAMPLE_KEY);
 	}
 
-	private ConcurrentHashMap<String, GatingStrategy> loadAnalyses(NodeSettingsRO settings)
+	@SuppressWarnings("unchecked")//TODO as with other hashtable serializers
+	private Hashtable<String, AbstractSubset> loadSubsets(NodeSettingsRO settings) throws InvalidSettingsException {
+		byte[] bytes = settings.getByteArray(SUBSETS_SETTINGS_KEY);
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		ObjectInputStream ois;
+		Object loadedObject = null;
+		Hashtable<String, AbstractSubset> loadedSubsets = null;
+		try {
+			ois = new ObjectInputStream(bis);
+			loadedObject = ois.readObject();
+			if (loadedObject instanceof Hashtable) {
+				loadedSubsets = (Hashtable<String, AbstractSubset>) loadedObject;
+			} else {
+				throw new IOException();
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			throw new InvalidSettingsException("Unable to parse chart specs from settings");
+		}
+		return loadedSubsets;
+	}
+
+	@SuppressWarnings("unchecked")//TODO as with other hashtable serializers
+	private Hashtable<String, AbstractGate> loadFilters(NodeSettingsRO settings)
 			throws InvalidSettingsException {
-		final ConcurrentHashMap<String, GatingStrategy> newAnalyses = new ConcurrentHashMap<String, GatingStrategy>();
-		for (final String analysisKey : settings.getStringArray(ANALYSIS_KEYS)) {
-			final GatingStrategy gs = GatingStrategy.load(settings.getString(analysisKey));
-			newAnalyses.put(gs.getId(), gs);
+		byte[] bytes = settings.getByteArray(SUBSETS_SETTINGS_KEY);
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		ObjectInputStream ois;
+		Object loadedObject = null;
+		Hashtable<String, AbstractGate> loadedFilters = null;
+		try {
+			ois = new ObjectInputStream(bis);
+			loadedObject = ois.readObject();
+			if (loadedObject instanceof Hashtable) {
+				loadedFilters = (Hashtable<String, AbstractGate>) loadedObject;
+			} else {
+				throw new IOException();
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			throw new InvalidSettingsException("Unable to parse event filters from settings");
 		}
-		return newAnalyses;
+		return loadedFilters;
 	}
 
-	private Hashtable<String, ChartSpec> loadPlots(NodeSettingsRO settings) throws InvalidSettingsException {
-		final Hashtable<String, ChartSpec> loadedPlots = new Hashtable<String, ChartSpec>();
-		for (final String plotKey : settings.getStringArray(PLOT_KEYS_KEY)) {
-			final ChartSpec spec = new ChartSpec(null);
-			spec.loadFromString(settings.getString(plotKey));
-			loadedPlots.put(spec.UUID, spec);
+	@SuppressWarnings("unchecked")//TODO: Not sure how to check the key/value types in a hashtable.
+	private Hashtable<String, ChartSpec> loadPlots(NodeSettingsRO settings) throws InvalidSettingsException{
+		
+		byte[] chartBytes = settings.getByteArray(CHARTS_SETTINGS_KEY);
+		ByteArrayInputStream bis = new ByteArrayInputStream(chartBytes);
+		ObjectInputStream ois;
+		Object loadedObject = null;
+		Hashtable<String, ChartSpec> loadedChartSpecs = null;
+		try {
+			ois = new ObjectInputStream(bis);
+			loadedObject = ois.readObject();
+			if (loadedObject instanceof Hashtable) {
+				loadedChartSpecs = (Hashtable<String, ChartSpec>) loadedObject;
+			} else {
+				throw new IOException();
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			throw new InvalidSettingsException("Unable to parse chart specs from settings");
 		}
-		return loadedPlots;
+		return loadedChartSpecs;
 	}
 
 	public void removePlotSpec(String uuidToRemove) {
-		chartSpecs.remove(uuidToRemove);
+		m_charts.remove(uuidToRemove);
 	}
 
-	public void save(NodeSettingsWO settings) {
-
-		savePlots(settings);
-		saveGates(settings);
-
-		final String[] gateListArray = getAnalysisKeys(m_analyses);
-		settings.addStringArray(ANALYSIS_KEYS, gateListArray);
-		final String[] plotList = getPlotIDs(chartSpecs);
-		settings.addStringArray(PLOT_KEYS_KEY, plotList);
-		settings.addString(SELECTED_SAMPLE_KEY, selectedSample);
-		settings.addStringArray(PARAMETER_LIST_KEY, paramterList);
-		settings.addString(MODE_KEY, mode);
-		settings.addString(GATING_ML_KEY, gml);
-		settings.addString(SELECTED_COLUMN_KEY, selectedColumn);
-		settings.addStringArray("Foo", getSubsetList());
-	}
-
-	private void saveGates(NodeSettingsWO settings) {
-		for (final String key : m_analyses.keySet()) {
-			settings.addString(key, m_analyses.get(key).toGatingML().toString());
-		}
-	}
-
-	private void savePlots(NodeSettingsWO settings) {
-		for (final String key : chartSpecs.keySet()) {
-			settings.addString(key, chartSpecs.get(key).saveToString());
-		}
-	}
-
-	public void setParameterList(String[] newValues) {
-		paramterList = newValues;
-
+	private void saveHashtable(NodeSettingsWO settings, String key, Serializable obj) throws IOException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(bos);
+		oos.writeObject(obj);
+		oos.flush();
+		byte[] chartBytes = bos.toByteArray();
+		settings.addByteArray(key, chartBytes);
 	}
 
 	public void setSelectedColumn(String newColumn) {
@@ -164,20 +151,29 @@ public class GatingModelNodeSettings {
 		selectedSample = newValue;
 	}
 
-	public void validate(NodeSettingsRO settings) {
-
-	}
-
 	public Hashtable<String, ChartSpec> getPlotSpecs() {
-		return chartSpecs;
+		return m_charts;
 	}
 
 	public void deleteChart(String id) {
-		chartSpecs.remove(id);
+		m_charts.remove(id);
 	}
 
+	public void addPlotSpec(ChartSpec spec) {
+		m_charts.put(spec.ID, spec);
+	}
+
+	public String getSelectedColumn() {
+		return selectedColumn;
+	}
+	
+	
 	public ChartSpec getChartSpec(String id) {
-		return chartSpecs.get(id);
+		return m_charts.get(id);
+	}
+
+	public void validate(NodeSettingsRO settings) {
+		// TODO Auto-generated method stub
 	}
 }
 // EOF

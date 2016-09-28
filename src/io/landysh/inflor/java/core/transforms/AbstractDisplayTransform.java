@@ -1,6 +1,9 @@
 package io.landysh.inflor.java.core.transforms;
 
-public abstract class AbstractDisplayTransform {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public abstract class AbstractDisplayTransform implements Serializable{
 
 	static final int bins = 256;
 	

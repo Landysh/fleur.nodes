@@ -1,7 +1,15 @@
 package io.landysh.inflor.java.core.transforms;
 
-public class BoundDisplayTransform extends AbstractDisplayTransform {
+public class BoundDisplayTransform extends AbstractDisplayTransform{
 	
+	/**
+	 * Version history:
+	 * v0.1 - 9121057400595419486L 
+	 * initial ID.
+	 * 
+	 */
+	private static final long serialVersionUID = 9121057400595419486L;
+
 	private static final TransformType TYPE = TransformType.Bounded;
 	
 	private double boundaryMin;

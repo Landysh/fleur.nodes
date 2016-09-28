@@ -153,7 +153,12 @@ public class CreateGatesNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-		m_settings.save(settings);
+		try {
+			m_settings.save(settings);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
