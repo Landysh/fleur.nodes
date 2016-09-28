@@ -8,7 +8,7 @@ import javax.swing.SwingWorker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCPlot;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 
@@ -36,7 +36,7 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 	protected JFreeChart doInBackground() throws Exception {
 		// Start
 		publish("Updating plot.");
-		AbstractFCSPlot newPlot = PlotUtils.createPlot(plotSpec);
+		AbstractFCPlot newPlot = PlotUtils.createPlot(plotSpec);
 		publish("Loading data.");
 		this.newChart = newPlot.createChart(X,Y);
 		publish("Finished update");

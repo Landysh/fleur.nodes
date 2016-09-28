@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,7 +76,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			public void actionPerformed(final ActionEvent e) {
 				if (lineageTree.getSelectionCount()==1){
 					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
-					String id = ((ChartSpec) selectedNode.getUserObject()).UUID;
+					String id = ((ChartSpec) selectedNode.getUserObject()).ID;
 					editChartDialog(id);
 					updateLineageTree();
 				}
@@ -88,7 +89,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			public void actionPerformed(final ActionEvent e) {
 				if (lineageTree.getSelectionCount()==1){
 					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
-					String id = ((ChartSpec) selectedNode.getUserObject()).UUID;
+					String id = ((ChartSpec) selectedNode.getUserObject()).ID;
 					m_Settings.deleteChart(id);
 					updateLineageTree();
 				}
@@ -236,9 +237,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 					Arrays.asList(cStoreData.getColumnNames()));
 			parameterSet.addAll(newParameters);
 		}
-		
-		m_Settings.setParameterList(parameterSet.toArray(new String[parameterSet.size()]));
-		
+				
 		if (selectSampleBox.getModel().getSize() == 0) {
 			selectSampleBox.removeAllItems();
 			selectSampleBox.setEnabled(false);
@@ -250,7 +249,13 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
 	@Override
 	protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
-		m_Settings.save(settings);
+		try {
+			m_Settings.save(settings);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new InvalidSettingsException("Unable to save node settings.");
+		}
 	}
 
 	public ColumnStore getSelectedSample() {

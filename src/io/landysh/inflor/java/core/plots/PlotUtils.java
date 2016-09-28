@@ -51,15 +51,15 @@ public class PlotUtils {
 		}
 	}
 
-	public static AbstractFCSPlot createPlot(ChartSpec plotSpec) {
+	public static AbstractFCPlot createPlot(ChartSpec plotSpec) {
 		PlotTypes type = plotSpec.getPlotType();
-		AbstractFCSPlot newPlot = null;		
+		AbstractFCPlot newPlot = null;		
 		if (type.equals(PlotTypes.Contour)){
 			newPlot = new ContourPlot(plotSpec);
 		} else if (type.equals(PlotTypes.Scatter)){
 			newPlot = new ScatterPlot(plotSpec);
 		} else {
-			newPlot = new FakePlot(null, null);
+			throw new RuntimeException("No valid plot type selected.");
 		}
 		return newPlot;
 	}
@@ -85,3 +85,4 @@ public class PlotUtils {
 		return newTransform;
 	}
 }
+//EOF

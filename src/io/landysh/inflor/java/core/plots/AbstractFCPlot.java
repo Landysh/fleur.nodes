@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-public abstract class AbstractFCSPlot {
+public abstract class AbstractFCPlot {
 
 	/**
 	 * @Param newUUID creates a new UUID for this plot definition.
@@ -14,7 +14,7 @@ public abstract class AbstractFCSPlot {
 	protected JFreeChart chart;
 	protected ChartSpec spec;
 
-	public AbstractFCSPlot(String priorUUID, ChartSpec spec) {
+	public AbstractFCPlot(String priorUUID, ChartSpec spec) {
 		// Create new UUID if needed.
 		if (priorUUID == null) {
 			uuid = UUID.randomUUID().toString();

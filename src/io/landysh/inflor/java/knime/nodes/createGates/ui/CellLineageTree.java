@@ -41,7 +41,7 @@ public class CellLineageTree extends JTree {
 					root.getChildCount());
 			specs.values().forEach(appendToTree);
 
-			Consumer<ChartSpec> setHierarchy = spec -> updateHierarchy(m_tree, spec.UUID);	
+			Consumer<ChartSpec> setHierarchy = spec -> updateHierarchy(m_tree, spec.ID);	
 			specs.values().forEach(setHierarchy);
 		}	
 		
@@ -79,7 +79,7 @@ public class CellLineageTree extends JTree {
 			DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) nodeEnum.nextElement();
 			if(currentNode.getUserObject().getClass().equals(ChartSpec.class)){
 				ChartSpec currentSpec = (ChartSpec) currentNode.getUserObject();
-				if (currentSpec.UUID.equals(queryID)){
+				if (currentSpec.ID.equals(queryID)){
 					return currentNode;
 				}
 			}

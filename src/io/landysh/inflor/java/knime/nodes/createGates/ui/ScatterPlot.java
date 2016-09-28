@@ -5,11 +5,11 @@ import java.awt.Color;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.FastScatterPlot;
 
-import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCPlot;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 
-public class ScatterPlot extends AbstractFCSPlot {
+public class ScatterPlot extends AbstractFCPlot {
 	
 	FastScatterPlot plot = new FastScatterPlot();
 	float[][] fastData;

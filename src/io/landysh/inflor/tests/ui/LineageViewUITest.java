@@ -49,7 +49,7 @@ public class LineageViewUITest extends ApplicationFrame {
 		ly2.setyMin(1000);
 		ly2.setxMax(262144);
 		ly2.setyMax(262144);
-		ly2.setParent(ly.UUID);
+		ly2.setParent(ly.ID);
 		
 		ChartSpec ly3 = new ChartSpec();
 		ly3.setPlotType(PlotTypes.Scatter);
@@ -61,13 +61,13 @@ public class LineageViewUITest extends ApplicationFrame {
 		ly3.setyMin(1000);
 		ly3.setxMax(262144);
 		ly3.setyMax(262144); 
-		ly3.setParent(ly.UUID);
+		ly3.setParent(ly.ID);
 
 		
 
-		testSpecs.put(ly.UUID, ly);
-		testSpecs.put(ly2.UUID, ly2);
-		testSpecs.put(ly3.UUID, ly3);
+		testSpecs.put(ly.ID, ly);
+		testSpecs.put(ly2.ID, ly2);
+		testSpecs.put(ly3.ID, ly3);
 
 		
 		UIDefaults defaults = UIManager.getDefaults();
