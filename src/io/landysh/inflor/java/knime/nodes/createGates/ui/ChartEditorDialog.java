@@ -22,7 +22,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCPlot;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
@@ -58,7 +58,7 @@ public class ChartEditorDialog extends JDialog {
 	private JComboBox<String> rangeParameterBox;
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
-	private AbstractFCSPlot previewPlot;
+	private AbstractFCPlot previewPlot;
 	private ChartPanel chartPanel;
 	private JComboBox<TransformType> domainTransformBox;
 	private JComboBox<TransformType> rangeTransformBox;
@@ -78,8 +78,8 @@ public class ChartEditorDialog extends JDialog {
 		parentDialog = parent;
 		spec = new ChartSpec();
 		spec.getPlotType();
-		spec.setDomainAxisName(parent.getSettings().getParameterList()[0]);
-		spec.setRangeAxisName(parent.getSettings().getParameterList()[1]);
+		spec.setDomainAxisName(parent.getSelectedSample().getColumnNames()[0]);
+		spec.setRangeAxisName(parent.getSelectedSample().getColumnNames()[1]);
 		spec.setDomainTransform(new BoundDisplayTransform(0, 262144));
 		spec.setRangeTransform(new BoundDisplayTransform(0, 262144));
 		setModal(true);
@@ -106,7 +106,7 @@ public class ChartEditorDialog extends JDialog {
 		setModal(true);
 
 		// populate the dialog
-		setTitle("Editing: " + spec.getPrefferedName());
+		setTitle("Editing: " + spec.getDisplayName());
 		final JPanel content = createContentPanel();
 		parentSelectorBox.setSelectedItem(spec.getParent());
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
@@ -178,8 +178,8 @@ public class ChartEditorDialog extends JDialog {
 
 	private ChartPanel createPreviewPanel() {
 		ColumnStore cStore = (ColumnStore) parentDialog.getSelectedSample();
-		double[] xData = cStore.getColumn(spec.getDomainAxisName());
-		double[] yData = cStore.getColumn(spec.getRangeAxisName());		
+		double[] xData = cStore.getDimensionData(spec.getDomainAxisName());
+		double[] yData = cStore.getDimensionData(spec.getRangeAxisName());		
 		previewPlot = PlotUtils.createPlot(spec);
 		JFreeChart chart = previewPlot.createChart(xData, yData);
 		chartPanel = new ChartPanel(chart);
@@ -196,7 +196,7 @@ public class ChartEditorDialog extends JDialog {
 		//Parameter selector
 		final String[] domainParameters = getParameterList();
 		domainParameterBox = new JComboBox<String>(domainParameters);
-		domainParameterBox.setSelectedIndex(guessHorizontalValueIndex(domainParameters));
+		domainParameterBox.setSelectedIndex(0);//TODO: Something smarter
 		domainParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
@@ -265,8 +265,8 @@ public class ChartEditorDialog extends JDialog {
 		progressBar.setString("Initializing");
 		progressBar.getModel().setValue(1);
 		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
-		double[] xData = data.getColumn(spec.getDomainAxisName());
-		double[] yData = data.getColumn(spec.getRangeAxisName());		
+		double[] xData = data.getDimensionData(spec.getDomainAxisName());
+		double[] yData = data.getDimensionData(spec.getRangeAxisName());		
 		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, xData, yData);
 		worker.execute();
 	}
@@ -336,18 +336,10 @@ public class ChartEditorDialog extends JDialog {
 
 	private String[] getParameterList() {
 		final ArrayList<String> options = new ArrayList<String>();
-		for (final String name : parentDialog.getSettings().getParameterList()) {
+		for (final String name : parentDialog.getSelectedSample().getColumnNames()) {
 			options.add(name);
 		}
 		return options.toArray(new String[options.size()]);
-	}
-
-	private int guessHorizontalValueIndex(String[] horizontalOptions) {
-		return 0;
-	}
-
-	private int guessVerticalValueIndex(String[] verticalOptions) {
-		return 1;
 	}
 
 	public ChartSpec getChartSpec() {

@@ -24,7 +24,7 @@ public class ScattPlotUITest extends ApplicationFrame {
 		reader.readData();
 		final ColumnStore dataStore = reader.getColumnStore();
 
-		ChartSpec spec = new ChartSpec(null);
+		ChartSpec spec = new ChartSpec();
 		spec.setPlotType(PlotTypes.Scatter);
 		spec.setDomainAxisName("FSC-A");
 		spec.setRangeAxisName("SSC-A");
@@ -39,11 +39,8 @@ public class ScattPlotUITest extends ApplicationFrame {
 		spec.setRangeTransform(new LogrithmicDisplayTransform(spec.getYMin(), spec.getYMax()));
 		spec.setDomainTransform(new BoundDisplayTransform(spec.getYMin(), spec.getyMax()));
 		
-		//final double[] fcs = { 400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400 };
-		//final double[] ssc = { 300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500 };
-		
-		double[] X = dataStore.getColumn(spec.getDomainAxisName());
-		double[] Y = dataStore.getColumn(spec.getRangeAxisName());
+		double[] X = dataStore.getDimensionData(spec.getDomainAxisName());
+		double[] Y = dataStore.getDimensionData(spec.getRangeAxisName());
 
 		ScatterPlot plot = new ScatterPlot(spec);
 		JFreeChart chart = plot.createChart(X, Y);

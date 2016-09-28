@@ -76,7 +76,7 @@ public class DownsampleNodeModel extends NodeModel {
 		} else {
 			final boolean[] mask = getShuffledMask(inSize, downSize);
 			for (final String name : inColumnStore.getColumnNames()) {
-				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getColumn(name));
+				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getDimensionData(name));
 				outStore.addColumn(name, maskedColumn);
 			}
 		}

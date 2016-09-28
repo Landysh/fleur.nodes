@@ -1,11 +1,13 @@
 package io.landysh.inflor.java.core.gatingML.gates.polygonGate;
 
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Hashtable;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGMLDimension;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 
@@ -62,18 +64,18 @@ public class PolygonGate extends AbstractGate {
 	}
 
 	@Override
-	public boolean[] evaluate(ConcurrentHashMap<String, double[]> data, int rowCount) {
-		validateWithData(data.keySet());
+	public BitSet evaluate(ColumnStore data) {
+		validateWithData(data.getData().keySet());
 		final PolygonCalculator poly = new PolygonCalculator(d1.points, d2.points);
-		final boolean[] result = new boolean[rowCount];
-		final double[] d1Data = data.get(d1.getName());
-		final double[] d2Data = data.get(d2.getName());
+		int rowCount = data.getRowCount();
+		final BitSet result = new BitSet(rowCount);
+		//TODO: The following assumes the Column Store magically knows which data to return...
+		final double[] d1Data = data.getDimensionData(d1.getName());
+		final double[] d2Data = data.getDimensionData(d2.getName());
 		for (int i = 0; i < d1Data.length; i++) {
 			if (poly.isInside(d1Data[i], d2Data[i]) == true) {
-				result[i] = true;
-			} else {
-				result[i] = false;
-			}
+				result.set(i);
+			} 
 		}
 		return result;
 	}

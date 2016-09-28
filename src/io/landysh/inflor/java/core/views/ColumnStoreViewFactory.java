@@ -24,8 +24,8 @@ public class ColumnStoreViewFactory {
 			final String yName = columnStore.getColumnNames()[1];
 			final XYSeries series = new XYSeries("");
 			for (int i = 0; i < columnStore.getRowCount(); i++) {
-				final double x = columnStore.getColumn(xName)[i];
-				final double y = columnStore.getColumn(yName)[i];
+				final double x = columnStore.getDimensionData(xName)[i];
+				final double y = columnStore.getDimensionData(yName)[i];
 				series.add(x, y);
 			}
 

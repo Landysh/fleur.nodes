@@ -13,7 +13,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.plots.AbstractFCSPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCPlot;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 
@@ -42,9 +42,9 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
 			return new JPanel();
 		}
 		ChartSpec spec = (ChartSpec) node.getUserObject();
-		AbstractFCSPlot plot = PlotUtils.createPlot(spec);
-		double[] xData = data.getColumn(spec.getDomainAxisName(), spec.getDomainVectorType());
-		double[] yData = data.getColumn(spec.getRangeAxisName(), spec.getRangeVectorType());
+		AbstractFCPlot plot = PlotUtils.createPlot(spec);
+		double[] xData = data.getDimensionData(spec.getDomainAxisName());
+		double[] yData = data.getDimensionData(spec.getRangeAxisName());
 		JFreeChart chart = plot.createChart(xData, yData);
 		if (!expanded) {
 			chart.setBackgroundPaint(Color.LIGHT_GRAY);

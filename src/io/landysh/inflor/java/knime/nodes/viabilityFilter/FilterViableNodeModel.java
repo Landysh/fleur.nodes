@@ -21,7 +21,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCParameter;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
@@ -85,7 +85,7 @@ public class FilterViableNodeModel extends NodeModel {
 			final int newSize = FCSUtils.countTrue(mask);
 			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), newSize);
 			for (final String name : columnStore.getColumnNames()) {
-				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getColumn(name));
+				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getDimensionData(name));
 				outStore.addColumn(name, maskedColumn);
 			}
 			final String fsName = i + "ColumnStore.fs";

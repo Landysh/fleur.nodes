@@ -76,8 +76,8 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 
 		//Do the modeling
 		final SingletsModel model = new SingletsModel(inSpec.columnNames);
-		final double[] area = inColumnStore.getColumn(m_AreaColumn.getStringValue());
-		final double[] height = inColumnStore.getColumn(m_HeightColumn.getStringValue());
+		final double[] area = inColumnStore.getDimensionData(m_AreaColumn.getStringValue());
+		final double[] height = inColumnStore.getDimensionData(m_HeightColumn.getStringValue());
 		final double[] ratio = model.buildModel(area, height);
 		final boolean[] mask = model.scoreModel(ratio);
 		
@@ -85,7 +85,7 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 		int newSize = FCSUtils.countTrue(mask);
 		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), newSize);
 		for (final String name : inColumnStore.getColumnNames()) {
-			final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getColumn(name));
+			final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getDimensionData(name));
 			outStore.addColumn(name, maskedColumn);
 		}
 

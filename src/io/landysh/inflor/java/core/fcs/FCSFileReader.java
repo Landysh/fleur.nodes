@@ -12,8 +12,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCParameter;
-import io.landysh.inflor.java.core.dataStructures.FCVectorType;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -153,39 +152,17 @@ public class FCSFileReader {
 		}
 	}
 
-//	private String[] parseColumnNames(Hashtable<String, String> header, boolean compensate) {
-//		if (compensate == true) {
-//			try {
-//				final SpilloverCompensator comp = new SpilloverCompensator(header);
-//				final String[] compParameters = comp.getCompDisplayNames(header);
-//				final String[] allParameters = new String[compParameters.length + fileParameterList.length];
-//				for (int i = 0; i < fileParameterList.length; i++) {
-//					allParameters[i] = fileParameterList[i];
-//				}
-//				for (int j = 0; j < compParameters.length; j++) {
-//					allParameters[fileParameterList.length + j] = compParameters[j];
-//				}
-//				return allParameters;
-//			} catch (final Exception e) {
-//				return fileParameterList;
-//			}
-//
-//		} else {
-//			return fileParameterList;
-//		}
-//	}
-
-	private Hashtable<String, FCParameter> readAndCompensateColumns(Hashtable<String, FCParameter> allData,
+	private Hashtable<String, FCSDimension> readAndCompensateColumns(Hashtable<String, FCSDimension> allData,
 			SpilloverCompensator compensator) throws IOException {
 		FCSFile.seek(beginData);
 		for (int i = 0; i < columnStore.getRowCount(); i++) {
 			final double[] row = readRow();
 			final double[] compRow = compensator.compensateRow(row);
 			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).getData(FCVectorType.RAW)[i] = row[j];
+				allData.get(fileParameterList[j]).getData()[i] = row[j];
 				for (int k = 0; k < compParameterList.length; k++) {
 					if (compParameterList[k] == fileParameterList[j]) {
-						allData.get(compParameterList[k]).getData(FCVectorType.COMP)[i] = compRow[k];
+						allData.get("[" + compParameterList[k] +"]").getData()[i] = compRow[k];
 					}
 				}
 			}
@@ -193,27 +170,32 @@ public class FCSFileReader {
 		return allData;
 	}
 
-	private Hashtable<String, FCParameter> readColumns(Hashtable<String, FCParameter> allData) throws IOException {
+	private Hashtable<String, FCSDimension> readColumns(Hashtable<String, FCSDimension> allData) throws IOException {
 		for (int i = 0; i < columnStore.getRowCount(); i++) {
 			final double[] row = readRow();
 			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).getData(FCVectorType.RAW)[i]= row[j];
+				allData.get(fileParameterList[j]).getData()[i]= row[j];
 			}
 		}
 		return allData;
 	}
 
 	public void readData() throws Exception {
-		Hashtable<String, FCParameter> allData = new Hashtable<String, FCParameter>();
-		//final String[] vectorNames = columnStore.getColumnNames();
+		Hashtable<String, FCSDimension> allData = new Hashtable<String, FCSDimension>();
 		FCSFile.seek(beginData);
 		// Initialize vector store
 		for (final String name : fileParameterList) {
-			final FCParameter newParameter = new FCParameter(name, columnStore.getRowCount());
+			final FCSDimension newParameter = new FCSDimension(name, new double[columnStore.getRowCount()], new Hashtable<String, String>() );
 			allData.put(name, newParameter);
 		}
 
 		if (compensateOnRead == true) {
+			
+			for (final String name : compParameterList) {
+				final FCSDimension newParameter = new FCSDimension(name, new double[columnStore.getRowCount()], new Hashtable<String, String>() );
+				allData.put("[" + name + "]", newParameter);
+			}
+			
 			try {
 				final SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
 				allData = readAndCompensateColumns(allData, compensator);

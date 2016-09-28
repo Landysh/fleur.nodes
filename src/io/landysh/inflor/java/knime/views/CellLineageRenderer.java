@@ -25,8 +25,8 @@ public class CellLineageRenderer implements DataValueRenderer {
 	private static XYDataset createDataset(ColumnStore columns) {
 		final XYSeriesCollection result = new XYSeriesCollection();
 		final XYSeries series = new XYSeries("Random");
-		final double[] x = columns.getColumn(columns.getColumnNames()[0]);
-		final double[] y = columns.getColumn(columns.getColumnNames()[1]);
+		final double[] x = columns.getDimensionData(columns.getColumnNames()[0]);
+		final double[] y = columns.getDimensionData(columns.getColumnNames()[1]);
 		for (int i = 0; i < 100; i++) {
 			series.add(x[i], y[i]);
 			result.addSeries(series);

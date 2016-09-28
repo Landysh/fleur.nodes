@@ -6,7 +6,6 @@ import org.junit.Test;
 
 //TestDependencies
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCVectorType;
 
 //Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
@@ -47,8 +46,8 @@ public class FCSFileReaderTest {
 		final double[] fcs = {400,600,300,500,600,500,800,200,300,800,900,400,200,600,400};
 		final double[] ssc = {300,300,600,200,800,500,600,400,100,200,400,800,900,700,500};
 		
-		double[] testFCS = dataStore.getColumn("FCS", FCVectorType.RAW);
-		double[] testSSC = dataStore.getColumn("SSC", FCVectorType.RAW);
+		double[] testFCS = dataStore.getDimensionData("FCS");
+		double[] testSSC = dataStore.getDimensionData("SSC");
 
 		// Assert
 		for (int i = 0; i < fcs.length; i++) {
@@ -73,8 +72,8 @@ public class FCSFileReaderTest {
 		final int testRowCount = dataStore.getRowCount();
 
 		
-		double[] testFCS = dataStore.getColumn("FSC-A", FCVectorType.RAW);
-		double[] testSSC = dataStore.getColumn("SSC-A", FCVectorType.RAW);
+		double[] testFCS = dataStore.getDimensionData("FSC-A");
+		double[] testSSC = dataStore.getDimensionData("SSC-A");
 
 		// Assert
 		assertEquals("Row count", trueRowCount, testRowCount);

@@ -40,11 +40,6 @@ public class ColumnStore {
 				values[i] = vector.getArray(i);
 			}
 			columnStore.addColumn(key, values);
-			if (vector.getCompArrayCount() != 0) {
-				for (int k = 0; k < vector.getArrayCount(); k++) {
-					columnStore.getColumn(key, FCVectorType.COMP)[k] = vector.getCompArray(k);
-				}
-			}
 		}
 		columnStore.setPreferredName(columnStore.getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
 		return columnStore;
@@ -61,7 +56,7 @@ public class ColumnStore {
 	public String UUID;
 
 	private Hashtable<String, String> keywords;
-	private Hashtable<String, FCParameter> columnData;
+	private Hashtable<String, FCSDimension> columnData;
 
 	// data properties
 	private Integer rowCount = -1;
@@ -80,28 +75,23 @@ public class ColumnStore {
 	 */
 	public ColumnStore(Hashtable<String, String> keywords, int rowCount) {
 		this.keywords = keywords;
-		columnData = new Hashtable<String, FCParameter>();
+		columnData = new Hashtable<String, FCSDimension>();
 		this.rowCount = rowCount;
 		preferredName = getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD);
 	}
 
 	public void addColumn(String name, double[] data) {
 		if (rowCount == data.length) {
-			final FCParameter newVector = new FCParameter(name, rowCount);
-			newVector.setData(data, FCVectorType.RAW);
-			columnData.put(name, newVector);
+			final FCSDimension newDimension = new FCSDimension(name, data, new Hashtable<String, String>());
+			columnData.put(name, newDimension);
 		} else {
-			throw new IllegalStateException("New column does not match frame size: " + rowCount.toString());
+			throw new IllegalStateException("New dimension does not match frame size: " + rowCount.toString());
 		}
 	}
 
-	public double[] getColumn(String xName) {
-		double[] data = columnData.get(xName).getData(FCVectorType.RAW);
+	public double[] getDimensionData(String xName) {
+		double[] data = columnData.get(xName).getData();
 		return data;
-	}
-
-	public double[] getColumn(String name, FCVectorType type) {
-			return columnData.get(name).getData(type);
 	}
 
 	public int getColumnCount() {
@@ -115,7 +105,7 @@ public class ColumnStore {
 		return columnNames;
 	}
 
-	public Hashtable<String, FCParameter> getData() {
+	public Hashtable<String, FCSDimension> getData() {
 		return columnData;
 	}
 
@@ -144,11 +134,10 @@ public class ColumnStore {
 	}
 
 	public double[] getRow(int index) {
-		// TODO Fix to get comped data as well.
 		final double[] row = new double[getColumnCount()];
 		int i = 0;
 		for (final String name : getColumnNames()) {
-			row[i] = columnData.get(name).getData(FCVectorType.RAW)[index];
+			row[i] = columnData.get(name).getData()[index];
 			i++;
 		}
 		return row;
@@ -158,8 +147,8 @@ public class ColumnStore {
 		return rowCount;
 	}
 
-	public FCParameter getVector(String viabilityColumn) {
-		return columnData.get(viabilityColumn);
+	public FCSDimension getVector(String name) {
+		return columnData.get(name);
 	}
 
 	public byte[] save() {
@@ -189,19 +178,11 @@ public class ColumnStore {
 			final AnnotatedVectorsProto.Vector.Builder vectorBuilder = AnnotatedVectorsProto.Vector.newBuilder();
 			final String name = getColumnNames()[i];
 			// Raw data
-			final double[] rawArray = columnData.get(name).getData(FCVectorType.RAW);
+			final double[] rawArray = columnData.get(name).getData();
 			vectorBuilder.setName(name);
 			for (final double element : rawArray) {
 				vectorBuilder.addArray(element);
 			}
-			// Comped data
-			final double[] compArray = columnData.get(name).getData(FCVectorType.COMP);
-			if (compArray != null) {
-				for (int k = 0; k < rawArray.length; k++) {
-					vectorBuilder.addCompArray(compArray[k]);
-				}
-			}
-
 			final AnnotatedVectorsProto.Vector v = vectorBuilder.build();
 			messageBuilder.addVectors(v);
 		}
@@ -218,9 +199,9 @@ public class ColumnStore {
 		out.flush();
 	}
 
-	public void setData(Hashtable<String, FCParameter> allData) {
+	public void setData(Hashtable<String, FCSDimension> allData) {
 		columnData = allData;
-		rowCount = allData.get(getColumnNames()[0]).getData(FCVectorType.RAW).length;
+		rowCount = allData.get(getColumnNames()[0]).getData().length;
 	}
 
 	public void setPreferredName(String preferredName) {
