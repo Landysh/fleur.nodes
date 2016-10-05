@@ -1,5 +1,7 @@
 package io.landysh.inflor.java.core.dataStructures;
 
+import java.util.BitSet;
+
 public class Histogram2D {
 	
 	double [][] mask;
@@ -9,12 +11,8 @@ public class Histogram2D {
 	private double[] zValues;
 	private double[] yBins;
 	private double[] xBins;
-	private double maxHistogramHeight;
-	private int usedBinCount;
-	
-	public double getMaxHistogramHeight() {
-		return maxHistogramHeight;
-	}
+	private int yBinCount;
+	private int xBinCount;
 
 	public Histogram2D (double[] xData, double xMin, double xMax, int xBinCount, 
 			double[] yData, double yMin, double yMax, int yBinCount){
@@ -23,6 +21,8 @@ public class Histogram2D {
  		xBins = new double[xBinCount*yBinCount];
 		yBins = new double[xBinCount*yBinCount];
 		zValues = new double[xBinCount*yBinCount];
+		this.xBinCount = xBinCount;
+		this.yBinCount = yBinCount;
 		
 		//Mask is the masked raw data to be used for gating.
 		mask = new double[2][xData.length];
@@ -35,12 +35,9 @@ public class Histogram2D {
 	}
 
 	public double[] populateHistogram(double[] xBins, double[] yBins, double[] zValues, double[] xData, double[] yData, double xBinWidth, double yBinWidth, int yBinCount) {
-		usedBinCount = xBins.length;
 		for (int i=0;i<xData.length;i++){
-			maxHistogramHeight = Double.MIN_VALUE;
 			double x = xData[i];
 			double y = yData[i];
-			//TODO Questionable...
 			int xBin = (int)((double) x/xBinWidth);
 			int yBin = (int)((double) y/yBinWidth);
 			int histogramIndex = yBinCount*xBin + yBin;
@@ -50,15 +47,9 @@ public class Histogram2D {
 				histogramIndex = zValues.length-1;
 			} 
 			zValues[histogramIndex]++;
-			if(zValues[histogramIndex]==1){
-				usedBinCount--;
-			}
 			mask[0][i] = (double) xBin * xBinWidth;
-			if (zValues[histogramIndex]>maxHistogramHeight){
-				maxHistogramHeight = zValues[histogramIndex];
-			}
+
 		}
-		
 		return zValues;
 	}
 
@@ -94,5 +85,38 @@ public class Histogram2D {
 
 	public double[] getZValues() {
 		return zValues;
+	}
+
+	public BitSet getNonEmptyBins() {
+		BitSet bits = new BitSet(zValues.length);
+		for(int i=0;i<zValues.length;i++){
+			if (zValues[i]!=0){
+				bits.set(i);
+			}
+		}
+		return bits;
+	}
+	
+	public BitSet getNonEdgeBins() {
+		BitSet bits = new BitSet(zValues.length);
+		for (int i=0;i<xBinCount;i++){
+			for (int j=0;j<yBinCount;j++){
+				Double testValue = zValues[i*yBinCount+j];
+				if (!(i==0||i==(xBinCount-1))){
+					bits.set(i*yBinCount+j);
+				} else if (!(j==0||j==(yBinCount-1))){
+					bits.set(i*yBinCount+j);
+				}else{
+					//NOOP
+				}
+			}
+		}
+		
+		for(int i=0;i<zValues.length;i++){
+			if (zValues[i]!=0){
+				bits.set(i);
+			}
+		}
+		return bits;
 	}
 }
