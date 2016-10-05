@@ -13,20 +13,12 @@ public abstract class DomainObject implements Serializable{
 	 */
 	
 	public final String ID;
-	
-	private String displayName;
-
-	public DomainObject() {
-		ID = UUID.randomUUID().toString();
-	}
-	public String getDisplayName(){
-		if (displayName!=null){
-			return displayName;
+		
+	public DomainObject(String priorUUID){
+		if (priorUUID==null){
+			ID = UUID.randomUUID().toString();
 		} else {
-			return ID;
+			ID = priorUUID;
 		}
-	}
-	public void setDisplayName(String newName){
-		this.displayName = newName;
-	}
+	}	
 }
