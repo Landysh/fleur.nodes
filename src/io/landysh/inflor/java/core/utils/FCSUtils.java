@@ -1,8 +1,13 @@
 package io.landysh.inflor.java.core.utils;
 
+import java.util.BitSet;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import io.landysh.inflor.java.core.dataStructures.Histogram2D;
+import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 
 public class FCSUtils {
 
@@ -41,49 +46,18 @@ public class FCSUtils {
 		return stainName;
 	}
 
-	public static String getDisplayName(Hashtable<String, String> keywords, String name, boolean compensated) {
-		final int parameterIndex = findParameterNumnberByName(keywords, name);
-		String displayName = name;
-		final String stainName = findStainName(keywords, parameterIndex);
-		if (stainName == "") {
-			displayName = displayName + ": " + stainName;
+	public static double[] filterColumn(BitSet mask, double[] data) {
+		double[] filteredData = new double[mask.cardinality()];
+		int currentBit=0;
+		for (int i=0;i<filteredData.length;i++){
+			int nextBit =  mask.nextSetBit(currentBit);
+			filteredData[i] = data[nextBit];
+			currentBit = nextBit+1;
 		}
-		if (compensated == true) {
-			displayName = "[" + displayName + "]";
-		}
-		return displayName;
-	}
-
-	public static double[] getMaskColumn(boolean[] mask, double[] column) {
-		int newSize = 0;
-		for (final boolean value : mask) {
-			if (value == true) {
-				newSize++;
-			}
-		}
-		final double[] maskedColumn = new double[newSize];
-		int j = 0;
-		for (int i = 0; i < mask.length; i++) {
-			if (mask[i] == true) {
-				maskedColumn[j] = column[i];
-				j++;
-			}
-		}
-		return maskedColumn;
+		return filteredData;
 	}
 	
-	public static int countTrue(boolean[] bools){
-		int count =0;
-		for (boolean bool:bools){
-			if (bool==true){
-				count++;
-			}
-		}
-		return count;
-	}
-	
-
-	public static String[] parseParameterList(Hashtable<String, String> keywords) {
+	public static String[] parseDimensionList(Hashtable<String, String> keywords) {
 		/**
 		 * Returns a String[] containing all of the values of the $PnN keywords
 		 * from the specified header table.
@@ -115,22 +89,66 @@ public class FCSUtils {
 		return validHeader;
 	}
 
-
-
-	public static Histogram2D create2dHistogram(double[] transformedDomainData, double[] rangeData, int xbins,
-			int ybins) {	
-		
-		return null;
-	}
-
-	public static Hashtable<String, String> findParameterKeywords(Hashtable <String, String> sourceKeywords, int vectorIndex) {
+	public static Hashtable<String, String> findParameterKeywords(Hashtable <String, String> sourceKeywords, int parameterIndex) {
 		Hashtable <String, String> keywords = new Hashtable<String, String>();
-		String regex = "\\$P" + vectorIndex +"[A-Z]";
+		String regex = "\\$P" + parameterIndex +"[A-Z]";
 		for (String key:keywords.keySet()){
 			if (key.matches(regex)){
 				keywords.put(key, sourceKeywords.get(key));
 			}
 		}
 		return keywords;
+	}
+
+	public static FCSDimension buildFCSDimension(int pIndex, Hashtable<String, String> header, boolean wasComped) {
+		/**
+		 * Constructs a new FCSDimension object from the parameter data in the header of an FCS File.
+		 */
+		int size = Integer.parseInt(header.get("$TOT"));
+		String pnn = header.get("$P" + pIndex + "N");
+		String pns = header.get("$P" + pIndex + "S");
+		String pne = header.get("$P" + pIndex + "E");
+		double pneF1 = Double.parseDouble(pne.split(",")[0]);
+		double pneF2 = Double.parseDouble(pne.split(",")[1]);
+		double pnr = Double.parseDouble(header.get("$P" + pIndex + "R"));
+
+		
+		FCSDimension newDimension = new FCSDimension(size,
+													 pIndex, 
+													 pnn, 
+													 pns, 
+													 pneF1, 
+													 pneF2, 
+													 pnr,
+													 wasComped);
+		
+		return newDimension;
+	}
+
+	public static ColumnStore filterColumnStore(BitSet mask, ColumnStore in) {
+		
+		ColumnStore out = new ColumnStore(in.getKeywords(), mask.cardinality());
+		for (String name:in.getData().keySet()){
+			FCSDimension  inDim = in.getData().get(name);
+			FCSDimension outDim = new FCSDimension(mask.cardinality(), inDim.getIndex(), inDim.getShortName(), inDim.getDisplayName(), 
+					inDim.getPNEF1(), inDim.getPNEF2(), inDim.getRange(), inDim.getCompRef());
+			out.addColumn(name, outDim);
+		}
+		return out;
+	}
+
+	public static FCSDimension findCompatibleDimension(Map<String, FCSDimension> dimensionMap, String name) {
+		/**
+		 * Returns the key for the first compatible FCSDimension in the selected map.
+		 * (ie. where the result of the toString() method is the same).
+		 * Will return null if no compatible entry is found.
+		 */
+		FCSDimension returnDim = null;
+		for (FCSDimension dim: dimensionMap.values()){
+			if (dim.toString().equals(name)){
+				returnDim = dim;
+			}
+		}
+		return returnDim;
 	}
 }
