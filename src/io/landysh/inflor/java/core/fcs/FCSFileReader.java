@@ -10,11 +10,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.MatrixCalculator;
 
 public class FCSFileReader {
 
@@ -53,9 +55,9 @@ public class FCSFileReader {
 	public final String dataType;
 	public final Integer[] bitMap;
 	public final ColumnStore columnStore;
-	public final String[] fileParameterList;
+	public final String[] fileDimensionList;
 	private final boolean compensateOnRead;
-
+	TreeMap<String, FCSDimension> data;
 	public String[] compParameterList = null;
 
 	// Constructor
@@ -80,7 +82,7 @@ public class FCSFileReader {
 			throw e;
 		}
 
-		fileParameterList = FCSUtils.parseParameterList(header);
+		fileDimensionList = FCSUtils.parseDimensionList(header);
 		if (compensate == true) {
 			final SpilloverCompensator comp = new SpilloverCompensator(header);
 			compParameterList = comp.getCompParameterNames();
@@ -94,6 +96,7 @@ public class FCSFileReader {
 		readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
 		bitMap = createBitMap(header);
 		dataType = columnStore.getKeywordValue("$DATATYPE");
+		data = new TreeMap<String, FCSDimension>();
 	}
 
 	private String calculateSHA(byte[] inBytes) throws NoSuchAlgorithmException {
@@ -117,7 +120,7 @@ public class FCSFileReader {
 	private Integer[] createBitMap(Hashtable<String, String> keywords) {
 		// This method reads how many bytes per parameter and returns an integer
 		// array of these values
-		final String[] rawParameterNames = FCSUtils.parseParameterList(keywords);
+		final String[] rawParameterNames = FCSUtils.parseDimensionList(keywords);
 		final Integer[] map = new Integer[rawParameterNames.length];
 		for (int i = 1; i <= map.length; i++) {
 			final String key = "$P" + (i) + "B";
@@ -152,63 +155,50 @@ public class FCSFileReader {
 		}
 	}
 
-	private Hashtable<String, FCSDimension> readAndCompensateColumns(Hashtable<String, FCSDimension> allData,
-			SpilloverCompensator compensator) throws IOException {
+	public void readData() throws IOException {
+		data = new TreeMap <String, FCSDimension>();
 		FCSFile.seek(beginData);
-		for (int i = 0; i < columnStore.getRowCount(); i++) {
-			final double[] row = readRow();
-			final double[] compRow = compensator.compensateRow(row);
-			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).getData()[i] = row[j];
-				for (int k = 0; k < compParameterList.length; k++) {
-					if (compParameterList[k] == fileParameterList[j]) {
-						allData.get("[" + compParameterList[k] +"]").getData()[i] = compRow[k];
-					}
-				}
+		
+		
+		double[][] compData = null;
+		SpilloverCompensator compensator = null;
+
+		if (compensateOnRead==true){
+			compensator = new SpilloverCompensator(getHeader());
+			compData = new double[columnStore.getRowCount()][fileDimensionList.length];
+		}
+
+		double[][] rawData = new double[columnStore.getRowCount()][fileDimensionList.length];
+		for (int i=0;i<rawData.length;i++){
+			double[] row = readRow();	
+			rawData[i] = row;
+			if (compensateOnRead==true){
+				compData[i] = compensator.compensateRow(rawData[i]);
 			}
 		}
-		return allData;
+		
+		double[][] transposedRawData = MatrixCalculator.transpose(rawData);
+		
+		for (int i=0;i<fileDimensionList.length;i++){
+			Integer pIndex = FCSUtils.findParameterNumnberByName(getHeader(),fileDimensionList[i]);
+			FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), false);
+			newDimension.setData(transposedRawData[i]);
+			data.put(newDimension.ID, newDimension);
+		}
+		
+		if (compensateOnRead==true){
+			double[][] transposedCompData = MatrixCalculator.transpose(rawData);
+			for (int i=0;i<compParameterList.length;i++){
+				Integer pIndex = FCSUtils.findParameterNumnberByName(getHeader(),compParameterList[i]);
+				FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), true);
+				newDimension.setData(transposedCompData[i]);
+				data.put(newDimension.ID, newDimension);
+			}
+		}
+
+		columnStore.setData(data);
 	}
-
-	private Hashtable<String, FCSDimension> readColumns(Hashtable<String, FCSDimension> allData) throws IOException {
-		for (int i = 0; i < columnStore.getRowCount(); i++) {
-			final double[] row = readRow();
-			for (int j = 0; j < fileParameterList.length; j++) {
-				allData.get(fileParameterList[j]).getData()[i]= row[j];
-			}
-		}
-		return allData;
-	}
-
-	public void readData() throws Exception {
-		Hashtable<String, FCSDimension> allData = new Hashtable<String, FCSDimension>();
-		FCSFile.seek(beginData);
-		// Initialize vector store
-		for (final String name : fileParameterList) {
-			final FCSDimension newParameter = new FCSDimension(name, new double[columnStore.getRowCount()], new Hashtable<String, String>() );
-			allData.put(name, newParameter);
-		}
-
-		if (compensateOnRead == true) {
-			
-			for (final String name : compParameterList) {
-				final FCSDimension newParameter = new FCSDimension(name, new double[columnStore.getRowCount()], new Hashtable<String, String>() );
-				allData.put("[" + name + "]", newParameter);
-			}
-			
-			try {
-				final SpilloverCompensator compensator = new SpilloverCompensator(getHeader());
-				allData = readAndCompensateColumns(allData, compensator);
-			} catch (final Exception e) {
-				allData = readColumns(allData);
-			}
-
-		} else {
-			allData = readColumns(allData);
-		}
-		columnStore.setData(allData);
-	}
-
+	
 	public String readFCSVersion(RandomAccessFile raFile)
 			throws UnsupportedEncodingException, IOException, FileNotFoundException {
 		// mark the current location (should be byte 0)
@@ -276,7 +266,6 @@ public class FCSFileReader {
 	}
 
 	private int readOffset(int start, int end) throws IOException {
-		// +1?
 		final byte[] bytes = new byte[end - start + 1];
 		FCSFile.seek(start);
 		FCSFile.read(bytes);
@@ -290,7 +279,7 @@ public class FCSFileReader {
 		 * Reads the next row of the data.
 		 */
 
-		double[] row = new double[fileParameterList.length];
+		double[] row = new double[fileDimensionList.length];
 		if (dataType.equals("F")) {
 			row = readFloatRow(row);
 		} else if (dataType.equals("I")) {
