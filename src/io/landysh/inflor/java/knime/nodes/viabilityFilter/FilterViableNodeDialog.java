@@ -71,7 +71,7 @@ public class FilterViableNodeDialog extends DefaultNodeSettingsPane {
 			keywords.put(key, value);
 		}
 
-		final String[] vectorNames = FCSUtils.parseParameterList(keywords);
+		final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
 		final ArrayList<String> areaChoices = new ArrayList<String>(Arrays.asList(vectorNames));
 
 		viabilityColumnComponent.replaceListItems(areaChoices, areaChoices.get(0));

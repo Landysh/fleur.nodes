@@ -67,7 +67,7 @@ public class SummaryStatisticsNodeDialog extends DefaultNodeSettingsPane {
 			keywords.put(key, value);
 		}
 
-		final String[] vectorNames = FCSUtils.parseParameterList(keywords);
+		final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
 		final ArrayList<String> newItems = (ArrayList<String>) Arrays.asList(vectorNames);
 		markerFilter.replaceListItems(newItems, (String) null);
 	}

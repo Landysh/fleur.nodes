@@ -17,7 +17,7 @@ public class SpilloverCompensator {
 	private DenseMatrix64F compMatrix;
 	private double[][] rawMatrix;
 
-	public SpilloverCompensator(Hashtable<String, String> keywords) throws Exception {
+	public SpilloverCompensator(Hashtable<String, String> keywords) {
 		if (keywords.containsKey("$SPILL") || keywords.containsKey("SPILL")) {
 			rawMatrix = parseSpillover(keywords);
 			compMatrix = new DenseMatrix64F(rawMatrix);
@@ -49,19 +49,6 @@ public class SpilloverCompensator {
 		}
 	}
 
-	// TODO: Unit test
-	public String[] getCompDisplayNames(Hashtable<String, String> keywords) {
-		if (compParameters != null) {
-			final String[] displayNames = new String[compParameters.length];
-			for (int i = 0; i < displayNames.length; i++) {
-				displayNames[i] = FCSUtils.getDisplayName(keywords, compParameters[i], true);
-			}
-			return displayNames;
-		} else {
-			return new String[] {};
-		}
-	}
-
 	public String[] getCompParameterNames() {
 		return compParameters;
 	}
@@ -70,7 +57,7 @@ public class SpilloverCompensator {
 		return rawMatrix;
 	}
 
-	private double[][] parseSpillover(Hashtable<String, String> keywords) throws Exception {
+	private double[][] parseSpillover(Hashtable<String, String> keywords) {
 		String spill = null;
 
 		// Check for spillover keywords
@@ -79,7 +66,7 @@ public class SpilloverCompensator {
 		} else if (keywords.containsKey("SPILL")) {
 			spill = keywords.get("SPILL");
 		} else {
-			throw new Exception("No spillover keyword found.");
+			throw new NullPointerException("No spillover keyword found.");
 		}
 
 		// Magic string parsing from FCS Spec PDF
@@ -110,7 +97,7 @@ public class SpilloverCompensator {
 			compParameters = compPars;
 			return matrix;
 		} else {
-			throw new Exception("Spillover Keyword - " + spill + " - appears to be invalid.");
+			return null;
 		}
 	}
 }

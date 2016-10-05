@@ -78,7 +78,7 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 			keywords.put(key, value);
 		}
 
-		final String[] vectorNames = FCSUtils.parseParameterList(keywords);
+		final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
 		final SingletsModel model = new SingletsModel(vectorNames);
 
 		final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);

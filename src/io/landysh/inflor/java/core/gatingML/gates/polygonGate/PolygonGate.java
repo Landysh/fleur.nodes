@@ -2,7 +2,6 @@ package io.landysh.inflor.java.core.gatingML.gates.polygonGate;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Hashtable;
 import java.util.Set;
 
 import org.w3c.dom.Element;
