@@ -16,8 +16,8 @@ public abstract class AbstractSubset extends DomainObject {
 
 	protected BitSet members;
 	
-	public AbstractSubset() {
-		super();
+	public AbstractSubset(String priorUUID) {
+		super(priorUUID);
 		members = null;
 	}
 	

@@ -16,7 +16,11 @@ public class DefaultSubset extends AbstractSubset {
 	AbstractGate gate;
 	
 	public DefaultSubset(AbstractSubset parent, AbstractGate filter) {
-		super();
+		this(null, parent, filter);
+	}
+
+	public DefaultSubset(String priorUUID, AbstractSubset parent, AbstractGate filter) {
+		super(priorUUID);
 		parentSubset = parent;
 		gate = filter;
 	}
