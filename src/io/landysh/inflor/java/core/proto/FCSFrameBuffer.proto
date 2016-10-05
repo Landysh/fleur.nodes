@@ -1,0 +1,34 @@
+option java_outer_classname = "FCSFrameProto";
+
+message Message {
+  required string       id 		   = 1;
+  required int32 		eventCount = 2;
+  repeated string		dimNames   = 3;  
+  repeated Keyword 		keyword    = 4;
+  repeated Dimension	dimension  = 5;
+  repeated Subset		subset 	   = 6;
+  
+  message  Keyword {
+	required string key   = 1;
+    required string value = 2;
+  }
+  
+  message Dimension {
+    required string 	id 		= 1;
+  	required int32	 	index   = 2;
+  	required string  	pnn     = 3;
+  	optional string  	pns     = 4;
+  	required double  	pneF1   = 5;
+  	required double  	pneF2   = 6;
+  	required double  	pnr     = 7;
+  	optional bool	 	compRef = 8;
+  	repeated double  	data    = 9;
+  }
+	
+  message Subset {
+    required string id       = 3;
+    required string name     = 1;
+    optional string parentID = 2;
+    repeated bool   mask     = 4;
+  }
+}
