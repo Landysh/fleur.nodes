@@ -33,4 +33,15 @@ public class VectorCalculator {
 	public double[] getSortedData() {
 		return sortedData;
 	}
+	
+	public double getPercentile(double percentile) {
+		//TODO: This is quick and dirty, need a correct implementation. 	
+		if (0<=percentile&&percentile<1){
+			int percentileIndex = (int)(percentile*sortedData.length);
+			return sortedData[percentileIndex];
+		} else {
+			throw new IllegalArgumentException("The requested percentile must be in the range 0->1");
+		}
+	}
+	
 }
