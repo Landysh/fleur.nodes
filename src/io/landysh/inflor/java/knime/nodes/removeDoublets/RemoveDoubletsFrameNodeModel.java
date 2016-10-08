@@ -2,6 +2,7 @@ package io.landysh.inflor.java.knime.nodes.removeDoublets;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.BitSet;
 
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
@@ -79,16 +80,10 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 		final double[] area = inColumnStore.getDimensionData(m_AreaColumn.getStringValue());
 		final double[] height = inColumnStore.getDimensionData(m_HeightColumn.getStringValue());
 		final double[] ratio = model.buildModel(area, height);
-		final boolean[] mask = model.scoreModel(ratio);
+		final BitSet mask = model.scoreModel(ratio);
 		
 		//Create the output
-		int newSize = FCSUtils.countTrue(mask);
-		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), newSize);
-		for (final String name : inColumnStore.getColumnNames()) {
-			final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getDimensionData(name));
-			outStore.addColumn(name, maskedColumn);
-		}
-
+		final ColumnStore outStore = FCSUtils.filterColumnStore(mask, inColumnStore);
 		final ColumnStorePortSpec outSpec = new ColumnStorePortSpec(inSpec.keywords, inSpec.columnNames,
 				outStore.getRowCount());
 		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);

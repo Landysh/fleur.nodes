@@ -2,6 +2,7 @@ package io.landysh.inflor.java.knime.nodes.removeDoublets;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.BitSet;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataRow;
@@ -21,6 +22,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
@@ -84,18 +86,13 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 			final double[] areaData = columnStore.getDimensionData(areaColumn);
 			final double[] heightData = columnStore.getDimensionData(heightColumn);
 			final double[] ratio = model.buildModel(areaData, heightData);
-			final boolean[] mask = model.scoreModel(ratio);
+			BitSet mask = model.scoreModel(ratio);
 
 			// now create the output row
-			int newSize = FCSUtils.countTrue(mask);
-			final ColumnStore outStore = new ColumnStore(columnStore.getKeywords(), newSize);
-			for (final String name : columnStore.getColumnNames()) {
-				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, columnStore.getDimensionData(name));
-				outStore.addColumn(name, maskedColumn);
-			}
+			final ColumnStore outStore = FCSUtils.filterColumnStore(mask, columnStore);
 			final String fsName = i + "ColumnStore.fs";
 			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
 
 			for (int j = 0; j < outCells.length; j++) {
 				if (j == index) {

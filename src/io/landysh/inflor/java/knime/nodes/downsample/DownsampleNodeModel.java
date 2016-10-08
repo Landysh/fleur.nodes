@@ -2,6 +2,7 @@ package io.landysh.inflor.java.knime.nodes.downsample;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.Random;
 
 import org.knime.core.data.filestore.FileStore;
@@ -20,6 +21,7 @@ import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec;
@@ -70,15 +72,12 @@ public class DownsampleNodeModel extends NodeModel {
 		final int inSize = inColumnStore.getRowCount();
 		final int downSize = m_Size.getIntValue();
 		final int finalSize = downSize >= inSize ? downSize : inSize;
-		final ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), finalSize);
+		ColumnStore outStore = new ColumnStore(inColumnStore.getKeywords(), finalSize);
 		if (downSize >= inSize) {
 			outStore.setData(inColumnStore.getData());
 		} else {
-			final boolean[] mask = getShuffledMask(inSize, downSize);
-			for (final String name : inColumnStore.getColumnNames()) {
-				final double[] maskedColumn = FCSUtils.getMaskColumn(mask, inColumnStore.getDimensionData(name));
-				outStore.addColumn(name, maskedColumn);
-			}
+			final BitSet mask = getShuffledMask(inSize, downSize);
+			outStore = FCSUtils.filterColumnStore(mask, inColumnStore);
 		}
 
 		final ColumnStorePortSpec outSpec = getSpec(inSpec);
@@ -89,7 +88,7 @@ public class DownsampleNodeModel extends NodeModel {
 		return new ColumnStorePortObject[] { outPort };
 	}
 
-	private boolean[] getShuffledMask(int inSize, int downSize) {
+	private BitSet getShuffledMask(int inSize, int downSize) {
 		/**
 		 * Based on a knuth shuffle
 		 * https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#
@@ -102,14 +101,14 @@ public class DownsampleNodeModel extends NodeModel {
 		}
 		// Init random number
 		final Random rand = new Random(-1);
-		final boolean[] mask = new boolean[inSize];
+		final BitSet mask = new BitSet(inSize);
 		// The knuthy part
 		for (int i = 0; i < downSize; i++) {
 			final int pos = i + rand.nextInt(inSize - i);
 			final int temp = indices[pos];
 			indices[pos] = indices[i];
 			indices[i] = temp;
-			mask[temp] = true;
+			mask.set(i);
 		}
 		return mask;
 	}
