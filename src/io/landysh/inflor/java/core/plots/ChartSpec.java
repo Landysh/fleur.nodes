@@ -34,15 +34,21 @@ public class ChartSpec extends DomainObject {
 	private AbstractDisplayTransform domainTransform = DEFAULT_TRANSFORM;
 	private AbstractDisplayTransform rangeTransform = DEFAULT_TRANSFORM;
 
+	private String displayName;
+
 	/**
 	 * @param priorUUID
 	 *            an id previously generated (eg if the object was previously
 	 *            serialized). Set to null to create a new UUID.
 	 */
 	public ChartSpec() {
-		super();
+		this(null);
 	}
 	
+	public ChartSpec(String priorUUID) {
+		super(priorUUID);
+	}
+
 	public String getParent() {
 		return parent;
 	}
@@ -163,6 +169,14 @@ public class ChartSpec extends DomainObject {
 	}
 
 	public void setxMax(double xMax) {this.xMax = xMax;}
+
+	public String getDisplayName() {
+		if (this.displayName!=null){
+			return displayName;
+		} else {
+			return ID;
+		}
+	}
 	
 	
 }
