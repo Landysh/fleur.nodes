@@ -287,4 +287,16 @@ public class FCSFileReader {
 		}
 		return row;
 	}
+
+	public static ColumnStore read(String filePath, boolean compensate)  {
+		FCSFileReader reader;
+		try {
+			reader = new FCSFileReader(filePath, compensate);
+			reader.readData();
+			return reader.getColumnStore();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
