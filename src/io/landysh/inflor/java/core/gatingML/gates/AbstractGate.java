@@ -1,15 +1,25 @@
 package io.landysh.inflor.java.core.gatingML.gates;
 
 import java.util.BitSet;
-import java.util.Hashtable;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
 
-public abstract class AbstractGate {
+@SuppressWarnings("serial")
+public abstract class AbstractGate extends DomainObject {
+	 
+	
+	public AbstractGate(String priorUUID) {
+		super(priorUUID);
+	}
+	public AbstractGate() {
+		this(null);
+	}
+
 	/**
 	 * An abstract class that provides the basis for all gating-ml compliant
 	 * gates.
@@ -19,11 +29,7 @@ public abstract class AbstractGate {
 
 	protected String id;
 	protected String parent_id;
-	protected Hashtable<String, String> custom_info;
-
-	public AbstractGate(final String id) {
-		this.id = id;
-	}
+	protected HashMap<String, String> custom_info;
 
 	/**
 	 * 
