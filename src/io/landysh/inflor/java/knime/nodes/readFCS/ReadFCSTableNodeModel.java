@@ -3,6 +3,7 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.knime.core.data.DataCell;
@@ -129,7 +130,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
 
 		try {
 			FCSReader = new FCSFileReader(m_FileLocation.getStringValue(), m_Compensate.getBooleanValue());
-			final Hashtable<String, String> keywords = FCSReader.getHeader();
+			final HashMap<String, String> keywords = FCSReader.getHeader();
 
 			final ColumnStore columnStore = FCSReader.getColumnStore();
 			final DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
@@ -208,7 +209,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
 		m_Compensate.loadSettingsFrom(settings);
 	}
 
-	private void readHeader(BufferedDataContainer header, Hashtable<String, String> keywords) {
+	private void readHeader(BufferedDataContainer header, HashMap<String, String> keywords) {
 		final Enumeration<String> enumKey = keywords.keys();
 		int i = 0;
 		while (enumKey.hasMoreElements()) {

@@ -2,7 +2,7 @@ package io.landysh.inflor.java.knime.nodes.removeDoublets;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
@@ -71,7 +71,7 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 
 		final DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
 		final Enumeration<String> keys = properties.properties();
-		final Hashtable<String, String> keywords = new Hashtable<String, String>();
+		final HashMap<String, String> keywords = new HashMap<String, String>();
 		while (keys.hasMoreElements()) {
 			final String key = keys.nextElement();
 			final String value = properties.getProperty(key);
@@ -88,35 +88,6 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
 		heightComponent.replaceListItems(heightChoices, null);
 
 	}
-
-	// protected void loadSettingsFrom(NodeSettingsRO settings,
-	// BufferedDataTable[] input)
-	// throws NotConfigurableException {
-	//
-	// BufferedDataTable table = input[0];
-	// table.getSpec().getColumnSpec("foo").getProperties().
-	// for (DataRow row: table){
-	// for (int i=0;i<row.getNumCells();i++){
-	//
-	// }
-	// }
-	// //TODO we are here.
-	// String[] vectorNames = null;
-	// SingletsModel model = new SingletsModel(vectorNames);
-	//
-	// ArrayList<String> areaChoices = model.findColumns(vectorNames,
-	// PuleProperties.AREA);
-	// ArrayList<String> heightChoices = model.findColumns(vectorNames,
-	// PuleProperties.HEIGHT);
-	//
-	// areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
-	// heightComponent.replaceListItems(heightChoices, heightChoices.get(0));
-	// try {
-	// m_settings.load(settings);
-	// } catch (Exception e) {
-	// throw new NotConfigurableException("Unable to load settings.");
-	// }
-	// }
 
 	@Override
 	protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {

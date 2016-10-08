@@ -3,6 +3,7 @@ package io.landysh.inflor.java.core.gatingML.compensation;
 import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.ejml.data.DenseMatrix64F;
@@ -17,7 +18,7 @@ public class SpilloverCompensator {
 	private DenseMatrix64F compMatrix;
 	private double[][] rawMatrix;
 
-	public SpilloverCompensator(Hashtable<String, String> keywords) {
+	public SpilloverCompensator(HashMap<String, String> keywords) {
 		if (keywords.containsKey("$SPILL") || keywords.containsKey("SPILL")) {
 			rawMatrix = parseSpillover(keywords);
 			compMatrix = new DenseMatrix64F(rawMatrix);
@@ -57,7 +58,7 @@ public class SpilloverCompensator {
 		return rawMatrix;
 	}
 
-	private double[][] parseSpillover(Hashtable<String, String> keywords) {
+	private double[][] parseSpillover(HashMap<String, String> keywords) {
 		String spill = null;
 
 		// Check for spillover keywords

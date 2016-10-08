@@ -3,7 +3,7 @@ package io.landysh.inflor.java.core.fcs;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -16,7 +16,7 @@ public class FCSSummaryPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public FCSSummaryPanel(Hashtable<String, String> header) {
+	public FCSSummaryPanel(HashMap<String, String> header) {
 		super(new GridBagLayout());
 		super.setName("FCS Summary");
 		final JTable table = new JTable(6, 2);

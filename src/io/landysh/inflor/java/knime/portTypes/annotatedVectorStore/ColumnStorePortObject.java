@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.JComponent;
@@ -117,7 +118,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		return cs;
 	}
 
-	public Hashtable<String, String> getHeader() {
+	public HashMap<String, String> getHeader() {
 		return m_spec.keywords;
 	}
 

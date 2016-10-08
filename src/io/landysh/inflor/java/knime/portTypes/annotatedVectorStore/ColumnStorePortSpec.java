@@ -1,7 +1,7 @@
 package io.landysh.inflor.java.knime.portTypes.annotatedVectorStore;
 
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 
 import javax.swing.JComponent;
@@ -59,7 +59,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 		} catch (final InvalidSettingsException ise) {
 			LOGGER.error("Internal error: Could not load settings", ise);
 		}
-		final Hashtable<String, String> newKeywords = new Hashtable<String, String>();
+		final HashMap<String, String> newKeywords = new HashMap<String, String>();
 		for (int i = 0; i < keys.length; i++) {
 			newKeywords.put(keys[i], values[i]);
 		}
@@ -68,7 +68,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 
 	}
 
-	public Hashtable<String, String> keywords;
+	public HashMap<String, String> keywords;
 	public String[] columnNames;
 
 	private int rowCount;
@@ -77,7 +77,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 		// no op, use with .load
 	}
 
-	public ColumnStorePortSpec(Hashtable<String, String> keys, String[] columns, int count) {
+	public ColumnStorePortSpec(HashMap<String, String> keys, String[] columns, int count) {
 		keywords = keys;
 		columnNames = columns;
 		rowCount = count;
@@ -87,7 +87,7 @@ public class ColumnStorePortSpec implements PortObjectSpec {
 		return columnNames;
 	}
 
-	public Hashtable<String, String> getKeywords() {
+	public HashMap<String, String> getKeywords() {
 		return keywords;
 	}
 

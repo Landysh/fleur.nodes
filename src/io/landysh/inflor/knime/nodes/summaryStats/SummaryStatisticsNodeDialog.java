@@ -3,6 +3,7 @@ package io.landysh.inflor.knime.nodes.summaryStats;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.knime.core.data.DataColumnProperties;
@@ -60,7 +61,7 @@ public class SummaryStatisticsNodeDialog extends DefaultNodeSettingsPane {
 
 		final DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
 		final Enumeration<String> keys = properties.properties();
-		final Hashtable<String, String> keywords = new Hashtable<String, String>();
+		final HashMap<String, String> keywords = new HashMap<String, String>();
 		while (keys.hasMoreElements()) {
 			final String key = keys.nextElement();
 			final String value = properties.getProperty(key);
@@ -72,4 +73,3 @@ public class SummaryStatisticsNodeDialog extends DefaultNodeSettingsPane {
 		markerFilter.replaceListItems(newItems, (String) null);
 	}
 }
-// EOF

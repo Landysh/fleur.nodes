@@ -2,7 +2,7 @@ package io.landysh.inflor.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class EventFrameTest {
 		final String trueValue = "value";
 		final int 	 trueRowCount = 15;
 
-		final Hashtable<String, String> header = new Hashtable<String, String>();
+		final HashMap<String, String> header = new HashMap<String, String>();
 		header.put(trueKey, trueValue);
 		
 		// Test

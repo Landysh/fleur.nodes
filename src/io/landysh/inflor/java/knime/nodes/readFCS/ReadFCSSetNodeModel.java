@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.knime.core.data.DataCell;
@@ -80,18 +81,19 @@ public class ReadFCSSetNodeModel extends NodeModel {
 		return new DataTableSpec[] { spec };
 	}
 
-	private Hashtable<String, String> createColumnPropertiesContent() throws Exception {
+	private HashMap<String, String> createColumnPropertiesContent() throws Exception {
 		/**
 		 * Creates column properties for an FCS Set by looking all of the
 		 * headers and setting shared keyword values.
 		 */
-		final Hashtable<String, ArrayList<String>> contentArray = new Hashtable<String, ArrayList<String>>();
+		final HashMap<String, ArrayList<String>> contentArray = new HashMap<String, ArrayList<String>>();
 		final String[] filePaths = getFilePaths(m_path.getStringValue());
 		// For each file
+		
 		for (final String path : filePaths) {
 			final FCSFileReader FCSReader = new FCSFileReader(path, false);
-			final Hashtable<String, String> header = FCSReader.getHeader();
-			final Enumeration<String> keys = header.keys();
+			final HashMap<String, String> header = FCSReader.getHeader();
+			final Enumeration<String> keys = header.keySet();
 			// for each keyword
 			while (keys.hasMoreElements()) {
 				final String key = keys.nextElement();
@@ -115,7 +117,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 		}
 		// Now aggregate into a reasonable Hashtable<String String>
 		final Hashtable<String, String> content = new Hashtable<String, String>();
-		final Enumeration<String> contentKeys = contentArray.keys();
+		final Enumeration<String> contentKeys = contentArray.keySet();
 
 		while (contentKeys.hasMoreElements()) {
 			final String key = contentKeys.nextElement();
@@ -133,7 +135,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	private DataColumnSpec createFCSColumnSpec() throws Exception {
 		final DataColumnSpecCreator creator = new DataColumnSpecCreator("FCS Frame", ColumnStoreCell.TYPE);
 		// Create properties
-		final Hashtable<String, String> content = createColumnPropertiesContent();
+		final HashMap<String, String> content = createColumnPropertiesContent();
 		final DataColumnProperties properties = new DataColumnProperties(content);
 		creator.setProperties(properties);
 		// Create spec

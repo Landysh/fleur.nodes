@@ -3,6 +3,7 @@ package io.landysh.inflor.java.core.dataStructures;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.TreeMap;
 
@@ -24,7 +25,7 @@ public class ColumnStore extends DomainObject{
 
 	private TreeMap<String, FCSDimension> columnData;
 
-	private Hashtable<String, String> keywords;
+	private HashMap<String, String> keywords;
 	private String preferredName;
 
 	// data properties
@@ -44,11 +45,11 @@ public class ColumnStore extends DomainObject{
 	 *            some annotation to get started with. Must be a valid FCS
 	 *            header but may be added to later.
 	 */
-	public ColumnStore(Hashtable<String, String> keywords, int rowCount) {
+	public ColumnStore(HashMap<String, String> keywords, int rowCount) {
 		this(null, keywords, rowCount);
 	}
 	
-	public ColumnStore(String priorUUID, Hashtable<String, String> keywords, int rowCount) {
+	public ColumnStore(String priorUUID, HashMap<String, String> keywords, int rowCount) {
 		super(priorUUID);
 		this.keywords = keywords;
 		columnData = new TreeMap<String, FCSDimension>();
@@ -84,7 +85,7 @@ public class ColumnStore extends DomainObject{
 		return matchingDimension.getData();
 	}
 
-	public Hashtable<String, String> getKeywords() {
+	public HashMap<String, String> getKeywords() {
 		return keywords;
 	}
 
@@ -190,7 +191,7 @@ public class ColumnStore extends DomainObject{
 		final Message loadedMessage = Message.parseFrom(bytes);
 
 		// Load the keywords
-		final Hashtable<String, String> keywords = new Hashtable<String, String>();
+		final HashMap<String, String> keywords = new HashMap<String, String>();
 		for (int i = 0; i < loadedMessage.getKeywordCount(); i++) {
 			final Keyword keyword = loadedMessage.getKeyword(i);
 			final String key = keyword.getKey();

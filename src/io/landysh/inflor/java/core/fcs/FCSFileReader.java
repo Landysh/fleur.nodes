@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -72,7 +72,7 @@ public class FCSFileReader {
 		// text specific properties
 		beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
 		endText = readOffset(FIRSTBYTE_EndTextOffset, LASTBYTE_EndTextOffset);
-		final Hashtable<String, String> header = readHeader(path_to_file);
+		final HashMap<String, String> header = readHeader(path_to_file);
 		header.put("FCSVersion", readFCSVersion(FCSFile));
 
 		// Try to validate the header.
@@ -117,7 +117,7 @@ public class FCSFileReader {
 		FCSFile.close();
 	}
 
-	private Integer[] createBitMap(Hashtable<String, String> keywords) {
+	private Integer[] createBitMap(HashMap<String, String> keywords) {
 		// This method reads how many bytes per parameter and returns an integer
 		// array of these values
 		final String[] rawParameterNames = FCSUtils.parseDimensionList(keywords);
@@ -135,7 +135,7 @@ public class FCSFileReader {
 		return columnStore;
 	}
 
-	public Hashtable<String, String> getHeader() {
+	public HashMap<String, String> getHeader() {
 		return columnStore.getKeywords();
 	}
 
@@ -218,8 +218,8 @@ public class FCSFileReader {
 		return row;
 	}
 
-	private Hashtable<String, String> readHeader(String path_to_file) throws Exception {
-		Hashtable<String, String> header = new Hashtable<String, String>();
+	private HashMap<String, String> readHeader(String path_to_file) throws Exception {
+		HashMap<String, String> header = new HashMap<String, String>();
 
 		// Delimiter is first UTF-8 character in the text section
 		final byte[] delimiterBytes = new byte[1];
@@ -237,7 +237,7 @@ public class FCSFileReader {
 			rawKeywords = rawKeywords.substring(0, rawKeywords.length() - 1);
 		}
 		final StringTokenizer s = new StringTokenizer(rawKeywords, delimiter);
-		final Hashtable<String, String> table = new Hashtable<String, String>();
+		final HashMap<String, String> table = new HashMap<String, String>();
 		Boolean ok = true;
 		while (s.hasMoreTokens() && ok) {
 			final String key = s.nextToken().trim();

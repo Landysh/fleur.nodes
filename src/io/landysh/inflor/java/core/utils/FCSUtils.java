@@ -1,17 +1,15 @@
 package io.landysh.inflor.java.core.utils;
 
 import java.util.BitSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 
 public class FCSUtils {
 
-	public static Integer findParameterNumnberByName(Hashtable<String, String> keywords, String name) {
+	public static Integer findParameterNumnberByName(HashMap<String, String> keywords, String name) {
 		/**
 		 * Attempts to find the parameter number in a supplied FCS header
 		 * (keywords). If the parameter name is not it will return null.
@@ -33,7 +31,7 @@ public class FCSUtils {
 		}
 	}
 
-	public static String findStainName(Hashtable<String, String> keywords, Integer parameterIndex) {
+	public static String findStainName(HashMap<String, String> keywords, Integer parameterIndex) {
 		/**
 		 * Returns the $PnS value for a particular parameter index
 		 */
@@ -57,7 +55,7 @@ public class FCSUtils {
 		return filteredData;
 	}
 	
-	public static String[] parseDimensionList(Hashtable<String, String> keywords) {
+	public static String[] parseDimensionList(HashMap<String, String> keywords) {
 		/**
 		 * Returns a String[] containing all of the values of the $PnN keywords
 		 * from the specified header table.
@@ -71,7 +69,7 @@ public class FCSUtils {
 		return plist;
 	}
 
-	public static Boolean validateHeader(Hashtable<String, String> keywords) {
+	public static Boolean validateHeader(HashMap<String, String> keywords) {
 		/**
 		 * Returns a boolean indicating whether the specified keywords are
 		 * consistent with the requirements of the FCS Standard version 3.1.
@@ -89,8 +87,8 @@ public class FCSUtils {
 		return validHeader;
 	}
 
-	public static Hashtable<String, String> findParameterKeywords(Hashtable <String, String> sourceKeywords, int parameterIndex) {
-		Hashtable <String, String> keywords = new Hashtable<String, String>();
+	public static HashMap<String, String> findParameterKeywords(HashMap <String, String> sourceKeywords, int parameterIndex) {
+		HashMap <String, String> keywords = new HashMap<String, String>();
 		String regex = "\\$P" + parameterIndex +"[A-Z]";
 		for (String key:keywords.keySet()){
 			if (key.matches(regex)){
@@ -100,7 +98,7 @@ public class FCSUtils {
 		return keywords;
 	}
 
-	public static FCSDimension buildFCSDimension(int pIndex, Hashtable<String, String> header, boolean wasComped) {
+	public static FCSDimension buildFCSDimension(int pIndex, HashMap<String, String> header, boolean wasComped) {
 		/**
 		 * Constructs a new FCSDimension object from the parameter data in the header of an FCS File.
 		 */
