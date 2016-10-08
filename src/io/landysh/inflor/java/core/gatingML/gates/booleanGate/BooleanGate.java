@@ -7,10 +7,16 @@ import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
+import io.landysh.inflor.java.core.gatingML.gates.BitSetAccumulator;
+import io.landysh.inflor.java.core.gatingML.gates.BitSetOperator;
 
 public class BooleanGate extends AbstractGate {
 
-	private BooleanOperator operator;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7315903940971172599L;
+	private BitSetOperator operator;
 	private final ConcurrentHashMap<String, AbstractGate> references;
 
 	public BooleanGate(String id) {
@@ -21,16 +27,16 @@ public class BooleanGate extends AbstractGate {
 	@Override
 	public BitSet evaluate(ColumnStore data) {
 		validate();
-		final BooleanAccumulator acc = new BooleanAccumulator(operator);
+		final BitSetAccumulator acc = new BitSetAccumulator(operator);
 		final BitSet result = references.values().parallelStream().map(g -> g.evaluate(data)).reduce(acc).get();
 		return result;
 	}
 
-	public BooleanOperator getBooleanOperator() {
+	public BitSetOperator getBooleanOperator() {
 		return operator;
 	}
 
-	public void setBooleanOperator(BooleanOperator op) {
+	public void setBooleanOperator(BitSetOperator op) {
 		operator = op;
 	}
 
