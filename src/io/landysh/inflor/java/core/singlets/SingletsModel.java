@@ -1,6 +1,7 @@
 package io.landysh.inflor.java.core.singlets;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 
 import org.apache.commons.math3.stat.StatUtils;
 
@@ -57,11 +58,11 @@ public class SingletsModel {
 		return ratio;
 	}
 
-	public boolean[] scoreModel(double[] ratio) {
-		final boolean[] mask = new boolean[ratio.length];
-		for (int i = 0; i < mask.length; i++) {
+	public BitSet scoreModel(double[] ratio) {
+		final BitSet mask = new BitSet(ratio.length);
+		for (int i = 0; i < mask.size(); i++) {
 			if (ratio[i] <= ratioThreshold) {
-				mask[i] = true;
+				mask.set(i);
 			}
 		}
 		return mask;
