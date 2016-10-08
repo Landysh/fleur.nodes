@@ -6,9 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,17 +21,26 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.TitledBorder;
 
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.ui.RectangleEdge;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.plots.AbstractFCPlot;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
+import io.landysh.inflor.java.core.subsets.AbstractSubset;
+import io.landysh.inflor.java.core.subsets.RootSubset;
 import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.TransformType;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import sun.awt.windows.WEmbeddedFrame;
 
@@ -50,12 +62,12 @@ public class ChartEditorDialog extends JDialog {
 	private JButton m_okButton = null;
 	private JButton m_cancelButton = null;
 	public boolean isOK = false;
-	private JComboBox<String> parentSelectorBox;
+	private JComboBox<AbstractSubset> parentSelectorBox;
 	private JComboBox<PlotTypes> plotTypeSelectorBox;
 	private JPanel domainAxisGroup;
-	private JComboBox<String> domainParameterBox;
+	private JComboBox<FCSDimension> domainParameterBox;
 	private JPanel rangeAxisGroup;
-	private JComboBox<String> rangeParameterBox;
+	private JComboBox<FCSDimension> rangeDimBox;
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
 	private AbstractFCPlot previewPlot;
@@ -78,8 +90,11 @@ public class ChartEditorDialog extends JDialog {
 		parentDialog = parent;
 		spec = new ChartSpec();
 		spec.getPlotType();
-		spec.setDomainAxisName(parent.getSelectedSample().getColumnNames()[0]);
-		spec.setRangeAxisName(parent.getSelectedSample().getColumnNames()[1]);
+		String first = parent.getSelectedSample().getData().navigableKeySet().first();
+		String next = parent.getSelectedSample().getData().navigableKeySet().ceiling(first);
+
+		spec.setDomainAxisName(parent.getSelectedSample().getVector(first).toString());
+		spec.setRangeAxisName(parent.getSelectedSample().getVector(next).toString());
 		spec.setDomainTransform(new BoundDisplayTransform(0, 262144));
 		spec.setRangeTransform(new BoundDisplayTransform(0, 262144));
 		setModal(true);
@@ -108,11 +123,11 @@ public class ChartEditorDialog extends JDialog {
 		// populate the dialog
 		setTitle("Editing: " + spec.getDisplayName());
 		final JPanel content = createContentPanel();
-		parentSelectorBox.setSelectedItem(spec.getParent());
+		parentSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
 		domainParameterBox.setSelectedItem(spec.getDomainAxisName());
 		domainTransformBox.setSelectedItem(spec.getDomainTransform());
-		rangeParameterBox.setSelectedItem(spec.getRangeAxisName());
+		rangeDimBox.setSelectedItem(spec.getRangeAxisName());
 		rangeTransformBox.setSelectedItem(spec.getRangeTransform());
 
 		getContentPane().add(content);
@@ -177,13 +192,43 @@ public class ChartEditorDialog extends JDialog {
 	}
 
 	private ChartPanel createPreviewPanel() {
-		ColumnStore cStore = (ColumnStore) parentDialog.getSelectedSample();
-		double[] xData = cStore.getDimensionData(spec.getDomainAxisName());
-		double[] yData = cStore.getDimensionData(spec.getRangeAxisName());		
+		TreeMap<String, FCSDimension> dataMap = ((ColumnStore) parentDialog.getSelectedSample()).getData();
+		String domainName = spec.getDomainAxisName();
+		double[] xData = FCSUtils.findCompatibleDimension(dataMap, domainName).getData();
+		double[] yData = FCSUtils.findCompatibleDimension(dataMap, spec.getRangeAxisName()).getData();		
 		previewPlot = PlotUtils.createPlot(spec);
 		JFreeChart chart = previewPlot.createChart(xData, yData);
 		chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(300,250));
+		chartPanel.addChartMouseListener(new ChartMouseListener(){
+
+			@Override
+			public void chartMouseClicked(ChartMouseEvent event) {
+				int mouseX = event.getTrigger().getX();
+				int mouseY = event.getTrigger().getY();
+				Point2D p = chartPanel.translateScreenToJava2D( 
+						new Point(mouseX, mouseY)); 
+						XYPlot plot = (XYPlot) chart.getPlot(); 
+						Rectangle2D plotArea = chartPanel.getScreenDataArea(); 
+						ValueAxis domainAxis = plot.getDomainAxis(); 
+						RectangleEdge domainAxisEdge = plot.getDomainAxisEdge(); 
+						ValueAxis rangeAxis = plot.getRangeAxis(); 
+						RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge(); 
+						double chartX = domainAxis.java2DToValue(p.getX(), plotArea, domainAxisEdge); 
+						double chartY = rangeAxis.java2DToValue(p.getY(), plotArea, rangeAxisEdge); 
+						
+						System.out.println("mouseX:"+ new Double(chartX)); 
+						System.out.println("mouseY:"+ new Double(chartY)); 
+	
+			}
+
+			@Override
+			public void chartMouseMoved(ChartMouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
+		chartPanel.setPreferredSize(new Dimension(280,250));
 		return chartPanel;
 	}
 
@@ -193,14 +238,19 @@ public class ChartEditorDialog extends JDialog {
 		domainAxisGroup.setLayout(new FlowLayout());
 		domainAxisGroup
 				.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Horizontal Axis"));
-		//Parameter selector
-		final String[] domainParameters = getParameterList();
-		domainParameterBox = new JComboBox<String>(domainParameters);
-		domainParameterBox.setSelectedIndex(0);//TODO: Something smarter
+		
+		domainParameterBox = new JComboBox<FCSDimension>();
+		
+		parentDialog.getSelectedSample()
+					.getData()
+					.values()
+					.forEach((dimension)->domainParameterBox.addItem(dimension));
+		
+		domainParameterBox.setSelectedIndex(1);
 		domainParameterBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setDomainAxisName((String) domainParameterBox.getModel().getSelectedItem());
+				spec.setDomainAxisName((String) domainParameterBox.getModel().getSelectedItem().toString());
 				updatePreviewPlot();
 			}
 		});
@@ -244,15 +294,16 @@ public class ChartEditorDialog extends JDialog {
 		return m_okButton;
 	}
 
-	private JComboBox<String> createParentSelector() {
-		parentSelectorBox = new JComboBox<String>(new String[] {});
-		parentSelectorBox.setSelectedIndex(-1);
+	private JComboBox<AbstractSubset> createParentSelector() {
+		parentSelectorBox = new JComboBox<AbstractSubset>();
+		parentSelectorBox.addItem(new RootSubset(parentDialog.getSelectedSample()));
+		parentDialog.m_Settings.getSubSets().forEach(subset -> parentSelectorBox.addItem(subset));
+		parentSelectorBox.setSelectedIndex(0);
 		parentSelectorBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				//ColumnStore parent = (ColumnStore) parentSelectorBox.getModel().getSelectedItem();
-				//TODO: Figure out how to reference other populations.
-				spec.setParent(null);
+				String parentID = ((AbstractSubset)parentSelectorBox.getSelectedItem()).ID;
+				spec.setParent(parentID);
 				updatePreviewPlot();
 			}
 		});
@@ -265,8 +316,10 @@ public class ChartEditorDialog extends JDialog {
 		progressBar.setString("Initializing");
 		progressBar.getModel().setValue(1);
 		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
-		double[] xData = data.getDimensionData(spec.getDomainAxisName());
-		double[] yData = data.getDimensionData(spec.getRangeAxisName());		
+		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getDomainAxisName());
+		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getRangeAxisName());
+		double[] xData = domainDimension.getData();
+		double[] yData = rangeDimension.getData();	
 		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, xData, yData);
 		worker.execute();
 	}
@@ -300,15 +353,19 @@ public class ChartEditorDialog extends JDialog {
 		rangeAxisGroup.setLayout(new FlowLayout());
 		TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Vertical Axis");
 		rangeAxisGroup.setBorder(border);
+	 	
+		rangeDimBox = new JComboBox<FCSDimension>();
 		
-		
-		final String[] rangeParameters = getParameterList();
-		rangeParameterBox = new JComboBox<String>(rangeParameters);
-		rangeParameterBox.setSelectedItem(spec.getRangeAxisName());
-		rangeParameterBox.addActionListener(new ActionListener() {
+		parentDialog.getSelectedSample()
+					.getData()
+					.values()
+					.forEach((dimension)->rangeDimBox.addItem(dimension));
+
+		rangeDimBox.setSelectedIndex(0);
+		rangeDimBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				spec.setRangeAxisName((String) rangeParameterBox.getModel().getSelectedItem());
+				spec.setRangeAxisName((String) rangeDimBox.getModel().getSelectedItem().toString());
 				updatePreviewPlot();
 			}
 		});
@@ -328,18 +385,10 @@ public class ChartEditorDialog extends JDialog {
 		});
 		
 		//Add the components
-		rangeAxisGroup.add(rangeParameterBox);
+		rangeAxisGroup.add(rangeDimBox);
 		rangeAxisGroup.add(rangeTransformBox);
 		
 		return rangeAxisGroup;
-	}
-
-	private String[] getParameterList() {
-		final ArrayList<String> options = new ArrayList<String>();
-		for (final String name : parentDialog.getSelectedSample().getColumnNames()) {
-			options.add(name);
-		}
-		return options.toArray(new String[options.size()]);
 	}
 
 	public ChartSpec getChartSpec() {
