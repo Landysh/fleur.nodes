@@ -10,7 +10,9 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.plots.ChartSpec;
+import io.landysh.inflor.java.core.subsets.RootSubset;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {
@@ -31,7 +33,8 @@ public class CellLineageTree extends JTree {
 		super.removeAll();
 		//initialize the tree
 		renderer = new TreeCellPlotRenderer(dataStore);
-		root = new DefaultMutableTreeNode("Root");
+		root = new DefaultMutableTreeNode(new RootSubset(dataStore));
+		this.setRowHeight(50);
 		DefaultTreeModel m_tree = new DefaultTreeModel(root);
 		
 		if (specs!=null){
@@ -39,6 +42,7 @@ public class CellLineageTree extends JTree {
 					(MutableTreeNode) new DefaultMutableTreeNode(spec),
 					root, 
 					root.getChildCount());
+			
 			specs.values().forEach(appendToTree);
 
 			Consumer<ChartSpec> setHierarchy = spec -> updateHierarchy(m_tree, spec.ID);	
@@ -47,8 +51,7 @@ public class CellLineageTree extends JTree {
 		
 		this.setModel(m_tree);
 		this.setCellRenderer(renderer);
-		//this.setEditable(false);
-		this.setRowHeight(150);
+		this.setRowHeight(0);
 	}
 
 	private Object updateHierarchy(DefaultTreeModel m_tree, String uuid) {
@@ -60,9 +63,13 @@ public class CellLineageTree extends JTree {
 					 parentNode = findNode(m_tree, parentID);
 				}
 				if (childNode.isNodeChild(parentNode)){
-					//Do nothing
+					//Do nothing if it is already a child of it's parent.
+				}else if(parentNode==null){
+					//Then the parent node is likely the root node.I think.
+					m_tree.insertNodeInto(childNode, root, root.getChildCount()-1);
 				} else {
-					m_tree.insertNodeInto(childNode, parentNode, 0);
+					//Otherwise, add it to the desired parent node.
+					m_tree.insertNodeInto(childNode, parentNode, parentNode.getChildCount()-1);
 				}
 			}
 		return null;
@@ -77,12 +84,10 @@ public class CellLineageTree extends JTree {
 		Enumeration<?> nodeEnum = root.preorderEnumeration();
 		while (nodeEnum.hasMoreElements()){
 			DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) nodeEnum.nextElement();
-			if(currentNode.getUserObject().getClass().equals(ChartSpec.class)){
-				ChartSpec currentSpec = (ChartSpec) currentNode.getUserObject();
-				if (currentSpec.ID.equals(queryID)){
+				DomainObject node = (DomainObject) currentNode.getUserObject();
+				if (node.ID.equals(queryID)){
 					return currentNode;
 				}
-			}
 		}
 		return null;
 	}	
@@ -93,8 +98,8 @@ public class CellLineageTree extends JTree {
         super.updateUI();
         setCellRenderer(renderer);
         setRowHeight(0);
-        setRootVisible(false);
-        setShowsRootHandles(false);
+        setRootVisible(true);
+        setShowsRootHandles(true);
       }
 }
 //EOF

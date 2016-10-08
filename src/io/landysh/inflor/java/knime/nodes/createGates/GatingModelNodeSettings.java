@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import org.knime.core.node.InvalidSettingsException;
@@ -174,6 +175,10 @@ public class GatingModelNodeSettings {
 
 	public void validate(NodeSettingsRO settings) {
 		// TODO Auto-generated method stub
+	}
+
+	public Collection<AbstractSubset> getSubSets() {
+		return this.m_subsets.values();
 	}
 }
 // EOF
