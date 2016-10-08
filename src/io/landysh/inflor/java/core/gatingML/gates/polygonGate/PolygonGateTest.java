@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Hashtable;
 
 import org.junit.Test;
 
@@ -26,8 +25,13 @@ public class PolygonGateTest {
 		final Double[] d2Values = { 0., 1., 1., 0. };
 
 		final ColumnStore testData = new ColumnStore();
-		testData.addColumn(d1Name, new double[] { 0.5 });
-		testData.addColumn(d2Name, new double[] { 0.5 });
+		FCSDimension d1 = new FCSDimension(1, 0, d1Name, d1Name, 0, 0, 0, false);
+		d1.getData()[0] = 0.5;
+		
+		FCSDimension d2 = new FCSDimension(1, 0, d2Name, d2Name, 0, 0, 0, false);
+		d2.getData()[0] = 0.5;
+		testData.addColumn(d1Name, d1);
+		testData.addColumn(d2Name, d2);
 
 		// Test
 		final PolygonGate testGate = new PolygonGate(id);
