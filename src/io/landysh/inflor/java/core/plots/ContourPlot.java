@@ -2,19 +2,20 @@ package io.landysh.inflor.java.core.plots;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.BitSet;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.GrayPaintScale;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.ui.RectangleAnchor;
 
 import io.landysh.inflor.java.core.dataStructures.Histogram2D;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class ContourPlot extends AbstractFCPlot {
-	
+		
 	XYPlot plot;
 	ChartSpec spec;
 
@@ -45,9 +46,16 @@ public class ContourPlot extends AbstractFCPlot {
 		
 		DefaultXYZDataset plotData = new DefaultXYZDataset();
 		
-		plotData.addSeries("Series 1", new double[][] {histogram.getXBins(), 
-			                                          histogram.getYBins(), 
-			                                          histogram.getZValues()});
+		BitSet nonEmptyMask = histogram.getNonEmptyBins();
+		double[] x = FCSUtils.filterColumn(nonEmptyMask, histogram.getXBins());
+		double[] y = FCSUtils.filterColumn(nonEmptyMask, histogram.getYBins());
+		double[] z = FCSUtils.filterColumn(nonEmptyMask, histogram.getZValues());
+        //TODO: Fix this.
+		//double[] zNoBorderBins = FCSUtils.filterColumn(histogram.getNonEdgeBins(), histogram.getZValues());
+		PaintModel pm = new PaintModel(z);        
+		double [] discreteValues = pm.getDiscreteData(z);
+        plotData.addSeries("Series 1", new double[][] {x,y,discreteValues});
+
 		
 		//Renderer
 		XYBlockRenderer renderer = new XYBlockRenderer();
@@ -55,52 +63,24 @@ public class ContourPlot extends AbstractFCPlot {
         renderer.setBlockHeight(histogram.getYBinWidth());
         renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
         renderer.setSeriesVisible(0, true);
-        double zMaxHeight = histogram.getMaxHistogramHeight();
-        Paint[] contourColors = createColorScale(zMaxHeight);
         
-        
-		LookupPaintScale paintScale = new LookupPaintScale(0, zMaxHeight, Color.gray);
-		double [] scaleValues = new double[contourColors.length];
-		double delta = (zMaxHeight)/(contourColors.length -1);
-		double value = 0;
-		for(int i=0; i<contourColors.length; i++){
-			paintScale.add(value, contourColors[i]);
-			scaleValues[i] = value;
-			value = value + delta;
+		Paint[] paints = pm.getPaints(); 
+		double[] levels = pm.getLevels();
+		LookupPaintScale paintScale = new LookupPaintScale(0,pm.getThreshold(), Color.red);
+		for (int i=0;i<levels.length;i++){
+			paintScale.add(levels[i], paints[i]);
 		}
-		GrayPaintScale p2 = new GrayPaintScale(0, zMaxHeight);
-		renderer.setPaintScale(p2);
+		renderer.setPaintScale(paintScale);
 		
 		//Create the plot
 		plot.setDataset(plotData);
 		plot.setDomainAxis(PlotUtils.createAxis(domainName, spec.getDomainTransform()));
 		plot.setRangeAxis(PlotUtils.createAxis(rangeName, spec.getRangeTransform()));
 		plot.setRenderer(renderer);
-		
 		//Add to panel.
 		this.chart = new JFreeChart(plot);
 		chart.removeLegend();
 		return chart;	
-	}
-
-	private Paint[] createColorScale(double maxHeight) {
-		
-		Paint[] colorScale = new Paint[(int)maxHeight+1];
-
-		float startHue = 180/360f;
-		float stopHue = 1f;
-		if (colorScale.length>1){
-			colorScale[0] = Color.WHITE;
-			colorScale[1] = Color.getHSBColor(startHue, 0.6f, 0.6f);
-			for (int i=2;i<colorScale.length;i++){
-				float num = (float)(i-2)/colorScale.length;
-				float delta = (stopHue-startHue);
-				float hueOffset = num*delta;
-				float currentHue = (stopHue - hueOffset);
-				colorScale[i] = Color.getHSBColor(currentHue, 0.6f, 0.6f);
-			}
-		}
-		return colorScale;
 	}
 }
 //EOF
