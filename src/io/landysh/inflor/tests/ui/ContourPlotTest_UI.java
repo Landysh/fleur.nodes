@@ -15,11 +15,11 @@ import org.jfree.ui.ApplicationFrame;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gatingML.gates.rangeGate.FCSChartPanel;
-import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RectangleGateListener;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.ContourPlot;
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
+import io.landysh.inflor.java.core.plots.gateui.RectangleGateAdapter;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 
 @SuppressWarnings("serial")
@@ -93,7 +93,7 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				activeListener = new RectangleGateListener(panel);
+				activeListener = new RectangleGateAdapter(panel);
 				panel.addMouseListener(activeListener);
 				panel.addMouseMotionListener(activeListener);
 				
