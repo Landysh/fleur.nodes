@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
+package io.landysh.inflor.java.core.plots.gateui;
 
 
 import java.awt.event.MouseAdapter;
@@ -7,9 +7,10 @@ import java.awt.event.MouseEvent;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.plot.XYPlot;
 
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.ui.DefaultGraphics;
 
-public class RectangleAnnotationMouseAdapter extends MouseAdapter {
+public class GateSelectionAdapter extends MouseAdapter {
 	
 	private XYBoxAnnotation annotation;
 	private FCSChartPanel panel;
@@ -19,7 +20,7 @@ public class RectangleAnnotationMouseAdapter extends MouseAdapter {
 	private double y1;
 
 
-	public RectangleAnnotationMouseAdapter(FCSChartPanel panel, XYBoxAnnotation box, double x0, double x1, double y0, double y1) {
+	public GateSelectionAdapter(FCSChartPanel panel, XYBoxAnnotation box, double x0, double x1, double y0, double y1) {
 		this.panel = panel;
 		this.annotation = box;
 		this.x0 = x0;

@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
+package io.landysh.inflor.java.core.plots;
 
 import java.util.ArrayList;
 

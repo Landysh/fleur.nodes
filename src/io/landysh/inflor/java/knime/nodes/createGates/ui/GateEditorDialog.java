@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
+package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

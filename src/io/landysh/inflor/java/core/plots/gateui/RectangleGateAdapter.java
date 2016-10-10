@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
+package io.landysh.inflor.java.core.plots.gateui;
 
 import java.awt.Frame;
 import java.awt.event.MouseEvent;
@@ -11,9 +11,12 @@ import javax.swing.event.MouseInputAdapter;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.chart.plot.XYPlot;
 
+import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.ui.DefaultGraphics;
+import io.landysh.inflor.java.knime.nodes.createGates.ui.GateEditorDialog;
 
-public class  RectangleGateListener extends MouseInputAdapter{
+public class  RectangleGateAdapter extends MouseInputAdapter{
     //http://stackoverflow.com/questions/16105277/jfreechart-select-an-area-without-zooming
     private  final FCSChartPanel panel;
 	private Point2D vert1;
@@ -24,13 +27,13 @@ public class  RectangleGateListener extends MouseInputAdapter{
 	private double y0;
 	private double y1;
 
-    public RectangleGateListener(FCSChartPanel panel) {
+    public RectangleGateAdapter(FCSChartPanel panel) {
         this.panel = panel;
     }
 
     private void updateMarker(){
         if (box != null){
-            ((XYPlot) panel.getChart().getPlot()).removeAnnotation(box);
+            panel.getChart().getXYPlot().removeAnnotation(box);
         }
         if (!(vert0==null&&vert1==null)){
             x0 = Math.min(vert0.getX(), vert1.getX());
