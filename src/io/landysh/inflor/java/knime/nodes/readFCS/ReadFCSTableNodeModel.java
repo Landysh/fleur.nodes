@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
@@ -54,6 +55,8 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	private final SettingsModelString m_FileLocation = new SettingsModelString(CFGKEY_FileLocation,
 			DEFAULT_FileLocation);
 	private final SettingsModelBoolean m_Compensate = new SettingsModelBoolean(KEY_Compensate, DEFAULT_Compensate);
+
+	private int currentKeywordIndex = 0;
 
 	/**
 	 * Constructor for the node model.
@@ -210,25 +213,23 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	}
 
 	private void readHeader(BufferedDataContainer header, HashMap<String, String> keywords) {
-		final Enumeration<String> enumKey = keywords.keys();
-		int i = 0;
-		while (enumKey.hasMoreElements()) {
-			final String key = enumKey.nextElement();
-			final String val = keywords.get(key);
-			final RowKey rowKey = new RowKey("Row " + i);
-			// the cells of the current row, the types of the cells must match
-			// the column spec (see above)
-			final DataCell[] keywordCells = new DataCell[2];
-			keywordCells[0] = new StringCell(key);
-			keywordCells[1] = new StringCell(val);
-			final DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
-			header.addRowToTable(keywordRow);
-			i++;
-			if (key.equals("0") && val.equals("0"))
-				keywords.remove(key);
-		}
+		keywords.entrySet().forEach(entry -> writeRow(header, entry));
 		header.close();
 
+	}
+
+	private synchronized void writeRow(BufferedDataContainer header, Entry<String, String> entry) {
+		String key = entry.getKey();
+		String val = entry.getValue();
+		final RowKey rowKey = new RowKey("Row " + currentKeywordIndex);
+		// the cells of the current row, the types of the cells must match
+		// the column spec (see above)
+		final DataCell[] keywordCells = new DataCell[2];
+		keywordCells[0] = new StringCell(key);
+		keywordCells[1] = new StringCell(val);
+		final DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
+		header.addRowToTable(keywordRow);
+		currentKeywordIndex++;
 	}
 
 	/**
@@ -251,7 +252,6 @@ public class ReadFCSTableNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
-
 		m_FileLocation.saveSettingsTo(settings);
 		m_Compensate.saveSettingsTo(settings);
 	}
@@ -265,5 +265,4 @@ public class ReadFCSTableNodeModel extends NodeModel {
 		m_FileLocation.validateSettings(settings);
 		m_Compensate.validateSettings(settings);
 	}
-
 }
