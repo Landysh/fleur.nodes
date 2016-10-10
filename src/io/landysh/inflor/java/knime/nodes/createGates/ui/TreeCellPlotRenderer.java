@@ -14,7 +14,7 @@ import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
-import io.landysh.inflor.java.core.plots.AbstractFCPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.subsets.AbstractSubset;
@@ -39,7 +39,7 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
 			return label;
 		} else if (node.getUserObject() instanceof ChartSpec){
 			ChartSpec spec = (ChartSpec) node.getUserObject();
-			AbstractFCPlot plot = PlotUtils.createPlot(spec);
+			AbstractFCChart plot = PlotUtils.createPlot(spec);
 			
 			FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getDomainAxisName());
 			FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getRangeAxisName());

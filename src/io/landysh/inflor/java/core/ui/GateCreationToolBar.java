@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import io.landysh.inflor.java.core.gatingML.gates.rangeGate.FCSChartPanel;
-import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RectangleGateListener;
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
+import io.landysh.inflor.java.core.plots.gateui.RectangleGateAdapter;
 
 @SuppressWarnings("serial")
 public class GateCreationToolBar extends JToolBar {
@@ -66,7 +66,7 @@ public class GateCreationToolBar extends JToolBar {
 				panel.removeMouseMotionListener((MouseMotionListener) activeListener);
 				
 				//Create new rect gate listener.
-				activeListener = new RectangleGateListener(panel);
+				activeListener = new RectangleGateAdapter(panel);
 				panel.addMouseListener(activeListener);
 				panel.addMouseMotionListener((MouseMotionListener) activeListener);
 			}

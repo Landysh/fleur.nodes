@@ -51,9 +51,9 @@ public class PlotUtils {
 		}
 	}
 
-	public static AbstractFCPlot createPlot(ChartSpec plotSpec) {
+	public static AbstractFCChart createPlot(ChartSpec plotSpec) {
 		PlotTypes type = plotSpec.getPlotType();
-		AbstractFCPlot newPlot = null;		
+		AbstractFCChart newPlot = null;		
 		if (type.equals(PlotTypes.Contour)){
 			newPlot = new ContourPlot(plotSpec);
 		} else if (type.equals(PlotTypes.Scatter)){

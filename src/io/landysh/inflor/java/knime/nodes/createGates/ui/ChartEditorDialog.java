@@ -31,7 +31,7 @@ import org.jfree.ui.RectangleEdge;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
-import io.landysh.inflor.java.core.plots.AbstractFCPlot;
+import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
@@ -70,7 +70,7 @@ public class ChartEditorDialog extends JDialog {
 	private JComboBox<FCSDimension> rangeDimBox;
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
-	private AbstractFCPlot previewPlot;
+	private AbstractFCChart previewPlot;
 	private ChartPanel chartPanel;
 	private JComboBox<TransformType> domainTransformBox;
 	private JComboBox<TransformType> rangeTransformBox;

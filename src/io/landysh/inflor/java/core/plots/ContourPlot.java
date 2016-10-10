@@ -14,7 +14,7 @@ import org.jfree.ui.RectangleAnchor;
 import io.landysh.inflor.java.core.dataStructures.Histogram2D;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
-public class ContourPlot extends AbstractFCPlot {
+public class ContourPlot extends AbstractFCChart {
 		
 	XYPlot plot;
 	ChartSpec spec;
