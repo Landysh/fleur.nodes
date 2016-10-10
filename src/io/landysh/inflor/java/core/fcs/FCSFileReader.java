@@ -299,4 +299,16 @@ public class FCSFileReader {
 			return null;
 		}
 	}
+	
+	public static HashMap<String, String> readHeaderOnly(String filePath)  {
+		FCSFileReader reader;
+		try {
+			reader = new FCSFileReader(filePath, false);
+			return reader.getHeader();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }
