@@ -3,9 +3,8 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map.Entry;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
@@ -29,8 +28,6 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
-
-import com.google.common.base.Joiner;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
@@ -56,6 +53,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	static final boolean DEFAULT_COMPENSATE = false;
 	private final SettingsModelString m_path = new SettingsModelString(CFGKEY_PATH, DEFAULT_PATH);
 	private final SettingsModelBoolean m_compensate = new SettingsModelBoolean(CFGKEY_COMPENSATE, DEFAULT_COMPENSATE);
+
+	private FileStoreFactory fileStoreFactory;
+
+	private int currentFileIndex=0;
+	private int fileCount;
 
 	/**
 	 * Constructor for the node model.
@@ -86,52 +88,23 @@ public class ReadFCSSetNodeModel extends NodeModel {
 		 * Creates column properties for an FCS Set by looking all of the
 		 * headers and setting shared keyword values.
 		 */
-		final HashMap<String, ArrayList<String>> contentArray = new HashMap<String, ArrayList<String>>();
-		final String[] filePaths = getFilePaths(m_path.getStringValue());
-		// For each file
-		
-		for (final String path : filePaths) {
-			final FCSFileReader FCSReader = new FCSFileReader(path, false);
-			final HashMap<String, String> header = FCSReader.getHeader();
-			final Enumeration<String> keys = header.keySet();
-			// for each keyword
-			while (keys.hasMoreElements()) {
-				final String key = keys.nextElement();
-				final String value = header.get(key);
-				// If the keyword has been seen already
-				if (contentArray.containsKey(key)) {
-					// See if the value is new, if it isn't
-					if (contentArray.get(key).contains(value)) {
-						// Do nothing
-					} else {
-						// otherwise add it.
-						contentArray.get(key).add(value);
-					}
-				} else {
-					// if the keyword is new, add it and its value.
-					final ArrayList<String> values = new ArrayList<String>();
-					values.add(value);
-					contentArray.put(key, values);
-				}
-			}
-		}
-		// Now aggregate into a reasonable Hashtable<String String>
-		final Hashtable<String, String> content = new Hashtable<String, String>();
-		final Enumeration<String> contentKeys = contentArray.keySet();
-
-		while (contentKeys.hasMoreElements()) {
-			final String key = contentKeys.nextElement();
-			final ArrayList<String> values = contentArray.get(key);
-			if (values.size() == 1) {
-				content.put(key, values.get(0));
-			} else {
-				final String newVal = Joiner.on(',').join(values);
-				content.put(key, newVal);
-			}
-		}
+		final ArrayList<String> filePaths = getFilePaths(m_path.getStringValue());
+		final HashMap<String, String> content = new HashMap<String, String>();
+		filePaths.stream().map(path -> FCSFileReader.readHeaderOnly(path))
+								  					.forEach(map -> map.entrySet()
+										            .forEach(entry -> updateContent(content, entry)));
 		return content;
 	}
 
+	private void updateContent(HashMap<String, String> content, Entry<String, String> entry){
+		if (content.containsKey(entry.getKey())){
+			String currentValue = content.get(entry.getKey());
+			currentValue = currentValue + "||" + entry.getValue();
+		} else {
+			content.put(entry.getKey(), entry.getValue());
+		}
+	}
+	
 	private DataColumnSpec createFCSColumnSpec() throws Exception {
 		final DataColumnSpecCreator creator = new DataColumnSpecCreator("FCS Frame", ColumnStoreCell.TYPE);
 		// Create properties
@@ -155,26 +128,31 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
 			throws Exception {
-
+		currentFileIndex = 0;
 		logger.info("Beginning Execution.");
-
+		fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 		// Create the output spec and data container.
 		final DataTableSpec outSpec = createSpec();
 		final BufferedDataContainer container = exec.createDataContainer(outSpec);
-		final String[] filePaths = getFilePaths(m_path.getStringValue());
-		final int rowCount = filePaths.length;
+		final ArrayList<String> filePaths = getFilePaths(m_path.getStringValue());
+		fileCount = filePaths.size();
+		exec.checkCanceled();
+		filePaths.parallelStream().map(path->FCSFileReader.read(path, m_compensate.getBooleanValue()))
+								  .forEach(columnStore -> addRow(columnStore, container, exec));//forEach(dataSet -> tempStore.add(dataSet));
+		exec.checkCanceled();
 
-		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+		// once we are done, we close the container and return its table
+		container.close();
+		final BufferedDataTable out = container.getTable();
+		return new BufferedDataTable[] { out };
+	}
 
-		// Read all the files.
-		for (int i = 0; i < rowCount; i++) {
-			final RowKey key = new RowKey("Row " + i);
-			final String pathToFile = filePaths[i];
-			final FCSFileReader FCSReader = new FCSFileReader(pathToFile, m_compensate.getBooleanValue());
-			FCSReader.readData();
-			final ColumnStore columnStore = FCSReader.getColumnStore();
-			final String fsName = i + "ColumnStore.fs";
-			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+	private synchronized void addRow(ColumnStore columnStore, BufferedDataContainer container, ExecutionContext exec) {
+		final RowKey key = new RowKey("Row " + currentFileIndex);
+		final String fsName = currentFileIndex + "ColumnStore.fs";
+		FileStore fileStore;
+		try {
+			fileStore = fileStoreFactory.createFileStore(fsName);
 			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
 			final DataCell[] cells = new DataCell[] { fileCell };
 
@@ -182,16 +160,14 @@ public class ReadFCSSetNodeModel extends NodeModel {
 			container.addRowToTable(row);
 
 			// check if the execution monitor was canceled
-			exec.checkCanceled();
-			exec.setProgress(i / (double) rowCount, "Reading file " + (i + 1));
+			exec.setProgress(currentFileIndex / (double) fileCount, "Reading file " + (currentFileIndex + 1));
+			currentFileIndex++;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		// once we are done, we close the container and return its table
-		container.close();
-		final BufferedDataTable out = container.getTable();
-		return new BufferedDataTable[] { out };
 	}
 
-	private String[] getFilePaths(String dirPath) {
+	private ArrayList<String> getFilePaths(String dirPath) {
 		/**
 		 * Returns a list of valid FCS Files from the chose directory.
 		 */
@@ -206,7 +182,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 				System.out.println("Directory " + file.getName());
 			}
 		}
-		return validFiles.toArray(new String[validFiles.size()]);
+		return validFiles;
 	}
 
 	/**
@@ -222,11 +198,8 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-
 		m_path.loadSettingsFrom(settings);
-		// m_selectedKeywords.loadSettingsFrom(settings);
 		m_compensate.loadSettingsFrom(settings);
-		// m_selectedFiles.loadSettingsFrom(settings);
 	}
 
 	/**
@@ -250,9 +223,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 		m_path.saveSettingsTo(settings);
-		// m_selectedKeywords.saveSettingsTo(settings);
 		m_compensate.saveSettingsTo(settings);
-		// m_selectedFiles.saveSettingsTo(settings);
 	}
 
 	/**
@@ -260,10 +231,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-
 		m_path.validateSettings(settings);
-		// m_selectedKeywords.validateSettings(settings);
 		m_compensate.validateSettings(settings);
-		// m_selectedFiles.validateSettings(settings);
 	}
 }
