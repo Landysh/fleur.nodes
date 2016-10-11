@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
+import io.landysh.inflor.java.core.plots.gateui.GateSelectionAdapter;
 import io.landysh.inflor.java.core.plots.gateui.RectangleGateAdapter;
 
 @SuppressWarnings("serial")
@@ -24,8 +25,9 @@ public class GateCreationToolBar extends JToolBar {
 	MouseListener activeListener;
 	private FCSChartPanel panel;
 	
-	public GateCreationToolBar(){
+	public GateCreationToolBar(FCSChartPanel panel){
 		super(TOOLBAR_TITLE);
+		this.panel = panel;
 		
 		cursorButtons = new ArrayList<JButton>();
 		
@@ -43,10 +45,13 @@ public class GateCreationToolBar extends JToolBar {
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if (activeListener!=null){
+					panel.removeMouseListener(activeListener);
+					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
+				}
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				panel.removeMouseListener(activeListener);
-				panel.removeMouseMotionListener((MouseMotionListener) activeListener);
+				panel.addMouseListener(new GateSelectionAdapter(panel));
 			}
 		});	
 		return button;
@@ -57,14 +62,14 @@ public class GateCreationToolBar extends JToolBar {
 	    button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				//Remove current listener.
+				if (activeListener!=null){
+					panel.removeMouseListener(activeListener);
+					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
+				}
 				//Set button states.
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				
-				//Remove current listener.
-				panel.removeMouseListener(activeListener);
-				panel.removeMouseMotionListener((MouseMotionListener) activeListener);
-				
 				//Create new rect gate listener.
 				activeListener = new RectangleGateAdapter(panel);
 				panel.addMouseListener(activeListener);
