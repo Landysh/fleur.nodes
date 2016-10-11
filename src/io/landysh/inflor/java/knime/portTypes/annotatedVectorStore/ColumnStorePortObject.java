@@ -26,7 +26,6 @@ import org.knime.core.node.port.PortTypeRegistry;
 import com.google.common.collect.Lists;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.views.ColumnStoreViewFactory;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreContent;
 
@@ -139,14 +138,6 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		return message;
 	}
 
-	@Override
-	public JComponent[] getViews() {
-		final ColumnStore columnStore = getColumnStore();
-		final JComponent lineageView = ColumnStoreViewFactory.createLineageView(columnStore);
-		final JComponent[] components = new JComponent[] { lineageView };
-		return components;
-	}
-
 	private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
 			throws IOException, CanceledExecutionException {
 		m_spec = (ColumnStorePortSpec) spec;
@@ -171,5 +162,11 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	public ColumnStoreCell toTableCell(FileStore fs) {
 		getColumnStore();
 		return m_columnStore.get().toColumnStoreCell(fs);
+	}
+
+	@Override
+	public JComponent[] getViews() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
