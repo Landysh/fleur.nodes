@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.core.ui;
+package io.landysh.inflor.java.core.plots.gateui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,8 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.plots.gateui.GateSelectionAdapter;
-import io.landysh.inflor.java.core.plots.gateui.RectangleGateAdapter;
 
 @SuppressWarnings("serial")
 public class GateCreationToolBar extends JToolBar {
@@ -24,6 +22,9 @@ public class GateCreationToolBar extends JToolBar {
 	private ArrayList<JButton> cursorButtons;
 	MouseListener activeListener;
 	private FCSChartPanel panel;
+	private JButton selectButton;
+	private JButton rectGateButton;
+	private JButton polyGateButton;
 	
 	public GateCreationToolBar(FCSChartPanel panel){
 		super(TOOLBAR_TITLE);
@@ -31,18 +32,20 @@ public class GateCreationToolBar extends JToolBar {
 		
 		cursorButtons = new ArrayList<JButton>();
 		
-		JButton zoomButton = createSelectButton();
-	    JButton rectGateButton = createRectGateButton();
+		selectButton   = createSelectButton();
+	    rectGateButton = createRectGateButton();
+	    polyGateButton = createPolyGateButton();
 	    
 	    cursorButtons = new ArrayList<JButton>();
-	    cursorButtons.add(zoomButton);
-	    cursorButtons.add(rectGateButton);    
+	    cursorButtons.add(selectButton);
+	    cursorButtons.add(rectGateButton);
+	    cursorButtons.add(polyGateButton);    
 	    cursorButtons.forEach(button-> this.add(button));
 	}
 
 	private JButton createSelectButton() {
-		JButton button = new JButton("Select");
-		button.addActionListener(new ActionListener(){
+		selectButton = new JButton("Select");
+		selectButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (activeListener!=null){
@@ -51,15 +54,17 @@ public class GateCreationToolBar extends JToolBar {
 				}
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				panel.addMouseListener(new GateSelectionAdapter(panel));
+				GateSelectionAdapter gsa = new GateSelectionAdapter(panel);
+				panel.addMouseListener(gsa);
+				panel.addMouseMotionListener(gsa);
 			}
 		});	
-		return button;
+		return selectButton;
 	}
 
 	private JButton createRectGateButton() {
-	    JButton button = new JButton("RectGate");
-	    button.addActionListener(new ActionListener(){
+	    rectGateButton = new JButton("RectGate");
+	    rectGateButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//Remove current listener.
@@ -76,6 +81,28 @@ public class GateCreationToolBar extends JToolBar {
 				panel.addMouseMotionListener((MouseMotionListener) activeListener);
 			}
 		});
-		return button;
+		return rectGateButton;
+	}
+	
+	private JButton createPolyGateButton() {
+	    polyGateButton = new JButton("Polygon");
+	    polyGateButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//Remove current listener.
+				if (activeListener!=null){
+					panel.removeMouseListener(activeListener);
+					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
+				}
+				//Set button states.
+				cursorButtons.forEach(button -> button.setEnabled(true));
+				((JButton)arg0.getSource()).setEnabled(false);
+				//Create new rect gate listener.
+				activeListener = new PolygonGateAdapter(panel);
+				panel.addMouseListener(activeListener);
+				panel.addMouseMotionListener((MouseMotionListener) activeListener);
+			}
+		});
+		return polyGateButton;
 	}
 }

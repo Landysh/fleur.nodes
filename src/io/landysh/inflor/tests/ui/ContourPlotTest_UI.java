@@ -13,8 +13,8 @@ import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.ContourPlot;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
+import io.landysh.inflor.java.core.plots.gateui.GateCreationToolBar;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
-import io.landysh.inflor.java.core.ui.GateCreationToolBar;
 
 @SuppressWarnings("serial")
 public class ContourPlotTest_UI extends ApplicationFrame {
