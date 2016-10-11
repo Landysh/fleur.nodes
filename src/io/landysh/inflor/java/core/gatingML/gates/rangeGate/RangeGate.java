@@ -13,14 +13,14 @@ import io.landysh.inflor.java.core.gatingML.gates.BitSetOperator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class RangeGate extends AbstractGate {
-	/**
-	 *  TODO Why is this automatically created.
-	 */
+
 	private static final long serialVersionUID = -4829977491684130257L;
 	ArrayList<RangeDimension> dimensions = new ArrayList<RangeDimension>();
+	private String label;
 
-	public RangeGate(String priorUUID, String[] names, double[] min, double[] max) {
+	public RangeGate(String label, String[] names, double[] min, double[] max, String priorUUID) {
 		super(priorUUID);
+		this.label = label;
 		if (names.length<1){
 			throw new IllegalArgumentException("CODING ERROR: Range gate array parameters must be of the same length and >=1");
 		}
@@ -28,6 +28,10 @@ public class RangeGate extends AbstractGate {
 			dimensions.add(new RangeDimension(names[i], min[i], max[i]));
 		}
 	}
+	
+	public RangeGate(String label, String[] names, double[] min, double[] max) {
+		this(label,names, min, max, null);
+		}
 	
 	public RangeGate() {
 		super(null);
@@ -49,7 +53,7 @@ public class RangeGate extends AbstractGate {
 		return result;
 	}
 	
-	
+	//TODO: is this worth it?
 	public BitSet evaluateParallel(ColumnStore FCSData) {				
 		Optional<BitSet> possibleResult = dimensions.parallelStream()
 				.map(dimension -> dimension.evaluate(FCSUtils.findCompatibleDimension(FCSData.getData(), dimension.getName()).getData()))
@@ -59,7 +63,6 @@ public class RangeGate extends AbstractGate {
 		} else {
 			throw new RuntimeException("Shit happened");
 		}
-		
 	}
 
 	public String[] getDimensionNames() {
@@ -80,6 +83,15 @@ public class RangeGate extends AbstractGate {
 			final IllegalStateException ise = new IllegalStateException(message);
 			ise.printStackTrace();
 			throw ise;
+		}
+	}
+	
+	@Override
+	public String toString() {
+		if (this.label==null){
+			return ID;
+		} else {
+			return label;
 		}
 	}
 }
