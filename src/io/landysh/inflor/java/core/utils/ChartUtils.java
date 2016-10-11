@@ -8,7 +8,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.plots.gateui.RectangleGateAnnotation;
+import io.landysh.inflor.java.core.plots.gateui.XYGateAnnotation;
 
 public class ChartUtils {
 	public static Point2D getPlotCoordinates(MouseEvent e, ChartPanel panel){
@@ -21,9 +21,11 @@ public class ChartUtils {
         return vertex;
     }
 
-	public static void updateRectangleAnnotation(RectangleGateAnnotation oldAnn,
-			RectangleGateAnnotation newAnn, FCSChartPanel panel) {
-		// TODO Auto-generated method stub
-		
+	public static void updateXYAnnotation(XYGateAnnotation oldAnn,
+			XYGateAnnotation newAnn, FCSChartPanel panel) {
+		if (oldAnn!=null){
+			panel.getChart().getXYPlot().removeAnnotation(oldAnn);
+		}
+		panel.getChart().getXYPlot().addAnnotation(newAnn);
 	}
 }

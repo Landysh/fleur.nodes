@@ -1,75 +1,84 @@
 package io.landysh.inflor.java.core.plots.gateui;
 
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jfree.chart.plot.XYPlot;
-
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.ui.DefaultGraphics;
 import io.landysh.inflor.java.core.utils.ChartUtils;
 
 public class GateSelectionAdapter extends MouseAdapter {
 	
-	private XYGateAnnotation selectedAnnotation;
+	//private XYGateAnnotation currentXYAnn;
 	private FCSChartPanel panel;
+	private List<XYGateAnnotation> selectedAnnotations;
+	private Point2D v0;
 
 	public GateSelectionAdapter(FCSChartPanel panel) {
 		this.panel = panel;
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e){
-		XYPlot plot = panel.getChart().getXYPlot();
-		
-		@SuppressWarnings("unchecked")//TODO Sketchy AF
-		List<XYGateAnnotation> annotations = plot.getAnnotations();
-		
+	public void selectAnnotations(MouseEvent e){		
+		@SuppressWarnings("unchecked")
+		List<XYGateAnnotation> annotations = panel.getChart().getXYPlot().getAnnotations();
 		Point2D p = ChartUtils.getPlotCoordinates(e, panel);
+		//Sort annotations into selected and unselected lists
+		Map<Boolean, List<XYGateAnnotation>> gateSelection = annotations
+				   .stream()
+				   .filter(annotation -> annotation instanceof XYGateAnnotation)
+				   .collect(Collectors.partitioningBy(annotation -> annotation.containsPoint(p)));
 		
-		List<XYGateAnnotation> result = annotations.stream()
-				   								   .filter(annotation -> annotation instanceof XYGateAnnotation)
-				                                   .filter(annotation -> annotation.containsPoint(p))
-				                                   .collect(Collectors.toList());
+		selectedAnnotations = gateSelection
+			.get(new Boolean(true))
+			.stream()
+			.map(annotation -> updateSelectionStatus(panel, annotation, true))
+			.collect(Collectors.toList());
 		
-		if(result.size()==1){
-			if (result.get(0) instanceof RectangleGateAnnotation){
-				RectangleGateAnnotation currentRect = (RectangleGateAnnotation) result.get(0);
-				selectedAnnotation = result.get(0);
-				RectangleGateAnnotation newAnnotation = new RectangleGateAnnotation(currentRect.getX0(), 
-																			 currentRect.getY0(), 
-																			 currentRect.getX1(),
-																			 currentRect.getY1(),
-																			 DefaultGraphics.SELECTED_STROKE, 
-																			 DefaultGraphics.SELECTED_GATE_COLOR);
-				newAnnotation.setToolTipText(currentRect.getToolTipText());
-				plot.removeAnnotation(selectedAnnotation);
-				plot.addAnnotation(newAnnotation);
-			} else {
-				
-			}
-		} else if (selectedAnnotation!=null){
-			RectangleGateAnnotation oldAnnotation = (RectangleGateAnnotation) selectedAnnotation;
-			RectangleGateAnnotation newAnnotation = new RectangleGateAnnotation(
-					oldAnnotation.getX0(), 
-					oldAnnotation.getY0(), 
-					oldAnnotation.getX1(),
-					oldAnnotation.getY1(),
-					DefaultGraphics.DEFAULT_STROKE, 
-					DefaultGraphics.DEFAULT_GATE_COLOR);
-			newAnnotation.setToolTipText(oldAnnotation.getToolTipText());
-			ChartUtils.updateRectangleAnnotation(oldAnnotation, newAnnotation, panel);
-			plot.removeAnnotation(selectedAnnotation, true);
-			plot.addAnnotation(newAnnotation);
+		gateSelection
+				.get(new Boolean(false))
+				.stream()
+				.forEach(annotation -> updateSelectionStatus(panel, annotation, false));
+	}
+
+	private XYGateAnnotation updateSelectionStatus(FCSChartPanel panel, XYGateAnnotation priorAnnotation, boolean markSelected) {
+		XYGateAnnotation udpatedAnnotation;
+		if (markSelected){
+			udpatedAnnotation = priorAnnotation.cloneSelected();
+		} else {
+			udpatedAnnotation = priorAnnotation.cloneDefault();
 		}
+		ChartUtils.updateXYAnnotation(priorAnnotation, udpatedAnnotation, panel);
+		return udpatedAnnotation;
+	}
+	
+	private XYGateAnnotation moveAnnotation(FCSChartPanel panel, XYGateAnnotation priorAnnotation, double dx, double dy) {
+		XYGateAnnotation udpatedAnnotation;
+			udpatedAnnotation = priorAnnotation.translate(dx, dy);
+		ChartUtils.updateXYAnnotation(priorAnnotation, udpatedAnnotation, panel);
+		return udpatedAnnotation;
 	}
 
 	@Override
+	public void mousePressed(MouseEvent e){
+		v0 = ChartUtils.getPlotCoordinates(e, panel);
+		selectAnnotations(e);
+	}
+	
+	@Override
 	public void mouseDragged(MouseEvent e){
-		
+		Point2D v = ChartUtils.getPlotCoordinates(e, panel);
+		double dx = (v.getX() - v0.getX());
+		double dy = (v.getY() - v0.getY());
+		v0=v;
+		if (selectedAnnotations!=null&&selectedAnnotations.size()>=1){
+			List<XYGateAnnotation> translatedAnnoations = selectedAnnotations
+				.stream()
+				.map(annotation -> moveAnnotation(panel, annotation, dx, dy))
+				.collect(Collectors.toList());
+			selectedAnnotations = translatedAnnoations;
+		}
 	}
 }

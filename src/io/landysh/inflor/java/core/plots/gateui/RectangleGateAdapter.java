@@ -7,19 +7,17 @@ import java.awt.geom.Point2D;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
-import org.jfree.chart.plot.XYPlot;
-
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.ui.DefaultGraphics;
+import io.landysh.inflor.java.core.ui.LookAndFeel;
 import io.landysh.inflor.java.core.utils.ChartUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.GateNameEditor;
 
 public class  RectangleGateAdapter extends MouseInputAdapter{
-    private  final FCSChartPanel panel;
+    private FCSChartPanel panel;
 	private Point2D vert1;
 	private Point2D vert0;
-	private RectangleGateAnnotation rectangleAnnotation;
+	private RectangleGateAnnotation currentRectAnn;
 	private double x0;
 	private double x1;
 	private double y0;
@@ -30,16 +28,15 @@ public class  RectangleGateAdapter extends MouseInputAdapter{
     }
 
     private void updateMarker(){
-        if (rectangleAnnotation!=null){
-            panel.getChart().getXYPlot().removeAnnotation(rectangleAnnotation);
-        }
-        if (!(vert0==null&&vert1==null)){
+    	if (!(vert0==null&&vert1==null)){
             x0 = Math.min(vert0.getX(), vert1.getX());
             x1 = Math.max(vert0.getX(), vert1.getX());
             y0 = Math.min(vert0.getY(), vert1.getY());
             y1 = Math.max(vert0.getY(), vert1.getY());
-        	rectangleAnnotation = new RectangleGateAnnotation(x0,y0,x1,y1, DefaultGraphics.SELECTED_STROKE, DefaultGraphics.DEFAULT_GATE_COLOR);
-        	((XYPlot) panel.getChart().getPlot()).addAnnotation(rectangleAnnotation);
+            RectangleGateAnnotation priorAnn = currentRectAnn;
+        	RectangleGateAnnotation updatedAnn = new RectangleGateAnnotation(x0,y0,x1,y1, LookAndFeel.SELECTED_STROKE, LookAndFeel.DEFAULT_GATE_COLOR);
+        	ChartUtils.updateXYAnnotation(priorAnn, updatedAnn, panel);
+        	currentRectAnn = updatedAnn;
         }
     }
 
@@ -53,9 +50,9 @@ public class  RectangleGateAdapter extends MouseInputAdapter{
     	
     		//Pop a gate editor dialog
     		Frame topFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
-
     		GateNameEditor dialog = new GateNameEditor(topFrame);
     		dialog.setVisible(true);
+    		//On Close...
     		if (dialog.isOK) {
     			String name = dialog.getGateName();
     			String xName = panel.getChart().getXYPlot().getDomainAxis().getLabel();
@@ -66,12 +63,10 @@ public class  RectangleGateAdapter extends MouseInputAdapter{
     					new double[] {x0, y0}, 
     					new double[] {x1, y1});
     			String label = panel.addRectangleGate(gate);
-    			rectangleAnnotation.setToolTipText(label);
-    			rectangleAnnotation.setNotify(true);
+    			currentRectAnn.setToolTipText(label);
     		} else {
-                panel.getChart().getXYPlot().removeAnnotation(rectangleAnnotation);
+                panel.getChart().getXYPlot().removeAnnotation(currentRectAnn);
     		}
-			rectangleAnnotation = null;
     		dialog.dispose();    	
     	}
     }
