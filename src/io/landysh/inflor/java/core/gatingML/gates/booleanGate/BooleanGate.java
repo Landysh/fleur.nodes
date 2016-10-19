@@ -62,4 +62,14 @@ public class BooleanGate extends AbstractGate {
 			throw ise;
 		}
 	}
+
+	@Override
+	public String getDomainAxisName() {
+		return null;
+	}
+
+	@Override
+	public String getRangeAxisName() {
+		return null;
+	}
 }
