@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
@@ -15,7 +16,7 @@ import io.landysh.inflor.java.core.plots.FCSChartPanel;
 public class GateCreationToolBar extends JToolBar {
     private static final String TOOLBAR_TITLE = "Mouse Mode";
 	/**
-     * This toolbar is responsible for managing the active listener (gate drawing/zooming mode)
+     * This toolbar is responsible for managing the active listeners (gate drawing/zooming mode)
      * on a JFreeChart ChartPanel. 
      */
 	
@@ -25,6 +26,9 @@ public class GateCreationToolBar extends JToolBar {
 	private JButton selectButton;
 	private JButton rectGateButton;
 	private JButton polyGateButton;
+	private GateSelectionAdapter gateSelectionAdapter;
+	private RectangleGateAdapter rectGateMouseAdapter;
+	private PolygonGateAdapter polyGateMouseAdapter;
 	
 	public GateCreationToolBar(FCSChartPanel panel){
 		super(TOOLBAR_TITLE);
@@ -44,65 +48,69 @@ public class GateCreationToolBar extends JToolBar {
 	}
 
 	private JButton createSelectButton() {
+		gateSelectionAdapter = new GateSelectionAdapter(panel);
 		selectButton = new JButton("Select");
-		selectButton.addActionListener(new ActionListener(){
+		ActionListener sbl = new ActionListener(){
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (activeListener!=null){
-					panel.removeMouseListener(activeListener);
-					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
-				}
+			public void actionPerformed(ActionEvent e) {
+				removeAllListeners();
+
 				cursorButtons.forEach(button -> button.setEnabled(true));
-				((JButton)arg0.getSource()).setEnabled(false);
-				GateSelectionAdapter gsa = new GateSelectionAdapter(panel);
-				panel.addMouseListener(gsa);
-				panel.addMouseMotionListener(gsa);
+				((JButton)e.getSource()).setEnabled(false);
+				
+				panel.addMouseListener(gateSelectionAdapter);
+				panel.addMouseMotionListener(gateSelectionAdapter);
 			}
-		});	
+		};
+		selectButton.addActionListener(sbl);
 		return selectButton;
 	}
 
 	private JButton createRectGateButton() {
-	    rectGateButton = new JButton("RectGate");
+		rectGateMouseAdapter = new RectangleGateAdapter(panel);
+		rectGateButton = new JButton("RectGate");
 	    rectGateButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Remove current listener.
-				if (activeListener!=null){
-					panel.removeMouseListener(activeListener);
-					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
-				}
-				//Set button states.
+				removeAllListeners();
+
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				//Create new rect gate listener.
-				activeListener = new RectangleGateAdapter(panel);
-				panel.addMouseListener(activeListener);
-				panel.addMouseMotionListener((MouseMotionListener) activeListener);
+				
+				panel.addMouseListener(rectGateMouseAdapter);
+				panel.addMouseMotionListener((MouseMotionListener) rectGateMouseAdapter);
 			}
 		});
 		return rectGateButton;
 	}
 	
 	private JButton createPolyGateButton() {
-	    polyGateButton = new JButton("Polygon");
+		polyGateMouseAdapter = new PolygonGateAdapter(panel);
+
+		polyGateButton = new JButton("Polygon");
 	    polyGateButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//Remove current listener.
-				if (activeListener!=null){
-					panel.removeMouseListener(activeListener);
-					panel.removeMouseMotionListener((MouseMotionListener) activeListener);
-				}
-				//Set button states.
+				removeAllListeners();
+				
 				cursorButtons.forEach(button -> button.setEnabled(true));
 				((JButton)arg0.getSource()).setEnabled(false);
-				//Create new rect gate listener.
-				activeListener = new PolygonGateAdapter(panel);
-				panel.addMouseListener(activeListener);
-				panel.addMouseMotionListener((MouseMotionListener) activeListener);
+				
+				panel.addMouseListener(polyGateMouseAdapter);
+				panel.addMouseMotionListener((MouseMotionListener) polyGateMouseAdapter);
 			}
 		});
 		return polyGateButton;
+	}
+	
+	private void removeAllListeners() {
+		EventListener[] motion = panel.getListeners(MouseMotionListener.class);
+		for (EventListener el: motion){
+			panel.removeMouseMotionListener((MouseMotionListener) el);
+		}
+		EventListener[] listener = panel.getListeners(MouseListener.class);
+		for (EventListener l: listener){
+			panel.removeMouseListener((MouseListener) l);
+		}
 	}
 }
