@@ -19,7 +19,6 @@ import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 @SuppressWarnings("serial")
 public class ContourPlotTest_UI extends ApplicationFrame {
 	
-	private JToolBar toolbar;
 	private FCSChartPanel panel;
 	MouseInputListener activeListener;
 	
@@ -50,14 +49,13 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 		//create the plot
 		ContourPlot plot = new ContourPlot(spec);
 		JFreeChart chart = plot.createChart(X, Y);
-		panel = new FCSChartPanel(chart, dataStore);		
-		
-	    
+		panel = new FCSChartPanel(chart, dataStore);	    
 	    JPanel editorPanel = new JPanel();
 	    editorPanel.add(panel);
 	    editorPanel.add(new GateCreationToolBar(panel));
-	    
 		this.getContentPane().add(editorPanel);
+//		panel.setFocusable(true);
+//		panel.requestFocusInWindow();
 	}
 
 	public static void main(String[] args) throws Exception {
