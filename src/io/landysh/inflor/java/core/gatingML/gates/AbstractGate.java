@@ -82,4 +82,6 @@ public abstract class AbstractGate extends DomainObject {
 	 * @throws IllegalStateException
 	 */
 	public abstract void validate() throws IllegalStateException;
+	public abstract String getDomainAxisName();
+	public abstract String getRangeAxisName();
 }

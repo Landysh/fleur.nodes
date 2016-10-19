@@ -94,5 +94,14 @@ public class RangeGate extends AbstractGate {
 			return label;
 		}
 	}
+
+	@Override
+	public String getDomainAxisName() {
+		return dimensions.get(0).getName();
+	}
+
+	@Override
+	public String getRangeAxisName() {
+		return dimensions.get(1).getName();
+	}
 }
-// EOF
