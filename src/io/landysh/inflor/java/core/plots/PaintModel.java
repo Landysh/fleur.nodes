@@ -50,12 +50,12 @@ public class PaintModel {
 	private Paint[] createPaintArray(int levels) {
 		
 		Paint[] colorScale = new Paint[levels];
-		float startH = 250/360f;
+		float startH = 200/360f;
 		float deltaH = startH/levels;
 		
 		for (int i=0;i<colorScale.length;i++){
 			float hue = startH-(i)*deltaH;
-			colorScale[i] = Color.getHSBColor(hue, 1f, 1f);
+			colorScale[i] = Color.getHSBColor(hue, 0.7f, 1f);
 		}
 		
 		return colorScale;
