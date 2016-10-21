@@ -2,7 +2,6 @@ package io.landysh.inflor.java.core.utils;
 
 import java.util.BitSet;
 import java.util.HashMap;
-import java.util.Map;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
@@ -135,15 +134,15 @@ public class FCSUtils {
 		return out;
 	}
 
-	public static FCSDimension findCompatibleDimension(Map<String, FCSDimension> dimensionMap, String name) {
+	public static FCSDimension findCompatibleDimension(ColumnStore dataSource, String name) {
 		/**
 		 * Returns the key for the first compatible FCSDimension in the selected map.
 		 * (ie. where the result of the toString() method is the same).
 		 * Will return null if no compatible entry is found.
 		 */
 		FCSDimension returnDim = null;
-		for (FCSDimension dim: dimensionMap.values()){
-			if (dim.toString().equals(name)){
+		for (FCSDimension dim: dataSource.getData().values()){
+			if (dim.getShortName().equals(name)){
 				returnDim = dim;
 			}
 		}
