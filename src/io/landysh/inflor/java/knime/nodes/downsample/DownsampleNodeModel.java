@@ -21,7 +21,6 @@ import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
-import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
 import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec;

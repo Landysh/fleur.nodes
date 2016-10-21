@@ -2,9 +2,7 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import org.knime.core.data.DataCell;

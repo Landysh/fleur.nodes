@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Hashtable;
-
 import javax.swing.JComponent;
 
 import org.knime.core.data.filestore.FileStore;
