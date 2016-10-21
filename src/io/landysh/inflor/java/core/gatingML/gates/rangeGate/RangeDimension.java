@@ -6,8 +6,8 @@ import io.landysh.inflor.java.core.gatingML.gates.AbstractGMLDimension;
 
 public class RangeDimension extends AbstractGMLDimension {
 
-	private double min = Double.MIN_VALUE;
-	private double max = Double.MAX_VALUE;
+	public double min = Double.MIN_VALUE;
+	public double max = Double.MAX_VALUE;
 
 	public RangeDimension(String name, double min, double max) {
 		super(name);

@@ -2,14 +2,11 @@ package io.landysh.inflor.java.core.gatingML.gates.rangeGate;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Optional;
 
 import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
-import io.landysh.inflor.java.core.gatingML.gates.BitSetAccumulator;
-import io.landysh.inflor.java.core.gatingML.gates.BitSetOperator;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class RangeGate extends AbstractGate {
@@ -39,6 +36,24 @@ public class RangeGate extends AbstractGate {
 
 	@Override
 	public BitSet evaluate(ColumnStore FCSData) {
+		//TODO performance optimization?
+		if (dimensions.size()==2){
+			String xName = dimensions.get(0).getName();
+			double xMin = dimensions.get(0).min;
+			double xMax = dimensions.get(0).max;
+			String yName = dimensions.get(1).getName();
+			double yMin = dimensions.get(1).min;
+			double yMax = dimensions.get(1).max;
+			double[] xData = FCSUtils.findCompatibleDimension(FCSData, xName).getData();
+			double[] yData = FCSUtils.findCompatibleDimension(FCSData, yName).getData();
+			BitSet bits = new BitSet(FCSData.getRowCount());
+			for (int i=0;i<xData.length;i++){
+				if (xMin<xData[i]&&xData[i]<xMax&&yMin<yData[i]&&yData[i]<yMax){
+					bits.set(i);
+				}
+			}
+			return bits;
+		}
 		
 		int rowCount = FCSData.getRowCount();
 		final BitSet result = new BitSet(rowCount);
@@ -46,23 +61,11 @@ public class RangeGate extends AbstractGate {
 		
 		for (RangeDimension dim: dimensions){
 			String name = dim.getName();
-			double[] data = FCSUtils.findCompatibleDimension(FCSData.getData(), name).getData();
+			double[] data = FCSUtils.findCompatibleDimension(FCSData, name).getData();
 			BitSet dimesnionBits = dim.evaluate(data);
 			result.and(dimesnionBits);
 		}
 		return result;
-	}
-	
-	//TODO: is this worth it?
-	public BitSet evaluateParallel(ColumnStore FCSData) {				
-		Optional<BitSet> possibleResult = dimensions.parallelStream()
-				.map(dimension -> dimension.evaluate(FCSUtils.findCompatibleDimension(FCSData.getData(), dimension.getName()).getData()))
-				.reduce(new BitSetAccumulator(BitSetOperator.AND));
-		if (possibleResult.isPresent()){
-			return possibleResult.get();
-		} else {
-			throw new RuntimeException("Shit happened");
-		}
 	}
 
 	public String[] getDimensionNames() {
@@ -103,5 +106,22 @@ public class RangeGate extends AbstractGate {
 	@Override
 	public String getRangeAxisName() {
 		return dimensions.get(1).getName();
+	}
+
+	public void evaluateSimpleRect(ColumnStore data) {
+		String xName = dimensions.get(0).getName();
+		double xMin = dimensions.get(0).min;
+		double xMax = dimensions.get(0).max;
+		String yName = dimensions.get(1).getName();
+		double yMin = dimensions.get(1).min;
+		double yMax = dimensions.get(1).max;
+		double[] xData = FCSUtils.findCompatibleDimension(data, xName).getData();
+		double[] yData = FCSUtils.findCompatibleDimension(data, yName).getData();
+		BitSet bits = new BitSet(data.getRowCount());
+		for (int i=0;i<xData.length;i++){
+			if (xMin<xData[i]&&xData[i]<xMax&&yMin<yData[i]&&yData[i]<yMax){
+				bits.set(i);
+			}
+		}
 	}
 }
