@@ -1,7 +1,6 @@
 package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -36,12 +35,12 @@ public class GateNameEditor extends JDialog{
 	private String gateName = "";
 	
 
-	public GateNameEditor(Frame topFrame) {
+	public GateNameEditor() {
 		
 		/**
 		 * @param topFrame the frame in which this dialog resides.  Required to make dialog modal
 		 */
-		super(topFrame);
+		super();
 		setModal(true);
 		setTitle("Create gate");
 		final JPanel content = createContentPanel();
