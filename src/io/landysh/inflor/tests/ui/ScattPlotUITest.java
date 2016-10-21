@@ -56,6 +56,10 @@ public class ScattPlotUITest extends ApplicationFrame {
 		ScattPlotUITest test = new ScattPlotUITest("ContourPlotTest");
 			  test.pack();
 		      test.setVisible(true);
+	}
+
+	public static void main(String[] args) {
+		rangeDimension
 	}	   
 }
 //EOF

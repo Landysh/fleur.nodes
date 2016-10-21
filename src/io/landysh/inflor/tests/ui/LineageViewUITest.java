@@ -12,7 +12,7 @@ import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
-import io.landysh.inflor.java.core.transforms.LogrithmicDisplayTransform;
+import io.landysh.inflor.java.core.transforms.LogrithmicTransform;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.CellLineageTree;
 
 @SuppressWarnings("serial")
@@ -31,36 +31,18 @@ public class LineageViewUITest extends ApplicationFrame {
 		ly.setPlotType(PlotTypes.Contour);
 		ly.setDomainAxisName("SSC-W");
 		ly.setRangeAxisName("SSC-A");
-		ly.setxBinCount(256);
-		ly.setyBinCount(256);
-		ly.setxMin(0);
-		ly.setyMin(1000);
-		ly.setxMax(262144);
-		ly.setyMax(262144);
-		
+
 		ChartSpec ly2 = new ChartSpec();
 		ly2.setPlotType(PlotTypes.Contour);
 		ly2.setDomainAxisName("FSC-A");
 		ly2.setRangeAxisName("SSC-A");
-		ly2.setRangeTransform(new LogrithmicDisplayTransform(1000, 262144));
-		ly2.setxBinCount(1024);
-		ly2.setyBinCount(1024);
-		ly2.setxMin(0);
-		ly2.setyMin(1000);
-		ly2.setxMax(262144);
-		ly2.setyMax(262144);
-		ly2.setParent(ly.ID);
+		ly2.setRangeTransform(new LogrithmicTransform(1000, 262144));
+
 		
 		ChartSpec ly3 = new ChartSpec();
 		ly3.setPlotType(PlotTypes.Scatter);
 		ly3.setDomainAxisName("FSC-A");
 		ly3.setRangeAxisName("SSC-A");
-		ly3.setxBinCount(1024);
-		ly3.setyBinCount(1024);
-		ly3.setxMin(0);
-		ly3.setyMin(1000);
-		ly3.setxMax(262144);
-		ly3.setyMax(262144); 
 		ly3.setParent(ly.ID);
 
 		
