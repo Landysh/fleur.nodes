@@ -6,12 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,24 +17,19 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.TitledBorder;
 
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.ui.RectangleEdge;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
+import io.landysh.inflor.java.core.plots.gateui.GateCreationToolBar;
 import io.landysh.inflor.java.core.subsets.AbstractSubset;
 import io.landysh.inflor.java.core.subsets.RootSubset;
-import io.landysh.inflor.java.core.transforms.AbstractDisplayTransform;
-import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
+import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.transforms.TransformType;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
@@ -71,9 +62,10 @@ public class ChartEditorDialog extends JDialog {
 	private JProgressBar progressBar;
 	private CreateGatesNodeDialog parentDialog;
 	private AbstractFCChart previewPlot;
-	private ChartPanel chartPanel;
+	private FCSChartPanel chartPanel;
 	private JComboBox<TransformType> domainTransformBox;
 	private JComboBox<TransformType> rangeTransformBox;
+	private GateCreationToolBar gatingToolBar;
 
 
 	public ChartEditorDialog(Frame topFrame, CreateGatesNodeDialog parent) {
@@ -95,8 +87,6 @@ public class ChartEditorDialog extends JDialog {
 
 		spec.setDomainAxisName(parent.getSelectedSample().getVector(first).toString());
 		spec.setRangeAxisName(parent.getSelectedSample().getVector(next).toString());
-		spec.setDomainTransform(new BoundDisplayTransform(0, 262144));
-		spec.setRangeTransform(new BoundDisplayTransform(0, 262144));
 		setModal(true);
 
 		// populate the dialog
@@ -126,9 +116,12 @@ public class ChartEditorDialog extends JDialog {
 		parentSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
 		domainParameterBox.setSelectedItem(spec.getDomainAxisName());
-		domainTransformBox.setSelectedItem(spec.getDomainTransform());
+		ColumnStore subsetData = ((AbstractSubset)parentSelectorBox.getSelectedItem()).getData();
+		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
+		domainTransformBox.setSelectedItem(domainDimension.getPreferredTransform());
+		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
 		rangeDimBox.setSelectedItem(spec.getRangeAxisName());
-		rangeTransformBox.setSelectedItem(spec.getRangeTransform());
+		rangeTransformBox.setSelectedItem(rangeDimension.getPreferredTransform());
 
 		getContentPane().add(content);
 		pack();
@@ -153,81 +146,56 @@ public class ChartEditorDialog extends JDialog {
 		final Component plotOptionsPanel = createPlotOptionsPanel();
 		
 		contentPanel = new JPanel(new GridBagLayout());
+		previewPanel = createPreviewPanel();
+		gatingToolBar = new GateCreationToolBar(chartPanel);
+		m_okButton = createOkButton();
+		m_cancelButton = createCancelButton();
+		final JPanel buttonPanel = new JPanel(new FlowLayout());
+		buttonPanel.add(m_okButton);
+		buttonPanel.add(m_cancelButton);
+
+		
+		//GridLayout
 		final GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		
-		//Preview Planel
+		//Gating toolbar
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		previewPanel = createPreviewPanel();
-		contentPanel.add(previewPanel, gbc);
-
-		//Plot Options
+		contentPanel.add(gatingToolBar, gbc);
+		//Preview Panel
+		gbc.gridx = 0;
 		gbc.gridy = 1;
-		contentPanel.add(plotOptionsPanel, gbc);
+		contentPanel.add(previewPanel, gbc);
+		//Plot Options
 		gbc.gridy = 2;
-		contentPanel.add(createHorizontalAxisGroup(), gbc);
+		contentPanel.add(plotOptionsPanel, gbc);
 		gbc.gridy = 3;
+		contentPanel.add(createHorizontalAxisGroup(), gbc);
+		gbc.gridy = 4;
 		contentPanel.add(createVerticalAxisGroup(), gbc);
-		
 		//Button Panel
 		gbc.anchor = GridBagConstraints.SOUTHEAST;
-		gbc.gridy = 4;
-		final JPanel buttonPanel = new JPanel(new FlowLayout());
-		m_okButton = createOkButton();
-		m_cancelButton = createCancelButton();
-		buttonPanel.add(m_okButton);
-		buttonPanel.add(m_cancelButton);
-		
+		gbc.gridy = 5;
 		//ProgressBar
 		gbc.gridy = 6;
 		progressBar = new JProgressBar();
 		progressBar.setVisible(false);
 		contentPanel.add(progressBar, gbc);
-		
 		contentPanel.add(buttonPanel, gbc);
 		contentPanel.setPreferredSize(new Dimension(300, 450));
 		
 		return contentPanel;
 	}
 
-	private ChartPanel createPreviewPanel() {
-		TreeMap<String, FCSDimension> dataMap = ((ColumnStore) parentDialog.getSelectedSample()).getData();
+	private FCSChartPanel createPreviewPanel() {
+		ColumnStore chartDataSource = (ColumnStore) parentDialog.getSelectedSample();
 		String domainName = spec.getDomainAxisName();
-		double[] xData = FCSUtils.findCompatibleDimension(dataMap, domainName).getData();
-		double[] yData = FCSUtils.findCompatibleDimension(dataMap, spec.getRangeAxisName()).getData();		
+		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(chartDataSource, domainName);
+		FCSDimension rangeDimension= FCSUtils.findCompatibleDimension(chartDataSource, spec.getRangeAxisName());		
 		previewPlot = PlotUtils.createPlot(spec);
-		JFreeChart chart = previewPlot.createChart(xData, yData);
-		chartPanel = new ChartPanel(chart);
-		chartPanel.addChartMouseListener(new ChartMouseListener(){
-
-			@Override
-			public void chartMouseClicked(ChartMouseEvent event) {
-				int mouseX = event.getTrigger().getX();
-				int mouseY = event.getTrigger().getY();
-				Point2D p = chartPanel.translateScreenToJava2D( 
-						new Point(mouseX, mouseY)); 
-						XYPlot plot = (XYPlot) chart.getPlot(); 
-						Rectangle2D plotArea = chartPanel.getScreenDataArea(); 
-						ValueAxis domainAxis = plot.getDomainAxis(); 
-						RectangleEdge domainAxisEdge = plot.getDomainAxisEdge(); 
-						ValueAxis rangeAxis = plot.getRangeAxis(); 
-						RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge(); 
-						double chartX = domainAxis.java2DToValue(p.getX(), plotArea, domainAxisEdge); 
-						double chartY = rangeAxis.java2DToValue(p.getY(), plotArea, rangeAxisEdge); 
-						
-						System.out.println("mouseX:"+ new Double(chartX)); 
-						System.out.println("mouseY:"+ new Double(chartY)); 
-	
-			}
-
-			@Override
-			public void chartMouseMoved(ChartMouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		});
+		JFreeChart chart = previewPlot.createChart(domainDimension, rangeDimension);
+		chartPanel = new FCSChartPanel(chart, chartDataSource);
 		chartPanel.setPreferredSize(new Dimension(280,250));
 		return chartPanel;
 	}
@@ -263,7 +231,7 @@ public class ChartEditorDialog extends JDialog {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				TransformType selectedType = (TransformType) domainTransformBox.getSelectedItem();
-				AbstractDisplayTransform newTransform = PlotUtils.createDefaultTransform(selectedType);
+				AbstractTransform newTransform = ((FCSDimension)domainParameterBox.getSelectedItem()).getTransform(selectedType);
 				spec.setDomainTransform(newTransform);
 				updatePreviewPlot();
 			}
@@ -316,11 +284,9 @@ public class ChartEditorDialog extends JDialog {
 		progressBar.setString("Initializing");
 		progressBar.getModel().setValue(1);
 		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
-		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getDomainAxisName());
-		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getRangeAxisName());
-		double[] xData = domainDimension.getData();
-		double[] yData = rangeDimension.getData();	
-		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, xData, yData);
+		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data, spec.getDomainAxisName());
+		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data, spec.getRangeAxisName());
+		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, domainDimension, rangeDimension);
 		worker.execute();
 	}
 
@@ -341,6 +307,7 @@ public class ChartEditorDialog extends JDialog {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				PlotTypes newValue = (PlotTypes) plotTypeSelectorBox.getModel().getSelectedItem();
+				spec.clone();
 				spec.setPlotType(newValue);
 				updatePreviewPlot();
 			}
@@ -373,17 +340,17 @@ public class ChartEditorDialog extends JDialog {
 		//Transform selector
 		final TransformType[] domainTransforms = TransformType.values();
 		rangeTransformBox = new JComboBox<TransformType>(domainTransforms);
-		rangeTransformBox.setSelectedItem(spec.getRangeTransform());
+		TransformType selectedTransform = ((FCSDimension) rangeDimBox.getSelectedItem()).getPreferredTransform().type;
+		rangeTransformBox.setSelectedItem(selectedTransform);
 		rangeTransformBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				TransformType selectedType = (TransformType) rangeTransformBox.getSelectedItem();
-				AbstractDisplayTransform newTransform = PlotUtils.createDefaultTransform(selectedType);
+				AbstractTransform newTransform = ((FCSDimension) rangeDimBox.getSelectedItem()).getTransform(selectedType);
 				spec.setRangeTransform(newTransform);
 				updatePreviewPlot();
 			}
 		});
-		
 		//Add the components
 		rangeAxisGroup.add(rangeDimBox);
 		rangeAxisGroup.add(rangeTransformBox);
@@ -395,4 +362,3 @@ public class ChartEditorDialog extends JDialog {
 		return spec;
 	}
 }
-// EOF
