@@ -30,7 +30,7 @@ public class RootSubset extends AbstractSubset implements Serializable{
 	}
 
 	@Override
-	protected ColumnStore getData() {
+	public ColumnStore getData() {
 		return this.data;
 	}
 	
