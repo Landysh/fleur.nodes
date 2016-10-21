@@ -41,12 +41,9 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
 			ChartSpec spec = (ChartSpec) node.getUserObject();
 			AbstractFCChart plot = PlotUtils.createPlot(spec);
 			
-			FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getDomainAxisName());
-			FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data.getData(), spec.getRangeAxisName());
-
-			double[] xData = domainDimension.getData();
-			double[] yData = rangeDimension.getData();
-			JFreeChart chart = plot.createChart(xData, yData);
+			FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data, spec.getDomainAxisName());
+			FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data, spec.getRangeAxisName());
+			JFreeChart chart = plot.createChart(domainDimension, rangeDimension);
 			if (!expanded) {
 				chart.setBackgroundPaint(Color.LIGHT_GRAY);
 			} else {
