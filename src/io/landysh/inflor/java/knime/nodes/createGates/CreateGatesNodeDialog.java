@@ -166,9 +166,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 			}
 		});
 		optionsPanel.add(fcsColumnBox);
-
-
-		
 		
 		// Select file
 		selectSampleBox = new JComboBox<ColumnStore>();
@@ -237,13 +234,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 					Arrays.asList(cStoreData.getColumnNames()));
 			parameterSet.addAll(newParameters);
 		}
-				
 		if (selectSampleBox.getModel().getSize() == 0) {
 			selectSampleBox.removeAllItems();
 			selectSampleBox.setEnabled(false);
 			selectSampleBox.setToolTipText("No FCS Files found");
 		}
-		
 		updateLineageTree();
 	}
 
@@ -252,7 +247,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		try {
 			m_Settings.save(settings);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new InvalidSettingsException("Unable to save node settings.");
 		}
@@ -268,12 +262,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		}
 		lineageTree = createAnalysisArea();
 		m_analyisTab.add(lineageTree, BorderLayout.CENTER);
-		m_analyisTab.revalidate();
-		m_analyisTab.repaint(50L);
+		m_analyisTab.revalidate();//TODO: needed?
+		m_analyisTab.repaint(50L);//TODO: needed?
 	}
 
 	public GatingModelNodeSettings getSettings() {
 		return m_Settings;
 	}
 }
-// EOF
