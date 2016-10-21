@@ -1,6 +1,5 @@
 package io.landysh.inflor.java.core.plots.gateui;
 
-import java.awt.Frame;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -49,8 +48,8 @@ public class PolygonGateAdapter extends MouseInputAdapter {
     			i++;
     		}
     		//Pop a gate editor dialog
-    		Frame topFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
-    		GateNameEditor dialog = new GateNameEditor(topFrame);
+    		//Frame topFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
+    		GateNameEditor dialog = new GateNameEditor();
     		dialog.setVisible(true);
     		//On Close...
     		if (dialog.isOK) {
@@ -70,6 +69,7 @@ public class PolygonGateAdapter extends MouseInputAdapter {
     			segments.forEach(annotation -> panel.removeTemporaryAnnotation(annotation));
     		}
     		segments = null;
+    		panel.activateGateSelectButton();
     	}
     }
 
