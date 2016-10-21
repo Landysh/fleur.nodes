@@ -4,7 +4,8 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import edu.stanford.facs.logicle.FastLogicle;
 
-public class LogicleTransform extends AbstractDisplayTransform {
+@SuppressWarnings("serial")
+public class LogicleTransform extends AbstractTransform {
 	
 	private static final TransformType TYPE = TransformType.Logicle;
 	private static final double LOGICLE_W_PERCENTILE = 0.05;
@@ -37,43 +38,12 @@ public class LogicleTransform extends AbstractDisplayTransform {
 	}
 	
 	public void setParameters(double t, double w, double m, double a){
-		this.setT(t);
-		this.setW(w);
-		this.setM(m);
-		this.setA(a);
+		this.t =t;
+		this.w=w;
+		this.m=m;
+		this.a=a;
 	}
 
-	public double getT() {
-		return t;
-	}
-
-	public void setT(double t) {
-		this.t = t;
-	}
-
-	public double getW() {
-		return w;
-	}
-
-	public void setW(double w) {
-		this.w = w;
-	}
-
-	public double getM() {
-		return m;
-	}
-
-	public void setM(double m) {
-		this.m = m;
-	}
-
-	public double getA() {
-		return a;
-	}
-
-	public void setA(double a) {
-		this.a = a;
-	}
 	public double calculateW(double[] data){
 		/**
 		 * Based on the 5th percentile method suggested by Parks/Moore.
@@ -83,12 +53,20 @@ public class LogicleTransform extends AbstractDisplayTransform {
 		this.w = newWidth;
 		return this.w;
 	}
-
+	@Override
 	public double transform(double value) {
 		return transformCalculator.scale(value);
 	}
+	@Override
 	public double inverse(double value) {
 		return transformCalculator.inverse(value);
 	}
-	
+
+	public double getMinValue() {
+		return transform(-100);
+	}
+
+	public double getMaxValue() {
+		return transform(t-1);
+	}	
 }

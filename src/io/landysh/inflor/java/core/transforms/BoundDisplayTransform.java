@@ -1,6 +1,6 @@
 package io.landysh.inflor.java.core.transforms;
 
-public class BoundDisplayTransform extends AbstractDisplayTransform{
+public class BoundDisplayTransform extends AbstractTransform{
 	
 	/**
 	 * Version history:
@@ -30,17 +30,11 @@ public class BoundDisplayTransform extends AbstractDisplayTransform{
 	
 	@Override
 	public double[] transform(double[] rawData) {
-		double[] transformedData = rawData.clone();
-		for (double d: transformedData){
-			if (d<boundaryMin){
-				d = boundaryMin;
-			}else if (d>boundaryMax){
-				d = boundaryMax;
-			} else {
-				
-			}
+		double[] transformedData = new double[rawData.length];
+		for (int i=0;i<rawData.length;i++){
+			transformedData[i] = transform(rawData[i]);
 		}
-		return rawData;
+		return transformedData;
 	}
 
 	public double getMinValue() {
@@ -49,5 +43,23 @@ public class BoundDisplayTransform extends AbstractDisplayTransform{
 	
 	public double getMaxValue() {
 		return boundaryMax;
+	}
+
+	@Override
+	public double transform(double d) {
+		if (d<boundaryMin){
+			d = boundaryMin;
+		} else if (d>boundaryMax){
+			d = boundaryMax;
+		} else {
+			//noop
+		}
+		return d;
+	}
+
+	@Override
+	public double inverse(double value) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
