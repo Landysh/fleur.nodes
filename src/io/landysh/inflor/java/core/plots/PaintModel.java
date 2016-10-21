@@ -10,9 +10,10 @@ public class PaintModel {
 	Paint[] paint;
 	private int levels;
 	private double zMin;
-	private double zMax;	
+	private double zMax;
+	private ColorSchemes colorScheme;	
 	
-	public PaintModel(double[] zValues) {
+	public PaintModel(ColorSchemes colorScheme, double[] zValues) {
         
 		zMin = Double.MAX_VALUE;
 		zMax = Double.MIN_VALUE;
@@ -20,12 +21,10 @@ public class PaintModel {
 			if(d>zMax){zMax = d;}
 			if(d<zMin){zMin = d;}
 		}
-		
+		this.colorScheme = colorScheme;
 		levels = (int) zMax;
 		paint = createPaintArray(levels);
 		discreteData = discretizeData(zValues, levels);
-
-		
 	}
 
 	private double[] discretizeData(double[] zValues, int levels) {
@@ -43,21 +42,35 @@ public class PaintModel {
 				discreteValues[i] = zValues[i] + zMin;
 			}
 		}
-		
 		return discreteValues;
 	}
 
 	private Paint[] createPaintArray(int levels) {
-		
 		Paint[] colorScale = new Paint[levels];
-		float startH = 200/360f;
-		float deltaH = startH/levels;
-		
-		for (int i=0;i<colorScale.length;i++){
-			float hue = startH-(i)*deltaH;
-			colorScale[i] = Color.getHSBColor(hue, 0.7f, 1f);
+
+		if (colorScheme == ColorSchemes.COOL_HEATMAP){
+			float startH = 200/360f;
+			float deltaH = startH/levels;
+			
+			for (int i=0;i<colorScale.length;i++){
+				float hue = startH-(i)*deltaH;
+				colorScale[i] = Color.getHSBColor(hue, 0.7f, 1f);
+			}
+		} else if(colorScheme == ColorSchemes.GRAY_SCALE){
+			float startV = 200/360f;
+			float deltaV = startV/levels;
+			
+			for (int i=0;i<colorScale.length;i++){
+				float v = startV-(i)*deltaV;
+				colorScale[i] = Color.getHSBColor(0f,0f,v);
+			}
+		} else {
+			//fallback, should not be used.
+			for (int i=0;i<colorScale.length;i++){
+				colorScale[i] = Color.getHSBColor(i/360f,i/360f,i/100);
+			}
 		}
-		
+
 		return colorScale;
 	}
 

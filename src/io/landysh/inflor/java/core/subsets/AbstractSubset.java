@@ -22,6 +22,5 @@ public abstract class AbstractSubset extends DomainObject {
 	}
 	
 	protected abstract BitSet evaluate();
-	protected abstract ColumnStore getData();
+	public abstract ColumnStore getData();
 }
-//EOF
