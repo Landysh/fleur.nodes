@@ -2,6 +2,8 @@ package io.landysh.inflor.java.core.dataStructures;
 
 import java.util.BitSet;
 
+import io.landysh.inflor.java.core.plots.ChartingDefaults;
+
 public class Histogram2D {
 	
 	double [][] mask;
@@ -14,15 +16,16 @@ public class Histogram2D {
 	private int yBinCount;
 	private int xBinCount;
 
-	public Histogram2D (double[] xData, double xMin, double xMax, int xBinCount, 
-			double[] yData, double yMin, double yMax, int yBinCount){
+	public Histogram2D (double[] xData, double xMin, double xMax,double[] yData, double yMin, double yMax){
 		
+		
+		this.xBinCount = ChartingDefaults.BIN_COUNT;
+		this.yBinCount = ChartingDefaults.BIN_COUNT;
 		//histogram contains resulting XYZ dataset
  		xBins = new double[xBinCount*yBinCount];
 		yBins = new double[xBinCount*yBinCount];
 		zValues = new double[xBinCount*yBinCount];
-		this.xBinCount = xBinCount;
-		this.yBinCount = yBinCount;
+
 		
 		//Mask is the masked raw data to be used for gating.
 		mask = new double[2][xData.length];
@@ -107,7 +110,7 @@ public class Histogram2D {
 				} else if (!(j==0||j==(yBinCount-1))){
 					bits.set(i*yBinCount+j);
 				}else{
-					//NOOP
+					//NOOP TODO Just bad?
 				}
 			}
 		}
