@@ -41,8 +41,8 @@ public class PolygonGate extends AbstractGate {
 
 	@Override
 	public BitSet evaluate(ColumnStore data) {
-		double[] d1Data = FCSUtils.findCompatibleDimension(data.getData(), domainName).getData();
-		double[] d2Data = FCSUtils.findCompatibleDimension(data.getData(), rangeName).getData();
+		double[] d1Data = FCSUtils.findCompatibleDimension(data, domainName).getData();
+		double[] d2Data = FCSUtils.findCompatibleDimension(data, rangeName).getData();
 		Path2D poly = new Path2D.Double();
 		BitSet mask = new BitSet(data.getRowCount());
 		for (int i=0;i<domainPoints.size();i++){
