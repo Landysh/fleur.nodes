@@ -38,7 +38,7 @@ public class GateSelectionAdapter extends MouseAdapter {
 		mousePressedEvent = null;
 	}
 	
-	@Override
+	@Override 
 	public void mouseDragged(MouseEvent e){
 		Point2D v = ChartUtils.getPlotCoordinates(e, panel);
 		double dx = (v.getX() - v0.getX());
