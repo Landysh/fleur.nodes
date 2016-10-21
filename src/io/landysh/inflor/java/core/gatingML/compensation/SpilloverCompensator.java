@@ -4,8 +4,6 @@ import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
 
 import java.util.HashMap;
-import java.util.Hashtable;
-
 import org.ejml.data.DenseMatrix64F;
 
 import io.landysh.inflor.java.core.utils.FCSUtils;

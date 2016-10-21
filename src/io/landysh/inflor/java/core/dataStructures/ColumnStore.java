@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.TreeMap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -81,7 +80,7 @@ public class ColumnStore extends DomainObject{
 	}
 
 	public double[] getDimensionData(String displayName) {
-		FCSDimension matchingDimension = FCSUtils.findCompatibleDimension(this.getData(), displayName);
+		FCSDimension matchingDimension = FCSUtils.findCompatibleDimension(this, displayName);
 		return matchingDimension.getData();
 	}
 
