@@ -2,6 +2,7 @@ package io.landysh.inflor.java.core.plots;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -22,6 +24,7 @@ import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.plots.gateui.SelectionButtonListener;
 import io.landysh.inflor.java.core.plots.gateui.XYGateAnnotation;
 import io.landysh.inflor.java.core.utils.BitSetUtils;
 import io.landysh.inflor.java.core.utils.ChartUtils;
@@ -40,6 +43,8 @@ public class FCSChartPanel extends ChartPanel {
 	private HashMap<XYGateAnnotation, XYTextAnnotation> gateAnnotations = new HashMap<>();
 	private double xHandleSize;
 	private double yHandleSize;
+
+	private JButton selectionButton;
 	
 	public FCSChartPanel(JFreeChart chart, ColumnStore data) {
 		super(chart);
@@ -80,7 +85,7 @@ public class FCSChartPanel extends ChartPanel {
 		Range xRange = annotation.getXRange();
 		Range yRange = annotation.getYRange();
 		double x = xRange.getLowerBound();
-		double y = yRange.getUpperBound() + yHandleSize;
+		double y = yRange.getUpperBound()+yHandleSize/10;
 		return new double[]{x,y};
 	}
 
@@ -180,5 +185,19 @@ public class FCSChartPanel extends ChartPanel {
 
 	public String getRangeAxisName() {
 		return this.getChart().getXYPlot().getRangeAxis().getLabel();
+	}
+
+	public void activateGateSelectButton() {
+		ActionListener[] action = selectionButton.getActionListeners();
+		for (ActionListener act: action){
+			if (act instanceof SelectionButtonListener){
+				ActionEvent event = new ActionEvent(selectionButton, 42, "What was the question again?");		
+				act.actionPerformed(event);
+			}
+		}
+	}
+	
+	public void setSelectionListener(JButton button) {
+		this.selectionButton=button;
 	}
 }
