@@ -20,7 +20,7 @@ public class GateCreationToolBar extends JToolBar {
      * on a JFreeChart ChartPanel. 
      */
 	
-	private ArrayList<JButton> cursorButtons;
+	ArrayList<JButton> cursorButtons;
 	MouseListener activeListener;
 	private FCSChartPanel panel;
 	private JButton selectButton;
@@ -50,18 +50,7 @@ public class GateCreationToolBar extends JToolBar {
 	private JButton createSelectButton() {
 		gateSelectionAdapter = new GateSelectionAdapter(panel);
 		selectButton = new JButton("Select");
-		ActionListener sbl = new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				removeAllListeners();
-
-				cursorButtons.forEach(button -> button.setEnabled(true));
-				((JButton)e.getSource()).setEnabled(false);
-				
-				panel.addMouseListener(gateSelectionAdapter);
-				panel.addMouseMotionListener(gateSelectionAdapter);
-			}
-		};
+		SelectionButtonListener sbl = new SelectionButtonListener(panel, this, gateSelectionAdapter);
 		selectButton.addActionListener(sbl);
 		return selectButton;
 	}
@@ -103,7 +92,7 @@ public class GateCreationToolBar extends JToolBar {
 		return polyGateButton;
 	}
 	
-	private void removeAllListeners() {
+	void removeAllListeners() {
 		EventListener[] motion = panel.getListeners(MouseMotionListener.class);
 		for (EventListener el: motion){
 			panel.removeMouseMotionListener((MouseMotionListener) el);
@@ -112,5 +101,9 @@ public class GateCreationToolBar extends JToolBar {
 		for (EventListener l: listener){
 			panel.removeMouseListener((MouseListener) l);
 		}
+	}
+
+	public JButton getSelectionListener() {
+		return selectButton;
 	}
 }
