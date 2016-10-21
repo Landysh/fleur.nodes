@@ -21,7 +21,7 @@ public class Histogram2DTest {
 	@Test
 	public void testConstructor() throws Exception {
 		// Setup
-		Histogram2D testHitogram = new Histogram2D(xData, xMin, xMax, xBinCount, yData, yMin, yMax, yBinCount);
+		Histogram2D testHitogram = new Histogram2D(xData, xMin, xMax, yData, yMin, yMax);
 		double xWidthTruth = 1;
 		double yWidthTruth = 1;
 
@@ -38,7 +38,7 @@ public class Histogram2DTest {
 	@Test
 	public void testInitializeHistogram() throws Exception {
 		// Setup
-		Histogram2D testHistogram = new Histogram2D(xData, xMin, xMax, xBinCount, yData, yMin, yMax, yBinCount);
+		Histogram2D testHistogram = new Histogram2D(xData, xMin, xMax, yData, yMin, yMax);
 
 		double[] xBinsTruth = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
 		double[] yBinsTruth = { 0, 1, 2, 0, 1, 2, 0, 1, 2 };
@@ -64,7 +64,7 @@ public class Histogram2DTest {
 	@Test
 	public void testPopulateHistogram() {
 		// Setup
-		Histogram2D testHistogram = new Histogram2D(xData, xMin, xMax, xBinCount, yData, yMin, yMax, yBinCount);
+		Histogram2D testHistogram = new Histogram2D(xData, xMin, xMax, yData, yMin, yMax);
 
 		double[] initValues = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		double[] xBinsTruth = { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
