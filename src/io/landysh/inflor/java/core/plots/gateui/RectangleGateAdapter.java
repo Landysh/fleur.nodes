@@ -1,6 +1,5 @@
 package io.landysh.inflor.java.core.plots.gateui;
 
-import java.awt.Frame;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
@@ -50,8 +49,8 @@ public class  RectangleGateAdapter extends MouseInputAdapter{
         			LookAndFeel.DEFAULT_GATE_COLOR);
     		panel.addTemporaryAnnotation(tempAnn);
     		//Pop a gate editor dialog
-    		Frame topFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
-    		GateNameEditor dialog = new GateNameEditor(topFrame);
+    		//Window topFrame = SwingUtilities.getWindowAncestor(panel);
+    		GateNameEditor dialog = new GateNameEditor();
     		dialog.setVisible(true);
     		//On Close...
     		if (dialog.isOK) {
@@ -63,7 +62,8 @@ public class  RectangleGateAdapter extends MouseInputAdapter{
     		}
             panel.removeTemporaryAnnotation(tempAnn);
     		tempAnn = null;
-    		dialog.dispose();    	
+    		dialog.dispose();
+    		panel.activateGateSelectButton();
     	}
     }
 
