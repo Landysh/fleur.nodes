@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
-
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.NodeSettingsRO;
