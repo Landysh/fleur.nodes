@@ -8,6 +8,7 @@ import javax.swing.SwingWorker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotUtils;
@@ -16,12 +17,12 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 
 	private JProgressBar progress;
 	private ChartSpec plotSpec;
-	double[] X;
-	double[] Y;
+	FCSDimension X;
+	FCSDimension Y;
 	ChartPanel chatPanel;
 	private JFreeChart newChart;
 
-	public UpdatePlotWorker(JProgressBar progressBar, ChartPanel chartPanel, ChartSpec spec, double[] xData, double[] yData) {
+	public UpdatePlotWorker(JProgressBar progressBar, ChartPanel chartPanel, ChartSpec spec, FCSDimension xData, FCSDimension yData) {
 		//UI Stuff
 		this.progress = progressBar;
 		
@@ -55,5 +56,4 @@ public class UpdatePlotWorker extends SwingWorker<JFreeChart, String> {
 		chatPanel.setChart(newChart);
 		progress.setVisible(false);
 	}
-	
 }
