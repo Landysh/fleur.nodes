@@ -4,6 +4,7 @@ import java.util.BitSet;
 
 import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class DefaultSubset extends AbstractSubset {
 
@@ -33,8 +34,10 @@ public class DefaultSubset extends AbstractSubset {
 	}
 
 	@Override
-	protected ColumnStore getData() {	
-		return parentSubset.getData();
+	public ColumnStore getData() {	
+		ColumnStore data = parentSubset.getData();
+		BitSet mask = gate.evaluate(data);
+		ColumnStore filteredData = FCSUtils.filterColumnStore(mask, data);
+		return filteredData;
 	}
-	
 }
