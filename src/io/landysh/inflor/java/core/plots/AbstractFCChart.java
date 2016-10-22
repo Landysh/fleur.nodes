@@ -13,7 +13,6 @@ public abstract class AbstractFCChart {
 	 */
 
 	public final String uuid;
-	protected JFreeChart chart;
 	protected ChartSpec spec;
 
 	public AbstractFCChart(String priorUUID, ChartSpec spec) {
@@ -23,12 +22,12 @@ public abstract class AbstractFCChart {
 		} else {
 			uuid = priorUUID;
 		}
-		
 		this.spec = spec;
-		
 	}
 	
-	public abstract void update(ChartSpec spec);
-	public abstract JFreeChart createChart(FCSDimension domainDimension, FCSDimension rangeDimension);
-
+	public void setSpec(ChartSpec spec) {this.spec = spec;}
+	public ChartSpec getSpec() {return this.spec;}
+	
+	public abstract JFreeChart createChart(FCSDimension domainDimension, 
+										   FCSDimension rangeDimension);
 }
