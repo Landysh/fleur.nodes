@@ -3,6 +3,7 @@ package io.landysh.inflor.java.core.transforms;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import edu.stanford.facs.logicle.FastLogicle;
+import io.landysh.inflor.java.core.plots.ChartingDefaults;
 
 @SuppressWarnings("serial")
 public class LogicleTransform extends AbstractTransform {
@@ -13,18 +14,18 @@ public class LogicleTransform extends AbstractTransform {
 	private double w = 0.5;
 	private double m = 4.5;
 	private double a = 0;
-	FastLogicle transformCalculator;
+	FastLogicle logicle;
 	
-	public LogicleTransform(int binCount) {
+	public LogicleTransform() {
 		super(TYPE);
-		this.transformCalculator = new FastLogicle(t, w, m, a, binCount);
+		this.logicle = new FastLogicle(t, w, m, a, ChartingDefaults.BIN_COUNT);
 	}
 
 	@Override
 	public double[] transform(double[] rawData) {
 		double[] newData = new double[rawData.length]; 
 		for (int i=0;i<rawData.length;i++){
-			newData[i] = transformCalculator.scale(rawData[i]);
+			newData[i] = logicle.scale(rawData[i]);
 		}
 		return newData;
 	}
@@ -32,7 +33,7 @@ public class LogicleTransform extends AbstractTransform {
 	public double[] inverse(double[] transformedData) {
 		double[] newData = new double[transformedData.length]; 
 		for (int i=0;i<transformedData.length;i++){
-			newData[i] = transformCalculator.inverse(transformedData[i]);
+			newData[i] = logicle.inverse(transformedData[i]);
 		}
 		return newData;
 	}
@@ -55,18 +56,22 @@ public class LogicleTransform extends AbstractTransform {
 	}
 	@Override
 	public double transform(double value) {
-		return transformCalculator.scale(value);
+		return logicle.scale(value);
 	}
 	@Override
 	public double inverse(double value) {
-		return transformCalculator.inverse(value);
+		return logicle.inverse(value);
 	}
 
 	public double getMinValue() {
-		return transform(-100);
+		return 0  ;
 	}
 
 	public double getMaxValue() {
-		return transform(t-1);
+		return 1;
 	}	
+	
+	public double[] getAxisValues(){
+		return logicle.axisLabels();
+	}
 }
