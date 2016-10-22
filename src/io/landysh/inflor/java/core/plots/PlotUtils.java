@@ -1,6 +1,5 @@
 package io.landysh.inflor.java.core.plots;
 
-import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.Range;
@@ -66,7 +65,7 @@ public class PlotUtils {
 				newTransform = new LogrithmicTransform(100, 262144);
 
 		 } else if (selectedType == TransformType.Logicle){
-			 newTransform = new LogicleTransform(512);
+			 newTransform = new LogicleTransform();
 		 } else {
 			 //TODO: No use case?
 			 newTransform = null;

@@ -58,7 +58,7 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
 		} else {
 			this.logTransform = new LogrithmicTransform(Math.exp(pneF1), Math.exp(pneF2));
 		}
-		this.logicleTransform = new LogicleTransform(ChartingDefaults.BIN_COUNT);
+		this.logicleTransform = new LogicleTransform();
 		
 	}
 
