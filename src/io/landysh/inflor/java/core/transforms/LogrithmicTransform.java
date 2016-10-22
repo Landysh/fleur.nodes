@@ -47,4 +47,14 @@ public class LogrithmicTransform extends AbstractTransform {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public double getMinValue() {
+		return Math.log(min);
+	}
+
+	@Override
+	public double getMaxValue() {
+		return Math.log(max);
+	}
 }
