@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests;
+package io.landysh.inflor.tests.unit;
 
 import org.junit.Test;
 
