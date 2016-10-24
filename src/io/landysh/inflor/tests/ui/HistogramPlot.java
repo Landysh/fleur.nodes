@@ -40,8 +40,8 @@ public class HistogramPlot extends AbstractFCChart {
 		double[] transformedData = transform.transform(domainDimension.getData());
 		
 		Histogram1D hist = new Histogram1D(transformedData,
-										   transform.getMinValue(), 
-										   transform.getMaxValue(), 
+										   transform.getMinTranformedValue(), 
+										   transform.getMaxTransformedValue(), 
 										   ChartingDefaults.BIN_COUNT);
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
