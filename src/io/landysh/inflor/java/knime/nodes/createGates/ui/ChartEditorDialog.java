@@ -29,8 +29,6 @@ import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.plots.gateui.GateCreationToolBar;
 import io.landysh.inflor.java.core.subsets.AbstractSubset;
 import io.landysh.inflor.java.core.subsets.RootSubset;
-import io.landysh.inflor.java.core.transforms.AbstractTransform;
-import io.landysh.inflor.java.core.transforms.TransformType;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import sun.awt.windows.WEmbeddedFrame;
@@ -63,8 +61,6 @@ public class ChartEditorDialog extends JDialog {
 	private CreateGatesNodeDialog parentDialog;
 	private AbstractFCChart previewPlot;
 	private FCSChartPanel chartPanel;
-	private JComboBox<TransformType> domainTransformBox;
-	private JComboBox<TransformType> rangeTransformBox;
 	private GateCreationToolBar gatingToolBar;
 
 
@@ -112,16 +108,14 @@ public class ChartEditorDialog extends JDialog {
 
 		// populate the dialog
 		setTitle("Editing: " + spec.getDisplayName());
+		ColumnStore subsetData = ((AbstractSubset)parentSelectorBox.getSelectedItem()).getData();
 		final JPanel content = createContentPanel();
 		parentSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
-		domainParameterBox.setSelectedItem(spec.getDomainAxisName());
-		ColumnStore subsetData = ((AbstractSubset)parentSelectorBox.getSelectedItem()).getData();
 		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
-		domainTransformBox.setSelectedItem(domainDimension.getPreferredTransform());
+		domainParameterBox.setSelectedItem(domainDimension);
 		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
-		rangeDimBox.setSelectedItem(spec.getRangeAxisName());
-		rangeTransformBox.setSelectedItem(rangeDimension.getPreferredTransform());
+		rangeDimBox.setSelectedItem(rangeDimension);
 
 		getContentPane().add(content);
 		pack();
@@ -222,24 +216,8 @@ public class ChartEditorDialog extends JDialog {
 				updatePreviewPlot();
 			}
 		});
-		
-		//Transform selector
-		final TransformType[] domainTransforms = TransformType.values();
-		domainTransformBox = new JComboBox<TransformType>(domainTransforms);
-		domainTransformBox.setSelectedItem(spec.getDomainTransform());
-		domainTransformBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				TransformType selectedType = (TransformType) domainTransformBox.getSelectedItem();
-				AbstractTransform newTransform = ((FCSDimension)domainParameterBox.getSelectedItem()).getTransform(selectedType);
-				spec.setDomainTransform(newTransform);
-				updatePreviewPlot();
-			}
-		});
-		
 		domainAxisGroup.add(domainParameterBox);
-		domainAxisGroup.add(domainTransformBox);
-
+		
 		return domainAxisGroup;
 	}
 
@@ -336,25 +314,8 @@ public class ChartEditorDialog extends JDialog {
 				updatePreviewPlot();
 			}
 		});
-		
-		//Transform selector
-		final TransformType[] domainTransforms = TransformType.values();
-		rangeTransformBox = new JComboBox<TransformType>(domainTransforms);
-		TransformType selectedTransform = ((FCSDimension) rangeDimBox.getSelectedItem()).getPreferredTransform().type;
-		rangeTransformBox.setSelectedItem(selectedTransform);
-		rangeTransformBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				TransformType selectedType = (TransformType) rangeTransformBox.getSelectedItem();
-				AbstractTransform newTransform = ((FCSDimension) rangeDimBox.getSelectedItem()).getTransform(selectedType);
-				spec.setRangeTransform(newTransform);
-				updatePreviewPlot();
-			}
-		});
-		//Add the components
 		rangeAxisGroup.add(rangeDimBox);
-		rangeAxisGroup.add(rangeTransformBox);
-		
+
 		return rangeAxisGroup;
 	}
 
