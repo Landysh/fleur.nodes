@@ -1,12 +1,8 @@
 package io.landysh.inflor.java.core.dataStructures;
 
-import io.landysh.inflor.java.core.fcs.ParameterTypes;
-import io.landysh.inflor.java.core.plots.ChartingDefaults;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
-import io.landysh.inflor.java.core.transforms.LogrithmicTransform;
-import io.landysh.inflor.java.core.transforms.TransformType;
 
 //Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")
@@ -32,9 +28,7 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
 	
 	private double[] data;
 
-	private AbstractTransform linearTransform;
-	private AbstractTransform logTransform;
-	private AbstractTransform logicleTransform;
+	private AbstractTransform preferredTransform;
 
 	public FCSDimension(int size, int index, String pnn, 
 			String pns, double pneF1, double pneF2, double pnr, boolean wasComped) {
@@ -52,14 +46,11 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
 		range = pnr;
 		compRef = wasComped;
 		this.data = new double[size] ;
-		this.linearTransform = new BoundDisplayTransform(0, range);
 		if (ampTypef1 ==0&&ampTypef2==0){
-			this.logTransform = new LogrithmicTransform(1, Math.log10(range));
+			this.preferredTransform = new BoundDisplayTransform(ampTypef1, range);
 		} else {
-			this.logTransform = new LogrithmicTransform(Math.exp(pneF1), Math.exp(pneF2));
-		}
-		this.logicleTransform = new LogicleTransform();
-		
+			this.preferredTransform = new LogicleTransform();
+		}		
 	}
 
 	public double[] getData() {
@@ -137,26 +128,6 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
 	}
 
 	public AbstractTransform getPreferredTransform() {
-		String[] regi = ParameterTypes.SCATTER.regi();
-		for (String regex:regi){
-			String name = shortName.toLowerCase();
-			if (name.matches(regex)){
-				return this.linearTransform;
-			}
-		}
-		return this.logicleTransform;
-	}
-
-	public AbstractTransform getTransform(TransformType selectedType) {
-		if (selectedType==TransformType.Linear){
-			return linearTransform;
-		} else if (selectedType==TransformType.Logrithmic){
-			return logTransform;
-		} else if (selectedType==TransformType.Logicle){
-			return logicleTransform;
-		} else {
-			System.out.println("CODING ERROR");//This should never happen.
-			throw new IllegalArgumentException("Transform type: " + selectedType + " not supported."); 
-		}
+		return this.preferredTransform;
 	}
 }
