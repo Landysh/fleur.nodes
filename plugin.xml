@@ -28,6 +28,7 @@
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory" id="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory" id="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory" id="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.compensate.CompensateNodeFactory" id="io.landysh.inflor.java.knime.nodes.compensate.CompensateNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
