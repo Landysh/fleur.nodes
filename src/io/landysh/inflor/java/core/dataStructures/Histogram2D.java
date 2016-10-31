@@ -18,14 +18,12 @@ public class Histogram2D {
 
 	public Histogram2D (double[] xData, double xMin, double xMax,double[] yData, double yMin, double yMax){
 		
-		
 		this.xBinCount = ChartingDefaults.BIN_COUNT;
 		this.yBinCount = ChartingDefaults.BIN_COUNT;
 		//histogram contains resulting XYZ dataset
  		xBins = new double[xBinCount*yBinCount];
 		yBins = new double[xBinCount*yBinCount];
 		zValues = new double[xBinCount*yBinCount];
-
 		
 		//Mask is the masked raw data to be used for gating.
 		mask = new double[2][xData.length];
@@ -70,27 +68,14 @@ public class Histogram2D {
 		}
 	}
 
-	public double getYBinWidth() {
-		return yBinWidth;
-	}
-
-	public double getXBinWidth() {
-		return xBinWidth;
-	}
-
-	public double[] getXBins() {
-		return xBins;
-	}
-
-	public double[] getYBins() {
-		return yBins;
-	}
-
-	public double[] getZValues() {
-		return zValues;
-	}
-
-	public BitSet getNonEmptyBins() {
+	public double getYBinWidth() {return yBinWidth;}
+	public double getXBinWidth() {return xBinWidth;}
+	public double[] getXBins() {return xBins;}
+	public double[] getYBins() {return yBins;}
+	public double[] getZValues() {return zValues;}
+	
+	public BitSet getNonEmptyBins() 
+	{
 		BitSet bits = new BitSet(zValues.length);
 		for(int i=0;i<zValues.length;i++){
 			if (zValues[i]!=0){
