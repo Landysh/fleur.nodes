@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.java.core.dataStructures.FCSDimension;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public abstract class AbstractFCChart {
 
@@ -28,6 +28,5 @@ public abstract class AbstractFCChart {
 	public void setSpec(ChartSpec spec) {this.spec = spec;}
 	public ChartSpec getSpec() {return this.spec;}
 	
-	public abstract JFreeChart createChart(FCSDimension domainDimension, 
-										   FCSDimension rangeDimension);
+	public abstract JFreeChart createChart(FCSFrame dataFrame);
 }
