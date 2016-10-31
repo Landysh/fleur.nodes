@@ -11,12 +11,14 @@ import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.util.ShapeUtilities;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.Histogram1D;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.ChartingDefaults;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
+import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class HistogramPlot extends AbstractFCChart {
 
@@ -35,7 +37,10 @@ public class HistogramPlot extends AbstractFCChart {
 	}
 
 	@Override
-	public JFreeChart createChart(FCSDimension domainDimension, FCSDimension rangeDimension) {
+	public JFreeChart createChart(FCSFrame dataFrame) {
+		
+		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(dataFrame, spec.getDomainAxisName());
+
 		AbstractTransform transform = spec.getDomainTransform();
 		double[] transformedData = transform.transform(domainDimension.getData());
 		
@@ -45,7 +50,7 @@ public class HistogramPlot extends AbstractFCChart {
 										   ChartingDefaults.BIN_COUNT);
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries("FOO", hist.getData());
+		dataset.addSeries(dataFrame.getPrefferedName(), hist.getData());
 		
 		ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.getDisplayName(), transform);
 		ValueAxis rangeAxis = new NumberAxis(spec.getRangeAxisName());
