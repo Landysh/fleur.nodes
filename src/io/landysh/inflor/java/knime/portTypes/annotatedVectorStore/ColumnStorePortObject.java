@@ -23,7 +23,7 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreContent;
 
@@ -51,7 +51,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
 	private static final String COLUMNS_NAME = "column_names";
 	private static final String MODEL_NAME = "column_store_model";
 
-	public static ColumnStorePortObject createPortObject(final ColumnStorePortSpec spec, final ColumnStore columnStore,
+	public static ColumnStorePortObject createPortObject(final ColumnStorePortSpec spec, final FCSFrame columnStore,
 			final FileStore fileStore) {
 		final ColumnStorePortObject portObject = new ColumnStorePortObject(spec, columnStore, fileStore);
 		try {
@@ -62,7 +62,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		return portObject;
 	}
 
-	private static void serialize(final ColumnStore vectorStore, final FileStore fileStore) throws IOException {
+	private static void serialize(final FCSFrame vectorStore, final FileStore fileStore) throws IOException {
 		final File file = fileStore.getFile();
 		try (FileOutputStream out = new FileOutputStream(file)) {
 			vectorStore.save(out);
@@ -79,7 +79,7 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		// to be used in conjunction only with .load().
 	}
 
-	public ColumnStorePortObject(ColumnStorePortSpec spec, ColumnStore vectorStore, FileStore fileStore) {
+	public ColumnStorePortObject(ColumnStorePortSpec spec, FCSFrame vectorStore, FileStore fileStore) {
 		super(Lists.newArrayList(fileStore));
 		m_spec = spec;
 		final ColumnStoreContent content = new ColumnStoreContent(vectorStore);
@@ -87,12 +87,12 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		m_columnNames = vectorStore.getColumnNames();
 	}
 
-	private ColumnStore deserialize() throws IOException {
+	private FCSFrame deserialize() throws IOException {
 		final File file = getFileStore(0).getFile();
-		ColumnStore vectorStore;
+		FCSFrame vectorStore;
 		try {
 			final FileInputStream input = new FileInputStream(file);
-			vectorStore = ColumnStore.load(input);
+			vectorStore = FCSFrame.load(input);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			throw new IOException();
@@ -100,9 +100,9 @@ public class ColumnStorePortObject extends FileStorePortObject {
 		return vectorStore;
 	}
 
-	public ColumnStore getColumnStore() {
+	public FCSFrame getColumnStore() {
 		final ColumnStoreContent content = m_columnStore.get();
-		ColumnStore cs = null;
+		FCSFrame cs = null;
 		if (content == null) {
 			try {
 				cs = deserialize();

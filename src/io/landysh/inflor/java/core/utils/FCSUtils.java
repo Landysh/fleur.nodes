@@ -3,7 +3,7 @@ package io.landysh.inflor.java.core.utils;
 import java.util.BitSet;
 import java.util.HashMap;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 
 public class FCSUtils {
@@ -97,7 +97,7 @@ public class FCSUtils {
 		return keywords;
 	}
 
-	public static FCSDimension buildFCSDimension(int pIndex, HashMap<String, String> header, boolean wasComped) {
+	public static FCSDimension buildFCSDimension(int pIndex, HashMap<String, String> header, String compensationReference) {
 		/**
 		 * Constructs a new FCSDimension object from the parameter data in the header of an FCS File.
 		 */
@@ -117,24 +117,25 @@ public class FCSUtils {
 													 pneF1, 
 													 pneF2, 
 													 pnr,
-													 wasComped);
+													 compensationReference);
 		
 		return newDimension;
 	}
 
-	public static ColumnStore filterColumnStore(BitSet mask, ColumnStore in) {
+	public static FCSFrame filterColumnStore(BitSet mask, FCSFrame in) {
 		
-		ColumnStore out = new ColumnStore(in.getKeywords(), mask.cardinality());
+		FCSFrame out = new FCSFrame(in.getKeywords(), mask.cardinality());
 		for (String name:in.getData().keySet()){
 			FCSDimension  inDim = in.getData().get(name);
 			FCSDimension outDim = new FCSDimension(mask.cardinality(), inDim.getIndex(), inDim.getShortName(), inDim.getDisplayName(), 
 					inDim.getPNEF1(), inDim.getPNEF2(), inDim.getRange(), inDim.getCompRef());
+			outDim.setPreferredTransform(inDim.getPreferredTransform());
 			out.addColumn(name, outDim);
 		}
 		return out;
 	}
 
-	public static FCSDimension findCompatibleDimension(ColumnStore dataSource, String name) {
+	public static FCSDimension findCompatibleDimension(FCSFrame dataSource, String shortName) {
 		/**
 		 * Returns the key for the first compatible FCSDimension in the selected map.
 		 * (ie. where the result of the toString() method is the same).
@@ -142,7 +143,7 @@ public class FCSUtils {
 		 */
 		FCSDimension returnDim = null;
 		for (FCSDimension dim: dataSource.getData().values()){
-			if (dim.getShortName().equals(name)){
+		  if (dim.getShortName().equals(shortName)){
 				returnDim = dim;
 			}
 		}

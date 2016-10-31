@@ -2,11 +2,7 @@ package io.landysh.inflor.java.knime.nodes.compensate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataRow;
@@ -25,12 +21,9 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-
 
 /**
  * This is the model implementation of Compensate.
@@ -51,7 +44,10 @@ public class CompensateNodeModel extends NodeModel {
     /**
      * Constructor for the node model.
      */
-    protected CompensateNodeModel() {super(1, 1);}
+    protected CompensateNodeModel() {
+    	super(1, 1);
+    	this.m_settings = new CompensateNodeSettings();
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -75,11 +71,11 @@ public class CompensateNodeModel extends NodeModel {
 		for (final DataRow inRow : inData[0]) {
 			
 			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			final ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
 			
 			
 			// now create the output row
-			final ColumnStore outStore = compr.compensateFCSFrame(columnStore);
+			final FCSFrame outStore = compr.compensateFCSFrame(columnStore);
 			final String fsName = i + "ColumnStore.fs";
 			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
 			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
@@ -120,13 +116,15 @@ public class CompensateNodeModel extends NodeModel {
 	}
 
 	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
-		return dataTableSpec;
-	}
-    /**
+		return dataTableSpec;}
+    
+	/**
      * {@inheritDoc}
      */
     @Override
-    protected void saveSettingsTo(final NodeSettingsWO settings){m_settings.save(settings);}
+    protected void saveSettingsTo(final NodeSettingsWO settings){
+    	m_settings.save(settings);
+    	}
 
     /**
      * {@inheritDoc}
@@ -158,4 +156,3 @@ public class CompensateNodeModel extends NodeModel {
             final ExecutionMonitor exec) throws IOException,
             CanceledExecutionException {}
 }
-

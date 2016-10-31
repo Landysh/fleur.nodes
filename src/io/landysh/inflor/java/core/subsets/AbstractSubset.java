@@ -2,7 +2,7 @@ package io.landysh.inflor.java.core.subsets;
 
 import java.util.BitSet;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 
 public abstract class AbstractSubset extends DomainObject {
@@ -22,5 +22,5 @@ public abstract class AbstractSubset extends DomainObject {
 	}
 	
 	protected abstract BitSet evaluate();
-	public abstract ColumnStore getData();
+	public abstract FCSFrame getData();
 }

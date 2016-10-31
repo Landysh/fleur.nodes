@@ -19,7 +19,7 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
@@ -31,7 +31,6 @@ import io.landysh.inflor.java.core.subsets.AbstractSubset;
 import io.landysh.inflor.java.core.subsets.RootSubset;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
-import sun.awt.windows.WEmbeddedFrame;
 
 public class ChartEditorDialog extends JDialog {
 
@@ -81,8 +80,8 @@ public class ChartEditorDialog extends JDialog {
 		String first = parent.getSelectedSample().getData().navigableKeySet().first();
 		String next = parent.getSelectedSample().getData().navigableKeySet().ceiling(first);
 
-		spec.setDomainAxisName(parent.getSelectedSample().getVector(first).toString());
-		spec.setRangeAxisName(parent.getSelectedSample().getVector(next).toString());
+		spec.setDomainAxisName(parent.getSelectedSample().getFCSDimension(first).getShortName());
+		spec.setRangeAxisName(parent.getSelectedSample().getFCSDimension(next).getShortName());
 		setModal(true);
 
 		// populate the dialog
@@ -93,7 +92,7 @@ public class ChartEditorDialog extends JDialog {
 		setLocationRelativeTo(getParent());
 	}
 
-	public ChartEditorDialog(WEmbeddedFrame topFrame, CreateGatesNodeDialog parent, String id) {
+	public ChartEditorDialog(CreateGatesNodeDialog parent, String id) {
 		/**
 		 * Use this constructor to edit an existing chart. 
 		 * 
@@ -101,14 +100,14 @@ public class ChartEditorDialog extends JDialog {
 		 * @param parent the parent dialog which stores the data model.
 		 * @param id The UUID of the domain object. typically found in the settingsModel.
 		 */
-		super(topFrame);
+		super();
 		parentDialog = parent;
 		spec = parentDialog.m_Settings.getChartSpec(id);
 		setModal(true);
 
 		// populate the dialog
 		setTitle("Editing: " + spec.getDisplayName());
-		ColumnStore subsetData = ((AbstractSubset)parentSelectorBox.getSelectedItem()).getData();
+		FCSFrame subsetData = ((AbstractSubset)parentSelectorBox.getSelectedItem()).getData();
 		final JPanel content = createContentPanel();
 		parentSelectorBox.setSelectedIndex(0);
 		plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
@@ -183,12 +182,9 @@ public class ChartEditorDialog extends JDialog {
 	}
 
 	private FCSChartPanel createPreviewPanel() {
-		ColumnStore chartDataSource = (ColumnStore) parentDialog.getSelectedSample();
-		String domainName = spec.getDomainAxisName();
-		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(chartDataSource, domainName);
-		FCSDimension rangeDimension= FCSUtils.findCompatibleDimension(chartDataSource, spec.getRangeAxisName());		
+		FCSFrame chartDataSource = (FCSFrame) parentDialog.getSelectedSample();
 		previewPlot = PlotUtils.createPlot(spec);
-		JFreeChart chart = previewPlot.createChart(domainDimension, rangeDimension);
+		JFreeChart chart = previewPlot.createChart(chartDataSource);
 		chartPanel = new FCSChartPanel(chart, chartDataSource);
 		chartPanel.setPreferredSize(new Dimension(280,250));
 		return chartPanel;
@@ -261,10 +257,8 @@ public class ChartEditorDialog extends JDialog {
 		progressBar.setStringPainted(true);
 		progressBar.setString("Initializing");
 		progressBar.getModel().setValue(1);
-		ColumnStore data = (ColumnStore) parentDialog.getSelectedSample();
-		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data, spec.getDomainAxisName());
-		FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data, spec.getRangeAxisName());
-		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, domainDimension, rangeDimension);
+		FCSFrame data = (FCSFrame) parentDialog.getSelectedSample();
+		UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, data);
 		worker.execute();
 	}
 

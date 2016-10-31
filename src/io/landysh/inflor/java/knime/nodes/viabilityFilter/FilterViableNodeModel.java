@@ -21,7 +21,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
@@ -75,15 +75,15 @@ public class FilterViableNodeModel extends NodeModel {
 		int i = 0;
 		for (final DataRow inRow : inData[0]) {
 			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			final ColumnStore columnStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
 			final ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-			final double[] viabilityData = columnStore.getVector(viabilityColumn).getData();
+			final double[] viabilityData = columnStore.getFCSDimension(viabilityColumn).getData();
 			model.buildModel(viabilityData);
 			final BitSet mask = model.scoreModel(viabilityData);
 
 			// now create the output row
 			
-			final ColumnStore outStore = FCSUtils.filterColumnStore(mask, columnStore);
+			final FCSFrame outStore = FCSUtils.filterColumnStore(mask, columnStore);
 
 			final String fsName = i + "ColumnStore.fs";
 			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);

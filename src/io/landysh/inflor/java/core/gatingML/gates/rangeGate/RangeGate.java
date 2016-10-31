@@ -5,7 +5,7 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -35,7 +35,7 @@ public class RangeGate extends AbstractGate {
 	}
 
 	@Override
-	public BitSet evaluate(ColumnStore FCSData) {
+	public BitSet evaluate(FCSFrame FCSData) {
 		//TODO performance optimization?
 		if (dimensions.size()==2){
 			String xName = dimensions.get(0).getName();
@@ -108,7 +108,7 @@ public class RangeGate extends AbstractGate {
 		return dimensions.get(1).getName();
 	}
 
-	public void evaluateSimpleRect(ColumnStore data) {
+	public void evaluateSimpleRect(FCSFrame data) {
 		String xName = dimensions.get(0).getName();
 		double xMin = dimensions.get(0).min;
 		double xMax = dimensions.get(0).max;

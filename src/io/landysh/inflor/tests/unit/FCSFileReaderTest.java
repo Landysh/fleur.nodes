@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 //TestDependencies
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 //Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
@@ -19,7 +19,7 @@ public class FCSFileReaderTest {
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
-		final FCSFileReader r = new FCSFileReader(path1, false);
+		final FCSFileReader r = new FCSFileReader(path1);
 
 		// Test
 
@@ -37,11 +37,11 @@ public class FCSFileReaderTest {
 	@Test
 	public void testReadAllData15ScatterEvents() throws Exception {
 		// Setup
-		final FCSFileReader reader = new FCSFileReader(path1, false);
+		final FCSFileReader reader = new FCSFileReader(path1);
 
 		// Test
 		reader.readData();
-		final ColumnStore dataStore = reader.getColumnStore();
+		final FCSFrame dataStore = reader.getColumnStore();
 
 		final double[] fcs = {400,600,300,500,600,500,800,200,300,800,900,400,200,600,400};
 		final double[] ssc = {300,300,600,200,800,500,600,400,100,200,400,800,900,700,500};
@@ -66,9 +66,9 @@ public class FCSFileReaderTest {
 		final double[] trueSSCFirstFew = {300,300,600,200,800,500,600,400,100,200,400,800,900,700,500};
 		
 		// Test
-		final FCSFileReader reader = new FCSFileReader(logiclePath, false);
+		final FCSFileReader reader = new FCSFileReader(logiclePath);
 		reader.readData();
-		final ColumnStore dataStore = reader.getColumnStore();
+		final FCSFrame dataStore = reader.getColumnStore();
 		final int testRowCount = dataStore.getRowCount();
 
 		

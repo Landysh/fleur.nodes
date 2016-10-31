@@ -10,7 +10,7 @@ import org.knime.core.data.filestore.FileStore;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class ColumnStoreContent {
 
@@ -21,8 +21,8 @@ public class ColumnStoreContent {
 			try {
 				final byte[] bytes = new byte[input.readInt()];
 				input.readFully(bytes);
-				ColumnStore cStore;
-				cStore = ColumnStore.load(bytes);
+				FCSFrame cStore;
+				cStore = FCSFrame.load(bytes);
 				final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
 				return newCell;
 			} catch (final Exception e) {
@@ -33,7 +33,7 @@ public class ColumnStoreContent {
 
 		@Override
 		public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
-			final byte[] bytes = cell.getColumnStore().save();
+			final byte[] bytes = cell.getFCSFrame().save();
 			output.writeInt(bytes.length);
 			output.write(bytes);
 		}
@@ -41,17 +41,17 @@ public class ColumnStoreContent {
 
 	public static final DataType TYPE = DataType.getType(ColumnStoreCell.class);
 
-	private ColumnStore m_data = null;
+	private FCSFrame m_data = null;
 
 	public ColumnStoreContent(byte[] buffer) throws InvalidProtocolBufferException {
-		m_data = ColumnStore.load(buffer);
+		m_data = FCSFrame.load(buffer);
 	}
 
-	public ColumnStoreContent(ColumnStore vectorStore) {
+	public ColumnStoreContent(FCSFrame vectorStore) {
 		m_data = vectorStore;
 	}
 
-	public ColumnStore getColumnStore() {
+	public FCSFrame getColumnStore() {
 		return m_data;
 	}
 

@@ -8,7 +8,7 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
@@ -23,9 +23,9 @@ public class LineageViewUITest extends ApplicationFrame {
 		Hashtable<String, ChartSpec> testSpecs = new Hashtable<String, ChartSpec>();
 		
 		String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
-		final FCSFileReader reader = new FCSFileReader(logiclePath, false);
+		final FCSFileReader reader = new FCSFileReader(logiclePath);
 		reader.readData();
-		final ColumnStore dataStore = reader.getColumnStore();
+		final FCSFrame dataStore = reader.getColumnStore();
 		
 		ChartSpec ly = new ChartSpec();
 		ly.setPlotType(PlotTypes.Contour);

@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.subsets.RootSubset;
@@ -29,7 +29,7 @@ public class CellLineageTree extends JTree {
 		
 	}
 
-	public void updateLayout(Hashtable<String, ChartSpec> specs, ColumnStore dataStore) {
+	public void updateLayout(Hashtable<String, ChartSpec> specs, FCSFrame dataStore) {
 		super.removeAll();
 		//initialize the tree
 		renderer = new TreeCellPlotRenderer(dataStore);

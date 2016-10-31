@@ -9,7 +9,7 @@ import org.knime.core.data.DataType;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class ColumnStoreCell extends FileStoreCell {
 
@@ -20,8 +20,8 @@ public class ColumnStoreCell extends FileStoreCell {
 			try {
 				final byte[] bytes = new byte[input.readInt()];
 				input.readFully(bytes);
-				ColumnStore cStore;
-				cStore = ColumnStore.load(bytes);
+				FCSFrame cStore;
+				cStore = FCSFrame.load(bytes);
 				final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
 				return newCell;
 			} catch (final Exception e) {
@@ -32,7 +32,7 @@ public class ColumnStoreCell extends FileStoreCell {
 
 		@Override
 		public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
-			final byte[] bytes = cell.getColumnStore().save();
+			final byte[] bytes = cell.getFCSFrame().save();
 			output.writeInt(bytes.length);
 			output.write(bytes);
 		}
@@ -43,24 +43,24 @@ public class ColumnStoreCell extends FileStoreCell {
 	/**
 	 * A cell type matching the functionality of the ColumnStorePortObject.
 	 */
-	private final ColumnStore m_data;
+	private final FCSFrame m_data;
 
-	ColumnStoreCell(ColumnStore cStore) {
+	ColumnStoreCell(FCSFrame cStore) {
 		// Use with deserializer.
 		m_data = cStore;
 	}
 
-	public ColumnStoreCell(FileStore fs, ColumnStore cStore) {
+	public ColumnStoreCell(FileStore fs, FCSFrame cStore) {
 		super(fs);
 		m_data = cStore;
 	}
 
-	public ColumnStore getColumnStore() {
+	public FCSFrame getFCSFrame() {
 		return m_data;
 	}
 
 	@Override
-	public String toString() {
-		return m_data.getKeywordValue("$FIL");
+	public String toString() { 
+	  return m_data.toString();
 	}
 }

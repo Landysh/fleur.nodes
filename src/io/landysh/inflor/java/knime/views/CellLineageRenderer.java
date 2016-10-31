@@ -15,14 +15,14 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.DataValueRenderer;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 
 public class CellLineageRenderer implements DataValueRenderer {
 
 	public static final String DESCRIPTION = "Cell Lineage View";
 
-	private static XYDataset createDataset(ColumnStore columns) {
+	private static XYDataset createDataset(FCSFrame columns) {
 		final XYSeriesCollection result = new XYSeriesCollection();
 		final XYSeries series = new XYSeries("Random");
 		final double[] x = columns.getDimensionData(columns.getColumnNames()[0]);
@@ -64,7 +64,7 @@ public class CellLineageRenderer implements DataValueRenderer {
 	@Override
 	public Component getRendererComponent(Object unCastCell) {
 		final ColumnStoreCell cell = (ColumnStoreCell) unCastCell;
-		final ColumnStore data = cell.getColumnStore();
+		final FCSFrame data = cell.getFCSFrame();
 		final XYDataset dataset = createDataset(data);
 		final JFreeChart chart = ChartFactory.createScatterPlot("Foo", "bar", "foobar", dataset);
 		final ChartPanel panel = new ChartPanel(chart);

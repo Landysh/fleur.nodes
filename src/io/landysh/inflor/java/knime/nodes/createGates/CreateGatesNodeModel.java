@@ -21,7 +21,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 
 /**
@@ -47,8 +47,8 @@ public class CreateGatesNodeModel extends NodeModel {
 
 	}
 
-	private ColumnStore applyGates(ColumnStore inStore) {
-		final ColumnStore outStore = new ColumnStore(inStore.getKeywords(), -1);
+	private FCSFrame applyGates(FCSFrame inStore) {
+		final FCSFrame outStore = new FCSFrame(inStore.getKeywords(), -1);
 		// TODO
 		return outStore;
 	}
@@ -89,10 +89,10 @@ public class CreateGatesNodeModel extends NodeModel {
 		int i = 0;
 		for (final DataRow inRow : inData[0]) {
 			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			final ColumnStore inStore = ((ColumnStoreCell) inRow.getCell(index)).getColumnStore();
+			final FCSFrame inStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
 
 			// now create the output row
-			final ColumnStore outStore = applyGates(inStore);
+			final FCSFrame outStore = applyGates(inStore);
 			final String fsName = i + "ColumnStore.fs";
 			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
 			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);

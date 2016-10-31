@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.gatingML.gates.BitSetAccumulator;
 import io.landysh.inflor.java.core.gatingML.gates.BitSetOperator;
@@ -25,7 +25,7 @@ public class BooleanGate extends AbstractGate {
 	}
 
 	@Override
-	public BitSet evaluate(ColumnStore data) {
+	public BitSet evaluate(FCSFrame data) {
 		validate();
 		final BitSetAccumulator acc = new BitSetAccumulator(operator);
 		final BitSet result = references.values().parallelStream().map(g -> g.evaluate(data)).reduce(acc).get();

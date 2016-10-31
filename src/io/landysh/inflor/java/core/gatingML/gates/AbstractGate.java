@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
 
@@ -41,7 +41,7 @@ public abstract class AbstractGate extends DomainObject {
 	 * @return A boolean array of rowCount.length where true corresponds to
 	 *         being in the gate
 	 */
-	public abstract BitSet evaluate(ColumnStore data);
+	public abstract BitSet evaluate(FCSFrame data);
 
 	public String getId() {
 		return id;

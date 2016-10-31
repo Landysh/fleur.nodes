@@ -23,7 +23,7 @@ import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.plots.gateui.SelectionButtonListener;
 import io.landysh.inflor.java.core.plots.gateui.XYGateAnnotation;
 import io.landysh.inflor.java.core.utils.BitSetUtils;
@@ -38,7 +38,7 @@ public class FCSChartPanel extends ChartPanel {
 	
 	private static final String DELETE_ANNOTATIONS_KEY = "delete selected annotations";
 
-	private ColumnStore data;
+	private FCSFrame data;
 	private List<XYGateAnnotation> selectedAnnotations = new ArrayList<XYGateAnnotation>();
 	private HashMap<XYGateAnnotation, XYTextAnnotation> gateAnnotations = new HashMap<>();
 	private double xHandleSize;
@@ -46,7 +46,7 @@ public class FCSChartPanel extends ChartPanel {
 
 	private JButton selectionButton;
 	
-	public FCSChartPanel(JFreeChart chart, ColumnStore data) {
+	public FCSChartPanel(JFreeChart chart, FCSFrame data) {
 		super(chart);
 		this.data = data;
 		

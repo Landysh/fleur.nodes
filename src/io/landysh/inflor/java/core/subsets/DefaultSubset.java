@@ -2,7 +2,7 @@ package io.landysh.inflor.java.core.subsets;
 
 import java.util.BitSet;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -28,16 +28,16 @@ public class DefaultSubset extends AbstractSubset {
 
 	@Override
 	protected BitSet evaluate() {
-		ColumnStore data = getData();
+		FCSFrame data = getData();
 		members = gate.evaluate(data);
 		return null;
 	}
 
 	@Override
-	public ColumnStore getData() {	
-		ColumnStore data = parentSubset.getData();
+	public FCSFrame getData() {	
+		FCSFrame data = parentSubset.getData();
 		BitSet mask = gate.evaluate(data);
-		ColumnStore filteredData = FCSUtils.filterColumnStore(mask, data);
+		FCSFrame filteredData = FCSUtils.filterColumnStore(mask, data);
 		return filteredData;
 	}
 }

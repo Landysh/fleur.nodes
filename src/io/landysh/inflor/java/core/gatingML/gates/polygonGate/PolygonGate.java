@@ -6,7 +6,7 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -40,7 +40,7 @@ public class PolygonGate extends AbstractGate {
 	}
 
 	@Override
-	public BitSet evaluate(ColumnStore data) {
+	public BitSet evaluate(FCSFrame data) {
 		double[] d1Data = FCSUtils.findCompatibleDimension(data, domainName).getData();
 		double[] d2Data = FCSUtils.findCompatibleDimension(data, rangeName).getData();
 		Path2D poly = new Path2D.Double();

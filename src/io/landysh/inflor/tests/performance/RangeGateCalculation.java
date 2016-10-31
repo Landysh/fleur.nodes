@@ -2,14 +2,14 @@ package io.landysh.inflor.tests.performance;
 
 import java.util.ArrayList;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RangeGate;
 import io.landysh.inflor.java.core.gatingML.gates.rangeGate.RectangleGate;
 
 public class RangeGateCalculation {
 	static final int numFiles = 1;
-	ArrayList<ColumnStore> dataSet = new ArrayList<ColumnStore>();
+	ArrayList<FCSFrame> dataSet = new ArrayList<FCSFrame>();
 	
 	public static void main(String[] args) throws Exception {
 		String path = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
@@ -17,7 +17,7 @@ public class RangeGateCalculation {
 
 		RangeGate rangeGate = new RangeGate("Foo", new String[] {"FSC-A", "SSC-A"}, new double[] {40,000, 60,000}, new double[]{5000,10000});
 		
-		ColumnStore data = FCSFileReader.read(bigPath, false);
+		FCSFrame data = FCSFileReader.read(bigPath);
 		//gate.evaluateParallel(data);
 		long start = System.currentTimeMillis();
 		for (int i=0;i<numFiles;i++){

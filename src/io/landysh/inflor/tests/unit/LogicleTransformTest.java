@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 //TestDependencies
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 //Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
@@ -19,7 +19,7 @@ public class LogicleTransformTest {
 	@Test
 	public void testInitialization() throws Exception {
 		// Setup
-		ColumnStore data = FCSFileReader.read(logiclePath, false);
+		FCSFrame data = FCSFileReader.read(logiclePath);
 		LogicleTransform transform = new LogicleTransform();
 		double[] axes = transform.getAxisValues();
 		double[] tData = transform.transform(data.getDimensionData("FSC-A"));

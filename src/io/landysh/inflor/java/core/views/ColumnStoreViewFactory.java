@@ -14,11 +14,11 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class ColumnStoreViewFactory {
 
-	public static JComponent createLineageView(ColumnStore columnStore) {
+	public static JComponent createLineageView(FCSFrame columnStore) {
 		if (columnStore != null) {
 			final String xName = columnStore.getColumnNames()[0];
 			final String yName = columnStore.getColumnNames()[1];
@@ -52,7 +52,7 @@ public class ColumnStoreViewFactory {
 
 	}
 
-	public static JComponent createResponseView(ColumnStore columnStore) {
+	public static JComponent createResponseView(FCSFrame columnStore) {
 		return null;
 	}
 

@@ -7,7 +7,7 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.plots.ChartSpec;
@@ -15,7 +15,6 @@ import io.landysh.inflor.java.core.plots.DensityPlot;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.gateui.GateCreationToolBar;
-import io.landysh.inflor.java.core.transforms.TransformType;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
 @SuppressWarnings("serial")
@@ -25,12 +24,13 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 	MouseInputListener activeListener;
 	private GateCreationToolBar toolbar;
 	
-	public ContourPlotTest_UI(String title) throws Exception {
+	public ContourPlotTest_UI(String title) throws Exception 
+	{
 		super(title);
 		//Setup data
 		String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
 		String bigPath = "src/io/landysh/inflor/tests/extData/20mbFCS3.fcs";
-		final ColumnStore dataStore = FCSFileReader.read(logiclePath, false);
+		final FCSFrame dataStore = FCSFileReader.read(logiclePath);
 
 		ChartSpec spec = new ChartSpec();
 		spec.setPlotType(PlotTypes.Contour);
@@ -39,10 +39,10 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 		FCSDimension X = FCSUtils.findCompatibleDimension(dataStore, spec.getDomainAxisName());
 		FCSDimension Y = FCSUtils.findCompatibleDimension(dataStore, spec.getRangeAxisName());
 		spec.setDomainTransform(X.getPreferredTransform());
-		spec.setRangeTransform(Y.getTransform(TransformType.Logrithmic));
+		spec.setRangeTransform(Y.getPreferredTransform());
 
 		DensityPlot plot = new DensityPlot(spec);
-		JFreeChart chart = plot.createChart(X, Y);
+		JFreeChart chart = plot.createChart(dataStore);
 		panel = new FCSChartPanel(chart, dataStore);
 		toolbar = new GateCreationToolBar(panel);
 		panel.setSelectionListener(toolbar.getSelectionListener());
@@ -50,7 +50,6 @@ public class ContourPlotTest_UI extends ApplicationFrame {
 	    editorPanel.add(panel);
 	    editorPanel.add(toolbar);
 		this.getContentPane().add(editorPanel);
-
 	}
 
 	public static void main(String[] args) throws Exception {

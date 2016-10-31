@@ -3,7 +3,7 @@ package io.landysh.inflor.java.core.subsets;
 import java.io.Serializable;
 import java.util.BitSet;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class RootSubset extends AbstractSubset implements Serializable{
 
@@ -12,13 +12,13 @@ public class RootSubset extends AbstractSubset implements Serializable{
 	 */
 	private static final long serialVersionUID = -8189764506384264612L;
 	private static final String ROOT_NAME = "Ungated";
-	private ColumnStore data;
+	private FCSFrame data;
 	
-	public RootSubset(ColumnStore data) {
+	public RootSubset(FCSFrame data) {
 		this(null, data);
 	}
 	
-	public RootSubset(String priorUUID, ColumnStore data) {
+	public RootSubset(String priorUUID, FCSFrame data) {
 		super(priorUUID);
 		this.data = data;
 		this.members = new BitSet(data.getRowCount());
@@ -30,7 +30,7 @@ public class RootSubset extends AbstractSubset implements Serializable{
 	}
 
 	@Override
-	public ColumnStore getData() {
+	public FCSFrame getData() {
 		return this.data;
 	}
 	

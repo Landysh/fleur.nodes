@@ -28,7 +28,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.CellLineageTree;
@@ -50,7 +50,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	JPanel m_analyisTab;
 	CellLineageTree lineageTree;
 	public JComboBox<String> fcsColumnBox;
-	public JComboBox<ColumnStore> selectSampleBox;
+	public JComboBox<FCSFrame> selectSampleBox;
 
 	protected CreateGatesNodeDialog() {
 		super();
@@ -110,7 +110,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	public void addChartDialog() {
 		// figure out the parent to be able to make the dialog modal
 		final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
-
+		
+		//Window foo = SwingUtilities.getWindowAncestor(getPanel());
+		
 		final ChartEditorDialog dialog = new ChartEditorDialog(topFrame, this);
  		dialog.setVisible(true);
 
@@ -123,9 +125,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 	
 	public void editChartDialog(String id) {
 		// figure out the parent to be able to make the dialog modal
-		final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
+		//topFrame = SwingUtilities.getWindowAncestor(getPanel());
 
-		final ChartEditorDialog dialog = new ChartEditorDialog(topFrame, this, id);
+		final ChartEditorDialog dialog = new ChartEditorDialog(this, id);
  		dialog.setVisible(true);
 
 		if (dialog.isOK) {
@@ -137,7 +139,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
 	private CellLineageTree createAnalysisArea() {
 		
-		ColumnStore dataStore = (ColumnStore) selectSampleBox.getSelectedItem();
+		FCSFrame dataStore = (FCSFrame) selectSampleBox.getSelectedItem();
 		Hashtable<String, ChartSpec> chartSpecs = m_Settings.getPlotSpecs();
 		
 		lineageTree = new CellLineageTree();
@@ -168,7 +170,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		optionsPanel.add(fcsColumnBox);
 		
 		// Select file
-		selectSampleBox = new JComboBox<ColumnStore>();
+		selectSampleBox = new JComboBox<FCSFrame>();
 		selectSampleBox.setSelectedIndex(-1);
 		selectSampleBox.addActionListener(new ActionListener() {
 			
@@ -228,7 +230,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		final HashSet<String> parameterSet = new HashSet<String>();
 		
 		for (final DataRow row : table) {
-			final ColumnStore cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getColumnStore();
+			final FCSFrame cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getFCSFrame();
 			selectSampleBox.addItem(cStoreData);
 			final List<String> newParameters = new ArrayList<String>(
 					Arrays.asList(cStoreData.getColumnNames()));
@@ -252,8 +254,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 		}
 	}
 
-	public ColumnStore getSelectedSample() {
-		return (ColumnStore)this.selectSampleBox.getSelectedItem();
+	public FCSFrame getSelectedSample() {
+		return (FCSFrame)this.selectSampleBox.getSelectedItem();
 	}
 	
 	private void updateLineageTree(){

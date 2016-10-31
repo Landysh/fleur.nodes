@@ -5,7 +5,7 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gatingML.gates.AbstractGate;
 import io.landysh.inflor.java.core.utils.FCSUtils;
 
@@ -75,16 +75,10 @@ public class RectangleGate extends AbstractGate {
 		return xName;
 	}
 
-	public BitSet evaluate(ColumnStore data) {
+	public BitSet evaluate(FCSFrame data) {
 		double[] xData = FCSUtils.findCompatibleDimension(data, xName).getData();
 		double[] yData = FCSUtils.findCompatibleDimension(data, yName).getData();
 		BitSet bits = new BitSet(data.getRowCount());
-		//TODO: Perforance check vs range gate
-//		double xmin = this.xMin;
-//		double xmax = this.xMax;
-//		double ymin = this.yMin;
-//		double ymax = this.yMax;
-//		
 		for (int i=0;i<xData.length;i++){
 			if (this.xMin<xData[i]&&xData[i]<this.xMax&&this.yMin<yData[i]&&yData[i]<this.yMax){
 				bits.set(i);
