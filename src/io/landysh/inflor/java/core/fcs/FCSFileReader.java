@@ -12,11 +12,10 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import io.landysh.inflor.java.core.dataStructures.ColumnStore;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
-import io.landysh.inflor.java.core.gatingML.compensation.SpilloverCompensator;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.core.utils.MatrixCalculator;
+import io.landysh.inflor.java.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 
@@ -38,7 +37,7 @@ public class FCSFileReader {
 		boolean isValid = false;
 		try {
 			@SuppressWarnings("unused")
-			final FCSFileReader reader = new FCSFileReader(filePath, false);
+			final FCSFileReader reader = new FCSFileReader(filePath);
 			isValid = true;
 		} catch (final Exception e) {
 			// noop
@@ -54,20 +53,17 @@ public class FCSFileReader {
 	public final Integer beginData;
 	public final String dataType;
 	public final Integer[] bitMap;
-	public final ColumnStore columnStore;
+	public final FCSFrame columnStore;
 	public final String[] fileDimensionList;
-	private final boolean compensateOnRead;
 	TreeMap<String, FCSDimension> data;
 	public String[] compParameterList = null;
 
 	// Constructor
-	public FCSFileReader(String path_to_file, boolean compensate) throws Exception {
+	public FCSFileReader(String path_to_file) throws Exception {
 		// Open the file
 		pathToFile = path_to_file;
 		final File f = new File(pathToFile);
 		FCSFile = new RandomAccessFile(f, "r");
-
-		compensateOnRead = compensate;
 
 		// text specific properties
 		beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
@@ -83,13 +79,9 @@ public class FCSFileReader {
 		}
 
 		fileDimensionList = FCSUtils.parseDimensionList(header);
-		if (compensate == true) {
-			final SpilloverCompensator comp = new SpilloverCompensator(header);
-			compParameterList = comp.getCompParameterNames();
-		}
 
 		final int rowCount = Integer.parseInt(header.get("$TOT"));
-		columnStore = new ColumnStore(header, rowCount);
+		columnStore = new FCSFrame(header, rowCount);
 
 		// data specific properties
 		beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
@@ -131,7 +123,7 @@ public class FCSFileReader {
 		return map;
 	}
 
-	public ColumnStore getColumnStore() {
+	public FCSFrame getColumnStore() {
 		return columnStore;
 	}
 
@@ -158,44 +150,22 @@ public class FCSFileReader {
 	public void readData() throws IOException {
 		data = new TreeMap <String, FCSDimension>();
 		FCSFile.seek(beginData);
-		
-		
-		double[][] compData = null;
-		SpilloverCompensator compensator = null;
-
-		if (compensateOnRead==true){
-			compensator = new SpilloverCompensator(getHeader());
-			compData = new double[columnStore.getRowCount()][fileDimensionList.length];
-		}
 
 		double[][] rawData = new double[columnStore.getRowCount()][fileDimensionList.length];
 		for (int i=0;i<rawData.length;i++){
 			double[] row = readRow();	
 			rawData[i] = row;
-			if (compensateOnRead==true){
-				compData[i] = compensator.compensateRow(rawData[i]);
-			}
 		}
 		
-		double[][] transposedRawData = MatrixCalculator.transpose(rawData);
+		double[][] transposedRawData = MatrixUtilities.transpose(rawData);
 		
 		for (int i=0;i<fileDimensionList.length;i++){
 			Integer pIndex = FCSUtils.findParameterNumnberByName(getHeader(),fileDimensionList[i]);
-			FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), false);
+			FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), null);
 			newDimension.setData(transposedRawData[i]);
 			data.put(newDimension.ID, newDimension);
 		}
 		
-		if (compensateOnRead==true){
-			double[][] transposedCompData = MatrixCalculator.transpose(rawData);
-			for (int i=0;i<compParameterList.length;i++){
-				Integer pIndex = FCSUtils.findParameterNumnberByName(getHeader(),compParameterList[i]);
-				FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), true);
-				newDimension.setData(transposedCompData[i]);
-				data.put(newDimension.ID, newDimension);
-			}
-		}
-
 		columnStore.setData(data);
 	}
 	
@@ -288,10 +258,10 @@ public class FCSFileReader {
 		return row;
 	}
 
-	public static ColumnStore read(String filePath, boolean compensate)  {
+	public static FCSFrame read(String filePath)  {
 		FCSFileReader reader;
 		try {
-			reader = new FCSFileReader(filePath, compensate);
+			reader = new FCSFileReader(filePath);
 			reader.readData();
 			return reader.getColumnStore();
 		} catch (Exception e) {
@@ -303,7 +273,7 @@ public class FCSFileReader {
 	public static HashMap<String, String> readHeaderOnly(String filePath)  {
 		FCSFileReader reader;
 		try {
-			reader = new FCSFileReader(filePath, false);
+			reader = new FCSFileReader(filePath);
 			return reader.getHeader();
 		} catch (Exception e) {
 			e.printStackTrace();
