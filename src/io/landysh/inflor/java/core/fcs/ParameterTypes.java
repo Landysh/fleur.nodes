@@ -12,7 +12,14 @@ public enum ParameterTypes {
 			this.regi = regi;
 	}
 
-	public String[] regi() {
-			return regi;
+	public boolean matches(String parameterName) {
+		for (String regex:this.regi){
+			if (parameterName.toLowerCase().matches(regex)){
+				System.out.println(parameterName + "matches " + regex);
+				
+				return true;
+			};
+		}
+		return false;
 	}
 }
