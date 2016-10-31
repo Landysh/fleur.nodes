@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.ValueAxisPlot;
 import org.jfree.data.Range;
 
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
