@@ -6,7 +6,7 @@ message Message {
   repeated string		dimNames   = 3;  
   repeated Keyword 		keyword    = 4;
   repeated Dimension	dimension  = 5;
-  repeated Subset		subset 	   = 6;
+  repeated Subset		subset 	   = 6;  
   
   message  Keyword {
 	required string key   = 1;
@@ -21,8 +21,9 @@ message Message {
   	required double  	pneF1   = 5;
   	required double  	pneF2   = 6;
   	required double  	pnr     = 7;
-  	optional bool	 	compRef = 8;
+  	optional string	 	compRef = 8;
   	repeated double  	data    = 9;
+  	optional Transform	preferredTransform = 10;
   }
 	
   message Subset {
@@ -30,5 +31,25 @@ message Message {
     required string name     = 1;
     optional string parentID = 2;
     repeated bool   mask     = 4;
+  }
+  
+    message Transform {
+    required string id       		= 1;
+    required string transformType   = 2;
+    optional string parentID 	    = 3;
+    
+    optional double logicleT		= 4;
+    optional double logicleW 		= 5;
+    optional double logicleM		= 6;
+    optional double logicleA		= 7;
+    
+    optional double logMin			= 8;
+    optional double logMax 			= 9;
+    
+    optional double linMin 			= 10;
+    optional double linMax 			= 11;
+    
+    optional double boundMin 		= 12;
+    optional double boundMax 		= 13;
   }
 }
