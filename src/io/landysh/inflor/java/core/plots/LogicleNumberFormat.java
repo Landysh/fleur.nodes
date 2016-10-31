@@ -14,17 +14,17 @@ public class LogicleNumberFormat extends NumberFormat {
 
 	public LogicleNumberFormat(LogicleTransform transform) {
 		this.transform = transform;
-}
+	}
 	
 	@Override
 	public StringBuffer format(double arg0, StringBuffer arg1, FieldPosition arg2) {
-		double[] tickPositions = transform.getAxisValues();
+		//double[] tickPositions = transform.getAxisValues();
 		double val = transform.inverse(arg0);
 		int iVal = (int)Math.round(val);
+		
+						
 		String tickLabel = null;
-		if (Math.round(val)==Math.round(tickPositions[0])||
-			Math.round(val)==Math.round(tickPositions[1])||
-			Math.round(val)==Math.round(tickPositions[2]))
+		if (Math.abs(iVal)<=990)
 		{	
 			tickLabel = Integer.toString(iVal);
 		} 
@@ -39,7 +39,7 @@ public class LogicleNumberFormat extends NumberFormat {
 	@Override
 	public StringBuffer format(long arg0, StringBuffer arg1, FieldPosition arg2) 
 	{
-		// TODO Auto-generated method stub
+		// TODO: needed?
 		return null;
 	}
 
