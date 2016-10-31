@@ -1,9 +1,14 @@
 package io.landysh.inflor.java.core.dataStructures;
 
+import java.util.BitSet;
+
+import io.landysh.inflor.java.core.utils.BitSetUtils;
+
 public class Histogram1D {
 
 	private double[] x;
 	private double[] y;
+	private BitSet mask;
 
 	public Histogram1D(double[] data, double min, double max, int binCount) {
 		
@@ -18,7 +23,7 @@ public class Histogram1D {
 	for(int i=0;i<data.length;i++){
 		int bin = (int) (data[i]/deltaX);
 		if (bin>=y.length){
-			i=i;
+			bin =binCount-1;
 		}
 		y[bin]++;
 		}
@@ -26,5 +31,26 @@ public class Histogram1D {
 	
 	public double[][] getData(){
 		return new double[][] {x,y};
+	}
+
+	public double[] getNonZeroX(){
+		if(mask == null){
+			createMask();
+		}
+		return BitSetUtils.filter(x, mask);
+	}
+	
+	public double[] getNonZeroY(){
+		if(mask == null){
+			createMask();
+		}
+		return BitSetUtils.filter(y, mask);
+	}
+
+	private void createMask() {
+		mask = new BitSet(y.length);
+		for (int i=0;i<y.length;i++){
+			if (y[i]!=0){mask.set(i);}
+		}
 	}
 }
