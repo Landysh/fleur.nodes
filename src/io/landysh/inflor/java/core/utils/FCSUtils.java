@@ -1,10 +1,13 @@
 package io.landysh.inflor.java.core.utils;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.BinaryOperator;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class FCSUtils {
 
@@ -127,6 +130,7 @@ public class FCSUtils {
           inDim.getShortName(), inDim.getDisplayName(), inDim.getPNEF1(), inDim.getPNEF2(),
           inDim.getRange(), inDim.getCompRef());
       outDim.setPreferredTransform(inDim.getPreferredTransform());
+      outDim.setData(BitSetUtils.filter(inDim.getData(), mask));
       out.addColumn(name, outDim);
     }
     return out;
@@ -145,5 +149,30 @@ public class FCSUtils {
       }
     }
     return returnDim;
+  }
+
+  public static FCSFrame createSummaryFrame(List<FCSFrame> fcsList, Integer maxEventsPerFrame) {
+    Integer dataSize = fcsList
+      .stream()
+      .map(dataFrame -> dataFrame.getRowCount())
+      .min(Integer::compare).get();
+    final Integer finalSize;
+    if (dataSize>maxEventsPerFrame){
+      finalSize = maxEventsPerFrame;
+    } else {
+      finalSize = dataSize;
+    }
+    
+    FCSFrame mergedFrame = fcsList
+         .stream()
+         .map(dataFrame -> FCSUtils.downSample(dataFrame, finalSize))
+         .reduce(new FCSConcatenator())
+         .get(); 
+    return mergedFrame;
+  }
+
+  private static FCSFrame downSample(FCSFrame dataFrame, Integer dataSize) {
+    BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), dataSize);
+    return FCSUtils.filterColumnStore(mask, dataFrame);
   }
 }
