@@ -11,44 +11,45 @@ import org.knime.core.node.NodeView;
  */
 public class ReadFCSTableNodeFactory extends NodeFactory<ReadFCSTableNodeModel> {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new ReadFCSNodeDialog();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeDialogPane createNodeDialogPane() {
+    return new ReadFCSNodeDialog();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ReadFCSTableNodeModel createNodeModel() {
-		return new ReadFCSTableNodeModel();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ReadFCSTableNodeModel createNodeModel() {
+    return new ReadFCSTableNodeModel();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeView<ReadFCSTableNodeModel> createNodeView(final int viewIndex, final ReadFCSTableNodeModel nodeModel) {
-		return new ReadFCSTableNodeView(nodeModel);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeView<ReadFCSTableNodeModel> createNodeView(final int viewIndex,
+      final ReadFCSTableNodeModel nodeModel) {
+    return new ReadFCSTableNodeView(nodeModel);
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getNrNodeViews() {
-		return 1;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNrNodeViews() {
+    return 1;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasDialog() {
-		return true;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean hasDialog() {
+    return true;
+  }
 
 }

@@ -23,4 +23,8 @@ public abstract class DomainObject implements Serializable {
       ID = priorUUID;
     }
   }
+  
+  public boolean matchesID(String id) {
+    return this.ID.equals(id);
+  }
 }

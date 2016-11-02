@@ -7,16 +7,16 @@ import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 
 public class SampleBoxListener implements ActionListener {
 
-	private final CreateGatesNodeDialog dialog;
+  private final CreateGatesNodeDialog dialog;
 
-	public SampleBoxListener(CreateGatesNodeDialog dialog) {
-		this.dialog = dialog;
-	}
+  public SampleBoxListener(CreateGatesNodeDialog dialog) {
+    this.dialog = dialog;
+  }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final String newValue = (String) dialog.selectSampleBox.getModel().getSelectedItem();
-		dialog.m_Settings.setSelectedSample(newValue);
-	}
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    final String newValue = (String) dialog.selectSampleBox.getModel().getSelectedItem();
+    dialog.m_settings.setSelectedSample(newValue);
+  }
 
 }

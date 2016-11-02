@@ -2,7 +2,6 @@ package io.landysh.inflor.java.knime.nodes.transform;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -39,7 +38,7 @@ public class TransformNodeModel extends NodeModel {
 
   private static final NodeLogger logger = NodeLogger.getLogger(TransformNodeModel.class);
 
-  private TransformNodeSettings m_Settings = new TransformNodeSettings();
+  private TransformNodeSettings modelSettings = new TransformNodeSettings();
 
   /**
    * Constructor for the node model.
@@ -60,7 +59,7 @@ public class TransformNodeModel extends NodeModel {
     // Create the output spec and data container.
     final DataTableSpec outSpec = createSpecs(inData[0].getSpec())[0];
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
-    final String columnName = m_Settings.getSelectedColumn();
+    final String columnName = modelSettings.getSelectedColumn();
     final int index = outSpec.findColumnIndex(columnName);
 
     int i = 0;
@@ -69,7 +68,7 @@ public class TransformNodeModel extends NodeModel {
       final FCSFrame inStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
 
       // now create the output row
-      final FCSFrame outStore = applyTransforms(inStore, m_Settings.getAllTransorms());
+      final FCSFrame outStore = applyTransforms(inStore, modelSettings.getAllTransorms());
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
@@ -89,8 +88,7 @@ public class TransformNodeModel extends NodeModel {
     return new BufferedDataTable[] {container.getTable()};
   }
 
-  private FCSFrame applyTransforms(FCSFrame inStore,
-      TreeMap<String, AbstractTransform> treeMap) {
+  private FCSFrame applyTransforms(FCSFrame inStore, TreeMap<String, AbstractTransform> treeMap) {
     for (Entry<String, AbstractTransform> entry : treeMap.entrySet()) {
       FCSDimension dimension = FCSUtils.findCompatibleDimension(inStore, entry.getKey());
       dimension.setPreferredTransform(entry.getValue());
@@ -123,7 +121,7 @@ public class TransformNodeModel extends NodeModel {
    */
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
-    m_Settings.save(settings);
+    modelSettings.save(settings);
   }
 
   /**
@@ -132,7 +130,7 @@ public class TransformNodeModel extends NodeModel {
   @Override
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
-    m_Settings.load(settings);
+    modelSettings.load(settings);
   }
 
   /**
@@ -140,7 +138,7 @@ public class TransformNodeModel extends NodeModel {
    */
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-    m_Settings.validate(settings);
+    modelSettings.validate(settings);
   }
 
   /**

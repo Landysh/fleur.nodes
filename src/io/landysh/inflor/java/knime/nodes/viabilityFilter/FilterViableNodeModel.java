@@ -34,125 +34,124 @@ import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
  */
 public class FilterViableNodeModel extends NodeModel {
 
-	// the logger instance
-	private static final NodeLogger logger = NodeLogger.getLogger(FilterViableNodeModel.class);
+  // the logger instance
+  private static final NodeLogger logger = NodeLogger.getLogger(FilterViableNodeModel.class);
 
-	ViabilityFilterSettingsModel m_settings = new ViabilityFilterSettingsModel();
+  ViabilityFilterSettingsModel m_settings = new ViabilityFilterSettingsModel();
 
-	protected FilterViableNodeModel() {
-		super(1, 1);
-	}
+  protected FilterViableNodeModel() {
+    super(1, 1);
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
+      throws InvalidSettingsException {
 
-		return new DataTableSpec[] { createSpec(inSpecs[0]) };
-	}
+    return new DataTableSpec[] {createSpec(inSpecs[0])};
+  }
 
-	private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
-		return dataTableSpec;
-	}
+  private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
+    return dataTableSpec;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
-			throws Exception {
-		logger.info("Beginning Execution.");
-		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
+      final ExecutionContext exec) throws Exception {
+    logger.info("Beginning Execution.");
+    final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
 
-		// Create the output spec and data container.
-		final DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
-		final BufferedDataContainer container = exec.createDataContainer(outSpec);
-		final String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
-		final int index = outSpec.findColumnIndex(columnName);
-		final String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
+    // Create the output spec and data container.
+    final DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
+    final BufferedDataContainer container = exec.createDataContainer(outSpec);
+    final String columnName = m_settings.getSelectedColumnSettingsModel().getStringValue();
+    final int index = outSpec.findColumnIndex(columnName);
+    final String viabilityColumn = m_settings.getViabilityColumnSettingsModel().getStringValue();
 
-		int i = 0;
-		for (final DataRow inRow : inData[0]) {
-			final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-			final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
-			final ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
-			final double[] viabilityData = columnStore.getFCSDimension(viabilityColumn).getData();
-			model.buildModel(viabilityData);
-			final BitSet mask = model.scoreModel(viabilityData);
+    int i = 0;
+    for (final DataRow inRow : inData[0]) {
+      final DataCell[] outCells = new DataCell[inRow.getNumCells()];
+      final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
+      final ViabilityModel model = new ViabilityModel(columnStore.getColumnNames());
+      final double[] viabilityData = columnStore.getFCSDimension(viabilityColumn).getData();
+      model.buildModel(viabilityData);
+      final BitSet mask = model.scoreModel(viabilityData);
 
-			// now create the output row
-			
-			final FCSFrame outStore = FCSUtils.filterColumnStore(mask, columnStore);
+      // now create the output row
 
-			final String fsName = i + "ColumnStore.fs";
-			final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-			final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+      final FCSFrame outStore = FCSUtils.filterColumnStore(mask, columnStore);
 
-			for (int j = 0; j < outCells.length; j++) {
-				if (j == index) {
-					outCells[j] = fileCell;
-				} else {
-					outCells[j] = inRow.getCell(j);
-				}
-			}
-			final DataRow outRow = new DefaultRow("Row " + i, outCells);
-			container.addRowToTable(outRow);
-			i++;
-		}
-		container.close();
-		return new BufferedDataTable[] { container.getTable() };
-	}
+      final String fsName = i + "ColumnStore.fs";
+      final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
+      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-	}
+      for (int j = 0; j < outCells.length; j++) {
+        if (j == index) {
+          outCells[j] = fileCell;
+        } else {
+          outCells[j] = inRow.getCell(j);
+        }
+      }
+      final DataRow outRow = new DefaultRow("Row " + i, outCells);
+      container.addRowToTable(outRow);
+      i++;
+    }
+    container.close();
+    return new BufferedDataTable[] {container.getTable()};
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {}
 
-		m_settings.loadSettingsFrom(settings);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
+      throws InvalidSettingsException {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void reset() {
-	}
+    m_settings.loadSettingsFrom(settings);
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void reset() {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {}
 
-		m_settings.saveSettingsTo(settings);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveSettingsTo(final NodeSettingsWO settings) {
 
-	}
+    m_settings.saveSettingsTo(settings);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+  }
 
-		m_settings.validateSettings(settings);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
 
-	}
+    m_settings.validateSettings(settings);
+
+  }
 }

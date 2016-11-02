@@ -9,18 +9,19 @@ public abstract class AbstractSubset extends DomainObject {
 
 
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8536548751594402599L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8536548751594402599L;
 
-	protected BitSet members;
-	
-	public AbstractSubset(String priorUUID) {
-		super(priorUUID);
-		members = null;
-	}
-	
-	protected abstract BitSet evaluate();
-	public abstract FCSFrame getData();
+  protected BitSet members;
+
+  public AbstractSubset(String priorUUID) {
+    super(priorUUID);
+    members = null;
+  }
+
+  public abstract BitSet createLocalMask();
+  public abstract FCSFrame getData();
+  public abstract BitSet createAncestralMask();
 }

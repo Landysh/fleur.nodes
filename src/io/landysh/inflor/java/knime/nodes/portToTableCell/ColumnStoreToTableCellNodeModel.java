@@ -28,7 +28,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
 import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortObject;
+import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject;
 import io.landysh.inflor.java.knime.views.CellLineageRenderer;
 
 /**
@@ -38,101 +38,99 @@ import io.landysh.inflor.java.knime.views.CellLineageRenderer;
  */
 public class ColumnStoreToTableCellNodeModel extends NodeModel {
 
-	/**
-	 * Constructor for the node model.
-	 */
-	protected ColumnStoreToTableCellNodeModel() {
-		super(new PortType[] { ColumnStorePortObject.TYPE }, new PortType[] { BufferedDataTable.TYPE });
-	}
+  /**
+   * Constructor for the node model.
+   */
+  protected ColumnStoreToTableCellNodeModel() {
+    super(new PortType[] {FCSFramePortObject.TYPE}, new PortType[] {BufferedDataTable.TYPE});
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs) throws InvalidSettingsException {
-		final DataColumnSpecCreator colSpec = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE);
-		colSpec.setProperties(new DataColumnProperties(Collections
-				.singletonMap(DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
-		final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
-		return new DataTableSpec[] { spec };
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs)
+      throws InvalidSettingsException {
+    final DataColumnSpecCreator colSpec =
+        new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE);
+    colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
+        DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
+    final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
+    return new DataTableSpec[] {spec};
+  }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws CanceledExecutionException
-	 */
-	@Override
-	protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
-			throws CanceledExecutionException {
-		// create the output container
-		final DataColumnSpec colSpecs = new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
-		final DataTableSpec spec = new DataTableSpec(colSpecs);
-		final BufferedDataContainer container = exec.createDataContainer(spec);
+  /**
+   * {@inheritDoc}
+   * 
+   * @throws CanceledExecutionException
+   */
+  @Override
+  protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
+      throws CanceledExecutionException {
+    // create the output container
+    final DataColumnSpec colSpecs =
+        new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
+    final DataTableSpec spec = new DataTableSpec(colSpecs);
+    final BufferedDataContainer container = exec.createDataContainer(spec);
 
-		// Create the file store
-		final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-		FileStore fs;
-		try {
-			fs = fileStoreFactory.createFileStore("column.store");
-		} catch (final IOException e) {
-			e.printStackTrace();
-			throw new CanceledExecutionException("Unable to create FileStore, cancelling execution.");
-		}
+    // Create the file store
+    final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+    FileStore fs;
+    try {
+      fs = fileStoreFactory.createFileStore("column.store");
+    } catch (final IOException e) {
+      e.printStackTrace();
+      throw new CanceledExecutionException("Unable to create FileStore, cancelling execution.");
+    }
 
-		// get the data and write it to the container
-		final ColumnStorePortObject port = ((ColumnStorePortObject) inData[0]);
-		final DataCell[] dataCells = new DataCell[] { port.toTableCell(fs) };
-		final DataRow dataRow = new DefaultRow("Row 0", dataCells);
-		container.addRowToTable(dataRow);
+    // get the data and write it to the container
+    final FCSFramePortObject port = ((FCSFramePortObject) inData[0]);
+    final DataCell[] dataCells = new DataCell[] {port.toTableCell(fs)};
+    final DataRow dataRow = new DefaultRow("Row 0", dataCells);
+    container.addRowToTable(dataRow);
 
-		// cleanup and create the table
-		container.close();
-		final BufferedDataTable table = container.getTable();
-		return new BufferedDataTable[] { table };
-	}
+    // cleanup and create the table
+    container.close();
+    final BufferedDataTable table = container.getTable();
+    return new BufferedDataTable[] {table};
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
+      throws InvalidSettingsException {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void reset() {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void reset() {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-			throws IOException, CanceledExecutionException {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void saveSettingsTo(final NodeSettingsWO settings) {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveSettingsTo(final NodeSettingsWO settings) {}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {}
 }

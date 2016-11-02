@@ -4,130 +4,146 @@ import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
 
-//Default serialization not used. We should measure performance.
+// Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")
-public class FCSDimension extends DomainObject implements Comparable<FCSDimension>{
-	
-	//eg. the n in PnN
-	private int parameterIndex;
-	
-	//$PnE Amplification type 
-	private double ampTypef1;
-	private double ampTypef2;
-	
-	//$PnN Short name 
-	private String shortName;
-	
-	//$PnS Stain name 
-	private String stainName;
-	
-	boolean compRef;
-	
-	//$PnR Range
-	private double range;
-	
-	private double[] data;
+public class FCSDimension extends DomainObject implements Comparable<FCSDimension> {
 
-	private AbstractTransform preferredTransform;
+  // eg. the n in PnN
+  private int parameterIndex;
 
-	public FCSDimension(int size, int index, String pnn, 
-			String pns, double pneF1, double pneF2, double pnr, boolean wasComped) {
-		this(null,size,index,pnn,pns,pneF1,pneF2,pnr,wasComped);
-	}
-	
-	public FCSDimension(String priorUUID, int size, int index, String pnn, 
-			String pns, double pneF1, double pneF2, double pnr, boolean wasComped) {
-		super(priorUUID);
-		parameterIndex = index;
-		shortName = pnn;
-		stainName = pns;
-		ampTypef1 = pneF1;
-		ampTypef2 = pneF2;
-		range = pnr;
-		compRef = wasComped;
-		this.data = new double[size] ;
-		if (ampTypef1 ==0&&ampTypef2==0){
-			this.preferredTransform = new BoundDisplayTransform(ampTypef1, range);
-		} else {
-			this.preferredTransform = new LogicleTransform();
-		}		
-	}
+  // $PnE Amplification type
+  private double ampTypef1;
+  private double ampTypef2;
 
-	public double[] getData() {
-		return data;
-	}
+  // $PnN Short name
+  private String shortName;
 
-	public int getSize() {
-		return this.data.length;
-	}
+  // $PnS Stain name
+  private String stainName;
 
-	public String getDisplayName(){
-		if (compRef==true){
-			if (stainName!=null){
-				return "[" + shortName +": " + stainName + "]"; 
-			} else {
-				return "[" + shortName + "]";
-			}
-		} else {
-			if (stainName!=null&&stainName!=""){
-				return shortName +": " + stainName; 
-			} else {
-				return shortName;
-			}
-		}
-	}
+  private String compensationReference;
+  private String tranformReference;
+  // $PnR Range
+  private double range;
 
-	@Override
-	public int compareTo(FCSDimension other) {
-		int result = 0;	
-		if (parameterIndex<parameterIndex){
-			result-=1;
-		} else if (parameterIndex>parameterIndex){
-			result+=1;
-		} else {
-			result = 0;
-		}
-	return result;
-	}
+  private double[] data;
 
-	public int getIndex() {
-		return this.parameterIndex;
-	}
+  private AbstractTransform preferredTransform;
 
-	public String getShortName() {
-		return this.shortName;
-	}
+  public FCSDimension(int size, int index, String pnn, String pns, double pneF1, double pneF2,
+      double pnr, String compensationReference) {
+    this(null, size, index, pnn, pns, pneF1, pneF2, pnr, compensationReference);
+  }
 
-	public String getStainName() {
-		return this.stainName;
-	}
+  public FCSDimension(String priorUUID, int size, int index, String pnn, String pns, double pneF1,
+      double pneF2, double pnr, String compensationReference) {
+    super(priorUUID);
+    parameterIndex = index;
+    shortName = pnn;
+    stainName = pns;
+    ampTypef1 = pneF1;
+    ampTypef2 = pneF2;
+    range = pnr;
+    this.compensationReference = compensationReference;
+    this.data = new double[size];
+    if (ampTypef1 == 0 && ampTypef2 == 0) {
+      this.preferredTransform = new BoundDisplayTransform(ampTypef1, range);
+    } else {
+      this.preferredTransform = new LogicleTransform();
+    }
+  }
 
-	public double getPNEF1() {
-		return this.ampTypef1;
-	}
+  @Override
+  public int compareTo(FCSDimension other) {
+    int result = 0;
+    if (this.parameterIndex < other.parameterIndex) {
+      result -= 1;
+    } else if (this.parameterIndex > other.parameterIndex) {
+      result += 1;
+    } else {
+      result = 0;
+    }
+    return result;
+  }
 
-	public double getPNEF2() {
-		return this.ampTypef2;
-	}
+  public String getCompRef() {
+    return this.compensationReference;
+  }
 
-	public double getRange() {
-		return this.range;
-	}
+  public double[] getData() {
+    return data;
+  }
 
-	public boolean getCompRef() {
-		return this.compRef;
-	}
+  public String getDisplayName() {
+    if (compensationReference != null) {
+      if (stainName != null) {
+        return "[" + shortName + ": " + stainName + "]";
+      } else {
+        return "[" + shortName + "]";
+      }
+    } else {
+      if (stainName != null && stainName.trim().length() != 0) {
+        return shortName + ": " + stainName;
+      } else {
+        return shortName;
+      }
+    }
+  }
 
-	public void setData(double[] newData) {
-		this.data = newData;
-	}
-	
-	@Override
-	public String toString(){
-		return this.getDisplayName();
-	}
+  public int getIndex() {
+    return this.parameterIndex;
+  }
 
-	public AbstractTransform getPreferredTransform() {
-		return this.preferredTransform;
-	}
+  public double getPNEF1() {
+    return this.ampTypef1;
+  }
+
+  public double getPNEF2() {
+    return this.ampTypef2;
+  }
+
+  public AbstractTransform getPreferredTransform() {
+    return this.preferredTransform;
+  }
+
+  public double getRange() {
+    return this.range;
+  }
+
+  public String getShortName() {
+    return this.shortName;
+  }
+
+  public int getSize() {
+    return this.data.length;
+  }
+
+  public String getStainName() {
+    return this.stainName;
+  }
+
+  public String getTranformReference() {
+    return tranformReference;
+  }
+
+  public void setData(double[] newData) {
+    this.data = newData;
+  }
+
+  public void setPreferredTransform(AbstractTransform newValue) {
+    this.preferredTransform = newValue;
+  }
+
+  public void setTranformReference(String tranformReference) {
+    this.tranformReference = tranformReference;
+  }
+
+  @Override
+  public String toString() {
+    return this.getDisplayName();
+  }
+
+  public void setCompRef(String newValue) {
+    this.compensationReference = newValue;
+  }
 }

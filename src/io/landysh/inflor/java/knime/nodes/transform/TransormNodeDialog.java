@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -52,18 +53,12 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
-  public TransformNodeSettings m_Settings;
-
-  JPanel m_analyisTab;
-
-  public JComboBox<String> fcsColumnBox;
-
+  private TransformNodeSettings m_Settings;
+  private JPanel m_analyisTab;
+  private JComboBox<String> fcsColumnBox;
   private ArrayList<FCSFrame> dataSet;
-
   private JPanel transformPanel;
-
   private JProgressBar progressBar;
-
   private JScrollPane scrollPane;
 
   protected TransormNodeDialog() {
@@ -137,20 +132,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        // should be done in a swing worker?
-        for (Entry<String, AbstractTransform> entry : m_Settings.getAllTransorms().entrySet()) {
-          double[] data = mergeData(entry.getKey(), dataSet);
-          if (entry.getValue() instanceof LogicleTransform) {
-            LogicleTransform logicle = (LogicleTransform) entry.getValue();
-            logicle.optimizeW(data);
-          } else if (entry.getValue() instanceof LogrithmicTransform) {
-            LogrithmicTransform logTransform = (LogrithmicTransform) entry.getValue();
-            logTransform.optimize(data);
-          } else if (entry.getValue() instanceof BoundDisplayTransform) {
-            BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) entry.getValue();
-            boundaryTransform.optimize(data);
-          }
-        }
+        optimizeTransforms();
         updateTransformPanel();
       }
     });
@@ -160,11 +142,25 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     return optionsPanel;
   }
 
+  private void optimizeTransforms() {
+    for (Entry<String, AbstractTransform> entry : m_Settings.getAllTransorms().entrySet()) {
+      double[] data = mergeData(entry.getKey(), dataSet);
+      if (entry.getValue() instanceof LogicleTransform) {
+        LogicleTransform logicle = (LogicleTransform) entry.getValue();
+        logicle.optimizeW(data);
+      } else if (entry.getValue() instanceof LogrithmicTransform) {
+        LogrithmicTransform logTransform = (LogrithmicTransform) entry.getValue();
+        logTransform.optimize(data);
+      } else if (entry.getValue() instanceof BoundDisplayTransform) {
+        BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) entry.getValue();
+        boundaryTransform.optimize(data);
+      }
+    }
+  }
 
-
-  private double[] mergeData(String shortName, ArrayList<FCSFrame> dataList) {
+  private double[] mergeData(String shortName, ArrayList<FCSFrame> dataSet2) {
     double[] data = null;
-    for (FCSFrame frame : dataList) {
+    for (FCSFrame frame : dataSet2) {
       FCSDimension dimension = FCSUtils.findCompatibleDimension(frame, shortName);
       data = MatrixUtilities.appendVectors(data, dimension.getData());
     }
@@ -222,13 +218,11 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     for (final DataRow row : table) {
       final FCSFrame dataFrame = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getFCSFrame();
       dataSet.add(dataFrame);
-      System.out.println(dataFrame.getPrefferedName());
     }
 
     transformPanel = new JPanel();
     populateTransformPanel(transformPanel);
     scrollPane = new JScrollPane(transformPanel);
-    // updateTransformPanel();
     scrollPane.setPreferredSize(new Dimension(400, 600));
     m_analyisTab.add(scrollPane, BorderLayout.CENTER);
   }
@@ -241,10 +235,21 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     UpdateTransformPanelWorker worker =
         new UpdateTransformPanelWorker(progressBar, transformPanel, m_Settings, dataSet);
     worker.execute();
-    transformPanel.revalidate();
-    transformPanel.repaint();
+    try {
+      ArrayList<ChartPanel> chartPanels = worker.get();
+      transformPanel.removeAll();
+      transformPanel.setLayout(new GridBagLayout());
+      GridBagConstraints gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      for (ChartPanel chart: chartPanels) {
+        transformPanel.add(chart, gbc);
+        gbc.gridy++;
+      }
+    } catch (InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+    }
   }
-
 
   @Override
   protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {

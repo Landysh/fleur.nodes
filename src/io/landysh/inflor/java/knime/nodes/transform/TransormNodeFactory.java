@@ -10,49 +10,48 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class TransormNodeFactory 
-        extends NodeFactory<TransformNodeModel> {
+public class TransormNodeFactory extends NodeFactory<TransformNodeModel> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TransformNodeModel createNodeModel() {
-        return new TransformNodeModel();
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public TransformNodeModel createNodeModel() {
+    return new TransformNodeModel();
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNrNodeViews() {
-        return 1;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNrNodeViews() {
+    return 1;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeView<TransformNodeModel> createNodeView(final int viewIndex,
-            final TransformNodeModel nodeModel) {
-        return new TransormNodeView(nodeModel);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeView<TransformNodeModel> createNodeView(final int viewIndex,
+      final TransformNodeModel nodeModel) {
+    return new TransormNodeView(nodeModel);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasDialog() {
-        return true;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean hasDialog() {
+    return true;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeDialogPane createNodeDialogPane() {
-        return new TransormNodeDialog();
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeDialogPane createNodeDialogPane() {
+    return new TransormNodeDialog();
+  }
 
 }
 

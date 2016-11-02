@@ -5,18 +5,18 @@ import org.knime.core.node.util.ColumnFilter;
 
 public class ColumnStoreCellColumnFilter implements ColumnFilter {
 
-	@Override
-	public String allFilteredMsg() {
-		return "No FCS compatible columns.";
-	}
+  @Override
+  public String allFilteredMsg() {
+    return "No FCS compatible columns.";
+  }
 
-	@Override
-	public boolean includeColumn(DataColumnSpec colSpec) {
-		if (colSpec.getType() == ColumnStoreCell.TYPE) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+  @Override
+  public boolean includeColumn(DataColumnSpec colSpec) {
+    if (colSpec.getType() == ColumnStoreCell.TYPE) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 }

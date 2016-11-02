@@ -9,19 +9,20 @@ package com.jujutsu.tsne;
  */
 public interface TSne {
 
-	static class R {
-		double[][] P;
-		double[] beta;
-		double H;
-	}
+  static class R {
+    double[][] P;
+    double[] beta;
+    double H;
+  }
 
-	R Hbeta(double[][] D, double beta);
+  R Hbeta(double[][] D, double beta);
 
-	double[][] tsne(double[][] X, int k, int initial_dims, double perplexity);
+  double[][] tsne(double[][] X, int k, int initial_dims, double perplexity);
 
-	double[][] tsne(double[][] X, int k, int initial_dims, double perplexity, int maxIterations);
+  double[][] tsne(double[][] X, int k, int initial_dims, double perplexity, int maxIterations);
 
-	double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity, int max_iter, boolean use_pca);
+  double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity, int max_iter,
+      boolean use_pca);
 
-	R x2p(double[][] X, double tol, double perplexity);
+  R x2p(double[][] X, double tol, double perplexity);
 }

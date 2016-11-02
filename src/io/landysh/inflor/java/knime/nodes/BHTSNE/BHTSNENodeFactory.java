@@ -12,44 +12,45 @@ import org.knime.core.node.NodeView;
  */
 public class BHTSNENodeFactory extends NodeFactory<BHTSNENodeModel> {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new BHTSNENodeDialog();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeDialogPane createNodeDialogPane() {
+    return new BHTSNENodeDialog();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BHTSNENodeModel createNodeModel() {
-		return new BHTSNENodeModel();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public BHTSNENodeModel createNodeModel() {
+    return new BHTSNENodeModel();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeView<BHTSNENodeModel> createNodeView(final int viewIndex, final BHTSNENodeModel nodeModel) {
-		return new BHTSNENodeView(nodeModel);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeView<BHTSNENodeModel> createNodeView(final int viewIndex,
+      final BHTSNENodeModel nodeModel) {
+    return new BHTSNENodeView(nodeModel);
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getNrNodeViews() {
-		return 1;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNrNodeViews() {
+    return 1;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasDialog() {
-		return true;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean hasDialog() {
+    return true;
+  }
 
 }

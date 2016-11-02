@@ -11,61 +11,64 @@ import org.knime.core.node.port.PortObjectSpec;
 
 import io.landysh.inflor.java.core.singlets.PuleProperties;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
-import io.landysh.inflor.java.knime.portTypes.annotatedVectorStore.ColumnStorePortSpec;
+import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortSpec;
 
 /**
  * <code>NodeDialog</code> for the "FindSingletsFrame" Node.
  * 
  *
- * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
- * creation of a simple dialog with standard components. If you need a more
- * complex dialog please derive directly from
+ * This node dialog derives from {@link DefaultNodeSettingsPane} which allows creation of a simple
+ * dialog with standard components. If you need a more complex dialog please derive directly from
  * {@link org.knime.core.node.NodeDialogPane}.
  * 
  * @author Aaron Hart
  */
 public class RemoveDoubletsFrameNodeDialog extends DefaultNodeSettingsPane {
 
-	/**
-	 * New pane for configuring the FindSingletsFrame node.
-	 */
+  /**
+   * New pane for configuring the FindSingletsFrame node.
+   */
 
-	private static final String AREA_LABEL = "Area Parameter";
-	private static final String HEIGHT_LABEL = "Height Parameter";
+  private static final String AREA_LABEL = "Area Parameter";
+  private static final String HEIGHT_LABEL = "Height Parameter";
 
-	public DialogComponentStringSelection areaComponent;
-	public DialogComponentStringSelection heightComponent;
+  public DialogComponentStringSelection areaComponent;
+  public DialogComponentStringSelection heightComponent;
 
-	protected RemoveDoubletsFrameNodeDialog() {
-		super();
-		final ArrayList<String> defaultChoices = new ArrayList<String>();
-		defaultChoices.add("None");
-		// Area Selector
-		final SettingsModelString m_areaStringSetting = new SettingsModelString(
-				RemoveDoubletsFrameNodeModel.CFGKEY_AreaColumn, RemoveDoubletsFrameNodeModel.DEFAULT_AreaColumn);
-		areaComponent = new DialogComponentStringSelection(m_areaStringSetting, AREA_LABEL, defaultChoices);
-		addDialogComponent(areaComponent);
+  protected RemoveDoubletsFrameNodeDialog() {
+    super();
+    final ArrayList<String> defaultChoices = new ArrayList<String>();
+    defaultChoices.add("None");
+    // Area Selector
+    final SettingsModelString m_areaStringSetting =
+        new SettingsModelString(RemoveDoubletsFrameNodeModel.CFGKEY_AreaColumn,
+            RemoveDoubletsFrameNodeModel.DEFAULT_AreaColumn);
+    areaComponent =
+        new DialogComponentStringSelection(m_areaStringSetting, AREA_LABEL, defaultChoices);
+    addDialogComponent(areaComponent);
 
-		// height Selector
-		final SettingsModelString m_heightStringSetting = new SettingsModelString(
-				RemoveDoubletsFrameNodeModel.CFGKEY_HeightColumn, RemoveDoubletsFrameNodeModel.DEFAULT_HeightColumn);
-		heightComponent = new DialogComponentStringSelection(m_heightStringSetting, HEIGHT_LABEL, defaultChoices);
-		addDialogComponent(heightComponent);
+    // height Selector
+    final SettingsModelString m_heightStringSetting =
+        new SettingsModelString(RemoveDoubletsFrameNodeModel.CFGKEY_HeightColumn,
+            RemoveDoubletsFrameNodeModel.DEFAULT_HeightColumn);
+    heightComponent =
+        new DialogComponentStringSelection(m_heightStringSetting, HEIGHT_LABEL, defaultChoices);
+    addDialogComponent(heightComponent);
 
-	}
+  }
 
-	/** {@inheritDoc} */
-	@Override
-	public void loadAdditionalSettingsFrom(final NodeSettingsRO settings, final PortObjectSpec[] specs)
-			throws NotConfigurableException {
-		final ColumnStorePortSpec spec = (ColumnStorePortSpec) specs[0];
-		final String[] vectorNames = spec.columnNames;
-		final SingletsModel model = new SingletsModel(vectorNames);
+  /** {@inheritDoc} */
+  @Override
+  public void loadAdditionalSettingsFrom(final NodeSettingsRO settings,
+      final PortObjectSpec[] specs) throws NotConfigurableException {
+    final FCSFramePortSpec spec = (FCSFramePortSpec) specs[0];
+    final String[] vectorNames = spec.columnNames;
+    final SingletsModel model = new SingletsModel(vectorNames);
 
-		final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
-		final ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
+    final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);
+    final ArrayList<String> heightChoices = model.findColumns(vectorNames, PuleProperties.HEIGHT);
 
-		areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
-		heightComponent.replaceListItems(heightChoices, heightChoices.get(0));
-	}
+    areaComponent.replaceListItems(areaChoices, areaChoices.get(0));
+    heightComponent.replaceListItems(heightChoices, heightChoices.get(0));
+  }
 }

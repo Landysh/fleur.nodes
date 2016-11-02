@@ -12,44 +12,45 @@ import org.knime.core.node.NodeView;
  */
 public class FilterViableNodeFactory extends NodeFactory<FilterViableNodeModel> {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeDialogPane createNodeDialogPane() {
-		return new FilterViableNodeDialog();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeDialogPane createNodeDialogPane() {
+    return new FilterViableNodeDialog();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public FilterViableNodeModel createNodeModel() {
-		return new FilterViableNodeModel();
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public FilterViableNodeModel createNodeModel() {
+    return new FilterViableNodeModel();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeView<FilterViableNodeModel> createNodeView(final int viewIndex, final FilterViableNodeModel nodeModel) {
-		return new FilterViableNodeView(nodeModel);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeView<FilterViableNodeModel> createNodeView(final int viewIndex,
+      final FilterViableNodeModel nodeModel) {
+    return new FilterViableNodeView(nodeModel);
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getNrNodeViews() {
-		return 1;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNrNodeViews() {
+    return 1;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasDialog() {
-		return true;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean hasDialog() {
+    return true;
+  }
 
 }

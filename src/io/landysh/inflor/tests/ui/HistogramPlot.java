@@ -22,43 +22,43 @@ import io.landysh.inflor.java.core.utils.FCSUtils;
 
 public class HistogramPlot extends AbstractFCChart {
 
-	public HistogramPlot(String priorUUID, ChartSpec spec) {
-		super(priorUUID, spec);
-		this.spec = spec;
-	}
-	
-	public HistogramPlot(ChartSpec spec) {
-		this(null, spec);
-	}
+  public HistogramPlot(String priorUUID, ChartSpec spec) {
+    super(priorUUID, spec);
+    this.spec = spec;
+  }
 
-	@Override
-	public void setSpec(ChartSpec spec) {
-		// TODO Auto-generated method stub
-	}
+  public HistogramPlot(ChartSpec spec) {
+    this(null, spec);
+  }
 
-	@Override
-	public JFreeChart createChart(FCSFrame dataFrame) {
-		
-		FCSDimension domainDimension = FCSUtils.findCompatibleDimension(dataFrame, spec.getDomainAxisName());
+  @Override
+  public void setSpec(ChartSpec spec) {
+    // TODO Auto-generated method stub
+  }
 
-		AbstractTransform transform = spec.getDomainTransform();
-		double[] transformedData = transform.transform(domainDimension.getData());
-		
-		Histogram1D hist = new Histogram1D(transformedData,
-										   transform.getMinTranformedValue(), 
-										   transform.getMaxTransformedValue(), 
-										   ChartingDefaults.BIN_COUNT);
+  @Override
+  public JFreeChart createChart(FCSFrame dataFrame) {
 
-		DefaultXYDataset dataset = new DefaultXYDataset();
-		dataset.addSeries(dataFrame.getPrefferedName(), hist.getData());
-		
-		ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.getDisplayName(), transform);
-		ValueAxis rangeAxis = new NumberAxis(spec.getRangeAxisName());
-		FillType fillType = FillType.TO_ZERO;
-		XYItemRenderer renderer = new XYSplineRenderer(1,fillType);
-		renderer.setSeriesShape(0, ShapeUtilities.createDiamond(Float.MIN_VALUE));//Make the points invisible
-		XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
-		JFreeChart chart = new JFreeChart(plot);
-		return chart;
-	}
+    FCSDimension domainDimension =
+        FCSUtils.findCompatibleDimension(dataFrame, spec.getDomainAxisName());
+
+    AbstractTransform transform = spec.getDomainTransform();
+    double[] transformedData = transform.transform(domainDimension.getData());
+
+    Histogram1D hist = new Histogram1D(transformedData, transform.getMinTranformedValue(),
+        transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+
+    DefaultXYDataset dataset = new DefaultXYDataset();
+    dataset.addSeries(dataFrame.getPrefferedName(), hist.getData());
+
+    ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.getDisplayName(), transform);
+    ValueAxis rangeAxis = new NumberAxis(spec.getRangeAxisName());
+    FillType fillType = FillType.TO_ZERO;
+    XYItemRenderer renderer = new XYSplineRenderer(1, fillType);
+    renderer.setSeriesShape(0, ShapeUtilities.createDiamond(Float.MIN_VALUE));// Make the points
+                                                                              // invisible
+    XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
+    JFreeChart chart = new JFreeChart(plot);
+    return chart;
+  }
 }

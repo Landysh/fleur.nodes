@@ -4,32 +4,31 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-//TestDependencies
+// TestDependencies
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
-//Class we are testing.
+// Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
 
 public class LogicleTransformTest {
-	// Define Constants
+  // Define Constants
 
-	String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
-	
-	@Test
-	public void testInitialization() throws Exception {
-		// Setup
-		FCSFrame data = FCSFileReader.read(logiclePath);
-		LogicleTransform transform = new LogicleTransform();
-		double[] axes = transform.getAxisValues();
-		double[] tData = transform.transform(data.getDimensionData("FSC-A"));
-		// Test
+  String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
 
-		// Assert
-		assertEquals(axes, axes);
+  @Test
+  public void testInitialization() throws Exception {
+    // Setup
+    FCSFrame data = FCSFileReader.read(logiclePath);
+    LogicleTransform transform = new LogicleTransform();
+    double[] tData = transform.transform(data.getDimensionData("FSC-A"));
+    // Test
 
-		// assertEquals( r.bitMap, new Integer[] {16,16});
-		System.out.println("LogicleTransformTest::testInitialization completed.");
+    // Assert
+    assertEquals(data.getDimensionData("FSC-A").length, tData.length);
 
-	}
+    // assertEquals( r.bitMap, new Integer[] {16,16});
+    System.out.println("LogicleTransformTest::testInitialization completed.");
+
+  }
 }

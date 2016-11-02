@@ -20,68 +20,69 @@ import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellCol
  * <code>NodeDialog</code> for the "FilterViable" Node.
  * 
  *
- * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
- * creation of a simple dialog with standard components. If you need a more
- * complex dialog please derive directly from
+ * This node dialog derives from {@link DefaultNodeSettingsPane} which allows creation of a simple
+ * dialog with standard components. If you need a more complex dialog please derive directly from
  * {@link org.knime.core.node.NodeDialogPane}.
  * 
  * @author Landysh Co.
  */
 public class FilterViableNodeDialog extends DefaultNodeSettingsPane {
 
-	private static final String VIABILITY_LABEL = "Viability Parameter";
+  private static final String VIABILITY_LABEL = "Viability Parameter";
 
-	private static final String COLUMN_LABEL = "FCS Column";
-	private final ViabilityFilterSettingsModel m_settings = new ViabilityFilterSettingsModel();
+  private static final String COLUMN_LABEL = "FCS Column";
+  private final ViabilityFilterSettingsModel m_settings = new ViabilityFilterSettingsModel();
 
-	public DialogComponentStringSelection viabilityColumnComponent;
-	public DialogComponentColumnNameSelection columnSelectionComponent;
+  public DialogComponentStringSelection viabilityColumnComponent;
+  public DialogComponentColumnNameSelection columnSelectionComponent;
 
-	protected FilterViableNodeDialog() {
-		super();
-		final ArrayList<String> defaultChoices = new ArrayList<String>();
-		defaultChoices.add("None");
+  protected FilterViableNodeDialog() {
+    super();
+    final ArrayList<String> defaultChoices = new ArrayList<String>();
+    defaultChoices.add("None");
 
-		// Input column selector
-		columnSelectionComponent = new DialogComponentColumnNameSelection(m_settings.getSelectedColumnSettingsModel(),
-				COLUMN_LABEL, 0, new ColumnStoreCellColumnFilter());
-		addDialogComponent(columnSelectionComponent);
+    // Input column selector
+    columnSelectionComponent =
+        new DialogComponentColumnNameSelection(m_settings.getSelectedColumnSettingsModel(),
+            COLUMN_LABEL, 0, new ColumnStoreCellColumnFilter());
+    addDialogComponent(columnSelectionComponent);
 
-		// Area Selector
-		viabilityColumnComponent = new DialogComponentStringSelection(m_settings.getViabilityColumnSettingsModel(),
-				VIABILITY_LABEL, defaultChoices);
-		addDialogComponent(viabilityColumnComponent);
+    // Area Selector
+    viabilityColumnComponent = new DialogComponentStringSelection(
+        m_settings.getViabilityColumnSettingsModel(), VIABILITY_LABEL, defaultChoices);
+    addDialogComponent(viabilityColumnComponent);
 
-	}
+  }
 
-	/** {@inheritDoc} */
-	@Override
-	public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
-			throws NotConfigurableException {
-		final DataTableSpec spec = specs[0];
-		final String name = m_settings.getSelectedColumnSettingsModel().getStringValue();
+  /** {@inheritDoc} */
+  @Override
+  public void loadAdditionalSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
+      throws NotConfigurableException {
+    final DataTableSpec spec = specs[0];
+    final String name = m_settings.getSelectedColumnSettingsModel().getStringValue();
 
-		final DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
-		final Enumeration<String> keys = properties.properties();
-		final HashMap<String, String> keywords = new HashMap<String, String>();
-		while (keys.hasMoreElements()) {
-			final String key = keys.nextElement();
-			final String value = properties.getProperty(key);
-			keywords.put(key, value);
-		}
+    final DataColumnProperties properties = spec.getColumnSpec(name).getProperties();
+    final Enumeration<String> keys = properties.properties();
+    final HashMap<String, String> keywords = new HashMap<String, String>();
+    while (keys.hasMoreElements()) {
+      final String key = keys.nextElement();
+      final String value = properties.getProperty(key);
+      keywords.put(key, value);
+    }
 
-		final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
-		final ArrayList<String> areaChoices = new ArrayList<String>(Arrays.asList(vectorNames));
+    final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
+    final ArrayList<String> areaChoices = new ArrayList<String>(Arrays.asList(vectorNames));
 
-		viabilityColumnComponent.replaceListItems(areaChoices, areaChoices.get(0));
-	}
+    viabilityColumnComponent.replaceListItems(areaChoices, areaChoices.get(0));
+  }
 
-	@Override
-	protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) throws NotConfigurableException {
-		try {
-			m_settings.loadSettingsFrom(settings);
-		} catch (final Exception e) {
-			throw new NotConfigurableException("Unable to load settings.");
-		}
-	}
+  @Override
+  protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
+      throws NotConfigurableException {
+    try {
+      m_settings.loadSettingsFrom(settings);
+    } catch (final Exception e) {
+      throw new NotConfigurableException("Unable to load settings.");
+    }
+  }
 }
