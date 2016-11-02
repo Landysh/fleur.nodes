@@ -47,13 +47,12 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
       }
     }
 
-    String name = "<Pacific Blue-A>";
 
     HashMap<String, FCSDimension> dataset = new HashMap<String, FCSDimension>();
 
     List<FCSFrame> fcsList = validFiles.parallelStream()
         .map(filePath -> FCSFileReader.read(filePath)).collect(Collectors.toList());
-
+    String name = "<Pacific Blue-A>";
     for (FCSFrame fcsFile : fcsList) {
       String key = fcsFile.toString();
       FCSDimension value = FCSUtils.findCompatibleDimension(fcsFile, name);
