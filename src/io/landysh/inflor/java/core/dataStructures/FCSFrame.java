@@ -296,7 +296,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public void setData(TreeMap<String, FCSDimension> allData) {
     columnData = allData;
-    rowCount = allData.get(getColumnNames()[0]).getData().length;
   }
 
   public void setPreferredName(String preferredName) {
