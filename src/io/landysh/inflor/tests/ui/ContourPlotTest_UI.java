@@ -15,7 +15,7 @@ import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.DensityPlot;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class ContourPlotTest_UI extends ApplicationFrame {
@@ -32,13 +32,11 @@ public class ContourPlotTest_UI extends ApplicationFrame {
     final FCSFrame dataStore = FCSFileReader.read(logiclePath);
 
     ChartSpec spec = new ChartSpec();
-    spec.setPlotType(PlotTypes.CONTOUR);
+    spec.setPlotType(PlotTypes.Density);
     spec.setDomainAxisName("FSC-A");
     spec.setRangeAxisName("SSC-A");
-    FCSDimension X = FCSUtils.findCompatibleDimension(dataStore, spec.getDomainAxisName());
-    FCSDimension Y = FCSUtils.findCompatibleDimension(dataStore, spec.getRangeAxisName());
-    spec.setDomainTransform(X.getPreferredTransform());
-    spec.setRangeTransform(Y.getPreferredTransform());
+    FCSDimension X = FCSUtilities.findCompatibleDimension(dataStore, spec.getDomainAxisName());
+    FCSDimension Y = FCSUtilities.findCompatibleDimension(dataStore, spec.getRangeAxisName());
 
     DensityPlot plot = new DensityPlot(spec);
     JFreeChart chart = plot.createChart(dataStore);

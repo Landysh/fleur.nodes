@@ -13,9 +13,10 @@ import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.gates.ui.GateCreationToolBar;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
+import io.landysh.inflor.java.core.plots.HistogramPlot;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class HistogramPlotTest extends ApplicationFrame {
@@ -38,9 +39,8 @@ public class HistogramPlotTest extends ApplicationFrame {
     spec.setPlotType(PlotTypes.Histogram);
     spec.setDomainAxisName("PE-Texas-Red-A");
     LogicleTransform transform = new LogicleTransform();
-    double[] data = FCSUtils.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").getData();
+    double[] data = FCSUtilities.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").getData();
     transform.optimizeW(data);
-    spec.setDomainTransform(transform);
     spec.setRangeAxisName("Count");
 
     HistogramPlot plot = new HistogramPlot(spec);
