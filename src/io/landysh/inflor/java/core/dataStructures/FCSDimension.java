@@ -6,7 +6,7 @@ import io.landysh.inflor.java.core.transforms.LogicleTransform;
 
 // Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")
-public class FCSDimension extends DomainObject implements Comparable<FCSDimension> {
+public class FCSDimension extends DomainObject implements Comparable <FCSDimension> {
 
   // eg. the n in PnN
   private int parameterIndex;
@@ -17,11 +17,9 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
 
   // $PnN Short name
   private String shortName;
-
   // $PnS Stain name
-  private String stainName;
+  final private String stainName;
 
-  private String compensationReference;
   private String tranformReference;
   // $PnR Range
   private double range;
@@ -31,12 +29,12 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
   private AbstractTransform preferredTransform;
 
   public FCSDimension(int size, int index, String pnn, String pns, double pneF1, double pneF2,
-      double pnr, String compensationReference) {
-    this(null, size, index, pnn, pns, pneF1, pneF2, pnr, compensationReference);
+      double pnr) {
+    this(null, size, index, pnn, pns, pneF1, pneF2, pnr);
   }
 
   public FCSDimension(String priorUUID, int size, int index, String pnn, String pns, double pneF1,
-      double pneF2, double pnr, String compensationReference) {
+      double pneF2, double pnr) {
     super(priorUUID);
     parameterIndex = index;
     shortName = pnn;
@@ -44,7 +42,6 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
     ampTypef1 = pneF1;
     ampTypef2 = pneF2;
     range = pnr;
-    this.compensationReference = compensationReference;
     this.data = new double[size];
     if (ampTypef1 == 0 && ampTypef2 == 0) {
       this.preferredTransform = new BoundDisplayTransform(ampTypef1, range);
@@ -65,28 +62,17 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
     }
     return result;
   }
-
-  public String getCompRef() {
-    return this.compensationReference;
-  }
-
+  
   public double[] getData() {
     return data;
   }
 
   public String getDisplayName() {
-    if (compensationReference != null) {
-      if (stainName != null) {
-        return "[" + shortName + ": " + stainName + "]";
-      } else {
-        return "[" + shortName + "]";
-      }
+    if (stainName != null && stainName.trim().length() != 0) {
+      String displayName = shortName + ": " + stainName;
+      return displayName;
     } else {
-      if (stainName != null && stainName.trim().length() != 0) {
-        return shortName + ": " + stainName;
-      } else {
-        return shortName;
-      }
+      return shortName;
     }
   }
 
@@ -143,7 +129,7 @@ public class FCSDimension extends DomainObject implements Comparable<FCSDimensio
     return this.getDisplayName();
   }
 
-  public void setCompRef(String newValue) {
-    this.compensationReference = newValue;
+  public void setShortName(String newValue) {
+    this.shortName = newValue;    
   }
 }

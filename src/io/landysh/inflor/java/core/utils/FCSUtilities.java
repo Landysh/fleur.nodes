@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BinaryOperator;
+import java.util.Optional;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.fcs.ParameterTypes;
+import io.landysh.inflor.java.core.singlets.PuleProperties;
 
-public class FCSUtils {
+public class FCSUtilities {
 
   public static Integer findParameterNumnberByName(HashMap<String, String> keywords, String name) {
     /**
@@ -42,6 +44,7 @@ public class FCSUtils {
       stainName = keywords.get("$P" + (1 + parameterIndex) + "S");
     } catch (final Exception e) {
       System.out.print("No stain name found for parameter index: " + parameterIndex);
+      e.printStackTrace();
     }
     return stainName;
   }
@@ -116,7 +119,7 @@ public class FCSUtils {
 
 
     FCSDimension newDimension =
-        new FCSDimension(size, pIndex, pnn, pns, pneF1, pneF2, pnr, compensationReference);
+        new FCSDimension(size, pIndex, pnn, pns, pneF1, pneF2, pnr);
 
     return newDimension;
   }
@@ -124,14 +127,13 @@ public class FCSUtils {
   public static FCSFrame filterColumnStore(BitSet mask, FCSFrame in) {
 
     FCSFrame out = new FCSFrame(in.getKeywords(), mask.cardinality());
-    for (String name : in.getData().keySet()) {
-      FCSDimension inDim = in.getData().get(name);
+    for (FCSDimension inDim : in.getData()) {
       FCSDimension outDim = new FCSDimension(mask.cardinality(), inDim.getIndex(),
-          inDim.getShortName(), inDim.getDisplayName(), inDim.getPNEF1(), inDim.getPNEF2(),
-          inDim.getRange(), inDim.getCompRef());
+          inDim.getShortName(), inDim.getStainName(), inDim.getPNEF1(), inDim.getPNEF2(),
+          inDim.getRange());
       outDim.setPreferredTransform(inDim.getPreferredTransform());
       outDim.setData(BitSetUtils.filter(inDim.getData(), mask));
-      out.addColumn(name, outDim);
+      out.addDimension(outDim);
     }
     return out;
   }
@@ -143,7 +145,7 @@ public class FCSUtils {
      * found.
      */
     FCSDimension returnDim = null;
-    for (FCSDimension dim : dataSource.getData().values()) {
+    for (FCSDimension dim : dataSource.getData()) {
       if (dim.getShortName().equals(shortName)) {
         returnDim = dim;
       }
@@ -165,7 +167,7 @@ public class FCSUtils {
     
     FCSFrame mergedFrame = fcsList
          .stream()
-         .map(dataFrame -> FCSUtils.downSample(dataFrame, finalSize))
+         .map(dataFrame -> FCSUtilities.downSample(dataFrame, finalSize))
          .reduce(new FCSConcatenator())
          .get(); 
     return mergedFrame;
@@ -173,6 +175,46 @@ public class FCSUtils {
 
   private static FCSFrame downSample(FCSFrame dataFrame, Integer dataSize) {
     BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), dataSize);
-    return FCSUtils.filterColumnStore(mask, dataFrame);
+    return FCSUtilities.filterColumnStore(mask, dataFrame);
+  }
+
+  public static FCSDimension findPreferredDimensionType(FCSFrame fcsFrame, ParameterTypes dimensionType) {
+    ArrayList<FCSDimension> forwardScatterDims = new ArrayList<FCSDimension>();
+    for (FCSDimension dimension: fcsFrame.getData()){
+      boolean isForwardScatter = dimensionType.matches(dimension.getShortName());
+      if (isForwardScatter){
+        forwardScatterDims.add(dimension);
+      }
+    }
+    
+    FCSDimension fscADimension = findDimensionType(forwardScatterDims, PuleProperties.AREA);
+    FCSDimension fscHDimension = findDimensionType(forwardScatterDims, PuleProperties.HEIGHT);
+    FCSDimension fscWDimension = findDimensionType(forwardScatterDims, PuleProperties.WIDTH);
+    
+    if (fscADimension!=null){
+      return fscADimension;
+    } else if (fscHDimension!=null){
+      return fscHDimension;
+    } else if (fscWDimension!=null){
+      return fscWDimension;
+    } else {
+      return null;
+    }
+  }
+
+  private static FCSDimension findDimensionType(ArrayList<FCSDimension> forwardScatterDims, PuleProperties pulseTypes) {
+    FCSDimension foundDimension = null;
+    if (forwardScatterDims.size()>=1){
+      Optional<FCSDimension> optionalDimension = forwardScatterDims
+          .stream()
+          .filter(dim -> pulseTypes.matches(dim.getShortName()))
+          .findAny();
+      if (optionalDimension.isPresent()){foundDimension = optionalDimension.get();}
+    }
+    return foundDimension;
+  }
+
+  public static String formatCompStainName(String origninalName) {
+    return "[" + origninalName + "]";
   }
 }

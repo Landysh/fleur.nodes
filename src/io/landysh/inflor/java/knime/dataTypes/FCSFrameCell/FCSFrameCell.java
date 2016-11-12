@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.dataTypes.columnStoreCell;
+package io.landysh.inflor.java.knime.dataTypes.FCSFrameCell;
 
 import java.io.IOException;
 
@@ -11,19 +11,18 @@ import org.knime.core.data.filestore.FileStoreCell;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
-public class ColumnStoreCell extends FileStoreCell {
+public class FCSFrameCell extends FileStoreCell {
 
   public static final class ColumnStoreCellSerializer
-      implements DataCellSerializer<ColumnStoreCell> {
+      implements DataCellSerializer<FCSFrameCell> {
 
     @Override
-    public ColumnStoreCell deserialize(DataCellDataInput input) throws IOException {
+    public FCSFrameCell deserialize(DataCellDataInput input) throws IOException {
       try {
         final byte[] bytes = new byte[input.readInt()];
         input.readFully(bytes);
-        FCSFrame cStore;
-        cStore = FCSFrame.load(bytes);
-        final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
+        FCSFrame cStore = FCSFrame.load(bytes);
+        final FCSFrameCell newCell = new FCSFrameCell(cStore);
         return newCell;
       } catch (final Exception e) {
         e.printStackTrace();
@@ -32,7 +31,7 @@ public class ColumnStoreCell extends FileStoreCell {
     }
 
     @Override
-    public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
+    public void serialize(FCSFrameCell cell, DataCellDataOutput output) throws IOException {
       final byte[] bytes = cell.getFCSFrame().save();
       output.writeInt(bytes.length);
       output.write(bytes);
@@ -40,18 +39,18 @@ public class ColumnStoreCell extends FileStoreCell {
   }
 
   private static final long serialVersionUID = 1L;
-  public static final DataType TYPE = DataType.getType(ColumnStoreCell.class, ColumnStoreCell.TYPE);
+  public static final DataType TYPE = DataType.getType(FCSFrameCell.class, FCSFrameCell.TYPE);
   /**
    * A cell type matching the functionality of the ColumnStorePortObject.
    */
   private final FCSFrame m_data;
 
-  ColumnStoreCell(FCSFrame cStore) {
+  FCSFrameCell(FCSFrame cStore) {
     // Use with deserializer.
     m_data = cStore;
   }
 
-  public ColumnStoreCell(FileStore fs, FCSFrame cStore) {
+  public FCSFrameCell(FileStore fs, FCSFrame cStore) {
     super(fs);
     m_data = cStore;
   }

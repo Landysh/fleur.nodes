@@ -13,9 +13,14 @@ public class LogrithmicTransform extends AbstractTransform {
   private double max;
 
 
-  public LogrithmicTransform(double min, double max) {
+  public LogrithmicTransform(double min, double max, String priorID) {
+    super(priorID);
     this.min = min;
     this.max = max;
+  }
+  
+  public LogrithmicTransform(double min, double max) {
+    this(min, max, null);
   }
 
   @Override

@@ -8,14 +8,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class TransormNodeView extends NodeView<TransformNodeModel> {
+public class TransformNodeView extends NodeView<TransformNodeModel> {
 
   /**
    * Creates a new view.
    * 
    * @param nodeModel The model (class: {@link TransformNodeModel})
    */
-  protected TransormNodeView(final TransformNodeModel nodeModel) {
+  protected TransformNodeView(final TransformNodeModel nodeModel) {
     super(nodeModel);
     // TODO: generated method stub
   }

@@ -40,12 +40,10 @@ public class PlotUtils {
   public static AbstractFCChart createPlot(ChartSpec plotSpec) {
     PlotTypes type = plotSpec.getPlotType();
     AbstractFCChart newPlot = null;
-    if (type.equals(PlotTypes.CONTOUR)) {
+    if (type.equals(PlotTypes.Density)) {
       newPlot = new DensityPlot(plotSpec);
-    } else if (type.equals(PlotTypes.DENSITY)) {
-      DensityPlot grayScalePlot = new DensityPlot(plotSpec);
-      grayScalePlot.updateColorScheme(ColorSchemes.GRAY_SCALE);
-      newPlot = grayScalePlot;
+    } else if (type.equals(PlotTypes.Histogram)) {
+      newPlot = new HistogramPlot(plotSpec);
     } else {
       throw new RuntimeException("No valid plot type selected.");
     }
@@ -83,8 +81,8 @@ public class PlotUtils {
   }
 
   public static AbstractTransform createDefaultTransform(String parameterName) {
-    if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.SCATTER.matches(parameterName)
-        || ParameterTypes.TIME.matches(parameterName)) {
+    if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.ForwardScatter.matches(parameterName)
+        || ParameterTypes.SideScatter.matches(parameterName)|| ParameterTypes.TIME.matches(parameterName)) {
       return new BoundDisplayTransform();
     } else {
       return new LogicleTransform();

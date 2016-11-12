@@ -27,7 +27,7 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject;
 import io.landysh.inflor.java.knime.views.CellLineageRenderer;
 
@@ -52,7 +52,7 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
   protected DataTableSpec[] configure(final PortObjectSpec[] inSpecs)
       throws InvalidSettingsException {
     final DataColumnSpecCreator colSpec =
-        new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE);
+        new DataColumnSpecCreator("Listmode Data", FCSFrameCell.TYPE);
     colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
         DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
     final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
@@ -69,7 +69,7 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
       throws CanceledExecutionException {
     // create the output container
     final DataColumnSpec colSpecs =
-        new DataColumnSpecCreator("Listmode Data", ColumnStoreCell.TYPE).createSpec();
+        new DataColumnSpecCreator("Listmode Data", FCSFrameCell.TYPE).createSpec();
     final DataTableSpec spec = new DataTableSpec(colSpecs);
     final BufferedDataContainer container = exec.createDataContainer(spec);
 

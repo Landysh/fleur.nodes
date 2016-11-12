@@ -6,7 +6,7 @@ import java.util.BitSet;
 import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class RectangleGate extends AbstractGate {
 
@@ -60,7 +60,7 @@ public class RectangleGate extends AbstractGate {
   @Override
   public String toString() {
     if (this.label == null) {
-      return ID;
+      return getID();
     } else {
       return label;
     }
@@ -77,8 +77,8 @@ public class RectangleGate extends AbstractGate {
   }
 
   public BitSet evaluate(FCSFrame data) {
-    double[] xData = FCSUtils.findCompatibleDimension(data, xName).getData();
-    double[] yData = FCSUtils.findCompatibleDimension(data, yName).getData();
+    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).getData();
+    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).getData();
     BitSet bits = new BitSet(data.getRowCount());
     for (int i = 0; i < xData.length; i++) {
       if (this.xMin < xData[i] && xData[i] < this.xMax && this.yMin < yData[i]

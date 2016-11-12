@@ -11,7 +11,7 @@ import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentStringListSelection;
 
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 /**
  * <code>NodeDialog</code> for the "SummaryStatistics" Node. Extract basic summary statistics from a
@@ -65,7 +65,7 @@ public class SummaryStatisticsNodeDialog extends DefaultNodeSettingsPane {
       keywords.put(key, value);
     }
 
-    final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
+    final String[] vectorNames = FCSUtilities.parseDimensionList(keywords);
     final ArrayList<String> newItems = (ArrayList<String>) Arrays.asList(vectorNames);
     markerFilter.replaceListItems(newItems, (String) null);
   }

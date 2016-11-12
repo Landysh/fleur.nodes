@@ -21,7 +21,7 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortSpec;
 
@@ -80,13 +80,13 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 
     // Do the modeling
     final SingletsModel model = new SingletsModel(inSpec.columnNames);
-    final double[] area = inColumnStore.getDimensionData(m_AreaColumn.getStringValue());
-    final double[] height = inColumnStore.getDimensionData(m_HeightColumn.getStringValue());
+    final double[] area = inColumnStore.getFCSDimensionByShortName(m_AreaColumn.getStringValue()).getData();
+    final double[] height = inColumnStore.getFCSDimensionByShortName(m_HeightColumn.getStringValue()).getData();
     final double[] ratio = model.buildModel(area, height);
     final BitSet mask = model.scoreModel(ratio);
 
     // Create the output
-    final FCSFrame outStore = FCSUtils.filterColumnStore(mask, inColumnStore);
+    final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, inColumnStore);
     final FCSFramePortSpec outSpec =
         new FCSFramePortSpec(inSpec.keywords, inSpec.columnNames, outStore.getRowCount());
     final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);

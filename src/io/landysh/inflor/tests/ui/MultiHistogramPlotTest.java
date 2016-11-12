@@ -17,10 +17,10 @@ import org.jfree.ui.ApplicationFrame;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
+import io.landysh.inflor.java.core.plots.SubsetResponseChart;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.nodes.transform.SubsetResponseChart;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class MultiHistogramPlotTest extends ApplicationFrame {
@@ -55,7 +55,7 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
     String name = "<Pacific Blue-A>";
     for (FCSFrame fcsFile : fcsList) {
       String key = fcsFile.toString();
-      FCSDimension value = FCSUtils.findCompatibleDimension(fcsFile, name);
+      FCSDimension value = FCSUtilities.findCompatibleDimension(fcsFile, name);
       dataset.put(key, value);
     }
 

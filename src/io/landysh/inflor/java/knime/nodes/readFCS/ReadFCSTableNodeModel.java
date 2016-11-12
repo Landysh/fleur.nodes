@@ -3,6 +3,7 @@ package io.landysh.inflor.java.knime.nodes.readFCS;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.knime.core.data.DataCell;
@@ -28,7 +29,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor
@@ -86,11 +87,10 @@ public class ReadFCSTableNodeModel extends NodeModel {
   }
 
   private DataTableSpec createDataSpec(FCSFrame columnStore) throws InvalidSettingsException {
-    final String[] columnNames = columnStore.getColumnNames();
-    final DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.length];
-    for (final String columnName : columnNames) {
-      final int specIndex =
-          FCSUtils.findParameterNumnberByName(columnStore.getKeywords(), columnName) - 1;
+    List<String> columnNames = columnStore.getColumnNames();
+    DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.size()];
+    for (String columnName : columnNames) {
+      int specIndex = FCSUtilities.findParameterNumnberByName(columnStore.getKeywords(), columnName) - 1;
       colSpecs[specIndex] = new DataColumnSpecCreator(columnName, DoubleCell.TYPE).createSpec();
     }
     final DataTableSpec dataSpec = new DataTableSpec(colSpecs);

@@ -75,7 +75,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 
   private FCSFramePortSpec createPortSpec(FCSFrame eventsFrame) {
     final FCSFramePortSpec spec = new FCSFramePortSpec(eventsFrame.getKeywords(),
-        eventsFrame.getColumnNames(), eventsFrame.getRowCount());
+        eventsFrame.getColumnNames().toArray(new String[eventsFrame.getColumnCount()]), eventsFrame.getRowCount());
     return spec;
   }
 

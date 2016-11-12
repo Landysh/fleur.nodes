@@ -17,9 +17,6 @@ public class CompensateNodeView extends NodeView<CompensateNodeModel> {
    */
   protected CompensateNodeView(final CompensateNodeModel nodeModel) {
     super(nodeModel);
-
-    // TODO instantiate the components of the view here.
-
   }
 
   /**

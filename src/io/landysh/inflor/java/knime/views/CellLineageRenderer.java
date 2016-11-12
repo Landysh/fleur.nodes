@@ -16,7 +16,7 @@ import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.DataValueRenderer;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 public class CellLineageRenderer implements DataValueRenderer {
 
@@ -25,8 +25,8 @@ public class CellLineageRenderer implements DataValueRenderer {
   private static XYDataset createDataset(FCSFrame columns) {
     final XYSeriesCollection result = new XYSeriesCollection();
     final XYSeries series = new XYSeries("Random");
-    final double[] x = columns.getDimensionData(columns.getColumnNames()[0]);
-    final double[] y = columns.getDimensionData(columns.getColumnNames()[1]);
+    final double[] x = columns.getData().first().getData();
+    final double[] y = columns.getData().last().getData();
     for (int i = 0; i < 100; i++) {
       series.add(x[i], y[i]);
       result.addSeries(series);
@@ -37,7 +37,7 @@ public class CellLineageRenderer implements DataValueRenderer {
   @Override
   public boolean accepts(DataColumnSpec spec) {
     // I guess this checks the spec to see if it is compatible.
-    if (spec.getType() == ColumnStoreCell.TYPE) {
+    if (spec.getType() == FCSFrameCell.TYPE) {
       return true;
     } else {
       return false;
@@ -64,7 +64,7 @@ public class CellLineageRenderer implements DataValueRenderer {
 
   @Override
   public Component getRendererComponent(Object unCastCell) {
-    final ColumnStoreCell cell = (ColumnStoreCell) unCastCell;
+    final FCSFrameCell cell = (FCSFrameCell) unCastCell;
     final FCSFrame data = cell.getFCSFrame();
     final XYDataset dataset = createDataset(data);
     final JFreeChart chart = ChartFactory.createScatterPlot("Foo", "bar", "foobar", dataset);

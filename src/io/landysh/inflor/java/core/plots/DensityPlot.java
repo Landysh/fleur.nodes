@@ -15,12 +15,15 @@ import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.Histogram2D;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class DensityPlot extends AbstractFCChart {
 
   ChartSpec spec;
-  private ColorSchemes colorScheme = ColorSchemes.COOL_HEATMAP;
+  private ColorSchemes colorScheme = ChartingDefaults.DEFAULT_COLOR_SCHEME;
+  private XYPlot plot;
+  private Histogram2D histogram;
+  
 
   public DensityPlot(ChartSpec spec, String priorUUID) {
     super(priorUUID, spec);
@@ -33,11 +36,9 @@ public class DensityPlot extends AbstractFCChart {
 
   @Override
   public JFreeChart createChart(FCSFrame data) {
-    FCSDimension domainDimension = FCSUtils.findCompatibleDimension(data, spec.getDomainAxisName());
+    FCSDimension domainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
     AbstractTransform domainTransform;
-    if (spec.getDomainTransform() != null) {
-      domainTransform = spec.getDomainTransform();
-    } else if (domainDimension.getPreferredTransform() != null) {
+    if (domainDimension.getPreferredTransform() != null) {
       domainTransform = domainDimension.getPreferredTransform();
     } else {
       domainTransform = PlotUtils.createDefaultTransform(domainDimension.getShortName());
@@ -47,40 +48,31 @@ public class DensityPlot extends AbstractFCChart {
     double domainMax = domainTransform.getMaxTransformedValue();
 
     AbstractTransform rangeTransform;
-    FCSDimension rangeDimension = FCSUtils.findCompatibleDimension(data, spec.getRangeAxisName());
-    if (spec.getRangeTransform() != null) {
-      rangeTransform = spec.getRangeTransform();
-    } else if (rangeDimension.getPreferredTransform() != null) {
+    FCSDimension rangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
+    
+    if (rangeDimension.getPreferredTransform() != null) {
       rangeTransform = rangeDimension.getPreferredTransform();
     } else {
       rangeTransform = PlotUtils.createDefaultTransform(rangeDimension.getShortName());
     }
+    
     double[] rangeData = rangeTransform.transform(rangeDimension.getData());
     double rangeMin = rangeTransform.getMinTranformedValue();
     double rangeMax = rangeTransform.getMaxTransformedValue();
-    Histogram2D histogram =
-        new Histogram2D(domainData, domainMin, domainMax, rangeData, rangeMin, rangeMax);
+    histogram = new Histogram2D(domainData, domainMin, domainMax, rangeData, rangeMin, rangeMax);
 
     DefaultXYZDataset plotData = new DefaultXYZDataset();
 
 
     BitSet nonEmptyMask = histogram.getNonEmptyBins();
-    double[] x = FCSUtils.filterColumn(nonEmptyMask, histogram.getXBins());
-    double[] y = FCSUtils.filterColumn(nonEmptyMask, histogram.getYBins());
-    double[] z = FCSUtils.filterColumn(nonEmptyMask, histogram.getZValues());
+    double[] x = FCSUtilities.filterColumn(nonEmptyMask, histogram.getXBins());
+    double[] y = FCSUtilities.filterColumn(nonEmptyMask, histogram.getYBins());
+    double[] z = FCSUtilities.filterColumn(nonEmptyMask, histogram.getZValues());
     plotData.addSeries(data.toString(), new double[][] {x, y, z});
 
-    LookupPaintScale paintScale = PlotUtils.createPaintScale(0, Doubles.max(z), colorScheme);
+    XYBlockRenderer renderer = updateRenderer(histogram);
 
-    // Renderer configuration
-    XYBlockRenderer renderer = new XYBlockRenderer();
-    renderer.setBlockWidth(histogram.getXBinWidth());
-    renderer.setBlockHeight(histogram.getYBinWidth());
-    renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
-    renderer.setSeriesVisible(0, true);
-    renderer.setPaintScale(paintScale);
-
-    XYPlot plot = new XYPlot();
+    plot = new XYPlot();
     // Create the plot
     plot.setDataset(plotData);
     plot.setDomainAxis(PlotUtils.createAxis(domainDimension.getDisplayName(), domainTransform));
@@ -92,7 +84,24 @@ public class DensityPlot extends AbstractFCChart {
     return chart;
   }
 
+  private XYBlockRenderer updateRenderer(Histogram2D histogram) {
+    BitSet nonEmptyMask = histogram.getNonEmptyBins();
+    double[] z = FCSUtilities.filterColumn(nonEmptyMask, histogram.getZValues());
+    LookupPaintScale paintScale = PlotUtils.createPaintScale(0, Doubles.max(z), colorScheme);
+    
+    
+    // Renderer configuration
+    XYBlockRenderer renderer = new XYBlockRenderer();
+    renderer.setBlockWidth(histogram.getXBinWidth());
+    renderer.setBlockHeight(histogram.getYBinWidth());
+    renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
+    renderer.setSeriesVisible(0, true);
+    renderer.setPaintScale(paintScale);
+    return renderer;
+  }
+
   public void updateColorScheme(ColorSchemes newScheme) {
     this.colorScheme = newScheme;
+    plot.setRenderer(updateRenderer(histogram));
   }
 }

@@ -85,7 +85,7 @@ public class BHTSNENodeModel extends NodeModel {
     final double[][] X = new double[features.length][rowCount];
 
     for (int i = 0; i < features.length; i++) {
-      X[i] = port.getColumnStore().getFCSDimension(features[i]).getData();
+      X[i] = port.getColumnStore().getFCSDimensionByShortName(features[i]).getData();
     }
 
     final FastTSne sne = new FastTSne();

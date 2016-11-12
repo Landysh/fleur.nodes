@@ -7,7 +7,7 @@ import java.util.BitSet;
 import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class PolygonGate extends AbstractGate {
 
@@ -45,8 +45,8 @@ public class PolygonGate extends AbstractGate {
 
   @Override
   public BitSet evaluate(FCSFrame data) {
-    double[] d1Data = FCSUtils.findCompatibleDimension(data, domainName).getData();
-    double[] d2Data = FCSUtils.findCompatibleDimension(data, rangeName).getData();
+    double[] d1Data = FCSUtilities.findCompatibleDimension(data, domainName).getData();
+    double[] d2Data = FCSUtilities.findCompatibleDimension(data, rangeName).getData();
     Path2D poly = new Path2D.Double();
     BitSet mask = new BitSet(data.getRowCount());
     for (int i = 0; i < domainPoints.size(); i++) {
@@ -121,7 +121,7 @@ public class PolygonGate extends AbstractGate {
     double[] result = new double[2*domainPoints.size()];
     for(int i=0;i<result.length;i++){
       result[i] = domainPoints.get(i/2);
-      result[i+1] = rangePoints.get(i/2+1);
+      result[i+1] = rangePoints.get(i/2);
     }
     return result;
   }

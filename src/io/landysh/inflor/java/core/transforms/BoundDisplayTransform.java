@@ -21,14 +21,18 @@ public class BoundDisplayTransform extends AbstractTransform {
    *        edge cases.
    */
 
-  public BoundDisplayTransform(double min, double max) {
+  public BoundDisplayTransform(double min, double max, String priorUUID) {
+    super(priorUUID);
     this.boundaryMin = min;
     this.boundaryMax = max;
+    }
+  
+  public BoundDisplayTransform(double min, double max) {
+    this(min, max, null);
   }
 
   public BoundDisplayTransform() {
-    this.boundaryMin = 0;
-    this.boundaryMax = 262144;
+    this(0,262144,null);
   }
 
   @Override

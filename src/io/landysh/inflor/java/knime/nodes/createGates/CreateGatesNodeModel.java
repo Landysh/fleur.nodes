@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataRow;
@@ -26,8 +25,9 @@ import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gates.AbstractGate;
-import io.landysh.inflor.java.core.subsets.DefaultSubset;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.core.gates.GateUtilities;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * This is the model implementation of CreateGates.
@@ -53,13 +53,9 @@ public class CreateGatesNodeModel extends NodeModel {
   }
 
   private FCSFrame applyGates(FCSFrame inStore) {
-    FCSFrame outStore = new FCSFrame(inStore.getKeywords(), inStore.getRowCount());
-    List<AbstractGate> gates = modelSettings.findGates(inStore.ID);
-    List<BitSet> masks = gates
-      .parallelStream()
-      .map(gate -> gate.evaluate(inStore))
-      .collect(Collectors.toList());
-    
+    List<AbstractGate> gates = modelSettings.findGates(inStore.getID());
+    BitSet returnMe = GateUtilities.applyGatingPath(inStore, gates);
+    FCSFrame outStore = FCSUtilities.filterColumnStore(returnMe, inStore);
     return outStore;
   }
 
@@ -100,13 +96,13 @@ public class CreateGatesNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
 
       // now create the output row
       final FCSFrame outStore = applyGates(inStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

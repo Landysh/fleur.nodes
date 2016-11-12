@@ -25,8 +25,8 @@ import org.knime.core.node.NodeSettingsWO;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * This is the model implementation of Transform.
@@ -65,13 +65,13 @@ public class TransformNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
 
       // now create the output row
       final FCSFrame outStore = applyTransforms(inStore, modelSettings.getAllTransorms());
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {
@@ -90,7 +90,7 @@ public class TransformNodeModel extends NodeModel {
 
   private FCSFrame applyTransforms(FCSFrame inStore, TreeMap<String, AbstractTransform> treeMap) {
     for (Entry<String, AbstractTransform> entry : treeMap.entrySet()) {
-      FCSDimension dimension = FCSUtils.findCompatibleDimension(inStore, entry.getKey());
+      FCSDimension dimension = FCSUtilities.findCompatibleDimension(inStore, entry.getKey());
       dimension.setPreferredTransform(entry.getValue());
     }
     return inStore;
@@ -104,7 +104,9 @@ public class TransformNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {}
+  protected void reset() {
+    modelSettings.reset();
+  }
 
   /**
    * {@inheritDoc}

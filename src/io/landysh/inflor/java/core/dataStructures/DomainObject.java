@@ -14,7 +14,7 @@ public abstract class DomainObject implements Serializable {
    *        not available.
    */
 
-  public final String ID;
+  private final String ID;
 
   public DomainObject(String priorUUID) {
     if (priorUUID == null) {
@@ -26,5 +26,9 @@ public abstract class DomainObject implements Serializable {
   
   public boolean matchesID(String id) {
     return this.ID.equals(id);
+  }
+  
+  public String getID() {
+    return this.ID;
   }
 }

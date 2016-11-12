@@ -6,9 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -17,7 +15,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.knime.core.data.DataRow;
@@ -31,11 +29,11 @@ import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.ui.LineageTreeMouseAdapter;
 import io.landysh.inflor.java.core.plots.ChartSpec;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.CellLineageTree;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.ChartEditorDialog;
-import sun.awt.windows.WEmbeddedFrame;
+import io.landysh.inflor.java.core.ui.CellLineageTree;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -47,44 +45,28 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
+  private static final Integer DEFAULT_SUMMARY_FRAME_EVENT_COUNT = 10000;
+
   public CreateGatesNodeSettings m_settings;
 
-  JPanel m_analyisTab;
-  CellLineageTree lineageTree;
+  JPanel analyisTab;
+  public CellLineageTree lineageTree;
   public JComboBox<String> fcsColumnBox;
   public JComboBox<FCSFrame> selectSampleBox;
+
+  private ArrayList<FCSFrame> dataSet;
+
+  private JScrollPane analysisArea;
 
   protected CreateGatesNodeDialog() {
     super();
     m_settings = new CreateGatesNodeSettings();
 
     // Main analysis Tab
-    m_analyisTab = new JPanel();
+    analyisTab = new JPanel();
     BorderLayout borderLayout = new BorderLayout();
-    m_analyisTab.setLayout(borderLayout);
-    m_analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
-
-    final JButton addChartButton = new JButton("Add");
-    addChartButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        addChartDialog();
-      }
-    });
-
-    final JButton editChartButton = new JButton("Edit");
-    editChartButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        if (lineageTree.getSelectionCount() == 1) {
-          DefaultMutableTreeNode selectedNode =
-              (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
-          String id = ((ChartSpec) selectedNode.getUserObject()).ID;
-          editChartDialog(id);
-          updateLineageTree();
-        }
-      }
-    });
+    analyisTab.setLayout(borderLayout);
+    analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
 
     final JButton deleteChartButton = new JButton("Delete");
     deleteChartButton.addActionListener(new ActionListener() {
@@ -93,62 +75,36 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
         if (lineageTree.getSelectionCount() == 1) {
           DefaultMutableTreeNode selectedNode =
               (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
-          String id = ((ChartSpec) selectedNode.getUserObject()).ID;
-          m_settings.deleteChart(id);
-          updateLineageTree();
+          if (!selectedNode.equals(selectedNode.getRoot()) &&
+              selectedNode.getUserObject() instanceof ChartSpec){
+            String id = ((ChartSpec) selectedNode.getUserObject()).getID();
+            m_settings.deleteChart(id);
+          } else if (!selectedNode.equals(selectedNode.getRoot()) &&
+            selectedNode.getUserObject() instanceof AbstractGate){
+            String id = ((AbstractGate) selectedNode.getUserObject()).getID();
+            m_settings.deleteGate(id);
+            updateLineageTree();
+          }
         }
       }
     });
 
     JPanel plotButtons = new JPanel(new FlowLayout());
 
-    plotButtons.add(addChartButton);
-    plotButtons.add(editChartButton);
     plotButtons.add(deleteChartButton);
-
-    m_analyisTab.add(plotButtons, BorderLayout.PAGE_END);
-
-    super.addTab("Analysis", m_analyisTab);
+    analyisTab.add(plotButtons, BorderLayout.PAGE_END);
+    super.addTab("Analysis", analyisTab);
   }
 
-  public void addChartDialog() {
-    // figure out the parent to be able to make the dialog modal
-    final WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(getPanel());
-
-    final ChartEditorDialog dialog = new ChartEditorDialog(topFrame, this);
-    dialog.setVisible(true);
-
-    if (dialog.isOK) {
-      m_settings.addPlotSpec(dialog.getChartSpec());
-      List<AbstractGate> gates = dialog.getGates();
-      gates.forEach(gate -> m_settings.addGate(gate));
-      updateLineageTree();
-    }
-    dialog.dispose();
-  }
-
-  public void editChartDialog(String id) {
-    // figure out the parent to be able to make the dialog modal
-    // topFrame = SwingUtilities.getWindowAncestor(getPanel());
-
-    final ChartEditorDialog dialog = new ChartEditorDialog(this, id);
-    dialog.setVisible(true);
-
-    if (dialog.isOK) {
-      m_settings.addPlotSpec(dialog.getChartSpec());
-      updateLineageTree();
-    }
-    dialog.dispose();
-  }
-
-  private CellLineageTree createAnalysisArea() {
-
+  private JScrollPane createAnalysisArea() {
     FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
     Collection<ChartSpec> chartSpecs = m_settings.getPlotSpecs().values();
-    List<AbstractGate> gates = m_settings.findGates(dataFrame.ID);
+    List<AbstractGate> gates = m_settings.findGates(dataFrame.getID());
     lineageTree = new CellLineageTree();
     lineageTree.updateLayout(chartSpecs, gates, dataFrame);
-    return lineageTree;
+    lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
+    analysisArea = new JScrollPane(lineageTree);
+    return analysisArea;
   }
 
   private JPanel createOptionsPanel() {
@@ -195,7 +151,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == ColumnStoreCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
@@ -233,19 +189,19 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     // Hold on to a reference of the data so we can plot it later.
 
     final HashSet<String> parameterSet = new HashSet<String>();
-
-    for (final DataRow row : table) {
-      final FCSFrame cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getFCSFrame();
-      selectSampleBox.addItem(cStoreData);
-      final List<String> newParameters =
-          new ArrayList<String>(Arrays.asList(cStoreData.getColumnNames()));
+    
+    dataSet = new ArrayList<FCSFrame>();
+    
+    for (DataRow row : table) {
+      FCSFrame dataFrame = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+      dataSet.add(dataFrame);
+      List<String> newParameters =dataFrame.getColumnNames();
       parameterSet.addAll(newParameters);
     }
-    if (selectSampleBox.getModel().getSize() == 0) {
-      selectSampleBox.removeAllItems();
-      selectSampleBox.setEnabled(false);
-      selectSampleBox.setToolTipText("No FCS Files found");
-    }
+    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, DEFAULT_SUMMARY_FRAME_EVENT_COUNT);
+    selectSampleBox.addItem(summaryFrame);
+    dataSet.forEach(dataFrame -> selectSampleBox.addItem(dataFrame));
+    selectSampleBox.setSelectedIndex(0);
     updateLineageTree();
   }
 
@@ -260,20 +216,16 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   }
 
   public FCSFrame getSelectedSample() {
-    return (FCSFrame) this.selectSampleBox.getSelectedItem();
+    return (FCSFrame) selectSampleBox.getSelectedItem();
   }
 
-  private void updateLineageTree() {
-    if (lineageTree != null) {
-      m_analyisTab.remove(lineageTree);
+  public void updateLineageTree() {
+    if (analysisArea != null) {
+      analyisTab.remove(analysisArea);
     }
-    lineageTree = createAnalysisArea();
-    m_analyisTab.add(lineageTree, BorderLayout.CENTER);
-    m_analyisTab.revalidate();// TODO: needed?
-    m_analyisTab.repaint(50L);// TODO: needed?
-  }
-
-  public CreateGatesNodeSettings getSettings() {
-    return m_settings;
+    analysisArea = createAnalysisArea();
+    analyisTab.add(analysisArea, BorderLayout.CENTER);
+    analyisTab.revalidate();
+    analyisTab.repaint(50);
   }
 }

@@ -10,11 +10,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
@@ -55,7 +55,7 @@ public class FCSFileReader {
   public final Integer[] bitMap;
   public final FCSFrame columnStore;
   public final String[] fileDimensionList;
-  TreeMap<String, FCSDimension> data;
+  TreeSet<FCSDimension> data;
   public String[] compParameterList = null;
 
   // Constructor
@@ -72,13 +72,13 @@ public class FCSFileReader {
     header.put("FCSVersion", readFCSVersion(FCSFile));
 
     // Try to validate the header.
-    if (FCSUtils.validateHeader(header) == false) {
+    if (FCSUtilities.validateHeader(header) == false) {
       final Exception e = new Exception("Invalid FCS Header.");
       e.printStackTrace();
       throw e;
     }
 
-    fileDimensionList = FCSUtils.parseDimensionList(header);
+    fileDimensionList = FCSUtilities.parseDimensionList(header);
 
     final int rowCount = Integer.parseInt(header.get("$TOT"));
     columnStore = new FCSFrame(header, rowCount);
@@ -88,7 +88,7 @@ public class FCSFileReader {
     readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
     bitMap = createBitMap(header);
     dataType = columnStore.getKeywordValue("$DATATYPE");
-    data = new TreeMap<String, FCSDimension>();
+    data = new TreeSet<FCSDimension>();
   }
 
   private String calculateSHA(byte[] inBytes) throws NoSuchAlgorithmException {
@@ -112,7 +112,7 @@ public class FCSFileReader {
   private Integer[] createBitMap(HashMap<String, String> keywords) {
     // This method reads how many bytes per parameter and returns an integer
     // array of these values
-    final String[] rawParameterNames = FCSUtils.parseDimensionList(keywords);
+    final String[] rawParameterNames = FCSUtilities.parseDimensionList(keywords);
     final Integer[] map = new Integer[rawParameterNames.length];
     for (int i = 1; i <= map.length; i++) {
       final String key = "$P" + (i) + "B";
@@ -148,7 +148,7 @@ public class FCSFileReader {
   }
 
   public void readData() throws IOException {
-    data = new TreeMap<String, FCSDimension>();
+    data = new TreeSet<FCSDimension>();
     FCSFile.seek(beginData);
 
     double[][] rawData = new double[columnStore.getRowCount()][fileDimensionList.length];
@@ -160,10 +160,10 @@ public class FCSFileReader {
     double[][] transposedRawData = MatrixUtilities.transpose(rawData);
 
     for (int i = 0; i < fileDimensionList.length; i++) {
-      Integer pIndex = FCSUtils.findParameterNumnberByName(getHeader(), fileDimensionList[i]);
-      FCSDimension newDimension = FCSUtils.buildFCSDimension(pIndex, getHeader(), null);
+      Integer pIndex = FCSUtilities.findParameterNumnberByName(getHeader(), fileDimensionList[i]);
+      FCSDimension newDimension = FCSUtilities.buildFCSDimension(pIndex, getHeader(), null);
       newDimension.setData(transposedRawData[i]);
-      data.put(newDimension.ID, newDimension);
+      data.add(newDimension);
     }
 
     columnStore.setData(data);

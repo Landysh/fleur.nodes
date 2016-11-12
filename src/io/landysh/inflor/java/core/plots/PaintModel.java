@@ -30,7 +30,7 @@ public class PaintModel {
   private Paint[] createPaintArray(int levels) {
     Paint[] colorScale = new Paint[levels];
 
-    if (colorScheme == ColorSchemes.COOL_HEATMAP) {
+    if (colorScheme == ColorSchemes.Color) {
       float startH = 200 / 360f;
       float deltaH = startH / levels;
 
@@ -38,7 +38,7 @@ public class PaintModel {
         float hue = startH - (i) * deltaH;
         colorScale[i] = Color.getHSBColor(hue, 0.7f, 1f);
       }
-    } else if (colorScheme == ColorSchemes.GRAY_SCALE) {
+    } else if (colorScheme == ColorSchemes.GrayScale) {
       float startV = 200 / 360f;
       float deltaV = startV / levels;
 
@@ -55,10 +55,6 @@ public class PaintModel {
 
     return colorScale;
   }
-
-  // public double[] getDiscreteData(double[] z) {
-  // return discretizeData(z, levels);
-  // }
 
   public Paint[] getPaints() {
     return paint;

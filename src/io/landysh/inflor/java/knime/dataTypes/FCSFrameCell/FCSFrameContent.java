@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.dataTypes.columnStoreCell;
+package io.landysh.inflor.java.knime.dataTypes.FCSFrameCell;
 
 import java.io.IOException;
 
@@ -12,18 +12,18 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
-public class ColumnStoreContent {
+public class FCSFrameContent {
 
-  public static final class CellSerializer implements DataCellSerializer<ColumnStoreCell> {
+  public static final class CellSerializer implements DataCellSerializer<FCSFrameCell> {
 
     @Override
-    public ColumnStoreCell deserialize(DataCellDataInput input) throws IOException {
+    public FCSFrameCell deserialize(DataCellDataInput input) throws IOException {
       try {
         final byte[] bytes = new byte[input.readInt()];
         input.readFully(bytes);
         FCSFrame cStore;
         cStore = FCSFrame.load(bytes);
-        final ColumnStoreCell newCell = new ColumnStoreCell(cStore);
+        final FCSFrameCell newCell = new FCSFrameCell(cStore);
         return newCell;
       } catch (final Exception e) {
         e.printStackTrace();
@@ -32,30 +32,30 @@ public class ColumnStoreContent {
     }
 
     @Override
-    public void serialize(ColumnStoreCell cell, DataCellDataOutput output) throws IOException {
+    public void serialize(FCSFrameCell cell, DataCellDataOutput output) throws IOException {
       final byte[] bytes = cell.getFCSFrame().save();
       output.writeInt(bytes.length);
       output.write(bytes);
     }
   }
 
-  public static final DataType TYPE = DataType.getType(ColumnStoreCell.class);
+  public static final DataType TYPE = DataType.getType(FCSFrameCell.class);
 
   private FCSFrame m_data = null;
 
-  public ColumnStoreContent(byte[] buffer) throws InvalidProtocolBufferException {
+  public FCSFrameContent(byte[] buffer) throws InvalidProtocolBufferException {
     m_data = FCSFrame.load(buffer);
   }
 
-  public ColumnStoreContent(FCSFrame vectorStore) {
-    m_data = vectorStore;
+  public FCSFrameContent(FCSFrame dataFrame) {
+    m_data = dataFrame;
   }
 
   public FCSFrame getColumnStore() {
     return m_data;
   }
 
-  public ColumnStoreCell toColumnStoreCell(FileStore fs) {
-    return new ColumnStoreCell(fs, m_data);
+  public FCSFrameCell toColumnStoreCell(FileStore fs) {
+    return new FCSFrameCell(fs, m_data);
   }
 }

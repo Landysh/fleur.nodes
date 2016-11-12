@@ -34,9 +34,9 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.nodes.transform.FCSFrameColumnPropertyKeys;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.core.NodeUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * This is the model implementation of ReadFCSSet.
@@ -85,33 +85,39 @@ public class ReadFCSSetNodeModel extends NodeModel {
     return new DataTableSpec[] {spec};
   }
 
-  private HashMap<String, String> createColumnPropertiesContent() throws Exception {
+  private HashMap<String, String> createColumnPropertiesContent() {
     /**
      * Creates column properties for an FCS Set by looking all of the headers and setting shared
      * keyword values.
      */
     final ArrayList<String> filePaths = getFilePaths(m_path.getStringValue());
-    List<HashMap<String, String>> headers = filePaths.stream()
-        .map(path -> FCSFileReader.readHeaderOnly(path)).collect(Collectors.toList());
+    List<HashMap<String, String>> headers = filePaths
+        .stream()
+        .map(path -> FCSFileReader.readHeaderOnly(path))
+        .collect(Collectors.toList());
 
     final HashMap<String, String> content = new HashMap<String, String>();
     HashSet<String> shortNames = new HashSet<>();
 
     // Merge all keywords.
     headers
-        .forEach(map -> map.entrySet().forEach(entry -> updateContent(content, entry, shortNames)));
+        .forEach(map -> map.entrySet()
+            .forEach(entry -> updateContent(content, entry, shortNames)));
 
 
-    // Colleact all parameter for experiment in one Hashset.
-    headers.stream().map(header -> FCSUtils.parseDimensionList(header))
-        .forEach(dimensionList -> updateShortNames(dimensionList, shortNames));
+    // Collect all parameter for experiment in one Hashset.
+    headers
+      .stream()
+      .map(header -> FCSUtilities.parseDimensionList(header))
+      .forEach(dimensionList -> updateShortNames(dimensionList, shortNames));
+    
     String dimensionNames = "";
     for (String name : shortNames) {
-      dimensionNames = dimensionNames + name + "||";
+      dimensionNames = dimensionNames + name + NodeUtilities.DELIMITER;
     }
-    dimensionNames = dimensionNames.substring(0, dimensionNames.length() - 2);
+    dimensionNames = dimensionNames.substring(0, dimensionNames.length() - NodeUtilities.DELIMITER.length());
     System.out.println(dimensionNames);
-    content.put(FCSFrameColumnPropertyKeys.DIMENSION_NAMES_KEY, dimensionNames);
+    content.put(NodeUtilities.DIMENSION_NAMES_KEY, dimensionNames);
 
     return content;
   }
@@ -131,21 +137,21 @@ public class ReadFCSSetNodeModel extends NodeModel {
     }
   }
 
-  private DataColumnSpec createFCSColumnSpec() throws Exception {
-    final DataColumnSpecCreator creator =
-        new DataColumnSpecCreator("FCS Frame", ColumnStoreCell.TYPE);
+  private DataColumnSpec createFCSColumnSpec() {
+    DataColumnSpecCreator creator =
+        new DataColumnSpecCreator("FCS Frame", FCSFrameCell.TYPE);
     // Create properties
-    final HashMap<String, String> content = createColumnPropertiesContent();
-    final DataColumnProperties properties = new DataColumnProperties(content);
+    HashMap<String, String> content = createColumnPropertiesContent();
+    DataColumnProperties properties = new DataColumnProperties(content);
     creator.setProperties(properties);
     // Create spec
-    final DataColumnSpec dcs = creator.createSpec();
+    DataColumnSpec dcs = creator.createSpec();
     return dcs;
   }
 
   private DataTableSpec createSpec() throws Exception {
-    final DataColumnSpec[] colSpecs = new DataColumnSpec[] {createFCSColumnSpec()};
-    final DataTableSpec tableSpec = new DataTableSpec(colSpecs);
+    DataColumnSpec[] colSpecs = new DataColumnSpec[] {createFCSColumnSpec()};
+    DataTableSpec tableSpec = new DataTableSpec(colSpecs);
     return tableSpec;
   }
 
@@ -165,8 +171,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     fileCount = filePaths.size();
     exec.checkCanceled();
     filePaths.parallelStream().map(path -> FCSFileReader.read(path))
-        .forEach(columnStore -> addRow(columnStore, container, exec));// forEach(dataSet ->
-                                                                      // tempStore.add(dataSet));
+        .forEach(columnStore -> addRow(columnStore, container, exec));
     exec.checkCanceled();
 
     // once we are done, we close the container and return its table
@@ -182,7 +187,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     FileStore fileStore;
     try {
       fileStore = fileStoreFactory.createFileStore(fsName);
-      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, columnStore);
+      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, columnStore);
       final DataCell[] cells = new DataCell[] {fileCell};
 
       final DataRow row = new DefaultRow(key, cells);

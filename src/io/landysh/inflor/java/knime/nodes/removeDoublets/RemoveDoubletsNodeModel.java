@@ -23,8 +23,8 @@ import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 import io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeModel;
 
 /**
@@ -81,18 +81,18 @@ public class RemoveDoubletsNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
-      final SingletsModel model = new SingletsModel(columnStore.getColumnNames());
-      final double[] areaData = columnStore.getDimensionData(areaColumn);
-      final double[] heightData = columnStore.getDimensionData(heightColumn);
+      final FCSFrame columnStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
+      final SingletsModel model = new SingletsModel(columnStore.getColumnNames().toArray(new String[columnStore.getColumnNames().size()]));
+      final double[] areaData = columnStore.getFCSDimensionByShortName(areaColumn).getData();
+      final double[] heightData = columnStore.getFCSDimensionByShortName(heightColumn).getData();//TODO: DisplayName or shortName?
       final double[] ratio = model.buildModel(areaData, heightData);
       BitSet mask = model.scoreModel(ratio);
 
       // now create the output row
-      final FCSFrame outStore = FCSUtils.filterColumnStore(mask, columnStore);
+      final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

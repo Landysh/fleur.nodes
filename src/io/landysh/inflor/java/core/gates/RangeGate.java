@@ -6,7 +6,7 @@ import java.util.BitSet;
 import org.w3c.dom.Element;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {
 
@@ -30,12 +30,8 @@ public class RangeGate extends AbstractGate {
     this(label, names, min, max, null);
   }
 
-  public RangeGate() {
-    super(null);
-  }
-
   @Override
-  public BitSet evaluate(FCSFrame FCSData) {
+  public BitSet evaluate(FCSFrame fcsFrame) {
     // TODO performance optimization?
     if (dimensions.size() == 2) {
       String xName = dimensions.get(0).getName();
@@ -44,9 +40,9 @@ public class RangeGate extends AbstractGate {
       String yName = dimensions.get(1).getName();
       double yMin = dimensions.get(1).min;
       double yMax = dimensions.get(1).max;
-      double[] xData = FCSUtils.findCompatibleDimension(FCSData, xName).getData();
-      double[] yData = FCSUtils.findCompatibleDimension(FCSData, yName).getData();
-      BitSet bits = new BitSet(FCSData.getRowCount());
+      double[] xData = FCSUtilities.findCompatibleDimension(fcsFrame, xName).getData();
+      double[] yData = FCSUtilities.findCompatibleDimension(fcsFrame, yName).getData();
+      BitSet bits = new BitSet(fcsFrame.getRowCount());
       for (int i = 0; i < xData.length; i++) {
         if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {
           bits.set(i);
@@ -55,13 +51,13 @@ public class RangeGate extends AbstractGate {
       return bits;
     }
 
-    int rowCount = FCSData.getRowCount();
+    int rowCount = fcsFrame.getRowCount();
     final BitSet result = new BitSet(rowCount);
     result.set(0, result.size() - 1);
 
     for (RangeDimension dim : dimensions) {
       String name = dim.getName();
-      double[] data = FCSUtils.findCompatibleDimension(FCSData, name).getData();
+      double[] data = FCSUtilities.findCompatibleDimension(fcsFrame, name).getData();
       BitSet dimesnionBits = dim.evaluate(data);
       result.and(dimesnionBits);
     }
@@ -92,7 +88,7 @@ public class RangeGate extends AbstractGate {
   @Override
   public String toString() {
     if (this.label == null) {
-      return ID;
+      return this.getID();
     } else {
       return label;
     }
@@ -115,8 +111,8 @@ public class RangeGate extends AbstractGate {
     String yName = dimensions.get(1).getName();
     double yMin = dimensions.get(1).min;
     double yMax = dimensions.get(1).max;
-    double[] xData = FCSUtils.findCompatibleDimension(data, xName).getData();
-    double[] yData = FCSUtils.findCompatibleDimension(data, yName).getData();
+    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).getData();
+    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).getData();
     BitSet bits = new BitSet(data.getRowCount());
     for (int i = 0; i < xData.length; i++) {
       if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {

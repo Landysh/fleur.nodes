@@ -1,17 +1,12 @@
 package io.landysh.inflor.java.knime.nodes.createGates.ui;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.BitSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,78 +18,47 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.gates.AbstractGate;
-import io.landysh.inflor.java.core.gates.GateUtilities;
-import io.landysh.inflor.java.core.gates.ui.GateCreationToolBar;
-import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.fcs.ParameterTypes;
+import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.ui.GateCreationToolBar;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
-import io.landysh.inflor.java.core.subsets.AbstractSubset;
-import io.landysh.inflor.java.core.subsets.RootSubset;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import sun.awt.windows.WEmbeddedFrame;
 
+@SuppressWarnings("serial")
 public class ChartEditorDialog extends JDialog {
 
   /**
-   * The modal dialog from which new chart definitions will be created and existing charts may be
+   * A modal dialog from which new chart definitions will be created and existing charts may be
    * edited
    */
 
-  private static final long serialVersionUID = 3249082301592821578L;
+  private static final String HORIZONTAL_AXIS_GROUP_LABEL = "Horizontal Axis";
+  private static final String RANGE_AXIS_GROUP_LABEL = "Vertical Axis";
   // private static final Frame parent;
   protected JPanel previewPanel;
   protected JPanel settingsPanel;
   protected JPanel contentPanel;
 
-  ChartSpec spec;
+  private ChartSpec localSpec;
+  private FCSFrame dataFrame;
 
-  private JButton m_okButton = null;
-  private JButton m_cancelButton = null;
   public boolean isOK = false;
-  private JComboBox<Object> parentSelectorBox;
-  private JComboBox<PlotTypes> plotTypeSelectorBox;
-  private JComboBox<FCSDimension> domainParameterBox;
-  private JComboBox<FCSDimension> rangeDimBox;
+  private JComboBox<FCSDimension> domainParameterSelector;
+  private JComboBox<FCSDimension> rangeParameterSelector;
   private JProgressBar progressBar;
-  private CreateGatesNodeDialog parentDialog;
   private AbstractFCChart previewPlot;
   private FCSChartPanel chartPanel;
   private GateCreationToolBar gatingToolBar;
+  private List<AbstractGate> gates;
 
-  public ChartEditorDialog(Frame topFrame, CreateGatesNodeDialog parent) {
-
-    /**
-     * Use this constructor to create a new chart.
-     * 
-     * @param topFrame the frame in which this dialog resides. Required to make dialog modal
-     * @param parent the parent dialog which stores the data model.
-     * @param id The UUID of the domain object. typically found in the settingsModel.
-     */
-    // Initialize
-    super(topFrame);
-    parentDialog = parent;
-    spec = new ChartSpec();
-    String first = parent.getSelectedSample().getData().navigableKeySet().first();
-    String next = parent.getSelectedSample().getData().navigableKeySet().last();
-    spec.setDomainAxisName(parent.getSelectedSample().getFCSDimension(first).getShortName());
-    spec.setRangeAxisName(parent.getSelectedSample().getFCSDimension(next).getShortName());
-    setModal(true);
-
-    // populate the dialog
-    setTitle("Add a new plot.");
-    final JPanel content = createContentPanel();
-    getContentPane().add(content);
-    pack();
-    setLocationRelativeTo(getParent());
-  }
-
-  public ChartEditorDialog(CreateGatesNodeDialog parent, String id) {
+  public ChartEditorDialog(WEmbeddedFrame topFrame, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
     /**
      * Use this constructor to edit an existing chart.
      * 
@@ -102,57 +66,96 @@ public class ChartEditorDialog extends JDialog {
      * @param parent the parent dialog which stores the data model.
      * @param id The UUID of the domain object. typically found in the settingsModel.
      */
-    super();
-    parentDialog = parent;
-    spec = parentDialog.m_settings.getChartSpec(id).clone();
+    super(topFrame);
     setModal(true);
-
+    this.dataFrame = dataFrame;
+    this.gates = applicableGates;
     // populate the dialog
-    setTitle("Editing: " + spec.getDisplayName());
-    FCSFrame subsetData = ((AbstractSubset) parentSelectorBox.getSelectedItem()).getData();
-    final JPanel content = createContentPanel();
-    parentSelectorBox.setSelectedIndex(0);
-    plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
-    FCSDimension domainDimension =
-        FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
-    domainParameterBox.setSelectedItem(domainDimension);
-    FCSDimension rangeDimension =
-        FCSUtils.findCompatibleDimension(subsetData, spec.getDomainAxisName());
-    rangeDimBox.setSelectedItem(rangeDimension);
-
+    final JPanel content = createContentPanel(spec);
     getContentPane().add(content);
     pack();
     setLocationRelativeTo(getParent());
   }
+  
+  public ChartEditorDialog(WEmbeddedFrame topFrame, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
+    this(topFrame, selectedSample, applicableGates, null);
+  }
+
+  private FCSDimension guessDomainDimension(FCSFrame fcsFrame) {
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.ForwardScatter);
+    if (domainDimension!=null){
+      return domainDimension;
+    } else {
+      return fcsFrame.getData().first();
+    }
+  }
+  
+  private FCSDimension guessRangeDimension(FCSFrame fcsFrame) {
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.SideScatter);
+    if (domainDimension!=null){
+      return domainDimension;
+    } else {
+      return fcsFrame.getData().higher(fcsFrame.getData().last());
+    }
+  }
 
   private JButton createCancelButton() {
-    m_cancelButton = new JButton();
-    m_cancelButton.setText("Cancel");
-    m_cancelButton.addActionListener(new ActionListener() {
+    JButton button = new JButton();
+    button.setText("Cancel");
+    button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
         setVisible(false);
       }
     });
-    return m_cancelButton;
+    return button;
   }
 
-  private JPanel createContentPanel() {
-    // Create the panel
-    progressBar = new JProgressBar();
-    final Component plotOptionsPanel = createPlotOptionsPanel();
+  private JPanel createContentPanel(ChartSpec originalSpec) {
+   // Create the panel
+   progressBar = new JProgressBar();
+   contentPanel = new JPanel(new GridBagLayout());
 
-    contentPanel = new JPanel(new GridBagLayout());
-    previewPanel = createPreviewPanel();
-    gatingToolBar = new GateCreationToolBar(chartPanel);
-    chartPanel.setSelectionListener(gatingToolBar.getSelectionListener());//TODO: bad design.
-    m_okButton = createOkButton();
-    m_cancelButton = createCancelButton();
-    final JPanel buttonPanel = new JPanel(new FlowLayout());
-    buttonPanel.add(m_okButton);
-    buttonPanel.add(m_cancelButton);
-
-
+   JButton okButton = createOkButton();
+   JButton cancelButton = createCancelButton();
+   final JPanel buttonPanel = new JPanel(new FlowLayout());
+   buttonPanel.add(okButton);
+   buttonPanel.add(cancelButton);
+   domainParameterSelector = new JComboBox<FCSDimension>();
+   Component domainAxisGroup = createAxisGroup(HORIZONTAL_AXIS_GROUP_LABEL, domainParameterSelector);
+   rangeParameterSelector = new JComboBox<FCSDimension>();
+   Component rangeAxisGroup = createAxisGroup(RANGE_AXIS_GROUP_LABEL, rangeParameterSelector);
+   
+   if (originalSpec!=null){
+     localSpec = originalSpec.clone();
+   } else {
+     localSpec = new ChartSpec();
+     localSpec.setDomainAxisName(guessDomainDimension(dataFrame).getShortName());
+     localSpec.setRangeAxisName(guessRangeDimension(dataFrame).getShortName());
+     localSpec.setParentID(dataFrame.getID());
+     localSpec.setPlotType(PlotTypes.Density);
+   }
+   
+   setSelection(localSpec.getDomainAxisName(), domainParameterSelector);
+   setSelection(localSpec.getRangeAxisName(), rangeParameterSelector);
+   previewPanel = createPreviewPanel();
+   domainParameterSelector.addActionListener(new ActionListener() {
+     @Override
+     public void actionPerformed(final ActionEvent e) {
+       FCSDimension dimension = (FCSDimension) domainParameterSelector.getModel().getSelectedItem();
+       localSpec.setDomainAxisName(dimension.getShortName());
+       updatePreviewPlot();
+     }
+   });
+   rangeParameterSelector.addActionListener(new ActionListener() {
+     @Override
+     public void actionPerformed(final ActionEvent e) {
+       FCSDimension dimension = (FCSDimension) rangeParameterSelector.getModel().getSelectedItem();
+       localSpec.setRangeAxisName(dimension.getShortName());
+      updatePreviewPlot();
+     }
+   });
+    // updatePreviewPlot();
     // GridLayout
     final GridBagConstraints gbc = new GridBagConstraints();
     gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -165,13 +168,10 @@ public class ChartEditorDialog extends JDialog {
     gbc.gridx = 0;
     gbc.gridy = 1;
     contentPanel.add(previewPanel, gbc);
-    // Plot Options
-    gbc.gridy = 2;
-    contentPanel.add(plotOptionsPanel, gbc);
     gbc.gridy = 3;
-    contentPanel.add(createHorizontalAxisGroup(), gbc);
+    contentPanel.add(domainAxisGroup, gbc);
     gbc.gridy = 4;
-    contentPanel.add(createVerticalAxisGroup(), gbc);
+    contentPanel.add(rangeAxisGroup, gbc);
     // Button Panel
     gbc.anchor = GridBagConstraints.SOUTHEAST;
     gbc.gridy = 5;
@@ -181,179 +181,81 @@ public class ChartEditorDialog extends JDialog {
     progressBar.setVisible(false);
     contentPanel.add(progressBar, gbc);
     contentPanel.add(buttonPanel, gbc);
-    contentPanel.setPreferredSize(new Dimension(350, 450));
-
     return contentPanel;
   }
 
+  private void setSelection(String domainAxisName,
+      JComboBox<FCSDimension> comboBox) {
+    int itemCount = comboBox.getItemCount();
+    for (int i=0;i<itemCount;i++){
+      FCSDimension dim = comboBox.getItemAt(i);
+      if (dim.getShortName().equals(domainAxisName)){
+        comboBox.setSelectedIndex(i);
+      }
+    }
+  }
+
   private FCSChartPanel createPreviewPanel() {
-    FCSFrame chartDataSource = (FCSFrame) parentDialog.getSelectedSample();
-    previewPlot = PlotUtils.createPlot(spec);
-    JFreeChart chart = previewPlot.createChart(chartDataSource);
-    chartPanel = new FCSChartPanel(chart, spec, chartDataSource);
-    chartPanel.setPreferredSize(new Dimension(280, 250));
+    previewPlot = PlotUtils.createPlot(localSpec);
+    JFreeChart chart = previewPlot.createChart(dataFrame);
+    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
+    gatingToolBar = new GateCreationToolBar(chartPanel);
+    chartPanel.setSelectionListener(gatingToolBar.getSelectionListener());//TODO: bad design.
+    chartPanel.createAnnotations(gates);
     return chartPanel;
   }
 
-
-  private Component createHorizontalAxisGroup() {
-    JPanel domainAxisGroup = new JPanel();
-    domainAxisGroup.setLayout(new FlowLayout());
-    domainAxisGroup.setBorder(
-        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Horizontal Axis"));
-
-    domainParameterBox = new JComboBox<FCSDimension>();
-
-    parentDialog.getSelectedSample().getData().values()
-        .forEach((dimension) -> domainParameterBox.addItem(dimension));
-
-    domainParameterBox.setSelectedIndex(1);
-    domainParameterBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        FCSDimension dimension = (FCSDimension) domainParameterBox.getModel().getSelectedItem();
-        spec.setDomainAxisName(dimension.getShortName());
-        updatePreviewPlot();
-      }
-    });
-    domainAxisGroup.add(domainParameterBox);
-
-    return domainAxisGroup;
+  private Component createAxisGroup(String label,JComboBox<FCSDimension> comboBox) {
+    JPanel axisGroup = new JPanel();
+    axisGroup.setLayout(new FlowLayout());
+    TitledBorder groupBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), label);
+    axisGroup.setBorder(groupBorder);
+    
+    dataFrame.getData().forEach(dimension-> comboBox.addItem(dimension));
+    
+    axisGroup.add(comboBox);
+    return axisGroup;
   }
 
-  /**
-   * This method initializes okButton.
-   *
-   * @return javax.swing.JButton
-   */
   private JButton createOkButton() {
-    m_okButton = new JButton();
-    m_okButton.setText("Ok");
-    m_okButton.addActionListener(new ActionListener() {
+    JButton button  = new JButton();
+    button.setText("Ok");
+    button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
-        updatePreviewPlot();
         isOK = true;
         setVisible(false);
       }
     });
-    return m_okButton;
-  }
-
-  private JComboBox<Object> createParentSelector() {
-    parentSelectorBox = new JComboBox<Object>();
-    FCSFrame dataFrame = (FCSFrame)parentDialog.selectSampleBox.getSelectedItem();
-    parentSelectorBox.addItem(dataFrame);
-    List<AbstractGate> gates = parentDialog.m_settings.findGates(dataFrame.ID);
-    gates.forEach(gate -> parentSelectorBox.addItem(gate));
-    parentSelectorBox.setSelectedIndex(0);
-    parentSelectorBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        String parentID = ((DomainObject) parentSelectorBox.getSelectedItem()).ID;
-        spec.setParent(parentID);
-        updatePreviewPlot();
-      }
-    });
-    return parentSelectorBox;
+    return button;
   }
 
   protected void updatePreviewPlot() {
-    progressBar.setVisible(true);
-    progressBar.setStringPainted(true);
-    progressBar.setString("Initializing");
-    progressBar.getModel().setValue(1);
-    FCSFrame dataFrame = (FCSFrame) parentDialog.getSelectedSample();
-    FCSFrame filteredDataFrame;
-    if (dataFrame.ID.equals(spec.getParent())){
-      filteredDataFrame = dataFrame;
-    } else {
-      List<AbstractGate> gates = parentDialog.m_settings.findGates(dataFrame.ID);
-      Optional<AbstractGate> foundGate = gates.stream()
-                                    .filter(gate -> gate.ID.equals(spec.ID))
-                                    .findAny();
-      if (foundGate.isPresent()){
-        AbstractGate gate = foundGate.get();
-        List<AbstractGate> gatePath = parentDialog.m_settings.findAncestorGates(gate);
-        BitSet mask = GateUtilities.applyGatingPath(dataFrame, gatePath);
-        filteredDataFrame = FCSUtils.filterColumnStore(mask, dataFrame);
-      } else {
-        throw new RuntimeException("Unable to find valid gating path.");
-      }
+    if (chartPanel!=null){
+      previewPanel.remove(chartPanel);
     }
-    UpdatePlotWorker worker = new UpdatePlotWorker(progressBar, chartPanel, spec, filteredDataFrame);
-    worker.execute();
-    try {
-      JFreeChart chart = worker.get();
-      chartPanel.setChart(chart);
-      chartPanel.revalidate();
-      chartPanel.repaint();
-      previewPanel.revalidate();
-      previewPanel.repaint();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    // previewPanel = createPreviewPanel();
-
-  }
-
-  private JPanel createPlotOptionsPanel() {
-    final JPanel panel = new JPanel(new FlowLayout());
-    panel.setBorder(
-        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "General Options"));
-    parentSelectorBox = createParentSelector();
-    panel.add(parentSelectorBox);
-    plotTypeSelectorBox = createPlotTypeSelector();
-    panel.add(plotTypeSelectorBox);
-    return panel;
-  }
-
-  private JComboBox<PlotTypes> createPlotTypeSelector() {
-    plotTypeSelectorBox = new JComboBox<PlotTypes>(PlotTypes.values());
-    plotTypeSelectorBox.setSelectedItem(spec.getPlotType());
-    plotTypeSelectorBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        PlotTypes newValue = (PlotTypes) plotTypeSelectorBox.getModel().getSelectedItem();
-        // spec.clone();
-        spec.setPlotType(newValue);
-        updatePreviewPlot();
-      }
-    });
-    return plotTypeSelectorBox;
-  }
-
-  private Component createVerticalAxisGroup() {
-    JPanel rangeAxisGroup = new JPanel();
-    rangeAxisGroup.setLayout(new FlowLayout());
-    TitledBorder border =
-        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Vertical Axis");
-    rangeAxisGroup.setBorder(border);
-
-    rangeDimBox = new JComboBox<FCSDimension>();
-
-    parentDialog.getSelectedSample().getData().values()
-        .forEach((dimension) -> rangeDimBox.addItem(dimension));
-
-    rangeDimBox.setSelectedIndex(0);
-    rangeDimBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        FCSDimension rangeDimension = (FCSDimension) rangeDimBox.getSelectedItem();
-        spec.setRangeAxisName(rangeDimension.getShortName());
-        updatePreviewPlot();
-      }
-    });
-    rangeAxisGroup.add(rangeDimBox);
-    return rangeAxisGroup;
+    AbstractFCChart abstractChart = PlotUtils.createPlot(localSpec);  
+    JFreeChart chart = abstractChart.createChart(dataFrame);
+    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
+    chartPanel.setChart(chart);
+    chartPanel.setSelectionListener(gatingToolBar.getSelectionListener());
+    chartPanel.createAnnotations(gates);
+    chartPanel.revalidate();
+    chartPanel.repaint();
+    previewPanel.add(chartPanel);
+    previewPanel.revalidate();
+    previewPanel.repaint();    
   }
 
   public ChartSpec getChartSpec() {
-    return spec;
+    return localSpec;
   }
 
   public List<AbstractGate> getGates() {
     return this.chartPanel.createAbstractGates();
+  }
+
+  public String getReferenceID() {
+    return this.dataFrame.getID();
   }
 }

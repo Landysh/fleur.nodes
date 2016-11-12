@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnProperties;
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.def.DefaultRow;
@@ -23,7 +26,9 @@ import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.core.NodeUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * This is the model implementation of Compensate. Will extract a compensation matrix from am FCS
@@ -70,14 +75,14 @@ public class CompensateNodeModel extends NodeModel {
     for (final DataRow inRow : inData[0]) {
 
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame columnStore = ((ColumnStoreCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame columnStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
 
 
       // now create the output row
       final FCSFrame outStore = compr.compensateFCSFrame(columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final ColumnStoreCell fileCell = new ColumnStoreCell(fileStore, outStore);
+      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {
@@ -116,7 +121,45 @@ public class CompensateNodeModel extends NodeModel {
   }
 
   private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
-    return dataTableSpec;
+    String columnName = m_settings.getSelectedColumn();
+    DataColumnSpec selectedColSpec = dataTableSpec.getColumnSpec(columnName);
+    DataColumnProperties properties = selectedColSpec.getProperties();
+    String dimensionNameString = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+    String[] dimensionNames = dimensionNameString.split(NodeUtilities.DELIMITER_REGEX);
+    String[] updatedNames = updateDimensionNames(dimensionNames);
+    String combinedNames = String.join(NodeUtilities.DELIMITER, updatedNames);
+    
+    HashMap<String, String> newColumnNames = new HashMap<String, String>();
+    newColumnNames.put(NodeUtilities.DIMENSION_NAMES_KEY, combinedNames);
+    DataColumnProperties newProps = properties.cloneAndOverwrite(newColumnNames);
+    
+    DataColumnSpecCreator creator = new DataColumnSpecCreator(columnName, FCSFrameCell.TYPE);
+    creator.setProperties(newProps);
+    DataColumnSpec newSpec = creator.createSpec();
+    DataColumnSpec[] colSpecs = new DataColumnSpec[dataTableSpec.getColumnNames().length];
+    for (int i=0;i<colSpecs.length;i++){
+      DataColumnSpec currentSpec = dataTableSpec.getColumnSpec(i);
+      if (currentSpec.getName().equals(columnName)){
+        colSpecs[i] = newSpec;
+      } else {
+        colSpecs[i] = dataTableSpec.getColumnSpec(i);
+      }
+    }
+    return new DataTableSpec(colSpecs);
+  }
+  
+  private String[] updateDimensionNames(String[] dimensionNames) {
+    String[] newNames = dimensionNames.clone();
+    SpilloverCompensator compr = new SpilloverCompensator(m_settings.getReferenceHeader());
+    String[] compParameterNames = compr.getCompParameterNames();
+    for(int i=0;i<newNames.length;i++){
+      for (int j=0;j<compParameterNames.length;j++){
+        if (newNames[i].equals(compParameterNames[j])){
+          newNames[i] = FCSUtilities.formatCompStainName(newNames[i]);
+        }
+      }
+    }
+    return newNames;
   }
 
   /**

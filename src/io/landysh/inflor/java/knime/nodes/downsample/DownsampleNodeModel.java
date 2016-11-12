@@ -21,7 +21,7 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.BitSetUtils;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortSpec;
 
@@ -78,7 +78,7 @@ public class DownsampleNodeModel extends NodeModel {
       outStore.setData(inColumnStore.getData());
     } else {
       final BitSet mask = BitSetUtils.getShuffledMask(inSize, downSize);
-      outStore = FCSUtils.filterColumnStore(mask, inColumnStore);
+      outStore = FCSUtilities.filterColumnStore(mask, inColumnStore);
     }
 
     final FCSFramePortSpec outSpec = getSpec(inSpec);

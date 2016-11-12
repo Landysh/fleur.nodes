@@ -6,7 +6,6 @@ import org.junit.Test;
 
 // TestDependencies
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-
 // Class we are testing.
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
@@ -21,11 +20,11 @@ public class LogicleTransformTest {
     // Setup
     FCSFrame data = FCSFileReader.read(logiclePath);
     LogicleTransform transform = new LogicleTransform();
-    double[] tData = transform.transform(data.getDimensionData("FSC-A"));
+    double[] tData = transform.transform(data.getFCSDimensionByShortName("FSC-A").getData());
     // Test
 
     // Assert
-    assertEquals(data.getDimensionData("FSC-A").length, tData.length);
+    assertEquals(data.getFCSDimensionByShortName("FSC-A").getData().length, tData.length);
 
     // assertEquals( r.bitMap, new Integer[] {16,16});
     System.out.println("LogicleTransformTest::testInitialization completed.");

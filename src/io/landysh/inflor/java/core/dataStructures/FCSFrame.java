@@ -4,7 +4,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.UninitializedMessageException;
@@ -18,7 +21,6 @@ import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
 import io.landysh.inflor.java.core.transforms.LogrithmicTransform;
 import io.landysh.inflor.java.core.transforms.TransformType;
-import io.landysh.inflor.java.core.utils.FCSUtils;
 import io.landysh.inflor.java.core.proto.FCSFrameProto.Message.Dimension;
 
 
@@ -28,9 +30,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   private static final String DEFAULT_PREFFERED_NAME_KEYWORD = "$FIL";
 
-
-
-  private TreeMap<String, FCSDimension> columnData;
+  private TreeSet<FCSDimension> columnData;
 
   private HashMap<String, String> keywords;
   private String preferredName;
@@ -59,14 +59,14 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public FCSFrame(String priorUUID, HashMap<String, String> keywords, int rowCount) {
     super(priorUUID);
     this.keywords = keywords;
-    columnData = new TreeMap<String, FCSDimension>();
+    columnData = new TreeSet<FCSDimension>();
     this.rowCount = rowCount;
     preferredName = getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD);
   }
 
-  public void addColumn(String name, FCSDimension newDim) {
+  public void addDimension(FCSDimension newDim) {
     if (rowCount == newDim.getSize()) {
-      columnData.put(name, newDim);
+      columnData.add(newDim);
     } else {
       throw new IllegalStateException(
           "New dimension does not match frame size: " + rowCount.toString());
@@ -74,25 +74,21 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public int getColumnCount() {
-    return getColumnNames().length;
+    return getColumnNames().size();
   }
 
-  public String[] getColumnNames() {
-    final int size = columnData.keySet().size();
-    final String[] newArray = new String[size];
-    final String[] columnNames = columnData.keySet().toArray(newArray);
+  public List<String> getColumnNames() {
+    List<String> columnNames = columnData
+        .stream()
+        .map(dimension -> dimension.getShortName())
+        .collect(Collectors.toList());
     return columnNames;
   }
 
-  public TreeMap<String, FCSDimension> getData() {
+  public TreeSet<FCSDimension> getData() {
     return columnData;
   }
-
-  public double[] getDimensionData(String displayName) {
-    FCSDimension matchingDimension = FCSUtils.findCompatibleDimension(this, displayName);
-    return matchingDimension.getData();
-  }
-
+  
   public HashMap<String, String> getKeywords() {
     return keywords;
   }
@@ -119,8 +115,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public double[] getRow(int index) {
     final double[] row = new double[getColumnCount()];
     int i = 0;
-    for (final String name : getColumnNames()) {
-      row[i] = columnData.get(name).getData()[index];
+    for (FCSDimension dim: columnData) {
+      row[i] = dim.getData()[index];
       i++;
     }
     return row;
@@ -130,14 +126,22 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return rowCount;
   }
 
-  public FCSDimension getFCSDimension(String name) {
-    return columnData.get(name);
+  public FCSDimension getFCSDimensionByShortName(String shortName) {
+    Optional<FCSDimension> matchingDimension = columnData
+        .stream()
+        .filter(dimension -> shortName.equals(dimension.getShortName()))
+        .findAny();
+    if (matchingDimension.isPresent()){
+      return matchingDimension.get();
+    } else {
+      return null;
+    }
   }
 
   public byte[] save() {
     // create the builder
     final Message.Builder messageBuilder = Message.newBuilder();
-    messageBuilder.setId(ID);
+    messageBuilder.setId(this.getID());
     messageBuilder.setEventCount(this.rowCount);
 
     // add the dimension names.
@@ -155,40 +159,32 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       final Message.Keyword newKeyword = keyBuilder.build();
       messageBuilder.addKeyword(newKeyword);
     }
-    // add the FCS Dimensions.
-    final Integer size = getColumnNames().length;
-    for (int i = 0; i < size; i++) {
-      final Message.Dimension.Builder dimBuilder = Message.Dimension.newBuilder();
-
-      // Add required information.
-      final String name = getColumnNames()[i];
-      FCSDimension fcsdim = columnData.get(name);
-      dimBuilder.setIndex(fcsdim.getIndex());
-      dimBuilder.setPnn(fcsdim.getShortName());
-      dimBuilder.setPns(fcsdim.getStainName());
-      dimBuilder.setPneF1(fcsdim.getPNEF1());
-      dimBuilder.setPneF2(fcsdim.getPNEF2());
-      dimBuilder.setPnr(fcsdim.getRange());
-      if (fcsdim.getCompRef() != null) {
-        dimBuilder.setCompRef(fcsdim.getCompRef());
-      }
-      dimBuilder.setId(fcsdim.ID);
+    // add the FCS Dimensions.    
+    for (FCSDimension dim : columnData){
+      Message.Dimension.Builder dimBuilder = Message.Dimension.newBuilder();
+      dimBuilder.setIndex(dim.getIndex());
+      dimBuilder.setPnn(dim.getShortName());
+      dimBuilder.setPns(dim.getStainName());
+      dimBuilder.setPneF1(dim.getPNEF1());
+      dimBuilder.setPneF2(dim.getPNEF2());
+      dimBuilder.setPnr(dim.getRange());
+      dimBuilder.setId(dim.getID());
+      
       // Add the numeric data
-      final double[] rawArray = columnData.get(name).getData();
+      final double[] rawArray = dim.getData();
       for (final double value : rawArray) {
         dimBuilder.addData(value);
       }
-
       try {
-        Builder tBuilder = buildTransform(fcsdim);
+        Builder tBuilder = buildTransform(dim);
         dimBuilder.setPreferredTransform(tBuilder.build());
       } catch (UninitializedMessageException e) {
         e.printStackTrace();
       }
-      final Message.Dimension dim = dimBuilder.build();
-      messageBuilder.addDimension(dim);
+      final Message.Dimension fcsdim = dimBuilder.build();
+      messageBuilder.addDimension(fcsdim);
     }
-
+    
     // build the message
     final Message buffer = messageBuilder.build();
     final byte[] bytes = buffer.toByteArray();
@@ -196,7 +192,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   private Builder buildTransform(FCSDimension fcsdim) {
-    // Set the prefferred transformation.
+    // Set the preferred transformation.
     Message.Transform.Builder tBuilder = Message.Transform.newBuilder();
     AbstractTransform transform = fcsdim.getPreferredTransform();
     if (transform instanceof LogicleTransform) {
@@ -217,7 +213,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       tBuilder.setBoundMin(boundaryTransform.getMinRawValue());
       tBuilder.setLogMax(boundaryTransform.getMaxRawValue());
     }
-    tBuilder.setId("FOO");// TODO Implement domainObject.
+    tBuilder.setId(transform.getID());
     return tBuilder;
   }
 
@@ -249,13 +245,13 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       dimen[j] = priorUUID;
       final FCSDimension currentDimension =
           new FCSDimension(priorUUID, columnStore.getRowCount(), dim.getIndex(), dim.getPnn(),
-              dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr(), dim.getCompRef());
+              dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr());
       for (int i = 0; i < currentDimension.getSize(); i++) {
         currentDimension.getData()[i] = dim.getData(i);
       }
       AbstractTransform preferredTransform = readTransform(dim);
       currentDimension.setPreferredTransform(preferredTransform);
-      columnStore.addColumn(priorUUID, currentDimension);
+      columnStore.addDimension(currentDimension);
     }
     columnStore.setPreferredName(columnStore.getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
     return columnStore;
@@ -264,24 +260,24 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   private static AbstractTransform readTransform(Dimension dim) {
     if (dim.hasPreferredTransform()) {
       Transform tBuffer = dim.getPreferredTransform();
-      if (tBuffer.getTransformType() == TransformType.LOGICLE.toString()) {
+      if (tBuffer.getTransformType().equals(TransformType.LOGICLE.toString())) {
         double t = tBuffer.getLogicleT();
         double w = tBuffer.getLogicleW();
         double m = tBuffer.getLogicleM();
         double a = tBuffer.getLogicleA();
         LogicleTransform transform = new LogicleTransform(t, w, m, a);
         return transform;
-      } else if (tBuffer.getTransformType() == TransformType.LOGARITHMIC.toString()) {
+      } else if (tBuffer.getTransformType().equals(TransformType.LOGARITHMIC.toString())) {
         LogrithmicTransform transform =
             new LogrithmicTransform(tBuffer.getLogMin(), tBuffer.getLogMax());
         return transform;
 
-      } else if (tBuffer.getTransformType() == TransformType.BOUNDARY.toString()) {
+      } else if (tBuffer.getTransformType().equals(TransformType.BOUNDARY.toString())) {
         BoundDisplayTransform transform =
             new BoundDisplayTransform(tBuffer.getBoundMin(), tBuffer.getBoundMax());
         return transform;
       } else {
-        // noop
+        System.out.print("Oh shit.");
       }
     }
     return null;
@@ -294,7 +290,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return columnStore;
   }
 
-  public void setData(TreeMap<String, FCSDimension> allData) {
+  public void setData(TreeSet<FCSDimension> allData) {
     columnData = allData;
   }
 
@@ -318,5 +314,15 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   @Override
   public int compareTo(String arg0) {
     return this.getPrefferedName().compareTo(arg0);
+  }
+
+  public void setID(String newID) {
+   this.UUID = newID;   
+  }
+
+  public FCSFrame deepCopy() throws InvalidProtocolBufferException {
+    byte[] bytes = this.save();
+    FCSFrame newFrame = FCSFrame.load(bytes);
+    return newFrame;
   }
 }

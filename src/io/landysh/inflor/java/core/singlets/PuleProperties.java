@@ -1,9 +1,11 @@
 package io.landysh.inflor.java.core.singlets;
 
 public enum PuleProperties {
-  AREA(new String[] {".+-A", ".+Area.+", ".+-A>"}), HEIGHT(
-      new String[] {".+-H", ".+Height.+", ".+-H>"}), WIDTH(
-          new String[] {".+-W", ".+Width.+", ".+-W>"});
+  AREA(new String[] {".+-a", ".+area.+", ".+-a>",  ".+-a]"}), 
+  HEIGHT(new String[] {".+-h", ".+height.+", ".+-h>",  ".+-h]"}),
+  WIDTH(new String[] {".+-w", ".+width.+", ".+-w>", ".+-w]"});
+
+ 
   private final String[] regi;
 
   PuleProperties(String[] regi) {
@@ -12,5 +14,14 @@ public enum PuleProperties {
 
   public String[] regi() {
     return regi;
+  }
+  
+  public boolean matches(String parameterName) {
+    for (String regex : this.regi) {
+      if (parameterName.toLowerCase().matches(regex)) {
+        return true;
+      };
+    }
+    return false;
   }
 }

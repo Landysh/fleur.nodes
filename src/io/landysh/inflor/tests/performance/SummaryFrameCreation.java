@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class SummaryFrameCreation {
   static final int numFiles = 10;
@@ -43,7 +43,7 @@ public class SummaryFrameCreation {
 
     long start = System.currentTimeMillis();
     
-    FCSFrame summaryFrame = FCSUtils.createSummaryFrame(fcsList, 10000);
+    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(fcsList, 10000);
     
     long end = System.currentTimeMillis();
     System.out.println("Millis for a stream: " + (end - start));

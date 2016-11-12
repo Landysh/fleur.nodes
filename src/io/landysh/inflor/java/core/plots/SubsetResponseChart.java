@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.transform;
+package io.landysh.inflor.java.core.plots;
 
 import java.util.BitSet;
 import java.util.Map;
@@ -16,10 +16,6 @@ import com.google.common.primitives.Doubles;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.Histogram1D;
-import io.landysh.inflor.java.core.plots.CategoricalNumberAxis;
-import io.landysh.inflor.java.core.plots.ChartingDefaults;
-import io.landysh.inflor.java.core.plots.ColorSchemes;
-import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.utils.BitSetUtils;
 
@@ -83,7 +79,7 @@ public class SubsetResponseChart {
     renderer.setBlockHeight(0.5);
     renderer.setBlockAnchor(RectangleAnchor.LEFT);
 
-    PaintScale paintScale = PlotUtils.createPaintScale(zMin, zMax, ColorSchemes.COOL_HEATMAP);
+    PaintScale paintScale = PlotUtils.createPaintScale(zMin, zMax, ChartingDefaults.DEFAULT_COLOR_SCHEME);
     renderer.setPaintScale(paintScale);
 
     // Add to panel.

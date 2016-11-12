@@ -1,8 +1,11 @@
 package io.landysh.inflor.java.core.fcs;
 
 public enum ParameterTypes {
-  SCATTER(new String[] {".*scatter.*", ".*fsc.*", ".*fcs.*", ".*ssc.*", ".*orth.*"}), VIABILITY(
-      new String[] {}), TIME(new String[] {".*time.*"}), DNA(new String[] {".*dapi.*", ".*pi.*"});
+  ForwardScatter(new String[] {".*fsc.*", ".*fcs.*", ".*forward.*", ".*size.*"}),
+  SideScatter(new String[] {".*side.*", ".*ssc.*", ".*orth.*"}),
+  VIABILITY(new String[] {}), 
+  TIME(new String[] {".*time.*"}), 
+  DNA(new String[] {".*dapi.*", ".*pi.*"});
 
   private final String[] regi;
 
@@ -13,8 +16,6 @@ public enum ParameterTypes {
   public boolean matches(String parameterName) {
     for (String regex : this.regi) {
       if (parameterName.toLowerCase().matches(regex)) {
-        System.out.println(parameterName + " matches " + regex);// TODO remove
-
         return true;
       };
     }

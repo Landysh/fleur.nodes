@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
@@ -20,13 +19,16 @@ import io.landysh.inflor.java.core.gates.AbstractGate;
 import io.landysh.inflor.java.core.gates.GateUtilities;
 import io.landysh.inflor.java.core.plots.AbstractFCChart;
 import io.landysh.inflor.java.core.plots.ChartSpec;
+import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.utils.BitSetUtils;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.ChartUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
-
+  
+  String[] columnNames = new String[] {"Name", "Count", "Frequency of Parent"};
 
   public TreeCellPlotRenderer() {}
 
@@ -41,33 +43,31 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
     //node is root
     if (node.getUserObject() instanceof FCSFrame) {
       FCSFrame root = (FCSFrame) node.getUserObject();
-      JLabel label = new JLabel(root.getPrefferedName() + " " + root.getRowCount() , LEFT);
-      return label;
+      String[][] tableRow = new String[][]{{"Ungated", Integer.toString(root.getRowCount()), "-"}};
+      JTable table = new JTable(tableRow, columnNames);
+      formatTable(selected, expanded, leaf, table);
+      return table;
     //node is a gate
     } else if (node.getUserObject() instanceof AbstractGate) {
-      dataFrame = (FCSFrame) node.getUserObjectPath()[0];
-      String label = BitSetUtils.frequencyOfParent(mask, 2);
-      JLabel jLabel = new JLabel(label, LEFT);
-      return jLabel;
+      AbstractGate gate = (AbstractGate) node.getUserObject();
+      String[][] tableRow = new String[][]{{gate.getLabel(), Integer.toString(mask.cardinality()), BitSetUtils.frequencyOfParent(mask, 2)}};
+      JTable table = new JTable(tableRow, columnNames);
+      formatTable(selected, expanded, leaf, table);
+      return table;
     //node is plot
     } else if (node.getUserObject() instanceof ChartSpec) {
-      FCSFrame filteredFrame = FCSUtils.filterColumnStore(mask, dataFrame);
+      FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
       ChartSpec spec = (ChartSpec) node.getUserObject();
       AbstractFCChart plot = PlotUtils.createPlot(spec);
       JFreeChart chart = plot.createChart(filteredFrame);
-      if (!expanded) {
-        chart.setBackgroundPaint(Color.LIGHT_GRAY);
-      } else {
-        chart.setBackgroundPaint(Color.WHITE);
-      }
-      if (leaf) {
-        chart.setBackgroundPaint(Color.WHITE);
-      }
-      if (selected) {
-        chart.setBorderPaint(Color.LIGHT_GRAY);
-        chart.setBorderVisible(true);
-      }
-      ChartPanel panel = new ChartPanel(chart);
+      formatChart(selected, expanded, leaf, chart);
+      FCSChartPanel panel = new FCSChartPanel(chart, spec, filteredFrame);
+      List<AbstractGate> siblingGates = findSiblingGates(node);
+      siblingGates
+        .stream()
+        .filter(gate -> ChartUtils.gateIsCompatibleWithChart(gate, spec))
+        .map(gate -> ChartUtils.createAnnotation(gate))
+        .forEach(ann -> panel.createGateAnnotation(ann));
       panel.setPreferredSize(new Dimension(220, 200));
       return panel;
     } else {
@@ -75,6 +75,40 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
       e.printStackTrace();
       throw e;
     }
+  }
+
+  private void formatTable(boolean selected, boolean expanded, boolean leaf,
+      JTable table) {
+    if (selected){
+      table.setRowSelectionInterval(0, 0);
+    }
+  }
+
+  private void formatChart(boolean selected, boolean expanded, boolean leaf, JFreeChart chart) {
+    if (!expanded) {
+      chart.setBackgroundPaint(Color.LIGHT_GRAY);
+    } else {
+      chart.setBackgroundPaint(Color.WHITE);
+    }
+    if (leaf) {
+      chart.setBackgroundPaint(Color.WHITE);
+    }
+    if (selected) {
+      chart.setBorderPaint(Color.LIGHT_GRAY);
+      chart.setBorderVisible(true);
+    }
+  }
+
+  private List<AbstractGate> findSiblingGates(DefaultMutableTreeNode node) {
+    List<AbstractGate> gates = new ArrayList<>();
+    int siblingCount = node.getParent().getChildCount();
+    for (int i=0;i<siblingCount;i++){
+      DefaultMutableTreeNode siblingNode = (DefaultMutableTreeNode) node.getParent().getChildAt(i); 
+      if (siblingNode.getUserObject() instanceof AbstractGate){
+        gates.add((AbstractGate)siblingNode.getUserObject());
+      }
+    }
+    return gates;
   }
 
   private List<AbstractGate> extractGates(Object[] userObjectPath) {

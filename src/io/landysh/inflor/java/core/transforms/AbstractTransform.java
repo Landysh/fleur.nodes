@@ -2,9 +2,15 @@ package io.landysh.inflor.java.core.transforms;
 
 import java.io.Serializable;
 
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
+
 @SuppressWarnings("serial")
-public abstract class AbstractTransform implements Serializable, Cloneable {
-  // TODO: no longer any fields, should be an interface?
+public abstract class AbstractTransform extends DomainObject implements Serializable, Cloneable {
+  
+  public AbstractTransform(String priorUUID) {
+    super(priorUUID);
+  }
+
   abstract public double[] transform(double[] rawData);
 
   abstract public double transform(double value);

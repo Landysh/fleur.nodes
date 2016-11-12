@@ -36,7 +36,7 @@ public class DefaultSubset extends AbstractSubset {
   }
   
   public boolean matchesID(String ID){
-    return this.ID == ID;
+    return this.getID().equals(ID);
   }
 
   @Override

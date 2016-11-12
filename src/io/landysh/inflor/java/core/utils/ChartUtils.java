@@ -12,6 +12,7 @@ import io.landysh.inflor.java.core.gates.RangeGate;
 import io.landysh.inflor.java.core.gates.ui.PolygonGateAnnotation;
 import io.landysh.inflor.java.core.gates.ui.RectangleGateAnnotation;
 import io.landysh.inflor.java.core.gates.ui.XYGateAnnotation;
+import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.ui.LookAndFeel;
 
@@ -56,13 +57,13 @@ public class ChartUtils {
       RectangleGateAnnotation rectAnn = (RectangleGateAnnotation) updatedAnnotation;
       gate = new RangeGate(subsetLabel, new String[] {domainLabel, rangeLable},
           new double[] {rectAnn.getX0(), rectAnn.getY0()},
-          new double[] {rectAnn.getX1(), rectAnn.getY1()}, priorGate.ID);
+          new double[] {rectAnn.getX1(), rectAnn.getY1()}, priorGate.getID());
 
     } else
       if (updatedAnnotation instanceof PolygonGateAnnotation && priorGate instanceof PolygonGate) {
       PolygonGateAnnotation udpatedPolyAnn = (PolygonGateAnnotation) updatedAnnotation;
       gate = new PolygonGate(subsetLabel, domainLabel, udpatedPolyAnn.getDomainPoints(), rangeLable,
-          udpatedPolyAnn.getRangePoints(), priorGate.ID);
+          udpatedPolyAnn.getRangePoints(), priorGate.getID());
     }
     return gate;
   }
@@ -90,5 +91,13 @@ public class ChartUtils {
     } else{
       throw new RuntimeException("unable to create gate annotation.");
     }
+  }
+
+  public static boolean gateIsCompatibleWithChart(AbstractGate gate, ChartSpec spec) {
+    if (gate.getDomainAxisName().equals(spec.getDomainAxisName())
+        &&gate.getRangeAxisName().equals(spec.getRangeAxisName())){
+      return true;
+    }
+    return false;
   }
 }

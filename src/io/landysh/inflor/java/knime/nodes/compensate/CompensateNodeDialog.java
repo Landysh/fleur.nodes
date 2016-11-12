@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -24,8 +22,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.CellLineageTree;
+import io.landysh.inflor.java.core.ui.CellLineageTree;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -101,8 +99,8 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
 
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
-    for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == ColumnStoreCell.TYPE) {
+    for (String name : spec.getColumnNames()) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
@@ -115,14 +113,13 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
   protected void loadSettingsFrom(final NodeSettingsRO settings, final BufferedDataTable[] input)
       throws NotConfigurableException {
 
-    final DataTableSpec[] specs = {input[0].getSpec()};
-
+    DataTableSpec[] specs = {input[0].getSpec()};
     loadSettingsFrom(settings, specs);
 
 
     // Update Sample List
-    final String targetColumn = m_Settings.getSelectedColumn();
-    final String[] names = input[0].getSpec().getColumnNames();
+    String targetColumn = m_Settings.getSelectedColumn();
+    String[] names = input[0].getSpec().getColumnNames();
     int fcsColumnIndex = -1;
     for (int i = 0; i < names.length; i++) {
       if (names[i].matches(targetColumn)) {
@@ -134,18 +131,17 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
     }
 
     // read the sample names;
-    final BufferedDataTable table = input[0];
+    BufferedDataTable table = input[0];
     selectSampleBox.removeAllItems();
 
     // Hold on to a reference of the data so we can plot it later.
 
-    final HashSet<String> parameterSet = new HashSet<String>();
+    HashSet<String> parameterSet = new HashSet<String>();
 
-    for (final DataRow row : table) {
-      final FCSFrame cStoreData = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+    for (DataRow row : table) {
+      FCSFrame cStoreData = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
       selectSampleBox.addItem(cStoreData);
-      final List<String> newParameters =
-          new ArrayList<String>(Arrays.asList(cStoreData.getColumnNames()));
+      List<String> newParameters =cStoreData.getColumnNames();
       parameterSet.addAll(newParameters);
     }
     if (selectSampleBox.getModel().getSize() == 0) {

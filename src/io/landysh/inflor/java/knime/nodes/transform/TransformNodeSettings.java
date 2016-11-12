@@ -71,4 +71,9 @@ public class TransformNodeSettings {
     // TODO Auto-generated method stub
   }
 
+  public void reset() {
+    m_selectedColumn = null;
+    m_transforms = null;
+  }
+
 }

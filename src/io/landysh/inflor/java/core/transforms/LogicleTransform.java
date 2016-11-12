@@ -15,25 +15,31 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   private static final double dw = 0.5;
   private static final double dm = 4.5;
   private static final double da = 0;
+  
   transient FastLogicle logicle;
+  
   private double t;
   private double w;
   private double m;
   private double a;
 
-  public LogicleTransform() {
-    this(dt, dw, dm, da);
-  }
-
-  public LogicleTransform(double t2, double w2, double m2, double a2) {
+  public LogicleTransform(double t2, double w2, double m2, double a2, String priorID) {
+    super(priorID);
     this.t = t2;
     this.w = w2;
     this.m = m2;
     this.a = a2;
     this.logicle = new FastLogicle(t, w, m, a);
-
   }
-
+  
+  public LogicleTransform(double t2, double w2, double m2, double a2) {
+    this(t2, w2, m2, a2, null);
+  }
+  
+  public LogicleTransform() {
+    this(dt, dw, dm, da, null);
+  }
+  
   @Override
   public double[] transform(double[] rawData) {
     double[] newData = new double[rawData.length];

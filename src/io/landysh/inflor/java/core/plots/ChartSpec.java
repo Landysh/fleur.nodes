@@ -1,9 +1,11 @@
 package io.landysh.inflor.java.core.plots;
 
-import io.landysh.inflor.java.core.dataStructures.DomainObject;
-import io.landysh.inflor.java.core.transforms.AbstractTransform;
+import java.util.List;
 
-public class ChartSpec extends DomainObject {
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
+import io.landysh.inflor.java.core.gates.Hierarchical;
+
+public class ChartSpec extends DomainObject implements Hierarchical{
 
   /**
    * Version 0.1 of the ChartSpec. Once a 1.0 stable release is made any changes that break backward
@@ -11,17 +13,16 @@ public class ChartSpec extends DomainObject {
    */
   private static final long serialVersionUID = 7153659120835974973L;
 
-  private static final PlotTypes DEFAULT_CHART_TYPE = PlotTypes.DENSITY;
+  private static final PlotTypes DEFAULT_CHART_TYPE = PlotTypes.Density;
 
-  private String parent;
+  private String parentID;
   private PlotTypes plotType = DEFAULT_CHART_TYPE;
   private String domainAxisName;
   private String rangeAxisName;
 
   private String displayName;
 
-  private AbstractTransform rangeTransform;
-  private AbstractTransform domainTransform;
+  private List<String> gateIDs;
 
   /**
    * @param priorUUID an id previously generated (eg if the object was previously serialized). Set
@@ -39,22 +40,20 @@ public class ChartSpec extends DomainObject {
     if (this.displayName != null) {
       return displayName;
     } else {
-      return ID;
+      return this.getID();
     }
   }
 
   @Override
   public ChartSpec clone() {
-    ChartSpec clonedSpec = new ChartSpec(this.ID);
+    ChartSpec clonedSpec = new ChartSpec(this.getID());
+    clonedSpec.parentID = this.parentID;
     clonedSpec.displayName = this.displayName;
-    clonedSpec.domainAxisName = this.displayName;
-    clonedSpec.parent = this.parent;
-    clonedSpec.plotType = this.plotType;
+    clonedSpec.domainAxisName = this.domainAxisName;
     clonedSpec.rangeAxisName = this.rangeAxisName;
     return clonedSpec;
   }
 
-  // Getters
   public PlotTypes getPlotType() {
     return plotType;
   }
@@ -67,25 +66,8 @@ public class ChartSpec extends DomainObject {
     return rangeAxisName;
   }
 
-  public String getParent() {
-    return parent;
-  }
-
-  public AbstractTransform getRangeTransform() {
-    return rangeTransform;
-  }
-
-  public AbstractTransform getDomainTransform() {
-    return domainTransform;
-  }
-
-  // Setters
   public void setDomainAxisName(String newValue) {
     domainAxisName = newValue;
-  }
-
-  public void setParent(String newValue) {
-    parent = newValue;
   }
 
   public void setPlotType(PlotTypes newValue) {
@@ -96,11 +78,21 @@ public class ChartSpec extends DomainObject {
     rangeAxisName = newValue;
   }
 
-  public void setRangeTransform(AbstractTransform newValue) {
-    rangeTransform = newValue;
+  @Override
+  public String getParentID() {
+    return this.parentID;
   }
 
-  public void setDomainTransform(AbstractTransform newValue) {
-    domainTransform = newValue;
+  @Override
+  public void setParentID(String newValue) {
+    this.parentID = newValue;
+  }
+  
+  public void setGateIDs(List<String> gateIDs){
+    this.gateIDs = gateIDs;
+  }
+  
+  public List<String> getGateIDs(){
+    return gateIDs;
   }
 }

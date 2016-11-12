@@ -18,8 +18,9 @@ import org.jfree.chart.JFreeChart;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.plots.SubsetResponseChart;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 public class UpdateTransformPanelWorker extends SwingWorker<ArrayList<ChartPanel>, String> {
 
@@ -69,7 +70,7 @@ public class UpdateTransformPanelWorker extends SwingWorker<ArrayList<ChartPanel
     TreeMap<String, FCSDimension> dataModel = new TreeMap<>();
     for (FCSFrame dataFrame : dataSet2) {
       dataModel.put(dataFrame.getPrefferedName(),
-          FCSUtils.findCompatibleDimension(dataFrame, parametername));
+          FCSUtilities.findCompatibleDimension(dataFrame, parametername));
     }
     return dataModel;
   }

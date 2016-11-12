@@ -83,7 +83,7 @@ public class FCSChartPanel extends ChartPanel {
     label.setTextAnchor(TextAnchor.BASELINE_LEFT);
     label.setFont(new Font("Arial", Font.BOLD, 14));
     gateAnnotations.put(annotation, label);
-    getChart().getXYPlot().addAnnotation(annotation);
+    getChart().getXYPlot().addAnnotation(annotation,true);
     getChart().getXYPlot().addAnnotation(label);
   }
 
@@ -194,7 +194,7 @@ public class FCSChartPanel extends ChartPanel {
     ActionListener[] action = selectionButton.getActionListeners();
     for (ActionListener act : action) {
       if (act instanceof SelectionButtonListener) {
-        ActionEvent event = new ActionEvent(selectionButton, 42, "What was the question again?");
+        ActionEvent event = new ActionEvent(selectionButton, 42, "What was the question again?");//TODO: Are these args relevant?
         act.actionPerformed(event);
       }
     }
@@ -219,5 +219,9 @@ public class FCSChartPanel extends ChartPanel {
       .stream()
       .map(gate -> ChartUtils.createAnnotation(gate))
       .forEach(annotation -> createGateAnnotation(annotation));
+  }
+
+  public FCSFrame getDataFrame() {
+    return this.data;
   }
 }

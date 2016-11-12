@@ -8,10 +8,12 @@ import java.util.HashMap;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class SpilloverCompensator extends DomainObject {
@@ -89,7 +91,7 @@ public class SpilloverCompensator extends DomainObject {
       for (int i = 0; i < compPars.length; i++) {
         compPars[i] = s[i + 1];
         final String parameterName = compPars[i];
-        pMap[i] = FCSUtils.findParameterNumnberByName(keywords, parameterName);
+        pMap[i] = FCSUtilities.findParameterNumnberByName(keywords, parameterName);
         final double[] row = new double[p];
         for (int j = 0; j < p; j++) {
           final int index = 1 + p + i * p + j;
@@ -105,11 +107,12 @@ public class SpilloverCompensator extends DomainObject {
     }
   }
 
-  public FCSFrame compensateFCSFrame(FCSFrame dataFrame) {
-    double[][] X = new double[compParameters.length][dataFrame.getRowCount()];
+  public FCSFrame compensateFCSFrame(FCSFrame dataFrame) throws InvalidProtocolBufferException {
+    FCSFrame newFrame = dataFrame.deepCopy();
+    double[][] X = new double[compParameters.length][newFrame.getRowCount()];
 
     for (int i = 0; i < compParameters.length; i++) {
-      FCSDimension dimension = FCSUtils.findCompatibleDimension(dataFrame, compParameters[i]);
+      FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
       if (dimension == null) {
         for (String s : compParameters) {
           System.out.println(s);
@@ -127,19 +130,20 @@ public class SpilloverCompensator extends DomainObject {
     mult(XT.copy(), compMatrix, XT);
     CommonOps.transpose(XT);
 
-    X = new double[compParameters.length][dataFrame.getRowCount()];
+    X = new double[compParameters.length][newFrame.getRowCount()];
     for (int i = 0; i < compParameters.length; i++) {
-      for (int j = 0; j < dataFrame.getRowCount(); j++) {
+      for (int j = 0; j < newFrame.getRowCount(); j++) {
         double newVal = XT.get(i, j);
         X[i][j] = newVal;
       }
     }
     for (int i = 0; i < compParameters.length; i++) {
-      FCSDimension dimension = FCSUtils.findCompatibleDimension(dataFrame, compParameters[i]);
+      FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
       dimension.setData(X[i]);
+      dimension.setShortName("[" + dimension.getShortName() + "]");
     }
-    dataFrame.setCompRef(this.ID);
-    return dataFrame;
+    newFrame.setCompRef(this.getID());
+    return newFrame;
   }
 
   public double[][] getMatrix() {

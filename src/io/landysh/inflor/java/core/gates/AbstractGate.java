@@ -9,8 +9,7 @@ import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 
 @SuppressWarnings("serial")
-public abstract class AbstractGate extends DomainObject {
-
+public abstract class AbstractGate extends DomainObject implements Hierarchical {
 
   public AbstractGate(String priorUUID) {
     super(priorUUID);
@@ -26,7 +25,6 @@ public abstract class AbstractGate extends DomainObject {
    * @see RangeGate
    */
 
-  protected String id;
   protected String parentID;
   protected HashMap<String, String> custom_info;
 
@@ -38,29 +36,12 @@ public abstract class AbstractGate extends DomainObject {
    */
   public abstract BitSet evaluate(FCSFrame data);
 
-  public String getId() {
-    return id;
-  }
-
   public String getInfo(String name) {
     return custom_info.get(name);
   }
 
-  /**
-   * Used to implement hierarchical gating.
-   * 
-   * @return the id of the gate upon which this gate depends.
-   */
-  public String getParentID() {
-    return parentID;
-  }
-
   public String setInfo(String key, String value) {
     return custom_info.put(key, value);
-  }
-
-  public void setParent_id(String parentID) {
-    this.parentID = parentID;
   }
 
   /**
@@ -79,5 +60,14 @@ public abstract class AbstractGate extends DomainObject {
   public abstract String getDomainAxisName();
   public abstract String getRangeAxisName();
   public abstract String getLabel();
-
+  
+  @Override
+  public String getParentID(){
+    return parentID;
+  }
+  
+  @Override
+  public void setParentID(String newValue){
+    parentID = newValue;
+  }
 }

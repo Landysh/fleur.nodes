@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.dataTypes.columnStoreCell;
+package io.landysh.inflor.java.knime.dataTypes.FCSFrameCell;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,23 +12,23 @@ import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.util.FileUtil;
 
-public class ColumnStoreCellFactory implements FromInputStream {
+public class FCSFrameCellFactory implements FromInputStream {
 
   /**
    * The data type for cells created using this factory.
    */
-  public static final DataType TYPE = ColumnStoreContent.TYPE;
+  public static final DataType TYPE = FCSFrameContent.TYPE;
 
   private final FileStoreFactory m_fileStoreFactory;
 
-  public ColumnStoreCellFactory() {
+  public FCSFrameCellFactory() {
     /**
      * Use with views
      */
     m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
   }
 
-  public ColumnStoreCellFactory(ExecutionContext exec) {
+  public FCSFrameCellFactory(ExecutionContext exec) {
     /**
      * Use during node execution.
      */
@@ -43,13 +43,13 @@ public class ColumnStoreCellFactory implements FromInputStream {
     final byte[] buffer = output.toByteArray();
     // Create the file store.
     final FileStore fs = m_fileStoreFactory.createFileStore("column.store");
-    final ColumnStoreCell cell = new ColumnStoreContent(buffer).toColumnStoreCell(fs);
+    final FCSFrameCell cell = new FCSFrameContent(buffer).toColumnStoreCell(fs);
     return cell;
   }
 
   @Override
   public DataType getDataType() {
-    return null;
+    return TYPE;
   }
 
 }

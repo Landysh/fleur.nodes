@@ -12,9 +12,9 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
 import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellColumnFilter;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "FilterViable" Node.
@@ -44,7 +44,7 @@ public class FilterViableNodeDialog extends DefaultNodeSettingsPane {
     // Input column selector
     columnSelectionComponent =
         new DialogComponentColumnNameSelection(m_settings.getSelectedColumnSettingsModel(),
-            COLUMN_LABEL, 0, new ColumnStoreCellColumnFilter());
+            COLUMN_LABEL, 0, new FCSFrameCellColumnFilter());
     addDialogComponent(columnSelectionComponent);
 
     // Area Selector
@@ -70,7 +70,7 @@ public class FilterViableNodeDialog extends DefaultNodeSettingsPane {
       keywords.put(key, value);
     }
 
-    final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
+    final String[] vectorNames = FCSUtilities.parseDimensionList(keywords);
     final ArrayList<String> areaChoices = new ArrayList<String>(Arrays.asList(vectorNames));
 
     viabilityColumnComponent.replaceListItems(areaChoices, areaChoices.get(0));

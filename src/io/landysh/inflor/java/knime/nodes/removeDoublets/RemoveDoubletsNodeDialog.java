@@ -14,8 +14,8 @@ import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
 import io.landysh.inflor.java.core.singlets.PuleProperties;
 import io.landysh.inflor.java.core.singlets.SingletsModel;
-import io.landysh.inflor.java.core.utils.FCSUtils;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCellColumnFilter;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "RemoveDoublets" Node.
@@ -47,7 +47,7 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
     // Input column selector
     columnSelectionComponent =
         new DialogComponentColumnNameSelection(m_settings.getSelectedColumnSettingsModel(),
-            COLUMN_LABEL, 0, new ColumnStoreCellColumnFilter());
+            COLUMN_LABEL, 0, new FCSFrameCellColumnFilter());
     addDialogComponent(columnSelectionComponent);
 
     // Area Selector
@@ -78,7 +78,7 @@ public class RemoveDoubletsNodeDialog extends DefaultNodeSettingsPane {
       keywords.put(key, value);
     }
 
-    final String[] vectorNames = FCSUtils.parseDimensionList(keywords);
+    final String[] vectorNames = FCSUtilities.parseDimensionList(keywords);
     final SingletsModel model = new SingletsModel(vectorNames);
 
     final ArrayList<String> areaChoices = model.findColumns(vectorNames, PuleProperties.AREA);

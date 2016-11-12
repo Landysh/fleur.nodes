@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.transform;
+package io.landysh.inflor.java.core.plots;
 
 import java.util.HashMap;
 

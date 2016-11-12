@@ -7,9 +7,9 @@ import java.util.BitSet;
 
 import org.junit.Test;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gates.PolygonGate;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
+import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class PolygonGateTest {
 
@@ -25,14 +25,14 @@ public class PolygonGateTest {
     // Setup
 
 
-    final FCSFrame testData = new FCSFrame();
-    FCSDimension d1 = new FCSDimension(1, 0, d1Name, d1Name, 0, 0, 0, null);
+    FCSFrame testData = new FCSFrame();
+    FCSDimension d1 = new FCSDimension(1, 0, d1Name, d1Name, 0, 0, 0);
     d1.getData()[0] = 0.5;
 
-    FCSDimension d2 = new FCSDimension(1, 0, d2Name, d2Name, 0, 0, 0, null);
+    FCSDimension d2 = new FCSDimension(1, 0, d2Name, d2Name, 0, 0, 0);
     d2.getData()[0] = 0.5;
-    testData.addColumn(d1Name, d1);
-    testData.addColumn(d2Name, d2);
+    testData.addDimension(d1);
+    testData.addDimension(d2);
 
     // Test
     final PolygonGate testGate = new PolygonGate("", d1Name, d1Values, d2Name, d2Values);
@@ -52,7 +52,7 @@ public class PolygonGateTest {
     PolygonGate testGate = new PolygonGate("", d1Name, d1Values, d2Name, d2Values);
 
     // Assert
-    assertEquals("Initialized", id, testGate.getId());
+    assertEquals("Initialized", id, testGate.getID());
     System.out.println("PolygonGateTest::testInitialization completed (succefully or otherwise)");
   }
 

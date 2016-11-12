@@ -1,4 +1,4 @@
-package io.landysh.inflor.java.knime.nodes.createGates.ui;
+package io.landysh.inflor.java.core.ui;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -10,7 +10,9 @@ import javax.swing.tree.DefaultTreeModel;
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.Hierarchical;
 import io.landysh.inflor.java.core.plots.ChartSpec;
+import io.landysh.inflor.java.knime.nodes.createGates.ui.TreeCellPlotRenderer;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {
@@ -33,13 +35,12 @@ public class CellLineageTree extends JTree {
     DefaultTreeModel m_tree = new DefaultTreeModel(root);
     if (gates!=null){
       gates.forEach(gate -> m_tree.insertNodeInto(new DefaultMutableTreeNode(gate), root, root.getChildCount()));
-      gates.forEach(gate -> updateHierarchy(m_tree, gate.ID));
+      gates.forEach(gate -> updateHierarchy(m_tree, gate.getID()));
     }
-    
     
     if (chartSpecs != null) {
       chartSpecs.forEach(spec -> m_tree.insertNodeInto(new DefaultMutableTreeNode(spec), root,root.getChildCount()));
-      chartSpecs.forEach(spec -> updateHierarchy(m_tree, spec.ID));
+      chartSpecs.forEach(spec -> updateHierarchy(m_tree, spec.getID()));
     }
 
     this.setModel(m_tree);
@@ -50,7 +51,7 @@ public class CellLineageTree extends JTree {
   private void updateHierarchy(DefaultTreeModel m_tree, String uuid) {
     DefaultMutableTreeNode childNode = findNode(m_tree, uuid);
     if (childNode != null) {
-      String parentID = ((ChartSpec) childNode.getUserObject()).getParent();
+      String parentID = ((Hierarchical) childNode.getUserObject()).getParentID();
       DefaultMutableTreeNode parentNode = root;
       if (parentID != null) {
         parentNode = findNode(m_tree, parentID);
@@ -78,7 +79,7 @@ public class CellLineageTree extends JTree {
     while (nodeEnum.hasMoreElements()) {
       DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) nodeEnum.nextElement();
       DomainObject node = (DomainObject) currentNode.getUserObject();
-      if (node.ID.equals(queryID)) {
+      if (node.getID().equals(queryID)) {
         return currentNode;
       }
     }

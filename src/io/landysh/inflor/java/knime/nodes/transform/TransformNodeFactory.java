@@ -10,7 +10,7 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class TransormNodeFactory extends NodeFactory<TransformNodeModel> {
+public class TransformNodeFactory extends NodeFactory<TransformNodeModel> {
 
   /**
    * {@inheritDoc}
@@ -34,7 +34,7 @@ public class TransormNodeFactory extends NodeFactory<TransformNodeModel> {
   @Override
   public NodeView<TransformNodeModel> createNodeView(final int viewIndex,
       final TransformNodeModel nodeModel) {
-    return new TransormNodeView(nodeModel);
+    return new TransformNodeView(nodeModel);
   }
 
   /**
@@ -50,7 +50,7 @@ public class TransormNodeFactory extends NodeFactory<TransformNodeModel> {
    */
   @Override
   public NodeDialogPane createNodeDialogPane() {
-    return new TransormNodeDialog();
+    return new TransformNodeDialog();
   }
 
 }

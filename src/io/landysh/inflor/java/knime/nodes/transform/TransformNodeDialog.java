@@ -35,13 +35,15 @@ import org.knime.core.node.NotConfigurableException;
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.plots.PlotUtils;
+import io.landysh.inflor.java.core.plots.SubsetResponseChart;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
 import io.landysh.inflor.java.core.transforms.LogrithmicTransform;
-import io.landysh.inflor.java.core.utils.FCSUtils;
+import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.core.utils.MatrixUtilities;
-import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
+import io.landysh.inflor.java.knime.core.NodeUtilities;
+import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.
@@ -49,27 +51,27 @@ import io.landysh.inflor.java.knime.dataTypes.columnStoreCell.ColumnStoreCell;
  * @author Aaron Hart
  */
 
-public class TransormNodeDialog extends DataAwareNodeDialogPane {
+public class TransformNodeDialog extends DataAwareNodeDialogPane {
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
-  private TransformNodeSettings m_Settings;
-  private JPanel m_analyisTab;
+  private TransformNodeSettings modelSettings;
+  private JPanel analysisTab;
   private JComboBox<String> fcsColumnBox;
   private ArrayList<FCSFrame> dataSet;
   private JPanel transformPanel;
   private JProgressBar progressBar;
   private JScrollPane scrollPane;
 
-  protected TransormNodeDialog() {
+  protected TransformNodeDialog() {
     super();
-    m_Settings = new TransformNodeSettings();
+    modelSettings = new TransformNodeSettings();
     // Main analysis Tab
-    m_analyisTab = new JPanel();
+    analysisTab = new JPanel();
     BorderLayout borderLayout = new BorderLayout();
-    m_analyisTab.setLayout(borderLayout);
-    m_analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
-    super.addTab("Transform Settings", m_analyisTab);
+    analysisTab.setLayout(borderLayout);
+    analysisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
+    super.addTab("Transform Settings", analysisTab);
   }
 
   private void populateTransformPanel(JPanel panel) {
@@ -78,7 +80,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 0;
-    for (String parameterName : m_Settings.getAllTransorms().navigableKeySet()) {
+    for (String parameterName : modelSettings.getAllTransorms().navigableKeySet()) {
       ChartPanel chart = createTransformChart(parameterName);
       panel.add(chart, gbc);
       gbc.gridy++;
@@ -87,7 +89,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
 
   private ChartPanel createTransformChart(String name) {
     HashMap<String, FCSDimension> dimensions = findMatchingDimensions(name);
-    AbstractTransform currentTransform = m_Settings.getTransform(name);
+    AbstractTransform currentTransform = modelSettings.getTransform(name);
     if (currentTransform == null) {
       currentTransform = new LogicleTransform();
     }
@@ -102,8 +104,10 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     HashMap<String, FCSDimension> result = new HashMap<String, FCSDimension>();
     for (FCSFrame dataFrame : dataSet) {
       String key = dataFrame.getPrefferedName();
-      FCSDimension value = FCSUtils.findCompatibleDimension(dataFrame, name);
-      result.put(key, value);
+      FCSDimension value = FCSUtilities.findCompatibleDimension(dataFrame, name);
+      if (value!=null){
+        result.put(key, value);
+      }
     }
     return result;
   }
@@ -122,7 +126,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     fcsColumnBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        m_Settings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
+        modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
       }
     });
     optionsPanel.add(fcsColumnBox);
@@ -143,7 +147,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
   }
 
   private void optimizeTransforms() {
-    for (Entry<String, AbstractTransform> entry : m_Settings.getAllTransorms().entrySet()) {
+    for (Entry<String, AbstractTransform> entry : modelSettings.getAllTransorms().entrySet()) {
       double[] data = mergeData(entry.getKey(), dataSet);
       if (entry.getValue() instanceof LogicleTransform) {
         LogicleTransform logicle = (LogicleTransform) entry.getValue();
@@ -161,7 +165,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
   private double[] mergeData(String shortName, ArrayList<FCSFrame> dataSet2) {
     double[] data = null;
     for (FCSFrame frame : dataSet2) {
-      FCSDimension dimension = FCSUtils.findCompatibleDimension(frame, shortName);
+      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
       data = MatrixUtilities.appendVectors(data, dimension.getData());
     }
     return data;
@@ -174,17 +178,17 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == ColumnStoreCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
     DataColumnSpec selectedColumnSpec = spec.getColumnSpec((String) fcsColumnBox.getSelectedItem());
     String shortNames = selectedColumnSpec.getProperties()
-        .getProperty(FCSFrameColumnPropertyKeys.DIMENSION_NAMES_KEY);
-    String[] dimensionNames = shortNames.split("\\|\\|");
+        .getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+    String[] dimensionNames = shortNames.split(NodeUtilities.DELIMITER_REGEX);
     for (String name : dimensionNames) {
-      if (m_Settings.getTransform(name) == null) {
-        m_Settings.addTransform(name, PlotUtils.createDefaultTransform(name));
+      if (modelSettings.getTransform(name) == null) {
+        modelSettings.addTransform(name, PlotUtils.createDefaultTransform(name));
       }
     }
   }
@@ -198,7 +202,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     loadSettingsFrom(settings, specs);
 
     // Update Sample List
-    final String targetColumn = m_Settings.getSelectedColumn();
+    final String targetColumn = modelSettings.getSelectedColumn();
     final String[] names = input[0].getSpec().getColumnNames();
     int fcsColumnIndex = -1;
     for (int i = 0; i < names.length; i++) {
@@ -216,7 +220,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     // Hold on to a reference of the data so we can plot it later.
     dataSet = new ArrayList<FCSFrame>();
     for (final DataRow row : table) {
-      final FCSFrame dataFrame = ((ColumnStoreCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+      final FCSFrame dataFrame = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
       dataSet.add(dataFrame);
     }
 
@@ -224,7 +228,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     populateTransformPanel(transformPanel);
     scrollPane = new JScrollPane(transformPanel);
     scrollPane.setPreferredSize(new Dimension(400, 600));
-    m_analyisTab.add(scrollPane, BorderLayout.CENTER);
+    analysisTab.add(scrollPane, BorderLayout.CENTER);
   }
 
   protected void updateTransformPanel() {
@@ -233,7 +237,7 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
     progressBar.setString("Initializing");
     progressBar.getModel().setValue(1);
     UpdateTransformPanelWorker worker =
-        new UpdateTransformPanelWorker(progressBar, transformPanel, m_Settings, dataSet);
+        new UpdateTransformPanelWorker(progressBar, transformPanel, modelSettings, dataSet);
     worker.execute();
     try {
       ArrayList<ChartPanel> chartPanels = worker.get();
@@ -253,6 +257,6 @@ public class TransormNodeDialog extends DataAwareNodeDialogPane {
 
   @Override
   protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
-    m_Settings.save(settings);
+    modelSettings.save(settings);
   }
 }
