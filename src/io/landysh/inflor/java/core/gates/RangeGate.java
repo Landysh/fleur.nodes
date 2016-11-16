@@ -90,7 +90,7 @@ public class RangeGate extends AbstractGate {
     if (this.label == null) {
       return this.getID();
     } else {
-      return label;
+      return label + this.getID();
     }
   }
 

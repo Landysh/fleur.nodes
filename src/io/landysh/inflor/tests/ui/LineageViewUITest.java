@@ -1,8 +1,7 @@
 package io.landysh.inflor.tests.ui;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -11,7 +10,8 @@ import org.jfree.ui.ApplicationFrame;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.Hierarchical;
+import io.landysh.inflor.java.core.gates.RectangleGate;
 import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.ui.CellLineageTree;
@@ -21,7 +21,7 @@ public class LineageViewUITest extends ApplicationFrame {
   public LineageViewUITest(String title) throws Exception {
     super(title);
 
-    HashMap<String, ChartSpec> testSpecs = new HashMap<String, ChartSpec>();
+    HashSet<Hierarchical> testSpecs = new HashSet<Hierarchical>();
 
     String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
     final FCSFileReader reader = new FCSFileReader(logiclePath);
@@ -44,21 +44,23 @@ public class LineageViewUITest extends ApplicationFrame {
     ly3.setDomainAxisName("FSC-A");
     ly3.setRangeAxisName("SSC-A");
     ly3.setParentID(ly.getID());
+    
+    RectangleGate g1 = new RectangleGate("LY", "FSC-A", 25000, 100000, "SSC-A", 36000, 200000, "gate");
+    g1.setParentID(dataStore.getID());
+    ly.setParentID("gate");
 
-
-
-    testSpecs.put(ly.getID(), ly);
-    testSpecs.put(ly2.getID(), ly2);
-    testSpecs.put(ly3.getID(), ly3);
+    testSpecs.add(ly);
+    testSpecs.add(ly2);
+    testSpecs.add(ly3);
+    testSpecs.add(g1);
 
 
     UIDefaults defaults = UIManager.getDefaults();
     Integer oldValue = (int) defaults.get("Tree.leftChildIndent");
     defaults.put("Tree.leftChildIndent", new Integer(110));
 
-    CellLineageTree testPanel = new CellLineageTree();
-    testPanel.updateLayout(testSpecs.values(), new ArrayList<AbstractGate>(), dataStore);
-    testPanel.setRootVisible(false);
+    CellLineageTree testPanel = new CellLineageTree(dataStore,testSpecs);
+    testPanel.setRootVisible(true);
 
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     this.getContentPane().add(testPanel);

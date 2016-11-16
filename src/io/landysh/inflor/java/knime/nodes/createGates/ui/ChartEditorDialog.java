@@ -136,6 +136,8 @@ public class ChartEditorDialog extends JDialog {
      localSpec.setPlotType(PlotTypes.Density);
    }
    
+   localSpec.setParentID(dataFrame.getID());
+   
    setSelection(localSpec.getDomainAxisName(), domainParameterSelector);
    setSelection(localSpec.getRangeAxisName(), rangeParameterSelector);
    previewPanel = createPreviewPanel();

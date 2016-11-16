@@ -95,4 +95,9 @@ public class ChartSpec extends DomainObject implements Hierarchical{
   public List<String> getGateIDs(){
     return gateIDs;
   }
+  
+  @Override
+  public String toString(){
+   return this.getDisplayName() + " : " + this.getID();
+  }
 }

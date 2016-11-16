@@ -2,8 +2,6 @@ package io.landysh.inflor.java.knime.nodes.createGates;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.BitSet;
-import java.util.List;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataRow;
@@ -24,9 +22,6 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.gates.AbstractGate;
-import io.landysh.inflor.java.core.gates.GateUtilities;
-import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
@@ -50,13 +45,6 @@ public class CreateGatesNodeModel extends NodeModel {
 
     modelSettings = new CreateGatesNodeSettings();
 
-  }
-
-  private FCSFrame applyGates(FCSFrame inStore) {
-    List<AbstractGate> gates = modelSettings.findGates(inStore.getID());
-    BitSet returnMe = GateUtilities.applyGatingPath(inStore, gates);
-    FCSFrame outStore = FCSUtilities.filterColumnStore(returnMe, inStore);
-    return outStore;
   }
 
   /**
@@ -99,7 +87,7 @@ public class CreateGatesNodeModel extends NodeModel {
       final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
 
       // now create the output row
-      final FCSFrame outStore = applyGates(inStore);
+      final FCSFrame outStore = (inStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
@@ -117,6 +105,11 @@ public class CreateGatesNodeModel extends NodeModel {
     }
     container.close();
     return new BufferedDataTable[] {container.getTable()};
+  }
+
+  private FCSFrame applyGates(FCSFrame inStore) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   /**
@@ -178,4 +171,3 @@ public class CreateGatesNodeModel extends NodeModel {
   }
 
 }
-// EOF

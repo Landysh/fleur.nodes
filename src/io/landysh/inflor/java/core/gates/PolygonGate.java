@@ -122,6 +122,7 @@ public class PolygonGate extends AbstractGate {
     for(int i=0;i<result.length;i++){
       result[i] = domainPoints.get(i/2);
       result[i+1] = rangePoints.get(i/2);
+      i++;
     }
     return result;
   }

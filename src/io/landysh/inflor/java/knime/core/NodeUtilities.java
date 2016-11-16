@@ -17,6 +17,7 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class NodeUtilities {
@@ -99,6 +100,21 @@ public class NodeUtilities {
       currentValue = currentValue + "||" + entry.getValue();
     } else {
       content.put(entry.getKey(), entry.getValue());
+    }
+  }
+
+  public static HashSet<Serializable> loadSet(NodeSettingsRO settings, String key) throws InvalidSettingsException {
+    try {
+      byte[] chartBytes = settings.getByteArray(key);
+      ByteArrayInputStream bis = new ByteArrayInputStream(chartBytes);
+      ObjectInputStream ois;
+      ois = new ObjectInputStream(bis);
+      @SuppressWarnings("unchecked")
+      HashSet<Serializable> loadedObject = (HashSet<Serializable>) ois.readObject();
+      return loadedObject;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new InvalidSettingsException("Unable to parse object set");
     }
   }
 }

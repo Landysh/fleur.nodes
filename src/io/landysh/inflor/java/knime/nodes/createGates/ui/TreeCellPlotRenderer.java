@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -36,26 +37,34 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
       boolean expanded, boolean leaf, int row, boolean hasFocus) {
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-    FCSFrame dataFrame = (FCSFrame) node.getUserObjectPath()[0];
-    List<AbstractGate> gates = extractGates(node.getUserObjectPath());
-    BitSet mask = GateUtilities.applyGatingPath(dataFrame, gates);
+    if (node instanceof DefaultMutableTreeNode){
+      node.breadthFirstEnumeration();
+    }
+    
+    Object uo = node.getUserObjectPath()[0];
+    FCSFrame dataFrame = null;
+    BitSet mask = null;
+    if (uo instanceof FCSFrame){
+      dataFrame = (FCSFrame) node.getUserObjectPath()[0];
+      List<AbstractGate> gates = extractGates(node.getUserObjectPath());
+      mask = GateUtilities.applyGatingPath(dataFrame, gates);
+    }
 
     //node is root
-    if (node.getUserObject() instanceof FCSFrame) {
-      FCSFrame root = (FCSFrame) node.getUserObject();
-      String[][] tableRow = new String[][]{{"Ungated", Integer.toString(root.getRowCount()), "-"}};
+    if (node.getUserObject() instanceof FCSFrame&&dataFrame!=null) {
+      String[][] tableRow = new String[][]{{"Ungated", Integer.toString(dataFrame.getRowCount()), "-"}};
       JTable table = new JTable(tableRow, columnNames);
       formatTable(selected, expanded, leaf, table);
       return table;
     //node is a gate
-    } else if (node.getUserObject() instanceof AbstractGate) {
+    } else if (node.getUserObject() instanceof AbstractGate&&mask!=null) {
       AbstractGate gate = (AbstractGate) node.getUserObject();
       String[][] tableRow = new String[][]{{gate.getLabel(), Integer.toString(mask.cardinality()), BitSetUtils.frequencyOfParent(mask, 2)}};
       JTable table = new JTable(tableRow, columnNames);
       formatTable(selected, expanded, leaf, table);
       return table;
     //node is plot
-    } else if (node.getUserObject() instanceof ChartSpec) {
+    } else if (node.getUserObject() instanceof ChartSpec && mask!=null) {
       FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
       ChartSpec spec = (ChartSpec) node.getUserObject();
       AbstractFCChart plot = PlotUtils.createPlot(spec);
@@ -72,8 +81,7 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
       return panel;
     } else {
       RuntimeException e = new RuntimeException("Tree node type not supported");
-      e.printStackTrace();
-      throw e;
+      return new JLabel("Unsupported node type.");//TODO: Issue with some incorrect model during init?
     }
   }
 

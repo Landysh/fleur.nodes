@@ -1,6 +1,7 @@
 package io.landysh.inflor.java.core.dataStructures;
 
 import java.io.Serializable;
+import java.util.Random;
 import java.util.UUID;
 
 @SuppressWarnings("serial")
@@ -14,11 +15,13 @@ public abstract class DomainObject implements Serializable {
    *        not available.
    */
 
-  private final String ID;
+  private String ID;
 
   public DomainObject(String priorUUID) {
     if (priorUUID == null) {
-      ID = UUID.randomUUID().toString();
+      Random rnjesus = new Random();
+      ID = Integer.toString(rnjesus.nextInt(1000));
+      //ID = UUID.randomUUID().toString();
     } else {
       ID = priorUUID;
     }
@@ -30,5 +33,9 @@ public abstract class DomainObject implements Serializable {
   
   public String getID() {
     return this.ID;
+  }
+  
+  public void setID(String newID){
+    this.ID = newID;
   }
 }

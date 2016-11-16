@@ -211,6 +211,9 @@ public class FCSChartPanel extends ChartPanel {
                                           .stream()
                                           .map(ann -> ChartUtils.createGate(ann))
                                           .collect(Collectors.toList());
+    
+    gates.forEach(gate -> gate.setParentID(data.getID()));
+    
     return gates;
   }
   

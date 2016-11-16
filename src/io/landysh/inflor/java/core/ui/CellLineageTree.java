@@ -1,7 +1,9 @@
 package io.landysh.inflor.java.core.ui;
 
-import java.util.Collection;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -9,9 +11,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.gates.AbstractGate;
 import io.landysh.inflor.java.core.gates.Hierarchical;
-import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.TreeCellPlotRenderer;
 
 @SuppressWarnings("serial")
@@ -22,77 +22,53 @@ public class CellLineageTree extends JTree {
    */
 
   private DefaultMutableTreeNode root;
-  private TreeCellPlotRenderer renderer;
+  private FCSFrame rootFrame;
+  private DefaultMutableTreeNode currentNode;
 
-  public CellLineageTree() {}
-
-  public void updateLayout(Collection<ChartSpec> chartSpecs, Collection<AbstractGate> gates, FCSFrame dataStore) {
-    super.removeAll();
-    // initialize the tree
-    renderer = new TreeCellPlotRenderer();
-    root = new DefaultMutableTreeNode(dataStore);
-    this.setRowHeight(50);
-    DefaultTreeModel m_tree = new DefaultTreeModel(root);
-    if (gates!=null){
-      gates.forEach(gate -> m_tree.insertNodeInto(new DefaultMutableTreeNode(gate), root, root.getChildCount()));
-      gates.forEach(gate -> updateHierarchy(m_tree, gate.getID()));
-    }
+  public CellLineageTree(FCSFrame rootFrame, Set<Hierarchical> nodePool) {
+    this.setCellRenderer(new TreeCellPlotRenderer());
+    this.rootFrame = rootFrame;
+    this.root = new DefaultMutableTreeNode(rootFrame);
+    this.setModel(buildTree(root, nodePool));
     
-    if (chartSpecs != null) {
-      chartSpecs.forEach(spec -> m_tree.insertNodeInto(new DefaultMutableTreeNode(spec), root,root.getChildCount()));
-      chartSpecs.forEach(spec -> updateHierarchy(m_tree, spec.getID()));
-    }
-
-    this.setModel(m_tree);
-    this.setCellRenderer(renderer);
-    this.setRowHeight(0);
-  }
-
-  private void updateHierarchy(DefaultTreeModel m_tree, String uuid) {
-    DefaultMutableTreeNode childNode = findNode(m_tree, uuid);
-    if (childNode != null) {
-      String parentID = ((Hierarchical) childNode.getUserObject()).getParentID();
-      DefaultMutableTreeNode parentNode = root;
-      if (parentID != null) {
-        parentNode = findNode(m_tree, parentID);
-      }
-      if (childNode.isNodeChild(parentNode)) {
-        // Do nothing if it is already a child of it's parent.
-      } else if (parentNode == null) {
-        // Then the parent node is likely the root node.
-        m_tree.insertNodeInto(childNode, root, root.getChildCount() - 1);
-      } else {
-        // Otherwise, add it to the desired parent node.
-        m_tree.insertNodeInto(childNode, parentNode, parentNode.getChildCount() - 1);
-      }
-    }
-  }
-
-  private DefaultMutableTreeNode findNode(DefaultTreeModel m_tree, String queryID) {
-    /**
-     * Attempts to find a node by ID. Will return null if it fails to find the requested ID.
-     * 
-     * @param m_tree - the tree to search.
-     * @param id - the id to search for.
-     */
-    Enumeration<?> nodeEnum = root.preorderEnumeration();
-    while (nodeEnum.hasMoreElements()) {
-      DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) nodeEnum.nextElement();
-      DomainObject node = (DomainObject) currentNode.getUserObject();
-      if (node.getID().equals(queryID)) {
-        return currentNode;
-      }
-    }
-    return null;
   }
 
   @Override
   public void updateUI() {
     setCellRenderer(null);
     super.updateUI();
-    setCellRenderer(renderer);
     setRowHeight(0);
     setRootVisible(true);
     setShowsRootHandles(true);
+  }
+  
+  private DefaultTreeModel buildTree(DefaultMutableTreeNode root, Set<Hierarchical> inNodePool){
+    List<Hierarchical> nodePool = inNodePool.stream().collect(Collectors.toList());
+    DefaultTreeModel tree = new DefaultTreeModel(root);
+    currentNode = root;
+
+    List<DefaultMutableTreeNode> nodesToCheck = new ArrayList<DefaultMutableTreeNode>();
+    nodesToCheck.add(root);
+    while (nodesToCheck.size()>0){
+      String parentID = ((DomainObject) currentNode.getUserObject()).getID();
+      List<DefaultMutableTreeNode> dmtNodes = new ArrayList<DefaultMutableTreeNode>(); 
+      for (Hierarchical node: nodePool){
+        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(node);
+        if (node.getParentID()!=null && node.getParentID().equals(parentID)){
+          dmtNodes.add(childNode);
+          nodesToCheck.add(childNode);
+        } else if(node.getParentID()==null){
+          node.setParentID(rootFrame.getID());
+          dmtNodes.add(childNode);  
+          nodesToCheck.add(childNode);
+        };
+      }
+      dmtNodes.forEach(child -> tree.insertNodeInto(child, currentNode, currentNode.getChildCount()));
+      nodesToCheck.remove(currentNode);
+      if (nodesToCheck.size()>0){
+        currentNode = nodesToCheck.get(0);
+      }
+    }
+    return tree;
   }
 }

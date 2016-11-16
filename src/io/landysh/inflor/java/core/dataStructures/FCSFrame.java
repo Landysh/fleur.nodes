@@ -38,8 +38,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   // data properties
   private Integer rowCount = -1;
-  // file details
-  public String UUID;
 
   // minimal constructor, use with .load()
   public FCSFrame() {
@@ -105,7 +103,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
 
   public String getPrefferedName() {
-    String name = UUID;
+    String name = getID();
     if (this.preferredName != null) {
       name = this.preferredName;
     }
@@ -314,10 +312,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   @Override
   public int compareTo(String arg0) {
     return this.getPrefferedName().compareTo(arg0);
-  }
-
-  public void setID(String newID) {
-   this.UUID = newID;   
   }
 
   public FCSFrame deepCopy() throws InvalidProtocolBufferException {

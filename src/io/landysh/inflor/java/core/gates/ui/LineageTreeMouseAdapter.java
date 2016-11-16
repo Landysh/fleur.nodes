@@ -54,7 +54,8 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates);
       FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
       if (parentGates.size()>=1){
-        filteredFrame.setID(parentGates.get(parentGates.size()-1).getID());
+        String ids = parentGates.get(parentGates.size()-1).getID();
+        filteredFrame.setID(ids);
       }
       WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(this.parent.getPanel());
       ArrayList<AbstractGate> siblingGates = new ArrayList<>();
@@ -71,7 +72,6 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       if(selectedObject instanceof AbstractGate){
         ChartEditorDialog dialog = new ChartEditorDialog(topFrame, filteredFrame, siblingGates);
         popDialog(dialog);
-        dialog.setVisible(true);
       } else if (selectedObject instanceof ChartSpec){
         ChartSpec spec = (ChartSpec) selectedObject;
         ChartEditorDialog dialog = new ChartEditorDialog(topFrame, filteredFrame, siblingGates, spec);
@@ -86,9 +86,9 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private void popDialog(ChartEditorDialog dialog) {
     dialog.setVisible(true);
     if (dialog.isOK) {
-      parent.m_settings.addPlotSpec(dialog.getChartSpec());
+      parent.m_settings.addNode(dialog.getChartSpec());
       List<AbstractGate> gates = dialog.getGates();
-      gates.forEach(gate -> parent.m_settings.addGate(gate, dialog.getReferenceID()));
+      gates.forEach(gate -> parent.m_settings.addNode(gate));
       parent.updateLineageTree();
     }
     dialog.dispose();

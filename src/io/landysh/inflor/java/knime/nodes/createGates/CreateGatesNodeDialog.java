@@ -4,9 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,10 +27,10 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
+import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.Hierarchical;
 import io.landysh.inflor.java.core.gates.ui.LineageTreeMouseAdapter;
-import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.ui.CellLineageTree;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
@@ -58,6 +58,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private JScrollPane analysisArea;
 
+  private LineageTreeMouseAdapter ltml;
+
   protected CreateGatesNodeDialog() {
     super();
     m_settings = new CreateGatesNodeSettings();
@@ -76,14 +78,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
           DefaultMutableTreeNode selectedNode =
               (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
           if (!selectedNode.equals(selectedNode.getRoot()) &&
-              selectedNode.getUserObject() instanceof ChartSpec){
-            String id = ((ChartSpec) selectedNode.getUserObject()).getID();
-            m_settings.deleteChart(id);
-          } else if (!selectedNode.equals(selectedNode.getRoot()) &&
-            selectedNode.getUserObject() instanceof AbstractGate){
-            String id = ((AbstractGate) selectedNode.getUserObject()).getID();
-            m_settings.deleteGate(id);
-            updateLineageTree();
+              selectedNode.getUserObject() instanceof DomainObject){
+            Hierarchical node = ((Hierarchical) selectedNode.getUserObject());
+            m_settings.removeNode(node);
           }
         }
       }
@@ -98,10 +95,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private JScrollPane createAnalysisArea() {
     FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
-    Collection<ChartSpec> chartSpecs = m_settings.getPlotSpecs().values();
-    List<AbstractGate> gates = m_settings.findGates(dataFrame.getID());
-    lineageTree = new CellLineageTree();
-    lineageTree.updateLayout(chartSpecs, gates, dataFrame);
+    lineageTree = new CellLineageTree(dataFrame, m_settings.getNodePool());
+    lineageTree.removeMouseListener(ltml);
+    ltml = new LineageTreeMouseAdapter(this);
     lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
     analysisArea = new JScrollPane(lineageTree);
     return analysisArea;
