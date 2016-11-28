@@ -3,9 +3,12 @@ package io.landysh.inflor.java.knime.nodes.transform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.def.DefaultRow;
@@ -24,8 +27,10 @@ import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.java.knime.core.NodeUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
@@ -60,21 +65,28 @@ public class TransformNodeModel extends NodeModel {
     final DataTableSpec outSpec = createSpecs(inData[0].getSpec())[0];
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
     final String columnName = modelSettings.getSelectedColumn();
-    final int index = outSpec.findColumnIndex(columnName);
-
+    final int columnIndex = outSpec.findColumnIndex(columnName);
+    //Find a useful set of transforms:
+    
+    if (modelSettings.getAllTransorms().size()==0){
+      createTransformSet(inData, exec, columnIndex);
+    }
+    
+    TreeMap<String, AbstractTransform>  transformSet = modelSettings.getAllTransorms();
+       
+    
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
-
+      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(columnIndex)).getFCSFrame();
       // now create the output row
-      final FCSFrame outStore = applyTransforms(inStore, modelSettings.getAllTransorms());
+      final FCSFrame outStore = applyTransforms(inStore, transformSet);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
-        if (j == index) {
+        if (j == columnIndex) {
           outCells[j] = fileCell;
         } else {
           outCells[j] = inRow.getCell(j);
@@ -88,10 +100,20 @@ public class TransformNodeModel extends NodeModel {
     return new BufferedDataTable[] {container.getTable()};
   }
 
+  private void createTransformSet(BufferedDataTable[] inData, ExecutionContext exec, int columnIndex) {
+    List<FCSFrame> fileList = new ArrayList<FCSFrame>();
+    for (DataRow inRow : inData[0]) {
+      FCSFrame fcsStore = ((FCSFrameCell) inRow.getCell(columnIndex)).getFCSFrame();
+      fileList.add(fcsStore);
+    }
+    modelSettings.optimizeTransforms(fileList);
+  }
+
   private FCSFrame applyTransforms(FCSFrame inStore, TreeMap<String, AbstractTransform> treeMap) {
     for (Entry<String, AbstractTransform> entry : treeMap.entrySet()) {
       FCSDimension dimension = FCSUtilities.findCompatibleDimension(inStore, entry.getKey());
-      dimension.setPreferredTransform(entry.getValue());
+      AbstractTransform optimizedTransform = entry.getValue();
+      dimension.setPreferredTransform(optimizedTransform);
     }
     return inStore;
   }
@@ -114,6 +136,24 @@ public class TransformNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
+    
+    final DataTableSpec spec = inSpecs[0];
+    if (modelSettings.getSelectedColumn()==null){
+      for (final String name : spec.getColumnNames()) {
+        if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+          modelSettings.setSelectedColumn(name);
+        }
+      }
+    }
+    DataColumnSpec selectedColumnSpec = spec.getColumnSpec(modelSettings.getSelectedColumn());
+    String shortNames = selectedColumnSpec.getProperties()
+        .getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+    String[] dimensionNames = shortNames.split(NodeUtilities.DELIMITER_REGEX);
+    for (String name : dimensionNames) {
+      if (modelSettings.getTransform(name) == null) {
+        modelSettings.addTransform(name, PlotUtils.createDefaultTransform(name));
+      }
+    }
 
     return new DataTableSpec[] {inSpecs[0]};
   }

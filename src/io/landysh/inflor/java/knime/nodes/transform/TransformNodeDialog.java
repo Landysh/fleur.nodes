@@ -9,12 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -37,11 +35,8 @@ import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.plots.SubsetResponseChart;
 import io.landysh.inflor.java.core.transforms.AbstractTransform;
-import io.landysh.inflor.java.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
-import io.landysh.inflor.java.core.transforms.LogrithmicTransform;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
-import io.landysh.inflor.java.core.utils.MatrixUtilities;
 import io.landysh.inflor.java.knime.core.NodeUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
@@ -130,45 +125,9 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
       }
     });
     optionsPanel.add(fcsColumnBox);
-
-    JButton optimizeWButton = new JButton("Optimize");
-    optimizeWButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        optimizeTransforms();
-        updateTransformPanel();
-      }
-    });
-    optionsPanel.add(optimizeWButton);
     progressBar = new JProgressBar();
     optionsPanel.add(progressBar);
     return optionsPanel;
-  }
-
-  private void optimizeTransforms() {
-    for (Entry<String, AbstractTransform> entry : modelSettings.getAllTransorms().entrySet()) {
-      double[] data = mergeData(entry.getKey(), dataSet);
-      if (entry.getValue() instanceof LogicleTransform) {
-        LogicleTransform logicle = (LogicleTransform) entry.getValue();
-        logicle.optimizeW(data);
-      } else if (entry.getValue() instanceof LogrithmicTransform) {
-        LogrithmicTransform logTransform = (LogrithmicTransform) entry.getValue();
-        logTransform.optimize(data);
-      } else if (entry.getValue() instanceof BoundDisplayTransform) {
-        BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) entry.getValue();
-        boundaryTransform.optimize(data);
-      }
-    }
-  }
-
-  private double[] mergeData(String shortName, ArrayList<FCSFrame> dataSet2) {
-    double[] data = null;
-    for (FCSFrame frame : dataSet2) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
-      data = MatrixUtilities.appendVectors(data, dimension.getData());
-    }
-    return data;
   }
 
   @Override
@@ -229,6 +188,8 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     scrollPane = new JScrollPane(transformPanel);
     scrollPane.setPreferredSize(new Dimension(400, 600));
     analysisTab.add(scrollPane, BorderLayout.CENTER);
+    modelSettings.optimizeTransforms(dataSet);
+    updateTransformPanel();
   }
 
   protected void updateTransformPanel() {
