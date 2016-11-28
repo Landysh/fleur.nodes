@@ -5,6 +5,7 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
 
@@ -40,8 +41,10 @@ public class RangeGate extends AbstractGate {
       String yName = dimensions.get(1).getName();
       double yMin = dimensions.get(1).min;
       double yMax = dimensions.get(1).max;
-      double[] xData = FCSUtilities.findCompatibleDimension(fcsFrame, xName).getData();
-      double[] yData = FCSUtilities.findCompatibleDimension(fcsFrame, yName).getData();
+      FCSDimension xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
+      double[] xData = xDimension.getPreferredTransform().transform(xDimension.getData());
+      FCSDimension yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
+      double[] yData = yDimension.getPreferredTransform().transform(yDimension.getData());
       BitSet bits = new BitSet(fcsFrame.getRowCount());
       for (int i = 0; i < xData.length; i++) {
         if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {
