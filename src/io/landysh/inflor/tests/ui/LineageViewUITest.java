@@ -1,7 +1,9 @@
 package io.landysh.inflor.tests.ui;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -21,7 +23,7 @@ public class LineageViewUITest extends ApplicationFrame {
   public LineageViewUITest(String title) throws Exception {
     super(title);
 
-    HashSet<Hierarchical> testSpecs = new HashSet<Hierarchical>();
+    List<Hierarchical> testSpecs = new ArrayList<Hierarchical>();
 
     String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
     final FCSFileReader reader = new FCSFileReader(logiclePath);
