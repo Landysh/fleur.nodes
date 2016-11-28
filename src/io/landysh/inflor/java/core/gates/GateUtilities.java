@@ -9,6 +9,10 @@ import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
 public class GateUtilities {
   
+  public static final String SUMMARY_FRAME_ID = "Summary";
+  public static final String UNGATED_SUBSET_ID = "Ungated";
+  
+  
   public static BitSet applyGatingPath(FCSFrame dataFrame, List<AbstractGate> gates){
     BinaryOperator<BitSet> accumulator = new BitSetAccumulator(BitSetOperator.AND);
     BitSet mask = new BitSet(dataFrame.getRowCount());
