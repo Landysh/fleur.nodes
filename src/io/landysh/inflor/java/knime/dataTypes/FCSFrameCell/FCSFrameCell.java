@@ -11,7 +11,7 @@ import org.knime.core.data.filestore.FileStoreCell;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 
-public class FCSFrameCell extends FileStoreCell {
+public class FCSFrameCell extends FileStoreCell implements Comparable<String>{
 
   public static final class ColumnStoreCellSerializer
       implements DataCellSerializer<FCSFrameCell> {
@@ -62,5 +62,10 @@ public class FCSFrameCell extends FileStoreCell {
   @Override
   public String toString() {
     return m_data.toString();
+  }
+
+  @Override
+  public int compareTo(String o) {
+    return m_data.toString().compareTo(o);
   }
 }
