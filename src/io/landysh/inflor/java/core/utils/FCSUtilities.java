@@ -3,8 +3,11 @@ package io.landysh.inflor.java.core.utils;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
@@ -216,5 +219,17 @@ public class FCSUtilities {
 
   public static String formatCompStainName(String origninalName) {
     return "[" + origninalName + "]";
+  }
+
+  public static Set<String> getDimensionNames(List<FCSFrame> dataSet) {
+    HashSet<String> setDimensionNames = new HashSet<String>();
+    for (FCSFrame dataFrame: dataSet){
+      Set<String> frameDimensionNames = dataFrame.getData()
+          .stream()
+          .map(dim -> dim.getShortName())
+          .collect(Collectors.toSet());
+    setDimensionNames.addAll(frameDimensionNames);
+    }
+    return setDimensionNames;
   }
 }
