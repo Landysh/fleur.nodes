@@ -3,6 +3,8 @@ package io.landysh.inflor.java.core.dataStructures;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +40,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   // data properties
   private Integer rowCount = -1;
+
+  private ArrayList<Subset> subsets;
 
   // minimal constructor, use with .load()
   public FCSFrame() {
@@ -183,6 +187,23 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       messageBuilder.addDimension(fcsdim);
     }
     
+    //Add subsets
+    if (subsets!=null){
+      for (Subset s:subsets){
+        Message.Subset.Builder sBuilder = Message.Subset.newBuilder();
+        sBuilder.setId(s.getID());
+        sBuilder.setParentID(s.getParentID());
+        sBuilder.setName(s.getLabel());
+        BitSet mask = s.getMembers();
+        for (int i=0;i<mask.size();i++){
+          sBuilder.addMask(mask.get(i));
+        }
+      Message.Subset subset = sBuilder.build();
+      messageBuilder.addSubset(subset);
+      }
+     
+    }
+    
     // build the message
     final Message buffer = messageBuilder.build();
     final byte[] bytes = buffer.toByteArray();
@@ -232,7 +253,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       final String value = keyword.getValue();
       keywords.put(key, value);
     }
-    // Load the vectors
+    // Load the Dimensions
     final int rowCount = loadedMessage.getEventCount();
     final FCSFrame columnStore = new FCSFrame(loadedMessage.getId(), keywords, rowCount);
     final int dimCount = loadedMessage.getDimensionCount();
@@ -250,6 +271,24 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       AbstractTransform preferredTransform = readTransform(dim);
       currentDimension.setPreferredTransform(preferredTransform);
       columnStore.addDimension(currentDimension);
+    }
+    
+    //TODO: Read back the subsets
+    if (loadedMessage.getSubsetCount()>0){
+      for (int i=0;i<loadedMessage.getSubsetCount();i++){
+        Message.Subset subsetMessage = loadedMessage.getSubset(i);
+        BitSet mask = new BitSet(subsetMessage.getMaskCount());
+        for (int j=0;j<mask.size();j++){
+          if (subsetMessage.getMask(j)){
+            mask.set(j);
+          }
+        }
+        Subset subset = new Subset(subsetMessage.getName(), 
+                                   mask, 
+                                   subsetMessage.getParentID(),
+                                   subsetMessage.getId());
+      columnStore.addSubset(subset);
+      }
     }
     columnStore.setPreferredName(columnStore.getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD));
     return columnStore;
@@ -318,5 +357,16 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     byte[] bytes = this.save();
     FCSFrame newFrame = FCSFrame.load(bytes);
     return newFrame;
+  }
+
+  public void addSubset(Subset subset) {
+    if (this.subsets==null){
+      this.subsets = new ArrayList<Subset>();
+    }
+    this.subsets.add(subset);
+  }
+
+  public List<Subset> getSubsets() {
+    return subsets;
   }
 }
