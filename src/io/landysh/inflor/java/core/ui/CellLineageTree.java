@@ -25,11 +25,14 @@ public class CellLineageTree extends JTree {
   private FCSFrame rootFrame;
   private DefaultMutableTreeNode currentNode;
 
-  public CellLineageTree(FCSFrame rootFrame, Set<Hierarchical> nodePool) {
+  public CellLineageTree(FCSFrame rootFrame, List<Hierarchical> nodePool) {
     this.setCellRenderer(new TreeCellPlotRenderer());
     this.rootFrame = rootFrame;
     this.root = new DefaultMutableTreeNode(rootFrame);
     this.setModel(buildTree(root, nodePool));
+    for (int i = 0; i < this.getRowCount(); i++) {
+      this.expandRow(i);
+    }
     
   }
 
@@ -37,12 +40,13 @@ public class CellLineageTree extends JTree {
   public void updateUI() {
     setCellRenderer(null);
     super.updateUI();
+    this.setCellRenderer(new TreeCellPlotRenderer());
     setRowHeight(0);
     setRootVisible(true);
     setShowsRootHandles(true);
   }
   
-  private DefaultTreeModel buildTree(DefaultMutableTreeNode root, Set<Hierarchical> inNodePool){
+  private DefaultTreeModel buildTree(DefaultMutableTreeNode root, List<Hierarchical> inNodePool){
     List<Hierarchical> nodePool = inNodePool.stream().collect(Collectors.toList());
     DefaultTreeModel tree = new DefaultTreeModel(root);
     currentNode = root;
