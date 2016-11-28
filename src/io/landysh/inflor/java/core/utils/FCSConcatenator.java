@@ -37,7 +37,7 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
           dimension.getRange()) ;
       double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
       mergedDimension.setData(mergedArray);
-      mergedDimension.setTranformReference(dimension.getTranformReference());
+      mergedDimension.setPreferredTransform(dimension.getPreferredTransform());;
       mergedData.add(mergedDimension);
     }
     return mergedData;
