@@ -1,8 +1,8 @@
 package io.landysh.inflor.tests.unit;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -34,7 +34,7 @@ public class CellLineageTreeTest{
     RectangleGate g4 = new RectangleGate("4", xName, 0, 1, yName, 0, 1, "4");
     g3.setParentID(g2.getID());
     g4.setParentID(g3.getID());
-    Set<Hierarchical> nodePool = new HashSet<>();
+    List<Hierarchical> nodePool = new ArrayList<Hierarchical>();
     nodePool.add(g1);
     nodePool.add(g2);
     nodePool.add(g3);
