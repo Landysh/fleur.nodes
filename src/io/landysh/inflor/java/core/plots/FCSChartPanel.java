@@ -75,7 +75,8 @@ public class FCSChartPanel extends ChartPanel {
   }
 
   public void createGateAnnotation(XYGateAnnotation annotation) {
-    BitSet mask = ChartUtils.createGate(annotation).evaluate(data);
+    AbstractGate gate = ChartUtils.createGate(annotation);
+    BitSet mask = gate.evaluate(data);
     String result = BitSetUtils.frequencyOfParent(mask, 2);
     double[] position = estimateGateLabelPosition(annotation);
     XYTextAnnotation label =
@@ -220,8 +221,18 @@ public class FCSChartPanel extends ChartPanel {
   public void createAnnotations(List<AbstractGate> gates){
     gates
       .stream()
+      .filter(gate -> isPlotable(gate))
       .map(gate -> ChartUtils.createAnnotation(gate))
       .forEach(annotation -> createGateAnnotation(annotation));
+  }
+
+  private boolean isPlotable(AbstractGate gate) {
+    if (gate.getDomainAxisName().equals(spec.getDomainAxisName()) && 
+        gate.getRangeAxisName().equals(spec.getRangeAxisName())){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public FCSFrame getDataFrame() {
