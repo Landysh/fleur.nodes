@@ -13,7 +13,6 @@ import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelectio
 import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
 import io.landysh.inflor.java.core.utils.FCSUtilities;
-import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
 
 /**
