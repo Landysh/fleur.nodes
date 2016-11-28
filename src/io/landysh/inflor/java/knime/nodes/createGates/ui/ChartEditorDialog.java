@@ -159,13 +159,10 @@ public class ChartEditorDialog extends JDialog {
    });
     // updatePreviewPlot();
     // GridLayout
-    final GridBagConstraints gbc = new GridBagConstraints();
-    gbc.anchor = GridBagConstraints.NORTHWEST;
-
-    // Gating toolbar
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    contentPanel.add(gatingToolBar, gbc);
+   
+   GridBagConstraints gbc = new GridBagConstraints();
+   gbc.anchor = GridBagConstraints.NORTHWEST;
+   addGatingToolBar();
     // Preview Panel
     gbc.gridx = 0;
     gbc.gridy = 1;
@@ -184,6 +181,14 @@ public class ChartEditorDialog extends JDialog {
     contentPanel.add(progressBar, gbc);
     contentPanel.add(buttonPanel, gbc);
     return contentPanel;
+  }
+
+  private void addGatingToolBar() {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.anchor = GridBagConstraints.NORTHWEST;
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    contentPanel.add(gatingToolBar, gbc);
   }
 
   private void setSelection(String domainAxisName,
@@ -236,10 +241,15 @@ public class ChartEditorDialog extends JDialog {
     if (chartPanel!=null){
       previewPanel.remove(chartPanel);
     }
+    if (gatingToolBar!=null){
+      contentPanel.remove(gatingToolBar);
+    }
     AbstractFCChart abstractChart = PlotUtils.createPlot(localSpec);  
     JFreeChart chart = abstractChart.createChart(dataFrame);
     chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
     chartPanel.setChart(chart);
+    gatingToolBar = new GateCreationToolBar(chartPanel);
+    addGatingToolBar();
     chartPanel.setSelectionListener(gatingToolBar.getSelectionListener());
     chartPanel.createAnnotations(gates);
     chartPanel.revalidate();

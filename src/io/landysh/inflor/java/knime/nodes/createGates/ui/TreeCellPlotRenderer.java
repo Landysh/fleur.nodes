@@ -80,7 +80,6 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
       panel.setPreferredSize(new Dimension(220, 200));
       return panel;
     } else {
-      RuntimeException e = new RuntimeException("Tree node type not supported");
       return new JLabel("Unsupported node type.");//TODO: Issue with some incorrect model during init?
     }
   }

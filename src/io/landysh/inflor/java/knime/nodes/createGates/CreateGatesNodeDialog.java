@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +28,7 @@ import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.core.dataStructures.DomainObject;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.gates.GateUtilities;
 import io.landysh.inflor.java.core.gates.Hierarchical;
 import io.landysh.inflor.java.core.gates.ui.LineageTreeMouseAdapter;
 import io.landysh.inflor.java.core.ui.CellLineageTree;
@@ -95,7 +95,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private JScrollPane createAnalysisArea() {
     FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
-    lineageTree = new CellLineageTree(dataFrame, m_settings.getNodePool());
+    List<Hierarchical> nodePool = m_settings.findNodes(dataFrame.getID());
+    lineageTree = new CellLineageTree(dataFrame, nodePool);
     lineageTree.removeMouseListener(ltml);
     ltml = new LineageTreeMouseAdapter(this);
     lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
@@ -195,6 +196,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       parameterSet.addAll(newParameters);
     }
     FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, DEFAULT_SUMMARY_FRAME_EVENT_COUNT);
+    summaryFrame.setID(GateUtilities.SUMMARY_FRAME_ID);
     selectSampleBox.addItem(summaryFrame);
     dataSet.forEach(dataFrame -> selectSampleBox.addItem(dataFrame));
     selectSampleBox.setSelectedIndex(0);

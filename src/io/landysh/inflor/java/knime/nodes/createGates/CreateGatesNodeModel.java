@@ -2,8 +2,16 @@ package io.landysh.inflor.java.knime.nodes.createGates;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnProperties;
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataTableSpecCreator;
@@ -22,6 +30,10 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.java.core.dataStructures.Subset;
+import io.landysh.inflor.java.core.gates.AbstractGate;
+import io.landysh.inflor.java.core.gates.GateUtilities;
+import io.landysh.inflor.java.knime.core.NodeUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
@@ -60,8 +72,24 @@ public class CreateGatesNodeModel extends NodeModel {
   }
 
   private DataTableSpec[] createSpecs(DataTableSpec inSpec) {
-    final DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
-    final DataTableSpec outSpec = creator.createSpec();
+    //TODO: make more concise.
+    DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
+    DataColumnProperties properties = inSpec.getColumnSpec(modelSettings.getSelectedColumn()).getProperties();
+    List<String> subsetNames = modelSettings.findNodes(GateUtilities.SUMMARY_FRAME_ID)
+        .stream()
+        .filter(node -> node instanceof AbstractGate)
+        .map(node -> (AbstractGate) node)
+        .map(gate -> gate.getLabel())
+        .collect(Collectors.toList());
+    String subSetNamesString = String.join(NodeUtilities.DELIMITER, subsetNames);
+    Map<String, String> newProperties = new HashMap<String, String>();
+    newProperties.put(NodeUtilities.SUBSET_NAMES_KEY, subSetNamesString);
+    DataColumnProperties newProps = properties.cloneAndOverwrite(newProperties);    
+    DataColumnSpec cspec = inSpec.getColumnSpec(modelSettings.getSelectedColumn());
+    DataColumnSpecCreator colCreartor = new DataColumnSpecCreator(cspec);
+    colCreartor.setProperties(newProps);
+    creator.replaceColumn(inSpec.findColumnIndex(modelSettings.getSelectedColumn()), colCreartor.createSpec());
+    DataTableSpec outSpec = creator.createSpec();
     return new DataTableSpec[] {outSpec};
   }
 
@@ -87,7 +115,18 @@ public class CreateGatesNodeModel extends NodeModel {
       final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
 
       // now create the output row
-      final FCSFrame outStore = (inStore);
+      final FCSFrame outStore = inStore.deepCopy();
+      List<AbstractGate> gates = modelSettings
+          .findNodes(outStore.getID())
+          .stream()
+          .filter(node -> node instanceof AbstractGate)
+          .map(node -> (AbstractGate) node)
+          .collect(Collectors.toList());
+      gates
+        .stream()
+        .map(gate -> createSubset(gate, outStore))
+        .forEach(subset -> outStore.addSubset(subset));
+      
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
@@ -107,9 +146,10 @@ public class CreateGatesNodeModel extends NodeModel {
     return new BufferedDataTable[] {container.getTable()};
   }
 
-  private FCSFrame applyGates(FCSFrame inStore) {
-    // TODO Auto-generated method stub
-    return null;
+  private Subset createSubset(AbstractGate gate, FCSFrame outStore) {
+    BitSet mask = gate.evaluate(outStore);
+    Subset subset = new Subset(gate.getLabel(), mask, gate.getParentID(), gate.getID());
+    return subset;
   }
 
   /**
