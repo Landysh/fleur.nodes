@@ -23,7 +23,6 @@ import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
-import io.landysh.inflor.java.core.viability.ViabilityFilterSettingsModel;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 
 /**
