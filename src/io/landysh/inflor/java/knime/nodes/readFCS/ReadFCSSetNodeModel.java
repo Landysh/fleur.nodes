@@ -193,9 +193,8 @@ public class ReadFCSSetNodeModel extends NodeModel {
       final DataRow row = new DefaultRow(key, cells);
       container.addRowToTable(row);
 
-      // check if the execution monitor was canceled
       exec.setProgress(currentFileIndex / (double) fileCount,
-          "Reading file " + (currentFileIndex + 1));
+          "Reading file " + (currentFileIndex + 1) + " of: " + fileCount);
       currentFileIndex++;
     } catch (IOException e) {
       e.printStackTrace();
