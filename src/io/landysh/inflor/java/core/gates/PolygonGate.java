@@ -6,6 +6,7 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
+import io.landysh.inflor.java.core.dataStructures.FCSDimension;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
 
@@ -45,8 +46,10 @@ public class PolygonGate extends AbstractGate {
 
   @Override
   public BitSet evaluate(FCSFrame data) {
-    double[] d1Data = FCSUtilities.findCompatibleDimension(data, domainName).getData();
-    double[] d2Data = FCSUtilities.findCompatibleDimension(data, rangeName).getData();
+    FCSDimension d1 = FCSUtilities.findCompatibleDimension(data, domainName);
+    FCSDimension d2 = FCSUtilities.findCompatibleDimension(data, rangeName);
+    double[] d1Data = d1.getPreferredTransform().transform(d1.getData());
+    double[] d2Data = d2.getPreferredTransform().transform(d2.getData());
     Path2D poly = new Path2D.Double();
     BitSet mask = new BitSet(data.getRowCount());
     for (int i = 0; i < domainPoints.size(); i++) {
