@@ -10,7 +10,7 @@ import edu.stanford.facs.logicle.FastLogicle;
 @SuppressWarnings("serial")
 public class LogicleTransform extends AbstractTransform implements Serializable {
 
-  private static final double LOGICLE_W_PERCENTILE = 1;
+  private static final double LOGICLE_W_PERCENTILE = 5;
   private static final double dt = 262144;
   private static final double dw = 0.5;
   private static final double dm = 4.5;
