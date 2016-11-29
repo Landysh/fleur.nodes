@@ -52,5 +52,4 @@ public class FCSSummaryPanel extends JPanel {
     super.add(table, gbc);
     gbc.insets = new Insets(5, 0, 5, 5);
   }
-
 }

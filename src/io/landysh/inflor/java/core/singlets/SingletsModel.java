@@ -23,7 +23,6 @@ public class SingletsModel {
 
   public double[] buildModel(double[] area, double[] height) {
     final double[] ratioAH = ratio(area, height);
-    // This only really works for homogeneous particles.
     final double minimum = StatUtils.percentile(ratioAH, 1);
     final double median = StatUtils.percentile(ratioAH, 50);
     ratioThreshold = (median - minimum) + median;

@@ -2,6 +2,7 @@ package io.landysh.inflor.knime.nodes.summaryStats;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -16,7 +17,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import io.landysh.inflor.java.core.gates.GateUtilities;
-import sun.awt.windows.WEmbeddedFrame;
 
 @SuppressWarnings("serial")
 public class StatEditorDialog extends JDialog {
@@ -41,7 +41,7 @@ public class StatEditorDialog extends JDialog {
    * @param dimensionList - list of dimension short names for which a stat may be calculated
    * @param spec - existing statistic definition to edit
    */
-  public StatEditorDialog(WEmbeddedFrame topFrame, List<String> dimensionList, List<String> subsetList, StatSpec spec) {
+  public StatEditorDialog(Window topFrame, List<String> dimensionList, List<String> subsetList, StatSpec spec) {
     super(topFrame);
     setModal(true);
     this.subsetList = subsetList;
@@ -61,7 +61,7 @@ public class StatEditorDialog extends JDialog {
     setTitle(TITLE);
   }
 
-  public StatEditorDialog(WEmbeddedFrame topFrame, List<String> dimensionList, List<String> subsetList) {
+  public StatEditorDialog(Window topFrame, List<String> dimensionList, List<String> subsetList) {
     this(topFrame, dimensionList, subsetList, null);
   }
 

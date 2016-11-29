@@ -1,5 +1,6 @@
 package io.landysh.inflor.java.core.gates.ui;
 
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,6 @@ import io.landysh.inflor.java.core.ui.CellLineageTree;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeDialog;
 import io.landysh.inflor.java.knime.nodes.createGates.ui.ChartEditorDialog;
-import sun.awt.windows.WEmbeddedFrame;
 
 public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private CreateGatesNodeDialog parent;
@@ -57,7 +57,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
         String ids = parentGates.get(parentGates.size()-1).getID();
         filteredFrame.setID(ids);
       }
-      WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(this.parent.getPanel());
+      Window topFrame = SwingUtilities.getWindowAncestor(this.parent.getPanel());
       ArrayList<AbstractGate> siblingGates = new ArrayList<>();
       
       if (selectedNode.getSiblingCount()!=1){

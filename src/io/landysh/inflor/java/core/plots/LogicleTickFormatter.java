@@ -1,6 +1,6 @@
-package io.landysh.inflor.java.core.transforms;
+package io.landysh.inflor.java.core.plots;
 
-public class TickFormatter {
+public class LogicleTickFormatter {
 
   /**
    * @param value - an integer wholly divisble by 10.

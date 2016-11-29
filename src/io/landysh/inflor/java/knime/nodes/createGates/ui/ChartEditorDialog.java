@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -29,7 +30,6 @@ import io.landysh.inflor.java.core.plots.FCSChartPanel;
 import io.landysh.inflor.java.core.plots.PlotTypes;
 import io.landysh.inflor.java.core.plots.PlotUtils;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
-import sun.awt.windows.WEmbeddedFrame;
 
 @SuppressWarnings("serial")
 public class ChartEditorDialog extends JDialog {
@@ -58,7 +58,7 @@ public class ChartEditorDialog extends JDialog {
   private GateCreationToolBar gatingToolBar;
   private List<AbstractGate> gates;
 
-  public ChartEditorDialog(WEmbeddedFrame topFrame, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
+  public ChartEditorDialog(Window topFrame, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
     /**
      * Use this constructor to edit an existing chart.
      * 
@@ -77,7 +77,7 @@ public class ChartEditorDialog extends JDialog {
     setLocationRelativeTo(getParent());
   }
   
-  public ChartEditorDialog(WEmbeddedFrame topFrame, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
+  public ChartEditorDialog(Window topFrame, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
     this(topFrame, selectedSample, applicableGates, null);
   }
 

@@ -29,7 +29,6 @@ import org.knime.core.node.port.PortType;
 
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
 import io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject;
-import io.landysh.inflor.java.knime.views.CellLineageRenderer;
 
 /**
  * This is the model implementation of ColumnStoreToTableCell. Converts a
@@ -53,8 +52,8 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
       throws InvalidSettingsException {
     final DataColumnSpecCreator colSpec =
         new DataColumnSpecCreator("Listmode Data", FCSFrameCell.TYPE);
-    colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
-        DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
+//    colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
+//        DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
     final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
     return new DataTableSpec[] {spec};
   }

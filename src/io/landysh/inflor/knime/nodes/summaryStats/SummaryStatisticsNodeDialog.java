@@ -1,11 +1,11 @@
 package io.landysh.inflor.knime.nodes.summaryStats;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -25,7 +25,6 @@ import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.java.knime.core.NodeUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
-import sun.awt.windows.WEmbeddedFrame;
 
 /**
  * <code>NodeDialog</code> for the "SummaryStatistics" Node. Extract basic summary statistics from a
@@ -105,7 +104,7 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
   }
 
   protected void popStatEditorDialog() {
-    WEmbeddedFrame topFrame = (WEmbeddedFrame) SwingUtilities.getWindowAncestor(this.getPanel());
+     Window topFrame = SwingUtilities.getWindowAncestor(this.getPanel());
 
     StatEditorDialog dialog = new StatEditorDialog(topFrame, Arrays.asList(dimensionNames), Arrays.asList(subsetNames));
     dialog.setVisible(true);

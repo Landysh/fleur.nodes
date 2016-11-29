@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 
 import io.landysh.inflor.java.core.transforms.LogicleTransform;
-import io.landysh.inflor.java.core.transforms.TickFormatter;
 
 @SuppressWarnings("serial")
 public class LogicleNumberFormat extends NumberFormat {
@@ -27,7 +26,7 @@ public class LogicleNumberFormat extends NumberFormat {
     if (Math.abs(iVal) <= 990) {
       tickLabel = Integer.toString(iVal);
     } else {
-      tickLabel = TickFormatter.findLogTick(iVal);
+      tickLabel = LogicleTickFormatter.findLogTick(iVal);
     }
     StringBuffer buffer = new StringBuffer(tickLabel);
     return buffer;

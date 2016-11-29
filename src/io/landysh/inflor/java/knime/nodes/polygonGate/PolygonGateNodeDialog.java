@@ -4,20 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
@@ -31,13 +25,9 @@ import org.knime.core.node.NotConfigurableException;
 import io.landysh.inflor.java.core.dataStructures.FCSFrame;
 import io.landysh.inflor.java.core.gates.AbstractGate;
 import io.landysh.inflor.java.core.gates.ui.GateCreationToolBar;
-import io.landysh.inflor.java.core.plots.ChartSpec;
 import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.ui.CellLineageTree;
 import io.landysh.inflor.java.core.utils.FCSUtilities;
 import io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell;
-import io.landysh.inflor.java.knime.nodes.createGates.ui.ChartEditorDialog;
-import sun.awt.windows.WEmbeddedFrame;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -69,15 +59,6 @@ public class PolygonGateNodeDialog extends DataAwareNodeDialogPane {
     m_analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
     
     super.addTab("Analysis", m_analyisTab);
-  }
-
-  private FCSChartPanel createAnalysisArea() {
-    FCSChartPanel fcsPanel = new FCSChartPanel(null, null, null);//TODO
-    fcsPanel.add(new GateCreationToolBar(fcsPanel));
-    FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
- 
-    List<AbstractGate> gates = modelSettings.findGates(dataFrame.getID());
-    return fcsPanel;
   }
 
   private JPanel createOptionsPanel() {
