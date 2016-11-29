@@ -10,13 +10,13 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gates.Hierarchical;
-import io.landysh.inflor.java.core.gates.RectangleGate;
-import io.landysh.inflor.java.core.plots.ChartSpec;
-import io.landysh.inflor.java.core.plots.PlotTypes;
-import io.landysh.inflor.java.core.ui.CellLineageTree;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.gates.Hierarchical;
+import io.landysh.inflor.main.core.gates.RectangleGate;
+import io.landysh.inflor.main.core.plots.ChartSpec;
+import io.landysh.inflor.main.core.plots.PlotTypes;
+import io.landysh.inflor.main.core.ui.CellLineageTree;
 
 @SuppressWarnings("serial")
 public class LineageViewUITest extends ApplicationFrame {

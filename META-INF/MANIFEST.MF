@@ -19,8 +19,6 @@ Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
  lib/jgraphx.jar,
  lib/junit-4.11.jar,
  lib/Logicle.jar,
- lib/orsoncharts-1.4-eval-nofx.jar,
- lib/orsonpdf-1.6-eval.jar,
  lib/protobuf-java-2.6.1.jar,
  fcsreader.jar,
  lib/EJML-core-0.29.jar,
@@ -28,5 +26,5 @@ Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
  lib/EJML-denseC64-0.29.jar,
  lib/EJML-equation-0.29.jar,
  lib/EJML-simple-0.29.jar
-Bundle-Activator: io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSNodePlugin
+Bundle-Activator: io.landysh.inflor.main.knime.nodes.readFCS.ReadFCSNodePlugin
 Bundle-ActivationPolicy: lazy

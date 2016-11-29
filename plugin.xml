@@ -14,23 +14,23 @@
    -->2
    
 <extension point="org.knime.workbench.repository.nodes">
-	<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSTableNodeFactory" id="ReadFCSTable"/>
+	<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.readFCS.ReadFCSTableNodeFactory" id="ReadFCSTable"/>
 	<node category-path="/inflor/experimental" factory-class="io.landysh.inflor.java.knime.nodes.calculateTSNE.TSNENodeFactory" id="CalculateTSNE"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.FindSingletsNodeFactory" id="FilterSingletsTable"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.readFCS.ReadFCSFrameNodeFactory" id="ReadFCSFrame"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.removeDoublets.FindSingletsNodeFactory" id="FilterSingletsTable"/>
 <node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.learnCellCycle.LearnCellCycleNodeFactory" id="ModelCellCycle"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsFrameNodeFactory" id="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsFrameNodeFactory"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.downsample.DownsampleNodeFactory" id="io.landyish.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
-<node category-path="/inflor" factory-class="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory" id="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory" id="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.removeDoublets.RemoveDoubletsFrameNodeFactory" id="io.landysh.inflor.java.knime.nodes.findSinglets.FindSingletsFrameNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.downsample.DownsampleNodeFactory" id="io.landyish.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory" id="io.landysh.inflor.java.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.readFCS.ReadFCSSetNodeFactory" id="io.landysh.inflor.java.knime.nodes.readFCS.ReadFCSSetNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory" id="io.landysh.inflor.java.knime.nodes.removeDoublets.RemoveDoubletsNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory" id="io.landysh.inflor.java.knime.nodes.viabilityFilter.FilterViableNodeFactory"/>
 <node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory" id="io.landysh.inflor.java.knime.nodes.BHTSNE.BHTSNENodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory" id="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory" id="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.compensate.CompensateNodeFactory" id="io.landysh.inflor.java.knime.nodes.compensate.CompensateNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.transform.TransformNodeFactory" id="io.landysh.inflor.java.knime.nodes.transform.TransormNodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.java.knime.nodes.polygonGate.PolygonGateNodeFactory" id="io.landysh.inflor.java.knime.nodes.polygonGate.PolygonGateNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.createGates.CreateGatesNodeFactory" id="io.landysh.inflor.java.knime.nodes.createGates.CreateGatesNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.summaryStats.SummaryStatisticsNodeFactory" id="io.landysh.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.compensate.CompensateNodeFactory" id="io.landysh.inflor.java.knime.nodes.compensate.CompensateNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.transform.TransformNodeFactory" id="io.landysh.inflor.java.knime.nodes.transform.TransormNodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.polygonGate.PolygonGateNodeFactory" id="io.landysh.inflor.java.knime.nodes.polygonGate.PolygonGateNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -38,11 +38,11 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.AVSPort" objectClass="io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject" objectSerializer="io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortObject$Serializer" specClass="io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortSpec" specSerializer="io.landysh.inflor.java.knime.portTypes.fcsFrame.FCSFramePortSpec$Serializer"/>
+      <portType color="#9B30FF" hidden="false" name="Inflor.AVSPort" objectClass="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject" objectSerializer="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject$Serializer" specClass="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec" specSerializer="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec$Serializer"/>
 </extension>
 <extension point="org.knime.core.DataType">
-   <DataType cellClass="io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell" factoryClass="io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCellFactory">
-      <serializer cellClass="io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell" serializerClass="io.landysh.inflor.java.knime.dataTypes.FCSFrameCell.FCSFrameCell$ColumnStoreCellSerializer">
+   <DataType cellClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell" factoryClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellFactory">
+      <serializer cellClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell" serializerClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell$ColumnStoreCellSerializer">
       </serializer>
    </DataType>
 </extension>

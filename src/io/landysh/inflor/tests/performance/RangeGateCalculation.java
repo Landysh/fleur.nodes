@@ -2,10 +2,10 @@ package io.landysh.inflor.tests.performance;
 
 import java.util.ArrayList;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gates.RangeGate;
-import io.landysh.inflor.java.core.gates.RectangleGate;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.gates.RangeGate;
+import io.landysh.inflor.main.core.gates.RectangleGate;
 
 public class RangeGateCalculation {
   static final int numFiles = 1;

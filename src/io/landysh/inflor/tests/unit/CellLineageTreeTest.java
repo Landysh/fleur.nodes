@@ -7,11 +7,11 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gates.Hierarchical;
-import io.landysh.inflor.java.core.gates.RectangleGate;
-import io.landysh.inflor.java.core.ui.CellLineageTree;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.gates.Hierarchical;
+import io.landysh.inflor.main.core.gates.RectangleGate;
+import io.landysh.inflor.main.core.ui.CellLineageTree;
 
 public class CellLineageTreeTest{
 
