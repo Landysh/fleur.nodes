@@ -7,7 +7,7 @@ Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.knime.workbench.core,
  org.knime.base,
  org.knime.workbench.repository,
- org.eclipse.core.runtime.compatibility
+ org.knime.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.collect
 Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
