@@ -1,9 +1,7 @@
 package io.landysh.inflor.main.knime.nodes.readFCS;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
-import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;
 import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;
-import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 /**
@@ -27,9 +25,5 @@ public class ReadFCSNodeDialog extends DefaultNodeSettingsPane {
         new SettingsModelString(ReadFCSTableNodeModel.CFGKEY_FileLocation,
             ReadFCSTableNodeModel.DEFAULT_FileLocation),
         "foo", "fcs"));
-
-    addDialogComponent(
-        new DialogComponentBoolean(new SettingsModelBoolean(ReadFCSTableNodeModel.KEY_Compensate,
-            ReadFCSTableNodeModel.DEFAULT_Compensate), "Compensate on read"));
   }
 }
