@@ -14,16 +14,16 @@ import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 
 public class FCSFrameContent {
 
-  public static final class CellSerializer implements DataCellSerializer<FCSFrameCell> {
+  public static final class CellSerializer implements DataCellSerializer<FCSFrameFileStoreDataCell> {
 
     @Override
-    public FCSFrameCell deserialize(DataCellDataInput input) throws IOException {
+    public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
         final byte[] bytes = new byte[input.readInt()];
         input.readFully(bytes);
         FCSFrame cStore;
         cStore = FCSFrame.load(bytes);
-        final FCSFrameCell newCell = new FCSFrameCell(cStore);
+        final FCSFrameFileStoreDataCell newCell = new FCSFrameFileStoreDataCell(cStore);
         return newCell;
       } catch (final Exception e) {
         e.printStackTrace();
@@ -32,14 +32,14 @@ public class FCSFrameContent {
     }
 
     @Override
-    public void serialize(FCSFrameCell cell, DataCellDataOutput output) throws IOException {
-      final byte[] bytes = cell.getFCSFrame().save();
+    public void serialize(FCSFrameFileStoreDataCell cell, DataCellDataOutput output) throws IOException {
+      final byte[] bytes = cell.getFCSFrameValue().save();
       output.writeInt(bytes.length);
       output.write(bytes);
     }
   }
 
-  public static final DataType TYPE = DataType.getType(FCSFrameCell.class);
+  public static final DataType TYPE = DataType.getType(FCSFrameFileStoreDataCell.class);
 
   private FCSFrame m_data = null;
 
@@ -55,7 +55,7 @@ public class FCSFrameContent {
     return m_data;
   }
 
-  public FCSFrameCell toColumnStoreCell(FileStore fs) {
-    return new FCSFrameCell(fs, m_data);
+  public FCSFrameFileStoreDataCell toColumnStoreCell(FileStore fs) {
+    return new FCSFrameFileStoreDataCell(fs, m_data);
   }
 }
