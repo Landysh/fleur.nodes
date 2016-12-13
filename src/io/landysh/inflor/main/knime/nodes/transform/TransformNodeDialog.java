@@ -38,7 +38,7 @@ import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.transforms.LogicleTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.
@@ -137,7 +137,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
@@ -179,7 +179,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     // Hold on to a reference of the data so we can plot it later.
     dataSet = new ArrayList<FCSFrame>();
     for (final DataRow row : table) {
-      final FCSFrame dataFrame = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+      final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
       dataSet.add(dataFrame);
     }
 

@@ -36,7 +36,7 @@ import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of ReadFCSSet.
@@ -139,7 +139,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 
   private DataColumnSpec createFCSColumnSpec() {
     DataColumnSpecCreator creator =
-        new DataColumnSpecCreator("FCS Frame", FCSFrameCell.TYPE);
+        new DataColumnSpecCreator("FCS Frame", FCSFrameFileStoreDataCell.TYPE);
     // Create properties
     HashMap<String, String> content = createColumnPropertiesContent();
     DataColumnProperties properties = new DataColumnProperties(content);
@@ -170,8 +170,10 @@ public class ReadFCSSetNodeModel extends NodeModel {
     final ArrayList<String> filePaths = getFilePaths(m_path.getStringValue());
     fileCount = filePaths.size();
     exec.checkCanceled();
-    filePaths.parallelStream().map(path -> FCSFileReader.read(path))
-        .forEach(columnStore -> addRow(columnStore, container, exec));
+    filePaths
+      .parallelStream()
+      .map(path -> FCSFileReader.read(path))
+      .forEach(columnStore -> addRow(columnStore, container, exec));
     exec.checkCanceled();
 
     // once we are done, we close the container and return its table
@@ -187,7 +189,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     FileStore fileStore;
     try {
       fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, columnStore);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, columnStore);
       final DataCell[] cells = new DataCell[] {fileCell};
 
       final DataRow row = new DefaultRow(key, cells);

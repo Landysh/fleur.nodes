@@ -27,7 +27,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.main.core.dataStructures.FCSFrame;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of SummaryStatistics. Extract basic summary statistics from a
@@ -90,14 +90,14 @@ public class SummaryStatisticsNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       DataCell[] outCells = new DataCell[inRow.getNumCells() + statDefinitions.size()];
-      FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
+      FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
 
       // now create the output row
       FCSFrame outStore = inStore.deepCopy();
       
       String fsName = i + "ColumnStore.fs";
       FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
+      FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
       inRow.getNumCells();
       for (int j = 0; j < inRow.getNumCells(); j++) {
         if (j == index) {

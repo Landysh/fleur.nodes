@@ -31,7 +31,7 @@ import io.landysh.inflor.main.core.plots.PlotUtils;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Transform.
@@ -78,12 +78,12 @@ public class TransformNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(columnIndex)).getFCSFrame();
+      final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
       // now create the output row
       final FCSFrame outStore = applyTransforms(inStore, transformSet);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == columnIndex) {
@@ -103,7 +103,7 @@ public class TransformNodeModel extends NodeModel {
   private void createTransformSet(BufferedDataTable[] inData, ExecutionContext exec, int columnIndex) {
     List<FCSFrame> fileList = new ArrayList<FCSFrame>();
     for (DataRow inRow : inData[0]) {
-      FCSFrame fcsStore = ((FCSFrameCell) inRow.getCell(columnIndex)).getFCSFrame();
+      FCSFrame fcsStore = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
       fileList.add(fcsStore);
     }
     modelSettings.optimizeTransforms(fileList);
@@ -140,7 +140,7 @@ public class TransformNodeModel extends NodeModel {
     final DataTableSpec spec = inSpecs[0];
     if (modelSettings.getSelectedColumn()==null){
       for (final String name : spec.getColumnNames()) {
-        if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+        if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
           modelSettings.setSelectedColumn(name);
         }
       }

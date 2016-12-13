@@ -34,7 +34,7 @@ import io.landysh.inflor.main.core.dataStructures.Subset;
 import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.GateUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of CreateGates.
@@ -112,7 +112,7 @@ public class CreateGatesNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
 
       // now create the output row
       final FCSFrame outStore = inStore.deepCopy();
@@ -129,7 +129,7 @@ public class CreateGatesNodeModel extends NodeModel {
       
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

@@ -23,7 +23,7 @@ import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -100,7 +100,7 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
@@ -139,7 +139,7 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
     HashSet<String> parameterSet = new HashSet<String>();
 
     for (DataRow row : table) {
-      FCSFrame cStoreData = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+      FCSFrame cStoreData = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
       selectSampleBox.addItem(cStoreData);
       List<String> newParameters =cStoreData.getColumnNames();
       parameterSet.addAll(newParameters);

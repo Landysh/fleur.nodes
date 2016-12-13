@@ -24,7 +24,7 @@ import org.knime.core.node.NodeSettingsWO;
 import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 import io.landysh.inflor.main.core.singlets.SingletsModel;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 import io.landysh.inflor.main.knime.nodes.readFCS.ReadFCSSetNodeModel;
 
 /**
@@ -81,7 +81,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame columnStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame columnStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
       final SingletsModel model = new SingletsModel(columnStore.getColumnNames().toArray(new String[columnStore.getColumnNames().size()]));
       final double[] areaData = columnStore.getFCSDimensionByShortName(areaColumn).getData();
       final double[] heightData = columnStore.getFCSDimensionByShortName(heightColumn).getData();//TODO: DisplayName or shortName?
@@ -92,7 +92,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
       final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

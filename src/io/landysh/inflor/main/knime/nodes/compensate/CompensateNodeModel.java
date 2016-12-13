@@ -28,7 +28,7 @@ import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Compensate. Will extract a compensation matrix from am FCS
@@ -75,14 +75,14 @@ public class CompensateNodeModel extends NodeModel {
     for (final DataRow inRow : inData[0]) {
 
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame columnStore = ((FCSFrameCell) inRow.getCell(index)).getFCSFrame();
+      final FCSFrame columnStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
 
 
       // now create the output row
       final FCSFrame outStore = compr.compensateFCSFrame(columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameCell fileCell = new FCSFrameCell(fileStore, outStore);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {
@@ -133,7 +133,7 @@ public class CompensateNodeModel extends NodeModel {
     newColumnNames.put(NodeUtilities.DIMENSION_NAMES_KEY, combinedNames);
     DataColumnProperties newProps = properties.cloneAndOverwrite(newColumnNames);
     
-    DataColumnSpecCreator creator = new DataColumnSpecCreator(columnName, FCSFrameCell.TYPE);
+    DataColumnSpecCreator creator = new DataColumnSpecCreator(columnName, FCSFrameFileStoreDataCell.TYPE);
     creator.setProperties(newProps);
     DataColumnSpec newSpec = creator.createSpec();
     DataColumnSpec[] colSpecs = new DataColumnSpec[dataTableSpec.getColumnNames().length];

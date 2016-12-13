@@ -33,7 +33,7 @@ import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.core.gates.ui.LineageTreeMouseAdapter;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -148,7 +148,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
@@ -190,7 +190,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     dataSet = new ArrayList<FCSFrame>();
     
     for (DataRow row : table) {
-      FCSFrame dataFrame = ((FCSFrameCell) row.getCell(fcsColumnIndex)).getFCSFrame();
+      FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
       dataSet.add(dataFrame);
       List<String> newParameters =dataFrame.getColumnNames();
       parameterSet.addAll(newParameters);
