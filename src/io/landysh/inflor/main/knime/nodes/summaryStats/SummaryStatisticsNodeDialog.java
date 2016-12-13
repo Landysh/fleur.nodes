@@ -24,7 +24,7 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCell;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "SummaryStatistics" Node. Extract basic summary statistics from a
@@ -151,7 +151,7 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
-      if (spec.getColumnSpec(name).getType() == FCSFrameCell.TYPE) {
+      if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
