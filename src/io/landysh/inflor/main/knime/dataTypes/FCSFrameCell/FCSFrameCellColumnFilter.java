@@ -12,7 +12,7 @@ public class FCSFrameCellColumnFilter implements ColumnFilter {
 
   @Override
   public boolean includeColumn(DataColumnSpec colSpec) {
-    if (colSpec.getType() == FCSFrameCell.TYPE) {
+    if (colSpec.getType() == FCSFrameFileStoreDataCell.TYPE) {
       return true;
     } else {
       return false;
