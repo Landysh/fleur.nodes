@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 
 public class EventFrameTest {
 

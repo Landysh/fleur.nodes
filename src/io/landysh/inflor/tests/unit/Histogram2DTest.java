@@ -2,7 +2,7 @@ package io.landysh.inflor.tests.unit;
 
 import org.junit.Test;
 
-import io.landysh.inflor.java.core.dataStructures.Histogram2D;
+import io.landysh.inflor.main.core.dataStructures.Histogram2D;
 
 import static org.junit.Assert.assertEquals;
 

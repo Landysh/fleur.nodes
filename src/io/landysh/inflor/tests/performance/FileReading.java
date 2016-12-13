@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
 
 public class FileReading {
   static final int numFiles = 10;

@@ -7,15 +7,15 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-import io.landysh.inflor.java.core.dataStructures.FCSDimension;
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
-import io.landysh.inflor.java.core.gates.ui.GateCreationToolBar;
-import io.landysh.inflor.java.core.plots.ChartSpec;
-import io.landysh.inflor.java.core.plots.DensityPlot;
-import io.landysh.inflor.java.core.plots.FCSChartPanel;
-import io.landysh.inflor.java.core.plots.PlotTypes;
-import io.landysh.inflor.java.core.utils.FCSUtilities;
+import io.landysh.inflor.main.core.dataStructures.FCSDimension;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.gates.ui.GateCreationToolBar;
+import io.landysh.inflor.main.core.plots.ChartSpec;
+import io.landysh.inflor.main.core.plots.DensityPlot;
+import io.landysh.inflor.main.core.plots.FCSChartPanel;
+import io.landysh.inflor.main.core.plots.PlotTypes;
+import io.landysh.inflor.main.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class ContourPlotTest_UI extends ApplicationFrame {

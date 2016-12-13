@@ -4,11 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-// TestDependencies
-import io.landysh.inflor.java.core.dataStructures.FCSFrame;
-
-// Class we are testing.
-import io.landysh.inflor.java.core.fcs.FCSFileReader;
+import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
   // Define Constants
