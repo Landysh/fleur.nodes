@@ -149,4 +149,30 @@ public class SpilloverCompensator extends DomainObject {
   public double[][] getMatrix() {
     return rawMatrix;
   }
+
+  public String[] getInputDimensions() {
+    // TODO Auto-generated method stub
+    return compParameters;
+  }
+
+  public String[] getOutputDimensions() {
+    String[] outDims = compParameters.clone();
+    for (int i=0;i<outDims.length;i++){
+      outDims[i] = "[" + outDims[i] + "]";
+    }
+    return outDims;
+  }
+  
+  public double[] getSpilloverValues() {
+    int inDimCount = getInputDimensions().length;
+    int outDimCount= getOutputDimensions().length;
+    double[] spills = new double[ inDimCount * outDimCount];
+    for (int i=0;i<inDimCount;i++){
+      for (int j=0;j<outDimCount;j++){
+        spills[j*i+i] = rawMatrix[i][j];
+      }
+    }
+    return spills;
+  }
+  
 }
