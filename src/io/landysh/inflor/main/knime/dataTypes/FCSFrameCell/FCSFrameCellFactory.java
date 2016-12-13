@@ -1,3 +1,23 @@
+/*
+ * ------------------------------------------------------------------------
+ *  Copyright by Aaron Hart
+ *  Email: Aaron.Hart@gmail.com
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License, Version 3, as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * ---------------------------------------------------------------------
+ *
+ * Created on December 13, 2016 by Aaron Hart
+ */
 package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
 
 import java.io.ByteArrayOutputStream;
@@ -14,24 +34,13 @@ import org.knime.core.util.FileUtil;
 
 public class FCSFrameCellFactory implements FromInputStream {
 
-  /**
-   * The data type for cells created using this factory.
-   */
-  public static final DataType TYPE = FCSFrameContent.TYPE;
-
   private final FileStoreFactory m_fileStoreFactory;
 
   public FCSFrameCellFactory() {
-    /**
-     * Use with views
-     */
     m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
   }
 
   public FCSFrameCellFactory(ExecutionContext exec) {
-    /**
-     * Use during node execution.
-     */
     m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
   }
 
@@ -43,13 +52,12 @@ public class FCSFrameCellFactory implements FromInputStream {
     final byte[] buffer = output.toByteArray();
     // Create the file store.
     final FileStore fs = m_fileStoreFactory.createFileStore("column.store");
-    final FCSFrameCell cell = new FCSFrameContent(buffer).toColumnStoreCell(fs);
+    final FCSFrameFileStoreDataCell cell = new FCSFrameContent(buffer).toColumnStoreCell(fs);
     return cell;
   }
 
   @Override
   public DataType getDataType() {
-    return TYPE;
+    return FCSFrameFileStoreDataCell.TYPE;
   }
-
 }
