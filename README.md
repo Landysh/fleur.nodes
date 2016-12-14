@@ -2,12 +2,9 @@ Inflor
 --------------------------------------------
 Open Source Flow Cytometry Nodes for KNIME.
 
-### License
-GPLv3
-https://www.gnu.org/licenses/gpl-3.0.en.html
 
 ### Installation
-Good Luck.
+ Build automation _in progress_.
 
 ### Useage 
-More luck.
+_coming soon_
