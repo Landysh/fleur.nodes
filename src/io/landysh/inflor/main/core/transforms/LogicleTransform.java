@@ -1,3 +1,23 @@
+/*
+ * ------------------------------------------------------------------------
+ *  Copyright 2016 by Aaron Hart
+ *  Email: Aaron.Hart@gmail.com
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License, Version 3, as
+ *  published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * ---------------------------------------------------------------------
+ *
+ * Created on December 14, 2016 by Aaron Hart
+ */
 package io.landysh.inflor.main.core.transforms;
 
 import java.io.IOException;
@@ -7,9 +27,10 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import edu.stanford.facs.logicle.FastLogicle;
 
-@SuppressWarnings("serial")
 public class LogicleTransform extends AbstractTransform implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private static final double LOGICLE_W_PERCENTILE = 5;
   private static final double dt = 262144;
   private static final double dw = 0.5;
@@ -119,6 +140,12 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   public double getMaxRawValue() {
     return t;
   }
+  
+  @Override
+  public String toString() {
+    return "Logicle: w:" + w + " , @" + getID();
+  }
+
 
   public double[] getAxisValues() {
     return logicle.axisLabels();
