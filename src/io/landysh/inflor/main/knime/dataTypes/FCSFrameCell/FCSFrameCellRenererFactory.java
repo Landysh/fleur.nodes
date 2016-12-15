@@ -18,33 +18,35 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package io.landysh.inflor.main.core.plots;
+package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
 
-import java.util.HashMap;
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.renderer.DataValueRenderer;
+import org.knime.core.data.renderer.DataValueRendererFactory;
 
-import org.jfree.data.xy.DefaultXYZDataset;
+public class FCSFrameCellRenererFactory implements DataValueRendererFactory {
 
-@SuppressWarnings("serial")
-public class CategoryXYZDataSet extends DefaultXYZDataset {
+  private static final String DESCRIPTION = "FCS Frame Cell Summary";
+  private static final String ID = "io.landysh.inflor.FCSFrameCellRenderer";
 
-  private HashMap<Integer, String> labelMap;
-
-  public CategoryXYZDataSet() {
-    super();
-    labelMap = new HashMap<Integer, String>();
+  public FCSFrameCellRenererFactory() {
+    // TODO Auto-generated constructor stub
   }
 
-  public synchronized void addCategoricalSeries(String name, double[] xValues, double[] zValues) {
-    double[] yValues = new double[xValues.length];
-    int yValue = this.getSeriesCount();
-    for (int i = 0; i < yValues.length; i++) {
-      yValues[i] = yValue;
-    }
-    labelMap.put(yValue, name);
-    this.addSeries(name, new double[][] {xValues, yValues, zValues});
+  @Override
+  public String getDescription() {
+    return DESCRIPTION;
   }
 
-  public HashMap<Integer, String> getLabelMap() {
-    return this.labelMap;
+  @Override
+  public String getId() {
+    return ID;
   }
+
+  @Override
+  public DataValueRenderer createRenderer(DataColumnSpec colSpec) {
+    FCSFrameDataValueRenderer renderer = new FCSFrameDataValueRenderer("Foobar");
+    return renderer;
+  }
+
 }

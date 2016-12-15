@@ -59,7 +59,7 @@
    <dataValue
          valueClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameDataValue">
       <renderer
-            rendererFactoryClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellRenererFactory1"
+            rendererFactoryClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellRenererFactory"
             suggestAsDefault="true">
       </renderer>
    </dataValue>
