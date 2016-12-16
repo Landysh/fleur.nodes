@@ -31,8 +31,7 @@ public class CompMatrixPortObject extends AbstractSimplePortObject {
 
   @Override
   public PortObjectSpec getSpec() {
-    // TODO Auto-generated method stub
-    return null;
+    return new CompMatrixPortSpec(m_inputDimensions, m_outputDimensions);
   }
 
   @Override
