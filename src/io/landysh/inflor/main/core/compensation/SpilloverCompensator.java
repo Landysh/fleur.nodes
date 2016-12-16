@@ -40,7 +40,6 @@ public class SpilloverCompensator extends DomainObject {
 
   // Compensation details
   public String[] compParameters;
-  private Integer[] compParameterMap;
   private DenseMatrix64F compMatrix;
   private double[][] rawMatrix;
 
@@ -58,25 +57,28 @@ public class SpilloverCompensator extends DomainObject {
     validate();
   }
 
+  public SpilloverCompensator(String[] inDimensionList, String[] outDimensionList,
+      Double[] spilloverValues, String priorUUID) {
+    super(priorUUID);
+    rawMatrix = new double[inDimensionList.length][outDimensionList.length];
+    for (int i=0;i<inDimensionList.length;i++){
+      for (int j=0;j<outDimensionList.length;j++){
+        rawMatrix[i][j] = spilloverValues[i*j + j];
+      }
+    }
+    compMatrix = new DenseMatrix64F(rawMatrix);
+    invert(compMatrix);
+  }
+  
+  public SpilloverCompensator(String[] dimensionList, String[] outDimensionList,
+      Double[] spilloverValues) {
+    this(dimensionList, outDimensionList, spilloverValues, null);
+  }
+
   private void validate() {
     if (compParameters.length <= 1) {
       throw new RuntimeException("Invalid compensation matrix");
     }
-  }
-
-  // TODO: Unit test
-  public double[] compensateRow(double[] FCSRow) {
-    double[] compedRow = new double[compParameters.length];
-    final double[] unCompedRow = new double[compParameters.length];
-    for (int i = 0; i < compParameters.length; i++) {
-      final int index = compParameterMap[i];
-      unCompedRow[i] = FCSRow[index];
-    }
-    final DenseMatrix64F unCompedVector = new DenseMatrix64F(new double[][] {unCompedRow});
-    final DenseMatrix64F c = new DenseMatrix64F(new double[][] {unCompedRow});
-    mult(unCompedVector, compMatrix, c);
-    compedRow = c.data;
-    return compedRow;
   }
 
   public String[] getCompParameterNames() {
@@ -107,11 +109,8 @@ public class SpilloverCompensator extends DomainObject {
       }
       final double[][] matrix = new double[p][p];
       final String[] compPars = new String[p];
-      final Integer[] pMap = new Integer[p];
       for (int i = 0; i < compPars.length; i++) {
         compPars[i] = s[i + 1];
-        final String parameterName = compPars[i];
-        pMap[i] = FCSUtilities.findParameterNumnberByName(keywords, parameterName);
         final double[] row = new double[p];
         for (int j = 0; j < p; j++) {
           final int index = 1 + p + i * p + j;
@@ -119,7 +118,6 @@ public class SpilloverCompensator extends DomainObject {
         }
         matrix[i] = row;
       }
-      compParameterMap = pMap;
       compParameters = compPars;
       return matrix;
     } else {
@@ -171,7 +169,6 @@ public class SpilloverCompensator extends DomainObject {
   }
 
   public String[] getInputDimensions() {
-    // TODO Auto-generated method stub
     return compParameters;
   }
 
@@ -194,5 +191,12 @@ public class SpilloverCompensator extends DomainObject {
     }
     return spills;
   }
-  
+
+  public boolean isEmpty() {
+    boolean isEmpty = true;
+    for (double d:getSpilloverValues()){
+      if (d!=0){isEmpty = false; break;}
+    }
+    return isEmpty;
+  }
 }
