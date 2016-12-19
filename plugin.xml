@@ -24,7 +24,8 @@
 <node after="inflor.readFCSSet" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.compensate.CompensateNodeFactory" id="inflor.compensate"/>
 <node after="inflor.compensate" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.transform.TransformNodeFactory" id="iinflor.transform"/>
 <node after="inflor.compensate" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.experimental.extractCompensation.ExtractCommpensationNodeFactory" id="inflor.ExtractCommpensation"/>
-<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.experimental.extractCompJo.ExtractCompJONodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.extractCompJo.ExtractCompJONodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.experimental.comp.fj9.ExtractCompJONodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.extractCompJo.ExtractCompJONodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.experimental.comp.apply.ApplyCompensationNodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.ApplyCompensationNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -35,7 +36,7 @@
 
 <extension point="org.knime.core.PortType">
       <portType color="#9B30FF" hidden="false" name="Inflor.FCSFramePort" objectClass="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject" objectSerializer="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject$Serializer" specClass="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec" specSerializer="io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec$Serializer"/>
-      <portType color="#F300FF" hidden="false" name="Inflor.compMatrix" objectClass="io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortObject" objectSerializer="io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortObject$Serializer" specClass="io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortSpec" specSerializer="io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortSpec.Serializer">
+      <portType color="#F300FF" hidden="false" name="Inflor.compMatrix" objectClass="io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject" objectSerializer="io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject$Serializer" specClass="io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortSpec" specSerializer="io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortSpec.Serializer">
       </portType>
 </extension>
 <extension point="org.knime.core.DataType">
