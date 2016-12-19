@@ -3,6 +3,7 @@ package io.landysh.inflor.main.knime.nodes.experimental.extractCompensation;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
@@ -20,8 +21,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
-import io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortObject;
-import io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortSpec;
+import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject;
+import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortSpec;
 
 /**
  * This is the node model implementation for FCSReader. It is designed to use the Inflor
@@ -68,8 +69,8 @@ public class ExtractCommpensationNodeModel extends NodeModel {
     return new CompMatrixPortSpec[] {spec};
   }
 
-  private CompMatrixPortSpec createPortSpec(HashMap<String, String> header) {
-    SpilloverCompensator compr = new SpilloverCompensator(header);
+  private CompMatrixPortSpec createPortSpec(Map<String, String> map) {
+    SpilloverCompensator compr = new SpilloverCompensator(map);
     String[] inDims = compr.getInputDimensions();
     String[] outDims = compr.getOutputDimensions();
     final CompMatrixPortSpec spec = new CompMatrixPortSpec(inDims, outDims);

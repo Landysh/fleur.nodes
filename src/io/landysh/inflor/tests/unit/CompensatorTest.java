@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.junit.Test;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 
 public class CompensatorTest {
@@ -81,7 +81,7 @@ public class CompensatorTest {
 
     // Assert
     for (int i = 0; i < truth.length; i++) {
-      assertEquals(Integer.toString(i), actual[i], actual[i], Double.MIN_VALUE);
+      assertEquals(Integer.toString(i), truth[i], actual[i], Double.MIN_VALUE);//TODO
     }
   }
 }

@@ -19,8 +19,8 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.ParameterTypes;
 import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.ui.GateCreationToolBar;
@@ -41,7 +41,6 @@ public class ChartEditorDialog extends JDialog {
 
   private static final String HORIZONTAL_AXIS_GROUP_LABEL = "Horizontal Axis";
   private static final String RANGE_AXIS_GROUP_LABEL = "Vertical Axis";
-  // private static final Frame parent;
   protected JPanel previewPanel;
   protected JPanel settingsPanel;
   protected JPanel contentPanel;
@@ -49,10 +48,9 @@ public class ChartEditorDialog extends JDialog {
   private ChartSpec localSpec;
   private FCSFrame dataFrame;
 
-  public boolean isOK = false;
+  private boolean isOK = false;
   private JComboBox<FCSDimension> domainParameterSelector;
   private JComboBox<FCSDimension> rangeParameterSelector;
-  private JProgressBar progressBar;
   private AbstractFCChart previewPlot;
   private FCSChartPanel chartPanel;
   private GateCreationToolBar gatingToolBar;
@@ -95,7 +93,7 @@ public class ChartEditorDialog extends JDialog {
     if (domainDimension!=null){
       return domainDimension;
     } else {
-      return fcsFrame.getData().higher(fcsFrame.getData().last());
+      return fcsFrame.getData().first();
     }
   }
 
@@ -113,7 +111,6 @@ public class ChartEditorDialog extends JDialog {
 
   private JPanel createContentPanel(ChartSpec originalSpec) {
    // Create the panel
-   progressBar = new JProgressBar();
    contentPanel = new JPanel(new GridBagLayout());
 
    JButton okButton = createOkButton();
@@ -121,9 +118,9 @@ public class ChartEditorDialog extends JDialog {
    final JPanel buttonPanel = new JPanel(new FlowLayout());
    buttonPanel.add(okButton);
    buttonPanel.add(cancelButton);
-   domainParameterSelector = new JComboBox<FCSDimension>();
+   domainParameterSelector = new JComboBox<>();
    Component domainAxisGroup = createAxisGroup(HORIZONTAL_AXIS_GROUP_LABEL, domainParameterSelector);
-   rangeParameterSelector = new JComboBox<FCSDimension>();
+   rangeParameterSelector = new JComboBox<>();
    Component rangeAxisGroup = createAxisGroup(RANGE_AXIS_GROUP_LABEL, rangeParameterSelector);
    
    if (originalSpec!=null){
@@ -157,7 +154,6 @@ public class ChartEditorDialog extends JDialog {
       updatePreviewPlot();
      }
    });
-    // updatePreviewPlot();
     // GridLayout
    
    GridBagConstraints gbc = new GridBagConstraints();
@@ -176,7 +172,7 @@ public class ChartEditorDialog extends JDialog {
     gbc.gridy = 5;
     // ProgressBar
     gbc.gridy = 6;
-    progressBar = new JProgressBar();
+    JProgressBar progressBar = new JProgressBar();
     progressBar.setVisible(false);
     contentPanel.add(progressBar, gbc);
     contentPanel.add(buttonPanel, gbc);
@@ -218,7 +214,7 @@ public class ChartEditorDialog extends JDialog {
     TitledBorder groupBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), label);
     axisGroup.setBorder(groupBorder);
     
-    dataFrame.getData().forEach(dimension-> comboBox.addItem(dimension));
+    dataFrame.getData().forEach(comboBox::addItem);
     
     axisGroup.add(comboBox);
     return axisGroup;
@@ -269,5 +265,9 @@ public class ChartEditorDialog extends JDialog {
 
   public String getReferenceID() {
     return this.dataFrame.getID();
+  }
+
+  public boolean isOK() {
+    return isOK;
   }
 }

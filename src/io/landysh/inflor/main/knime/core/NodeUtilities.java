@@ -37,7 +37,7 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class NodeUtilities {
   
@@ -65,12 +65,12 @@ public class NodeUtilities {
     }
   }
 
-  public static void saveSerializable(NodeSettingsWO settings, String key, Serializable obj) {
+  public static void saveSerializable(NodeSettingsWO settings, String key, Serializable ser) {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ObjectOutputStream oos;
     try {
       oos = new ObjectOutputStream(bos);
-      oos.writeObject(obj);
+      oos.writeObject(ser);
       oos.flush();
     } catch (IOException e) {
       e.printStackTrace();
@@ -79,14 +79,14 @@ public class NodeUtilities {
     settings.addByteArray(key, chartBytes);
   }
   
-  public HashMap<String, String> createColumnPropertiesContent(List<FCSFrame> dataSet) throws Exception {
+  public Map<String, String> createColumnPropertiesContent(List<FCSFrame> dataSet) throws Exception {
     /**
      * Creates column properties for an FCS Set by looking all of the headers and setting shared
      * keyword values.
      */
-    final HashMap<String, String> content = new HashMap<String, String>();
+    final HashMap<String, String> content = new HashMap<>();
     HashSet<String> shortNames = new HashSet<>();
-    List<HashMap<String, String>> headers = dataSet
+    List<Map<String, String>> headers = dataSet
         .stream()
         .map(frame -> frame.getKeywords())
         .collect(Collectors.toList());

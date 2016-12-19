@@ -16,43 +16,46 @@ public class CompensateNodeSettings {
   private static final String SELECTED_COLUMN_KEY = "Selected Column";
   private static final String SPILLOVER_KEY = "Complensation reference";
 
-  private String m_selectedColumn;
-  private HashMap<String, String> m_spilloverRef;
+  private String mSelectedColumn;
+  private Map<String, String> mSpilloverReference;
 
-  public CompensateNodeSettings() {}
+  CompensateNodeSettings() {}
 
   public void save(NodeSettingsWO settings) {
-    NodeUtilities.saveSerializable(settings, SPILLOVER_KEY, m_spilloverRef);
-    settings.addString(SELECTED_COLUMN_KEY, m_selectedColumn);
+    NodeUtilities.saveSerializable(settings, SPILLOVER_KEY, (Serializable) mSpilloverReference);
+    settings.addString(SELECTED_COLUMN_KEY, mSelectedColumn);
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {
-    m_selectedColumn = settings.getString(SELECTED_COLUMN_KEY);
+    mSelectedColumn = settings.getString(SELECTED_COLUMN_KEY);
     Map<String, Serializable> map = NodeUtilities.loadMap(settings, SPILLOVER_KEY);
-    m_spilloverRef = new HashMap<String, String>();
+    mSpilloverReference = new HashMap<>();
     for (Entry<String, Serializable> e : map.entrySet()) {
-      m_spilloverRef.put(e.getKey(), (String) e.getValue());
+      mSpilloverReference.put(e.getKey(), (String) e.getValue());
     }
   }
 
   public String getSelectedColumn() {
-    return m_selectedColumn;
+    return mSelectedColumn;
   }
 
   public void setSelectedColumn(String selectedItem) {
-    m_selectedColumn = selectedItem;
+    mSelectedColumn = selectedItem;
   }
 
-  public void setHeader(HashMap<String, String> keywords) {
-    m_spilloverRef = keywords;
+  public void setHeader(Map<String, String> keywords) {
+    mSpilloverReference = keywords;
   }
 
-  public void validate(NodeSettingsRO settings) {
-    // TODO Auto-generated method stub
-
+  public void validate(NodeSettingsRO settings) throws InvalidSettingsException {
+    if (settings.getString(SELECTED_COLUMN_KEY) == null){
+      throw new InvalidSettingsException("Selected Column is null");
+    } else if (NodeUtilities.loadMap(settings, SPILLOVER_KEY)==null){
+      throw new InvalidSettingsException("Spillover reference is null");
+    }
   }
 
-  public HashMap<String, String> getReferenceHeader() {
-    return m_spilloverRef;
+  public Map<String, String> getReferenceHeader() {
+    return mSpilloverReference;
   }
 }

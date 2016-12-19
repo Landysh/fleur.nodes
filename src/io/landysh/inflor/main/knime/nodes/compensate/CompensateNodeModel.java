@@ -3,6 +3,7 @@ package io.landysh.inflor.main.knime.nodes.compensate;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
@@ -25,7 +26,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
 import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
@@ -42,7 +43,7 @@ public class CompensateNodeModel extends NodeModel {
   private static final NodeLogger logger = NodeLogger.getLogger(CompensateNodeModel.class);
 
 
-  private CompensateNodeSettings m_settings;
+  private CompensateNodeSettings mSettings;
 
 
   /**
@@ -50,7 +51,7 @@ public class CompensateNodeModel extends NodeModel {
    */
   protected CompensateNodeModel() {
     super(1, 1);
-    this.m_settings = new CompensateNodeSettings();
+    this.mSettings = new CompensateNodeSettings();
   }
 
   /**
@@ -66,9 +67,9 @@ public class CompensateNodeModel extends NodeModel {
     // Create the output spec and data container.
     final DataTableSpec outSpec = createSpec(inData[0].getDataTableSpec());
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
-    final String columnName = m_settings.getSelectedColumn();
+    final String columnName = mSettings.getSelectedColumn();
     final int index = outSpec.findColumnIndex(columnName);
-    final HashMap<String, String> referenceHeader = m_settings.getReferenceHeader();
+    Map<String, String> referenceHeader = mSettings.getReferenceHeader();
     SpilloverCompensator compr = new SpilloverCompensator(referenceHeader);
 
     int i = 0;
@@ -104,11 +105,7 @@ public class CompensateNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {
-    // TODO Code executed on reset.
-    // Models build during execute are cleared here.
-    // Also data handled in load/saveInternals will be erased here.
-  }
+  protected void reset() {}
 
   /**
    * {@inheritDoc}
@@ -121,7 +118,7 @@ public class CompensateNodeModel extends NodeModel {
   }
 
   private DataTableSpec createSpec(DataTableSpec dataTableSpec) {
-    String columnName = m_settings.getSelectedColumn();
+    String columnName = mSettings.getSelectedColumn();
     DataColumnSpec selectedColSpec = dataTableSpec.getColumnSpec(columnName);
     DataColumnProperties properties = selectedColSpec.getProperties();
     String dimensionNameString = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
@@ -129,7 +126,7 @@ public class CompensateNodeModel extends NodeModel {
     String[] updatedNames = updateDimensionNames(dimensionNames);
     String combinedNames = String.join(NodeUtilities.DELIMITER, updatedNames);
     
-    HashMap<String, String> newColumnNames = new HashMap<String, String>();
+    HashMap<String, String> newColumnNames = new HashMap<>();
     newColumnNames.put(NodeUtilities.DIMENSION_NAMES_KEY, combinedNames);
     DataColumnProperties newProps = properties.cloneAndOverwrite(newColumnNames);
     
@@ -150,7 +147,7 @@ public class CompensateNodeModel extends NodeModel {
   
   private String[] updateDimensionNames(String[] dimensionNames) {
     String[] newNames = dimensionNames.clone();
-    SpilloverCompensator compr = new SpilloverCompensator(m_settings.getReferenceHeader());
+    SpilloverCompensator compr = new SpilloverCompensator(mSettings.getReferenceHeader());
     String[] compParameterNames = compr.getCompParameterNames();
     for(int i=0;i<newNames.length;i++){
       for (int j=0;j<compParameterNames.length;j++){
@@ -167,7 +164,7 @@ public class CompensateNodeModel extends NodeModel {
    */
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
-    m_settings.save(settings);
+    mSettings.save(settings);
   }
 
   /**
@@ -176,7 +173,7 @@ public class CompensateNodeModel extends NodeModel {
   @Override
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
-    m_settings.load(settings);
+    mSettings.load(settings);
   }
 
   /**
@@ -184,7 +181,7 @@ public class CompensateNodeModel extends NodeModel {
    */
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-    m_settings.validate(settings);
+    mSettings.validate(settings);
   }
 
   /**

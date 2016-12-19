@@ -2,6 +2,7 @@ package io.landysh.inflor.main.knime.portTypes.fcsFrame;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 
 import javax.swing.JComponent;
@@ -70,7 +71,7 @@ public class FCSFramePortSpec implements PortObjectSpec {
 
   }
 
-  public HashMap<String, String> keywords;
+  public Map<String, String> keywords;
   public String[] columnNames;
 
   private int rowCount;
@@ -79,8 +80,8 @@ public class FCSFramePortSpec implements PortObjectSpec {
     // no op, use with .load
   }
 
-  public FCSFramePortSpec(HashMap<String, String> keys, String[] columns, int count) {
-    keywords = keys;
+  public FCSFramePortSpec(Map<String, String> map, String[] columns, int count) {
+    keywords = map;
     columnNames = columns;
     rowCount = count;
   }
@@ -89,7 +90,7 @@ public class FCSFramePortSpec implements PortObjectSpec {
     return columnNames;
   }
 
-  public HashMap<String, String> getKeywords() {
+  public Map<String, String> getKeywords() {
     return keywords;
   }
 

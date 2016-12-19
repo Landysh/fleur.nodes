@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
@@ -91,7 +92,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
      * keyword values.
      */
     final ArrayList<String> filePaths = getFilePaths(m_path.getStringValue());
-    List<HashMap<String, String>> headers = filePaths
+    List<Map<String, String>> headers = filePaths
         .stream()
         .map(path -> FCSFileReader.readHeaderOnly(path))
         .collect(Collectors.toList());

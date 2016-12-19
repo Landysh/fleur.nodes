@@ -8,6 +8,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 
@@ -26,8 +27,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
 import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameContent;
 
 public class FCSFramePortObject extends FileStorePortObject {
@@ -123,7 +124,7 @@ public class FCSFramePortObject extends FileStorePortObject {
     return cs;
   }
 
-  public HashMap<String, String> getHeader() {
+  public Map<String, String> getHeader() {
     return m_spec.keywords;
   }
 

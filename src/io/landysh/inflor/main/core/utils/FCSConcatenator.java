@@ -21,18 +21,20 @@
 package io.landysh.inflor.main.core.utils;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 
   @Override
   public FCSFrame apply(FCSFrame arg0, FCSFrame arg1) {
     
-    HashMap<String, String> mergedHeader = mergeHeaders(arg0.getKeywords(), arg1.getKeywords());
+    Map<String, String> mergedHeader = mergeHeaders(arg0.getKeywords(), arg1.getKeywords());
     FCSFrame mergedFrame = new FCSFrame(mergedHeader, arg0.getRowCount() + arg1.getRowCount());
     TreeSet<FCSDimension> mergedData = mergeData(arg0, arg1);
     mergedFrame.setData(mergedData);
@@ -43,7 +45,7 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
   }
 
   private TreeSet<FCSDimension> mergeData(FCSFrame arg0, FCSFrame arg1) {
-    TreeSet<FCSDimension> mergedData = new TreeSet<FCSDimension>();
+    TreeSet<FCSDimension> mergedData = new TreeSet<>();
     
     
     for (FCSDimension dimension: arg0.getData()){
@@ -57,24 +59,24 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
           dimension.getRange()) ;
       double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
       mergedDimension.setData(mergedArray);
-      mergedDimension.setPreferredTransform(dimension.getPreferredTransform());;
+      mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
       mergedData.add(mergedDimension);
     }
     return mergedData;
   }
 
-  private HashMap<String, String> mergeHeaders(HashMap<String, String> header1, 
-      HashMap<String, String> header2) {
+  private Map<String, String> mergeHeaders(Map<String, String> header1, 
+      Map<String, String> header2) {
     
     HashMap<String, String> mergedHeader = new HashMap<>();
-    for (String key:header1.keySet()){
-      mergedHeader.put(key, header1.get(key));
+    for (Entry<String, String> entry:header1.entrySet()){
+      mergedHeader.put(entry.getKey(), entry.getValue());
     }
-    for (String key:header2.keySet()){
-      if (mergedHeader.containsKey(key)){
-        mergedHeader.put(key, mergedHeader.get(key) +"||"+header2.get(key));
+    for (Entry<String, String> entry:header2.entrySet()){
+      if (mergedHeader.containsKey(entry.getKey())){
+        mergedHeader.put(entry.getKey(), mergedHeader.get(entry.getKey()) +"||"+entry.getValue());
       } else {
-        mergedHeader.put(key, header2.get(key));
+        mergedHeader.put(entry.getKey(), entry.getValue());
       }
     }
     return mergedHeader;

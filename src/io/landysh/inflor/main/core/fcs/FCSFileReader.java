@@ -29,18 +29,19 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 
   // From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
-  private static final int BEGIN_FCSVersionOffset = 0;
+  private static final int BEGIN_FCS_VERSION_OFFSET = 0;
   private static final int END_FCSVersionOffset = 5;
 
   private static final int FIRSTBYTE_BeginTextOffset = 10;
@@ -147,7 +148,7 @@ public class FCSFileReader {
     return columnStore;
   }
 
-  public HashMap<String, String> getHeader() {
+  public Map<String, String> getHeader() {
     return columnStore.getKeywords();
   }
 
@@ -193,7 +194,7 @@ public class FCSFileReader {
       throws UnsupportedEncodingException, IOException, FileNotFoundException {
     // mark the current location (should be byte 0)
     FCSFile.seek(0);
-    final byte[] bytes = new byte[END_FCSVersionOffset - BEGIN_FCSVersionOffset + 1];
+    final byte[] bytes = new byte[END_FCSVersionOffset - BEGIN_FCS_VERSION_OFFSET + 1];
     raFile.read(bytes);
     final String FCSVersion = new String(bytes, "UTF-8");
     return FCSVersion;
@@ -291,7 +292,7 @@ public class FCSFileReader {
     }
   }
 
-  public static HashMap<String, String> readHeaderOnly(String filePath) {
+  public static Map<String, String> readHeaderOnly(String filePath) {
     FCSFileReader reader;
     try {
       reader = new FCSFileReader(filePath);

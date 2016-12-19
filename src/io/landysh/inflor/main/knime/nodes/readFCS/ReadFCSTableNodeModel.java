@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.knime.core.data.DataCell;
@@ -27,7 +28,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 
@@ -130,10 +131,10 @@ public class ReadFCSTableNodeModel extends NodeModel {
 
     try {
       FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-      final HashMap<String, String> keywords = FCSReader.getHeader();
+      Map<String, String> keywords = FCSReader.getHeader();
 
-      final FCSFrame columnStore = FCSReader.getColumnStore();
-      final DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
+      FCSFrame columnStore = FCSReader.getColumnStore();
+      DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
 
       // Read header section
       headerTable = exec.createDataContainer(tableSpecs[0]);
@@ -192,10 +193,9 @@ public class ReadFCSTableNodeModel extends NodeModel {
     m_FileLocation.loadSettingsFrom(settings);
   }
 
-  private void readHeader(BufferedDataContainer header, HashMap<String, String> keywords) {
+  private void readHeader(BufferedDataContainer header, Map<String, String> keywords) {
     keywords.entrySet().forEach(entry -> writeRow(header, entry));
     header.close();
-
   }
 
   private synchronized void writeRow(BufferedDataContainer header, Entry<String, String> entry) {

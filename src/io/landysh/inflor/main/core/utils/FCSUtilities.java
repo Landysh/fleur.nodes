@@ -25,18 +25,23 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.ParameterTypes;
 import io.landysh.inflor.main.core.singlets.PuleProperties;
 
 public class FCSUtilities {
+  
+  private FCSUtilities(){
+    
+  }
 
-  public static Integer findParameterNumnberByName(HashMap<String, String> keywords, String name) {
+  public static Integer findParameterNumnberByName(Map<String, String> keywords, String name) {
     /**
      * Attempts to find the parameter number in a supplied FCS header (keywords). If the parameter
      * name is not it will return null.
@@ -58,7 +63,7 @@ public class FCSUtilities {
     }
   }
 
-  public static String findStainName(HashMap<String, String> keywords, Integer parameterIndex) {
+  public static String findStainName(Map<String, String> keywords, Integer parameterIndex) {
     /**
      * Returns the $PnS value for a particular parameter index
      */
@@ -83,7 +88,7 @@ public class FCSUtilities {
     return filteredData;
   }
 
-  public static String[] parseDimensionList(HashMap<String, String> keywords) {
+  public static String[] parseDimensionList(Map<String, String> keywords) {
     /**
      * Returns a String[] containing all of the values of the $PnN keywords from the specified
      * header table.
@@ -97,7 +102,7 @@ public class FCSUtilities {
     return plist;
   }
 
-  public static Boolean validateHeader(HashMap<String, String> keywords) {
+  public static Boolean validateHeader(Map<String, String> keywords) {
     /**
      * Returns a boolean indicating whether the specified keywords are consistent with the
      * requirements of the FCS Standard version 3.1.
@@ -115,8 +120,8 @@ public class FCSUtilities {
     return validHeader;
   }
 
-  public static HashMap<String, String> findParameterKeywords(
-      HashMap<String, String> sourceKeywords, int parameterIndex) {
+  public static Map<String, String> findParameterKeywords(
+      Map<String, String> sourceKeywords, int parameterIndex) {
     HashMap<String, String> keywords = new HashMap<String, String>();
     String regex = "\\$P" + parameterIndex + "[A-Z]";
     for (String key : keywords.keySet()) {
@@ -127,7 +132,7 @@ public class FCSUtilities {
     return keywords;
   }
 
-  public static FCSDimension buildFCSDimension(int pIndex, HashMap<String, String> header,
+  public static FCSDimension buildFCSDimension(int pIndex, Map<String, String> header,
       String compensationReference) {
     /**
      * Constructs a new FCSDimension object from the parameter data in the header of an FCS File.
