@@ -38,6 +38,8 @@ import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
+import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject;
+import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortSpec;
 
 /**
  * This is the model implementation of ExtractCompJO.
@@ -61,6 +63,7 @@ public class ExtractCompJONodeModel extends NodeModel {
      */
     protected ExtractCompJONodeModel() { 
       super(new PortType[0],
+            new PortType[] {PortTypeRegistry.getInstance().getPortType(CompMatrixPortObject.class)});
     }
 
     /**
