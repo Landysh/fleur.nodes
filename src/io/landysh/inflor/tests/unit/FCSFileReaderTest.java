@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
@@ -61,11 +61,11 @@ public class FCSFileReaderTest {
   public void testReadAllLogicleDataNoComp() throws Exception {
     // Setup
     int trueRowCount = 30000;
+    double tolerance = 0.1;
     final double[] trueFSCFirstFew =
-        {400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400};
+        {58998.59765625, 53811.0, 52696.796875, 65865.6015625, 24123.599609375, 63445.5, 61881.296875, 64310.3984375, 73426.5, 75041.1015625};
     final double[] trueSSCFirstFew =
-        {300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500};
-
+        {2111.969970703125, 3435.199951171875, 2412.550048828125, 1323.22998046875, 1257.68994140625, 1195.5400390625, 1101.75, 1400.0699462890625, 1187.6300048828125, 1676.9200439453125};
     // Test
     final FCSFileReader reader = new FCSFileReader(logiclePath);
     reader.readData();
@@ -76,11 +76,20 @@ public class FCSFileReaderTest {
     double[] testFCS = dataStore.getFCSDimensionByShortName("FSC-A").getData();
     double[] testSSC = dataStore.getFCSDimensionByShortName("SSC-A").getData();
 
+    int fewCount = 10;
+    double[] testFSCFirstFew = new double[fewCount];
+    double[] testSSCFirstFew = new double[fewCount]; 
+
+    for (int i=0;i<fewCount;i++){
+      testFSCFirstFew[i] = testFCS[i];
+      testSSCFirstFew[i] = testSSC[i];
+    }
+    
     // Assert
     assertEquals("Row count", trueRowCount, testRowCount);
     for (int i = 0; i < trueFSCFirstFew.length; i++) {
-      assertEquals(trueFSCFirstFew[i], testFCS[i], Double.MIN_VALUE);
-      assertEquals(trueSSCFirstFew[i], testSSC[i], Double.MIN_VALUE);
+      assertEquals(trueFSCFirstFew[i], testFSCFirstFew[i], tolerance);
+      assertEquals(trueSSCFirstFew[i], testSSCFirstFew[i], tolerance);
     }
     System.out.println("FCSFileReaderTes::testReadAllLogicleDataNoComp completed.");
   }
