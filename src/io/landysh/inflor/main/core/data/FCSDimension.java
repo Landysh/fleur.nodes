@@ -105,7 +105,11 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
   }
 
   public String getStainName() {
-    return this.stainName;
+    if (stainName!=null){
+      return stainName;
+    } else {
+      return "";
+    }
   }
 
   public String getTranformReference() {
