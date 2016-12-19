@@ -1,20 +1,20 @@
-package io.landysh.inflor.main.knime.nodes.readFCS;
+package io.landysh.inflor.main.knime.nodes.fcs.read;
 
 import org.knime.core.node.NodeView;
 
 /**
- * <code>NodeView</code> for the "FCSReader" Node. It will do stuff
+ * <code>NodeView</code> for the "FCSFrameReader" Node. Reads a data file into an FCS Frame
  *
- * @author Landysh
+ * @author Aaron Hart
  */
-public class ReadFCSTableNodeView extends NodeView<ReadFCSTableNodeModel> {
+public class ReadFCSFrameNodeView extends NodeView<ReadFCSFrameNodeModel> {
 
   /**
    * Creates a new view.
    * 
-   * @param nodeModel The model (class: {@link ReadFCSTableNodeModel})
+   * @param nodeModel The model (class: {@link ReadFCSFrameNodeModel})
    */
-  protected ReadFCSTableNodeView(final ReadFCSTableNodeModel nodeModel) {
+  protected ReadFCSFrameNodeView(final ReadFCSFrameNodeModel nodeModel) {
     super(nodeModel);
 
     // TODO instantiate the components of the view here.
@@ -29,7 +29,7 @@ public class ReadFCSTableNodeView extends NodeView<ReadFCSTableNodeModel> {
 
     // TODO retrieve the new model from your nodemodel and
     // update the view.
-    final ReadFCSTableNodeModel nodeModel = getNodeModel();
+    final ReadFCSFrameNodeModel nodeModel = getNodeModel();
     assert nodeModel != null;
 
     // be aware of a possibly not executed nodeModel! The data you retrieve

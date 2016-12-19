@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.portTypes.fcsFrame;
+package io.landysh.inflor.main.knime.ports.fcs;
 
 import java.io.IOException;
 import java.util.HashMap;

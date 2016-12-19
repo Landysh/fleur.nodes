@@ -1,15 +1,15 @@
-package io.landysh.inflor.main.knime.nodes.readFCS;
+package io.landysh.inflor.main.knime.nodes.fcs.read;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
 
 /**
- * <code>NodeFactory</code> for the "FCSFrameReader" Node. Reads a data file into an FCS Frame
+ * <code>NodeFactory</code> for the "FCSReader" Node. It will do stuff
  *
- * @author Aaron Hart
+ * @author Landysh
  */
-public class ReadFCSFrameNodeFactory extends NodeFactory<ReadFCSFrameNodeModel> {
+public class ReadFCSTableNodeFactory extends NodeFactory<ReadFCSTableNodeModel> {
 
   /**
    * {@inheritDoc}
@@ -23,17 +23,17 @@ public class ReadFCSFrameNodeFactory extends NodeFactory<ReadFCSFrameNodeModel> 
    * {@inheritDoc}
    */
   @Override
-  public ReadFCSFrameNodeModel createNodeModel() {
-    return new ReadFCSFrameNodeModel();
+  public ReadFCSTableNodeModel createNodeModel() {
+    return new ReadFCSTableNodeModel();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public NodeView<ReadFCSFrameNodeModel> createNodeView(final int viewIndex,
-      final ReadFCSFrameNodeModel nodeModel) {
-    return new ReadFCSFrameNodeView(nodeModel);
+  public NodeView<ReadFCSTableNodeModel> createNodeView(final int viewIndex,
+      final ReadFCSTableNodeModel nodeModel) {
+    return new ReadFCSTableNodeView(nodeModel);
   }
 
   /**

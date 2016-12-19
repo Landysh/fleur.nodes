@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.readFCS;
+package io.landysh.inflor.main.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +21,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortObject;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * This is the node model implementation for FCSReader. It is designed to use the Inflor

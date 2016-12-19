@@ -28,7 +28,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
 import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortObject;
 
 /**
  * This is the model implementation of ColumnStoreToTableCell. Converts a

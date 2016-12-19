@@ -22,8 +22,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.singlets.SingletsModel;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortObject;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * This is the model implementation of FindSingletsFrame.

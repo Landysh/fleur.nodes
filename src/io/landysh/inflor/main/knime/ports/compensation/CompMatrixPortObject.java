@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.portTypes.compensation;
+package io.landysh.inflor.main.knime.ports.compensation;
 
 import java.util.Arrays;
 
@@ -12,6 +12,11 @@ import org.knime.core.node.port.PortObjectSpec;
 
 public class CompMatrixPortObject extends AbstractSimplePortObject {
   
+  public static final class Serializer extends AbstractSimplePortObjectSerializer<CompMatrixPortObject> {
+
+
+  }
+  
   private static final String IN_DIMENSIONS_KEY =   "Input Dimensions";
   private static final String SPILLOVER_VALUE_KEY = "Spillover Values";
   private static final String OUT_DIMENSIONS_KEY =  "Output Dimensions";
@@ -22,8 +27,12 @@ public class CompMatrixPortObject extends AbstractSimplePortObject {
   
   public CompMatrixPortObject(CompMatrixPortSpec spec, double[] spilloverValues) {
     mInputDimensions = spec.getInputDimensions();
-    mOutputDimensions = spec.getoutputDimensions();
+    mOutputDimensions = spec.getOutputDimensions();
     mSpilloverValues = spilloverValues;
+  }
+  
+  public CompMatrixPortObject (){
+    //no arg constuctor for serialization
   }
 
   @Override

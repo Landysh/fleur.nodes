@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.readFCS;
+package io.landysh.inflor.main.knime.nodes.fcs.read;
 
 import javax.swing.JFileChooser;
 

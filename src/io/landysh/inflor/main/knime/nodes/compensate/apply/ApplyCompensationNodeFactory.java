@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.experimental.comp.apply;
+package io.landysh.inflor.main.knime.nodes.compensate.apply;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

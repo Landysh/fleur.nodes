@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.readFCS;
+package io.landysh.inflor.main.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,7 @@ import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreData
  * This is the model implementation of ReadFCSSet.
  * 
  *
- * @author Landysh Co.
+ * @author Aaron Hart
  */
 public class ReadFCSSetNodeModel extends NodeModel {
 

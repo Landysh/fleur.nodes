@@ -21,8 +21,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
-import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject;
-import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortSpec;
+import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortObject;
+import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortSpec;
 
 /**
  * This is the node model implementation for FCSReader. It is designed to use the Inflor

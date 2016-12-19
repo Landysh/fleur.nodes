@@ -1,7 +1,8 @@
-package io.landysh.inflor.main.knime.nodes.experimental.comp.apply;
+package io.landysh.inflor.main.knime.nodes.compensate.apply;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.knime.core.data.DataCell;
@@ -23,6 +24,9 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.DialogComponentColumnFilter;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
+import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
@@ -30,11 +34,14 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.data.FCSFrame;
+import io.landysh.inflor.main.core.utils.FCSConcatenator;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
+import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameDataValue;
 import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
-import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortObject;
-import io.landysh.inflor.main.knime.portTypes.compensation.CompMatrixPortSpec;
+import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortObject;
+import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortSpec;
 
 /**
  * This is the model implementation of ApplyCompensation.
@@ -46,7 +53,14 @@ public class ApplyCompensationNodeModel extends NodeModel {
     
   private static final NodeLogger logger = NodeLogger.getLogger(ApplyCompensationNodeModel.class);
   
-  private ApplyCompensationNodeSettings mSettings = new ApplyCompensationNodeSettings();
+  public static final String KEY_SELECTED_COLUMN = "Selected Column";
+  public static final String KEY_RETAIN_UNCOMPED = "Retain Uncomped Dimensions";
+
+  public static final boolean DEFAULT_RETAIN_UNCOMPED = false;
+  public static final String DEFAULT_SELECTED_COLUMN = "Select...";
+  
+  private SettingsModelColumnName mSelectedColumn=  new SettingsModelColumnName(KEY_SELECTED_COLUMN, DEFAULT_SELECTED_COLUMN);
+  private SettingsModelBoolean    mRetainUncomped = new SettingsModelBoolean(KEY_RETAIN_UNCOMPED, DEFAULT_RETAIN_UNCOMPED);
   
     /**
      * Constructor for the node model.
@@ -73,22 +87,21 @@ public class ApplyCompensationNodeModel extends NodeModel {
       // Create the output spec and data container.
       DataTableSpec outSpec = createSpec(new PortObjectSpec[]{inObjects[0].getSpec(), inObjects[1].getSpec()});
       BufferedDataContainer container = exec.createDataContainer(outSpec);
-      String columnName = mSettings.getSelectedColumn();
+      String columnName = mSelectedColumn.getColumnName();
       int index = outSpec.findColumnIndex(columnName);
       CompMatrixPortObject cmpo = (CompMatrixPortObject) inObjects[0];
       CompMatrixPortSpec cmSpec = (CompMatrixPortSpec) cmpo.getSpec();
-      SpilloverCompensator compr = new SpilloverCompensator(cmSpec.getInputDimensions(), cmSpec.getoutputDimensions(),cmpo.getSpilloverValues());
+      SpilloverCompensator compr = new SpilloverCompensator(cmSpec.getInputDimensions(), cmSpec.getOutputDimensions(),cmpo.getSpilloverValues());
       
-      BufferedDataTable inTable = (BufferedDataTable) inObjects[0];
+      BufferedDataTable inTable = (BufferedDataTable) inObjects[1];
       int i = 0;
       for (final DataRow inRow : inTable) {
 
         DataCell[] outCells = new DataCell[inRow.getNumCells()];
         FCSFrame columnStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
 
-
         // now create the output row
-        FCSFrame outStore = compr.compensateFCSFrame(columnStore, mSettings.getRetainUncomped());
+        FCSFrame outStore = compr.compensateFCSFrame(columnStore, mRetainUncomped.getBooleanValue());
         String fsName = i + "ColumnStore.fs";
         FileStore fileStore = fileStoreFactory.createFileStore(fsName);
         FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
@@ -111,7 +124,7 @@ public class ApplyCompensationNodeModel extends NodeModel {
     private DataTableSpec createSpec(PortObjectSpec[] inSpecs) {
       CompMatrixPortSpec compMatrixSpec = (CompMatrixPortSpec) inSpecs[0];
       DataTableSpec dataTableSpec = (DataTableSpec) inSpecs[1];
-      String columnName = mSettings.getSelectedColumn();
+      String columnName = mSelectedColumn.getColumnName();
       DataColumnSpec selectedColSpec = dataTableSpec.getColumnSpec(columnName);
       DataColumnProperties properties = selectedColSpec.getProperties();
       String dimensionNameString = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
@@ -140,8 +153,8 @@ public class ApplyCompensationNodeModel extends NodeModel {
     
     private String[] updateDimensionNames(String[] dimensionNames, CompMatrixPortSpec compMatrixSpec) {
       String[] newNames;
-      String[] outDimensions = compMatrixSpec.getoutputDimensions();
-      if (mSettings.getRetainUncomped()){
+      String[] outDimensions = compMatrixSpec.getOutputDimensions();
+      if (mRetainUncomped.getBooleanValue()){
         newNames = new String[dimensionNames.length+outDimensions.length];
         for (int i=0;i<dimensionNames.length;i++){
           newNames[i] = dimensionNames[i];
@@ -167,19 +180,26 @@ public class ApplyCompensationNodeModel extends NodeModel {
      * {@inheritDoc}
      */
     @Override
-    protected void reset() {
-        // TODO: generated method stub
-    }
+    protected void reset() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
+    protected PortObjectSpec[] configure(final PortObjectSpec[] inSpecs)
             throws InvalidSettingsException {
-
-        // TODO: generated method stub
-        return new DataTableSpec[]{null};
+      //identify any compatible FCS Columns
+      if (mSelectedColumn.getColumnName().equals(DEFAULT_SELECTED_COLUMN)){
+        DataTableSpec dataTableSpec = (DataTableSpec) inSpecs[1];
+        dataTableSpec.containsCompatibleType(FCSFrameDataValue.class);
+        for (int i=0;i<dataTableSpec.getNumColumns();i++){
+          if (dataTableSpec.getColumnSpec(i).getType().equals(FCSFrameFileStoreDataCell.TYPE)){
+            mSelectedColumn.setSelection(dataTableSpec.getColumnSpec(i).getName(), false);
+            break;
+          }
+        }
+      }
+      return new PortObjectSpec[]{createSpec(inSpecs)};
     }
 
     /**
@@ -187,7 +207,8 @@ public class ApplyCompensationNodeModel extends NodeModel {
      */
     @Override
     protected void saveSettingsTo(final NodeSettingsWO settings) {
-         // TODO: generated method stub
+         mRetainUncomped.saveSettingsTo(settings);
+         mSelectedColumn.saveSettingsTo(settings);
     }
 
     /**
@@ -195,8 +216,9 @@ public class ApplyCompensationNodeModel extends NodeModel {
      */
     @Override
     protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        // TODO: generated method stub
+            throws InvalidSettingsException {    
+      mRetainUncomped.loadSettingsFrom(settings);
+      mSelectedColumn.loadSettingsFrom(settings);
     }
 
     /**
@@ -204,9 +226,7 @@ public class ApplyCompensationNodeModel extends NodeModel {
      */
     @Override
     protected void validateSettings(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        // TODO: generated method stub
-    }
+            throws InvalidSettingsException {    }
     
     /**
      * {@inheritDoc}
@@ -214,9 +234,7 @@ public class ApplyCompensationNodeModel extends NodeModel {
     @Override
     protected void loadInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {
-        // TODO: generated method stub
-    }
+            CanceledExecutionException {}
     
     /**
      * {@inheritDoc}
@@ -224,9 +242,7 @@ public class ApplyCompensationNodeModel extends NodeModel {
     @Override
     protected void saveInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {
-        // TODO: generated method stub
-    }
+            CanceledExecutionException {    }
 
 }
 

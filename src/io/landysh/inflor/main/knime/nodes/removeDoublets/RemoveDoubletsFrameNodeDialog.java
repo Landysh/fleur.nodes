@@ -11,7 +11,7 @@ import org.knime.core.node.port.PortObjectSpec;
 
 import io.landysh.inflor.main.core.singlets.PuleProperties;
 import io.landysh.inflor.main.core.singlets.SingletsModel;
-import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec;
+import io.landysh.inflor.main.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * <code>NodeDialog</code> for the "FindSingletsFrame" Node.

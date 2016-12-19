@@ -54,4 +54,3 @@ public class CompensateNodeFactory extends NodeFactory<CompensateNodeModel> {
   }
 
 }
-
