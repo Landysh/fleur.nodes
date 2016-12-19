@@ -14,8 +14,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.plots.SubsetResponseChart;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;

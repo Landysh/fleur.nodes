@@ -2,7 +2,7 @@ package io.landysh.inflor.tests.performance;
 
 import java.util.ArrayList;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.RangeGate;
 import io.landysh.inflor.main.core.gates.RectangleGate;

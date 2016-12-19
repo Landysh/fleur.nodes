@@ -50,8 +50,8 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.plots.PlotUtils;
 import io.landysh.inflor.main.core.plots.SubsetResponseChart;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;

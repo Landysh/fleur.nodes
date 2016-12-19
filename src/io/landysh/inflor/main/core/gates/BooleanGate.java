@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class BooleanGate extends AbstractGate {
 

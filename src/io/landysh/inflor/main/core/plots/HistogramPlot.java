@@ -30,9 +30,9 @@ import org.jfree.chart.renderer.xy.XYSplineRenderer.FillType;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.util.ShapeUtilities;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
-import io.landysh.inflor.main.core.dataStructures.Histogram1D;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
+import io.landysh.inflor.main.core.data.Histogram1D;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 

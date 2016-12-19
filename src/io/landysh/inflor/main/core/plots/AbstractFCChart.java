@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public abstract class AbstractFCChart {
 

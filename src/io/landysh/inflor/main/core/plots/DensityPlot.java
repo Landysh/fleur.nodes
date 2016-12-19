@@ -31,9 +31,9 @@ import org.jfree.ui.RectangleAnchor;
 
 import com.google.common.primitives.Doubles;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
-import io.landysh.inflor.main.core.dataStructures.Histogram2D;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
+import io.landysh.inflor.main.core.data.Histogram2D;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 

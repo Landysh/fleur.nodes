@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.core.gates.RectangleGate;

@@ -10,7 +10,7 @@ import org.knime.core.data.filestore.FileStore;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class FCSFrameContent {
 

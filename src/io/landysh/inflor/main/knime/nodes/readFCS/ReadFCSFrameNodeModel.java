@@ -19,7 +19,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortObject;
 import io.landysh.inflor.main.knime.portTypes.fcsFrame.FCSFramePortSpec;

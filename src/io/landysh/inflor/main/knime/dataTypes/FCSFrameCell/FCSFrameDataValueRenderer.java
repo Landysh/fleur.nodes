@@ -30,9 +30,9 @@ import org.knime.core.data.renderer.AbstractDataValueRendererFactory;
 import org.knime.core.data.renderer.DataValueRenderer;
 import org.knime.core.data.renderer.MultiLineStringValueRenderer;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
-import io.landysh.inflor.main.core.dataStructures.Subset;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
+import io.landysh.inflor.main.core.data.Subset;
 import io.landysh.inflor.main.knime.core.Icons;
 
 @SuppressWarnings("serial")

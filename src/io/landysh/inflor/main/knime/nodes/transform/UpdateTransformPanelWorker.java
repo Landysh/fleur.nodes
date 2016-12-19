@@ -16,8 +16,8 @@ import javax.swing.SwingWorker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.plots.SubsetResponseChart;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;

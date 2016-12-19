@@ -34,7 +34,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.GateUtilities;
 import io.landysh.inflor.main.core.plots.ChartSpec;

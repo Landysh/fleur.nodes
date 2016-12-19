@@ -22,7 +22,7 @@ package io.landysh.inflor.main.core.transforms;
 
 import java.io.Serializable;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
+import io.landysh.inflor.main.core.data.DomainObject;
 
 @SuppressWarnings("serial")
 public abstract class AbstractTransform extends DomainObject implements Serializable, Cloneable {

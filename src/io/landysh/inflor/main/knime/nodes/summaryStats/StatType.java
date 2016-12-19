@@ -9,9 +9,9 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
-import io.landysh.inflor.main.core.dataStructures.Subset;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
+import io.landysh.inflor.main.core.data.Subset;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 
 public enum StatType {

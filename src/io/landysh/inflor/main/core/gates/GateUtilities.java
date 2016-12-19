@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class GateUtilities {
   

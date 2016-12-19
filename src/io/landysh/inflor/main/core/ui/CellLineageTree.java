@@ -28,8 +28,8 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.DomainObject;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.knime.nodes.createGates.ui.TreeCellPlotRenderer;
 

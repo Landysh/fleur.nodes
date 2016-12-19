@@ -30,8 +30,8 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.transforms.BoundDisplayTransform;
 import io.landysh.inflor.main.core.transforms.LogicleTransform;

@@ -25,8 +25,8 @@ import java.util.BitSet;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {

@@ -25,8 +25,8 @@ import java.util.HashMap;
 
 import org.w3c.dom.Element;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.DomainObject;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {

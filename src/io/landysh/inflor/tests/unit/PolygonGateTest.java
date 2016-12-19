@@ -7,8 +7,8 @@ import java.util.BitSet;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.gates.PolygonGate;
 
 public class PolygonGateTest {

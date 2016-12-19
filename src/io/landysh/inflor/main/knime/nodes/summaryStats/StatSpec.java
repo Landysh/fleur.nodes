@@ -2,8 +2,8 @@ package io.landysh.inflor.main.knime.nodes.summaryStats;
 
 import java.io.Serializable;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.DomainObject;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 @SuppressWarnings("serial")
 public class StatSpec extends DomainObject implements Serializable{

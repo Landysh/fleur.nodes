@@ -22,7 +22,7 @@ package io.landysh.inflor.main.core.plots;
 
 import java.util.List;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
+import io.landysh.inflor.main.core.data.DomainObject;
 import io.landysh.inflor.main.core.gates.Hierarchical;
 
 public class ChartSpec extends DomainObject implements Hierarchical{

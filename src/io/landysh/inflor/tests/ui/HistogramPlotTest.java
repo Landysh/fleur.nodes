@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.ui.GateCreationToolBar;
 import io.landysh.inflor.main.core.plots.ChartSpec;

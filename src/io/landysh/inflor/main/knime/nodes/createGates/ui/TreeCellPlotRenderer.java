@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.jfree.chart.JFreeChart;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.GateUtilities;
 import io.landysh.inflor.main.core.plots.AbstractFCChart;
