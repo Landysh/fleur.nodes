@@ -35,22 +35,21 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
-  public CompensateNodeSettings m_Settings;
+  private CompensateNodeSettings mSettings;
 
-  JPanel m_analyisTab;
-  CellLineageTree lineageTree;
-  public JComboBox<String> fcsColumnBox;
-  public JComboBox<FCSFrame> selectSampleBox;
+  private JPanel mAnalyisTab;
+  private JComboBox<String> fcsColumnBox;
+  private JComboBox<FCSFrame> selectSampleBox;
 
   protected CompensateNodeDialog() {
     super();
-    m_Settings = new CompensateNodeSettings();
+    mSettings = new CompensateNodeSettings();
     // Main analysis Tab
-    m_analyisTab = new JPanel();
+    mAnalyisTab = new JPanel();
     BorderLayout borderLayout = new BorderLayout();
-    m_analyisTab.setLayout(borderLayout);
-    m_analyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
-    super.addTab("From FCS File", m_analyisTab);
+    mAnalyisTab.setLayout(borderLayout);
+    mAnalyisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
+    super.addTab("From FCS File", mAnalyisTab);
   }
 
   private JPanel createOptionsPanel() {
@@ -62,17 +61,17 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
     optionsPanel.add(Box.createVerticalGlue());
     optionsPanel.add(Box.createHorizontalGlue());
     // Select Input data
-    fcsColumnBox = new JComboBox<String>(new String[] {NO_COLUMNS_AVAILABLE_WARNING});
+    fcsColumnBox = new JComboBox<>(new String[] {NO_COLUMNS_AVAILABLE_WARNING});
     fcsColumnBox.setSelectedIndex(0);
     fcsColumnBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        m_Settings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
+        mSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
       }
     });
     optionsPanel.add(fcsColumnBox);
     // Select file
-    selectSampleBox = new JComboBox<FCSFrame>();
+    selectSampleBox = new JComboBox<>();
     selectSampleBox.setSelectedIndex(-1);
     selectSampleBox.addActionListener(new ActionListener() {
 
@@ -89,7 +88,7 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
   }
 
   private void parseSpillover(FCSFrame fcs) {
-    m_Settings.setHeader(fcs.getKeywords());
+    mSettings.setHeader(fcs.getKeywords());
   }
 
   @Override
@@ -116,9 +115,8 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
     DataTableSpec[] specs = {input[0].getSpec()};
     loadSettingsFrom(settings, specs);
 
-
     // Update Sample List
-    String targetColumn = m_Settings.getSelectedColumn();
+    String targetColumn = mSettings.getSelectedColumn();
     String[] names = input[0].getSpec().getColumnNames();
     int fcsColumnIndex = -1;
     for (int i = 0; i < names.length; i++) {
@@ -130,13 +128,13 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
       throw new NotConfigurableException("target column not in column list");
     }
 
-    // read the sample names;
+    // read the sample names
     BufferedDataTable table = input[0];
     selectSampleBox.removeAllItems();
 
     // Hold on to a reference of the data so we can plot it later.
 
-    HashSet<String> parameterSet = new HashSet<String>();
+    HashSet<String> parameterSet = new HashSet<>();
 
     for (DataRow row : table) {
       FCSFrame cStoreData = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
@@ -153,7 +151,7 @@ public class CompensateNodeDialog extends DataAwareNodeDialogPane {
 
   @Override
   protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
-    m_Settings.save(settings);
+    mSettings.save(settings);
   }
 
   public FCSFrame getSelectedSample() {
