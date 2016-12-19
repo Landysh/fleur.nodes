@@ -105,7 +105,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
 
   private void popDialog(ChartEditorDialog dialog) {
     dialog.setVisible(true);
-    if (dialog.isOK) {
+    if (dialog.isOK()) {
       FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) parent.lineageTree.getModel().getRoot()).getUserObject();
       parent.m_settings.addNode(dialog.getChartSpec(), dataFrame.getID());
       List<AbstractGate> gates = dialog.getGates();

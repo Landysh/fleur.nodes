@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class EventFrameTest {
 
@@ -16,12 +16,12 @@ public class EventFrameTest {
     final String trueKey = "key";
     final String trueValue = "value";
     final int trueRowCount = 15;
-
+    String trueUUID = "42";
     final HashMap<String, String> header = new HashMap<String, String>();
     header.put(trueKey, trueValue);
-
+    
     // Test
-    final FCSFrame cs = new FCSFrame(header, trueRowCount);
+    final FCSFrame cs = new FCSFrame(trueUUID, header, trueRowCount);
     final String testValue = cs.getKeywords().get(trueKey);
     final int testRowCount = cs.getRowCount();
     String testPrefName = cs.getPrefferedName();
@@ -29,7 +29,7 @@ public class EventFrameTest {
     // Assert
     assertEquals("keyword", trueValue, testValue);
     assertEquals("rowcount", trueRowCount, testRowCount);
-    assertEquals("preferredName", "Foo", testPrefName);
+    assertEquals("preferredName", trueUUID, testPrefName);
     System.out.println("EventFrameTest testInitialization completed (succefully or otherwise)");
   }
 }

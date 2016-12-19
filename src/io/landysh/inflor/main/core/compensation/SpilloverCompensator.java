@@ -38,8 +38,10 @@ import io.landysh.inflor.main.core.utils.FCSUtilities;
 @SuppressWarnings("serial")
 public class SpilloverCompensator extends DomainObject {
 
+  private static final Object COMP_MATRIX_KEYWORD = "$SPILL";
+  private static final double COMP_MATRIX_ZERO_THRESHOLD = 0.000001;
   // Compensation details
-  public String[] compParameters;
+  private String[] compParameters;
   private DenseMatrix64F compMatrix;
   private double[][] rawMatrix;
 
@@ -49,7 +51,7 @@ public class SpilloverCompensator extends DomainObject {
 
   public SpilloverCompensator(Map<String, String> keywords, String priorUUID) {
     super(priorUUID);
-    if (keywords.containsKey("$SPILL") || keywords.containsKey("SPILL")) {
+    if (keywords.containsKey(COMP_MATRIX_KEYWORD)) {
       rawMatrix = parseSpillover(keywords);
       compMatrix = new DenseMatrix64F(rawMatrix);
       invert(compMatrix);
@@ -60,10 +62,11 @@ public class SpilloverCompensator extends DomainObject {
   public SpilloverCompensator(String[] inDimensionList, String[] outDimensionList,
       Double[] spilloverValues, String priorUUID) {
     super(priorUUID);
+    compParameters = inDimensionList;
     rawMatrix = new double[inDimensionList.length][outDimensionList.length];
     for (int i=0;i<inDimensionList.length;i++){
       for (int j=0;j<outDimensionList.length;j++){
-        rawMatrix[i][j] = spilloverValues[i*j + j];
+        rawMatrix[i][j] = spilloverValues[i*j + i];
       }
     }
     compMatrix = new DenseMatrix64F(rawMatrix);
@@ -77,7 +80,7 @@ public class SpilloverCompensator extends DomainObject {
 
   private void validate() {
     if (compParameters.length <= 1) {
-      throw new RuntimeException("Invalid compensation matrix");
+      throw new IllegalArgumentException("Invalid compensation matrix");
     }
   }
 
@@ -86,8 +89,8 @@ public class SpilloverCompensator extends DomainObject {
   }
 
   private double[][] parseSpillover(Map<String, String> keywords) {
-    String spill = null;
 
+    String spill;
     // Check for spillover keywords
     if (keywords.containsKey("$SPILLOVER")) {
       spill = keywords.get("SPILLOVER");
@@ -121,43 +124,37 @@ public class SpilloverCompensator extends DomainObject {
       compParameters = compPars;
       return matrix;
     } else {
-      return null;
+      throw new IllegalArgumentException("Invalid Spillover Keyword: Matrix must contain at least 2 input dimensions");
     }
   }
 
   public FCSFrame compensateFCSFrame(FCSFrame dataFrame) throws InvalidProtocolBufferException {
     FCSFrame newFrame = dataFrame.deepCopy();
-    double[][] X = new double[compParameters.length][newFrame.getRowCount()];
+    double[][] x = new double[compParameters.length][newFrame.getRowCount()];
 
     for (int i = 0; i < compParameters.length; i++) {
       FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
       if (dimension == null) {
-        for (String s : compParameters) {
-          System.out.println(s);
-        }
-        RuntimeException e = new RuntimeException(
-            "DataFrame does not contain matching parameters: " + compParameters[i]);
-        e.printStackTrace();
-        throw e;
+        throw new IllegalArgumentException("DataFrame does not contain matching parameters: " + compParameters[i]);
       }
-      X[i] = dimension.getData();
+      x[i] = dimension.getData();
     }
-    DenseMatrix64F XT = new DenseMatrix64F(X);
-    CommonOps.transpose(XT);
+    DenseMatrix64F xt = new DenseMatrix64F(x);
+    CommonOps.transpose(xt);
     // not sure about mutability.
-    mult(XT.copy(), compMatrix, XT);
-    CommonOps.transpose(XT);
+    mult(xt.copy(), compMatrix, xt);
+    CommonOps.transpose(xt);
 
-    X = new double[compParameters.length][newFrame.getRowCount()];
+    x = new double[compParameters.length][newFrame.getRowCount()];
     for (int i = 0; i < compParameters.length; i++) {
       for (int j = 0; j < newFrame.getRowCount(); j++) {
-        double newVal = XT.get(i, j);
-        X[i][j] = newVal;
+        double newVal = xt.get(i, j);
+        x[i][j] = newVal;
       }
     }
     for (int i = 0; i < compParameters.length; i++) {
       FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
-      dimension.setData(X[i]);
+      dimension.setData(x[i]);
       dimension.setShortName("[" + dimension.getShortName() + "]");
     }
     newFrame.setCompRef(this.getID());
@@ -195,8 +192,16 @@ public class SpilloverCompensator extends DomainObject {
   public boolean isEmpty() {
     boolean isEmpty = true;
     for (double d:getSpilloverValues()){
-      if (d!=0){isEmpty = false; break;}
+      if (d >= COMP_MATRIX_ZERO_THRESHOLD ){
+        isEmpty = false; 
+        break;
+      }
     }
     return isEmpty;
+  }
+
+  public FCSFrame compensateFCSFrame(FCSFrame columnStore, boolean retainUncomped) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

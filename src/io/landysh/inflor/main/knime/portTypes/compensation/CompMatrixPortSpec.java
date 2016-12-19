@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.portTypes.compMatrix;
+package io.landysh.inflor.main.knime.portTypes.compensation;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
@@ -36,10 +36,20 @@ public class CompMatrixPortSpec implements PortObjectSpec {
 
   private static final NodeLogger LOGGER = NodeLogger.getLogger(CompMatrixPortSpec.class);
 
-  private final static String SPEC_KEY = "spec";
-  private final static String INPUT_DIMENSIONS_KEY = "Input Dimensions";
-  private final static String OUTPUT_DIMENSIONS_KEY = "Output Dimensions";
+  private static final String SPEC_KEY = "spec";
+  private static final String INPUT_DIMENSIONS_KEY = "Input Dimensions";
+  private static final String OUTPUT_DIMENSIONS_KEY = "Output Dimensions";
 
+  public CompMatrixPortSpec() {
+    // no op, use with .load
+  }
+
+  public CompMatrixPortSpec(String[] inputDimensionNames, String[] outputDimensionNames) {
+    mInputDimensions = inputDimensionNames;
+    mOutputDimensions = outputDimensionNames;
+  }
+
+  
   public static CompMatrixPortSpec load(PortObjectSpecZipInputStream in) {
     ModelContentRO model = null;
     try {
@@ -62,24 +72,16 @@ public class CompMatrixPortSpec implements PortObjectSpec {
 
   }
 
-  private String[] m_inputDimensions;
+  private String[] mInputDimensions;
 
-  private String[] m_outputDimensions;
+  private String[] mOutputDimensions;
 
-  public CompMatrixPortSpec() {
-    // no op, use with .load
-  }
-
-  public CompMatrixPortSpec(String[] inputDimensionNames, String[] outputDimensionNames) {
-    m_inputDimensions = inputDimensionNames;
-    m_outputDimensions = outputDimensionNames;
-  }
 
   @Override
   public JComponent[] getViews() {
     
-    JTable t1 = new JTable(new String[][] {m_inputDimensions}, new String[]{"Input Dimensions"});
-    JTable t2 = new JTable(new String[][] {m_outputDimensions}, new String[]{"Output Dimensions"});
+    JTable t1 = new JTable(new String[][] {mInputDimensions}, new String[]{"Input Dimensions"});
+    JTable t2 = new JTable(new String[][] {mOutputDimensions}, new String[]{"Output Dimensions"});
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(t1, BorderLayout.NORTH);
     panel.add(t2, BorderLayout.SOUTH);
@@ -92,8 +94,8 @@ public class CompMatrixPortSpec implements PortObjectSpec {
 
     // Create model and add values.
     final ModelContent modelOut = new ModelContent(SPEC_KEY);
-    modelOut.addStringArray(INPUT_DIMENSIONS_KEY, m_inputDimensions);
-    modelOut.addStringArray(OUTPUT_DIMENSIONS_KEY, m_outputDimensions);
+    modelOut.addStringArray(INPUT_DIMENSIONS_KEY, mInputDimensions);
+    modelOut.addStringArray(OUTPUT_DIMENSIONS_KEY, mOutputDimensions);
     try {
       out.putNextEntry(new ZipEntry(SPEC_KEY));
       modelOut.saveToXML(out);
@@ -102,12 +104,12 @@ public class CompMatrixPortSpec implements PortObjectSpec {
     }
   }
   
-  public String[] getinputDimensions() {
-    return m_inputDimensions;
+  public String[] getInputDimensions() {
+    return mInputDimensions;
   }
 
   public String[] getoutputDimensions() {
-    return m_outputDimensions;
+    return mOutputDimensions;
   }
 
 }

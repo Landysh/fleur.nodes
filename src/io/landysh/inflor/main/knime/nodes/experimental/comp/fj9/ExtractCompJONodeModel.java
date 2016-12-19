@@ -16,16 +16,14 @@
  *  along with this program; if not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  */
-package io.landysh.inflor.main.knime.nodes.experimental.extractCompJo;
+package io.landysh.inflor.main.knime.nodes.experimental.comp.fj9;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
@@ -40,8 +38,6 @@ import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
-import io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortObject;
-import io.landysh.inflor.main.knime.portTypes.compMatrix.CompMatrixPortSpec;
 
 /**
  * This is the model implementation of ExtractCompJO.
@@ -57,7 +53,7 @@ public class ExtractCompJONodeModel extends NodeModel {
 
     private static final String EMPTY_MATRIX_WARNING = "This compensation matrix has only spillover values of zero. Compensation will not modify the input data.";
     
-    private ExtractCompJoSettings modelSettings;
+    private ExtractCompJoSettings modelSettings = new ExtractCompJoSettings();
     
 
     /**
@@ -65,7 +61,6 @@ public class ExtractCompJONodeModel extends NodeModel {
      */
     protected ExtractCompJONodeModel() { 
       super(new PortType[0],
-          new PortType[] {PortTypeRegistry.getInstance().getPortType(CompMatrixPortObject.class)});
     }
 
     /**
@@ -88,55 +83,57 @@ public class ExtractCompJONodeModel extends NodeModel {
         CompMatrixPortObject portObject = new CompMatrixPortObject(spec, compr.getSpilloverValues());
         return new PortObject[] {portObject};
       } catch (final Exception e) {
-        e.printStackTrace();
-        throw new CanceledExecutionException("Execution Failed. See log for details.");
+        logger.error("Execution Failed. See debug console for details.", e);
+        throw new CanceledExecutionException("Execution Failed. See debug console for details.");
       }
     }
 
   /**
    * @param filePath - Path to an mtx file as generated from V9.x of FlowJo.
-   * @return a new SpilloverCompensator generated from the specified file or null if somthing goes wrong.
+   * @return a new SpilloverCompensator generated from the specified file or null if something goes wrong.
+   * @throws Exception 
    */
-    private SpilloverCompensator readCompensationFromMTXFile(String filePath) {
+    private SpilloverCompensator readCompensationFromMTXFile(String filePath) throws CanceledExecutionException {
       
-      try {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+      try (FileReader freader = new FileReader(filePath);
+           BufferedReader reader = new BufferedReader(freader)) {
+        
         ArrayList<String> lines = new ArrayList<>();
         String line = reader.readLine();
         while (line!= null){
-          lines.add(reader.readLine());
+          lines.add(line);
           line = reader.readLine();
         }
-        reader.close();
         String headerLine = lines.get(2);
         String[] dimensionList = headerLine.split("\t");
-        ArrayList<Double> spilloverList = new ArrayList<Double>();
+        ArrayList<Double> spilloverList = new ArrayList<>();
         Double[] spilloverValues = new Double[dimensionList.length*dimensionList.length];
         for (int i=3;i<lines.size();i++){
           String[] valueLine = lines.get(i).split("\t");
           for (String s: valueLine){
-            spilloverList.add(Double.parseDouble(s));
-          }
-          if (spilloverList.size()==spilloverValues.length){
-            spilloverValues = spilloverList.toArray(spilloverValues);
-          } else {
-            RuntimeException re = new RuntimeException("failed to parse compensation matrix.  Input file invalid or in unexpected format.");
-            re.printStackTrace();
-            throw re;
+            Double dValue = Double.parseDouble(s);
+            spilloverList.add(dValue);
           }
         }
+        if (spilloverList.size()==spilloverValues.length){
+          spilloverValues = spilloverList.toArray(spilloverValues);
+        } else {
+          CanceledExecutionException re = new CanceledExecutionException("failed to parse compensation matrix.  Input file invalid or in unexpected format.");
+          logger.error("failed to parse compensation matrix.  Input file invalid or in unexpected format.", re);
+          throw re;
+        }
         String[] outDimensionList = new String[dimensionList.length];
+        
         for (int i=0;i<outDimensionList.length;i++){
           outDimensionList[i] = "[" + dimensionList[i] + "]";
         }
         
-        SpilloverCompensator compr = new SpilloverCompensator(dimensionList, outDimensionList, spilloverValues);
-        return compr;
+        return new SpilloverCompensator(dimensionList, outDimensionList, spilloverValues);
 
       } catch (Exception e) {
-        e.printStackTrace();
-        return null;
-      } 
+          logger.error("failed to parse compensation matrix.  File may be missing, or corrupted", e);
+          throw new CanceledExecutionException("File not read.");
+      }
     }
 
     private CompMatrixPortSpec createPortSpec(SpilloverCompensator compr) {
@@ -165,7 +162,7 @@ public class ExtractCompJONodeModel extends NodeModel {
         SpilloverCompensator compr = readCompensationFromMTXFile(modelSettings.getFilePath());
         spec = createPortSpec(compr);
       } catch (final Exception e) {
-        e.printStackTrace();
+        logger.error("Error while checking file. Check that it exists and is valid.", e);
         throw new InvalidSettingsException(
             "Error while checking file. Check that it exists and is valid.");
       }

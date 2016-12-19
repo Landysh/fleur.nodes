@@ -16,63 +16,60 @@
  *  along with this program; if not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  */
-package io.landysh.inflor.main.knime.nodes.experimental.extractCompJo;
+package io.landysh.inflor.main.knime.nodes.experimental.comp.fj9;
 
+import org.knime.core.node.NodeDialogPane;
+import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
 
 /**
- * <code>NodeView</code> for the "ExtractCompJO" Node.
+ * <code>NodeFactory</code> for the "ExtractCompJO" Node.
  * Extract a compenation matrix from a text file generated with FlowJo for Mac. This has only been tested with exports from version 9 of FlowJo.
  *
  * @author Aaron Hart
  */
-public class ExtractCompJONodeView extends NodeView<ExtractCompJONodeModel> {
+public class ExtractCompJONodeFactory 
+        extends NodeFactory<ExtractCompJONodeModel> {
 
     /**
-     * Creates a new view.
-     * 
-     * @param nodeModel The model (class: {@link ExtractCompJONodeModel})
+     * {@inheritDoc}
      */
-    protected ExtractCompJONodeView(final ExtractCompJONodeModel nodeModel) {
-        super(nodeModel);
-
-        // TODO instantiate the components of the view here.
-
+    @Override
+    public ExtractCompJONodeModel createNodeModel() {
+        return new ExtractCompJONodeModel();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void modelChanged() {
-
-        // TODO retrieve the new model from your nodemodel and 
-        // update the view.
-        ExtractCompJONodeModel nodeModel = 
-            (ExtractCompJONodeModel)getNodeModel();
-        assert nodeModel != null;
-        
-        // be aware of a possibly not executed nodeModel! The data you retrieve
-        // from your nodemodel could be null, emtpy, or invalid in any kind.
-        
+    public int getNrNodeViews() {
+        return 1;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onClose() {
-    
-        // TODO things to do when closing the view
+    public NodeView<ExtractCompJONodeModel> createNodeView(final int viewIndex,
+            final ExtractCompJONodeModel nodeModel) {
+        return new ExtractCompJONodeView(nodeModel);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onOpen() {
+    public boolean hasDialog() {
+        return true;
+    }
 
-        // TODO things to do when opening the view
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodeDialogPane createNodeDialogPane() {
+        return new ExtractCompJONodeDialog();
     }
 
 }

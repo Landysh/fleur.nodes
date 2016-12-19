@@ -16,7 +16,7 @@
  *  along with this program; if not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  */
-package io.landysh.inflor.main.knime.nodes.experimental.extractCompJo;
+package io.landysh.inflor.main.knime.nodes.experimental.comp.fj9;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;
