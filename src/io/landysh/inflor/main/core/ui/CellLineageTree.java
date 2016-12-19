@@ -31,7 +31,6 @@ import javax.swing.tree.DefaultTreeModel;
 import io.landysh.inflor.main.core.data.DomainObject;
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.gates.Hierarchical;
-import io.landysh.inflor.main.knime.nodes.createGates.ui.TreeCellPlotRenderer;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {

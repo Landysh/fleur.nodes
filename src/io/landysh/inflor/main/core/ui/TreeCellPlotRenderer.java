@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.createGates.ui;
+package io.landysh.inflor.main.core.ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -31,15 +31,15 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
   
   String[] columnNames = new String[] {"Name", "Count", "Frequency of Parent"};
 
-  public TreeCellPlotRenderer() {}
+  public TreeCellPlotRenderer() {
+    super();
+  }
 
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
       boolean expanded, boolean leaf, int row, boolean hasFocus) {
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-    if (node instanceof DefaultMutableTreeNode){
-      node.breadthFirstEnumeration();
-    }
+    node.breadthFirstEnumeration();
     
     Object uo = node.getUserObjectPath()[0];
     FCSFrame dataFrame = null;
@@ -54,14 +54,14 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
     if (node.getUserObject() instanceof FCSFrame&&dataFrame!=null) {
       String[][] tableRow = new String[][]{{"Ungated", Integer.toString(dataFrame.getRowCount()), "-"}};
       JTable table = new JTable(tableRow, columnNames);
-      formatTable(selected, expanded, leaf, table);
+      formatTable(selected, table);
       return table;
     //node is a gate
     } else if (node.getUserObject() instanceof AbstractGate&&mask!=null) {
       AbstractGate gate = (AbstractGate) node.getUserObject();
       String[][] tableRow = new String[][]{{gate.getLabel(), Integer.toString(mask.cardinality()), BitSetUtils.frequencyOfParent(mask, 2)}};
       JTable table = new JTable(tableRow, columnNames);
-      formatTable(selected, expanded, leaf, table);
+      formatTable(selected, table);
       return table;
     //node is plot
     } else if (node.getUserObject() instanceof ChartSpec && mask!=null) {
@@ -75,17 +75,16 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
       siblingGates
         .stream()
         .filter(gate -> ChartUtils.gateIsCompatibleWithChart(gate, spec))
-        .map(gate -> ChartUtils.createAnnotation(gate))
-        .forEach(ann -> panel.createGateAnnotation(ann));
+        .map(ChartUtils::createAnnotation)
+        .forEach(panel::createGateAnnotation);
       panel.setPreferredSize(new Dimension(220, 200));
       return panel;
     } else {
-      return new JLabel("Unsupported node type.");//TODO: Issue with some incorrect model during init?
+      return new JLabel("Unsupported node type.");
     }
   }
 
-  private void formatTable(boolean selected, boolean expanded, boolean leaf,
-      JTable table) {
+  private void formatTable(boolean selected, JTable table) {
     if (selected){
       table.setRowSelectionInterval(0, 0);
     }
@@ -119,7 +118,7 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
   }
 
   private List<AbstractGate> extractGates(Object[] userObjectPath) {
-    List<AbstractGate> gates = new ArrayList<AbstractGate>();
+    List<AbstractGate> gates = new ArrayList<>();
     for (Object o:userObjectPath){
       if (o instanceof AbstractGate){
         gates.add((AbstractGate) o);

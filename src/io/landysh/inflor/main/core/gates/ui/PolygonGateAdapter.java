@@ -30,9 +30,9 @@ import javax.swing.event.MouseInputAdapter;
 import org.jfree.chart.annotations.XYLineAnnotation;
 
 import io.landysh.inflor.main.core.plots.FCSChartPanel;
+import io.landysh.inflor.main.core.ui.GateNameEditor;
 import io.landysh.inflor.main.core.ui.LookAndFeel;
 import io.landysh.inflor.main.core.utils.ChartUtils;
-import io.landysh.inflor.main.knime.nodes.createGates.ui.GateNameEditor;
 
 public class PolygonGateAdapter extends MouseInputAdapter {
   private FCSChartPanel panel;
@@ -66,10 +66,9 @@ public class PolygonGateAdapter extends MouseInputAdapter {
       for (int i = 0; i < pointCount; i++) {
         polygon[i] = vertices.get(i / 2).getX();
         polygon[i + 1] = vertices.get(i / 2).getY();
-        i++;
+        i++;//Sonar warning but wont fix, I think.
       }
       // Pop a gate editor dialog
-      // Frame topFrame = (Frame) SwingUtilities.getWindowAncestor(panel);
       GateNameEditor dialog = new GateNameEditor();
       dialog.setVisible(true);
       // On Close...
@@ -86,9 +85,7 @@ public class PolygonGateAdapter extends MouseInputAdapter {
       panel.removeTemporaryAnnotation(anchorSegment);
       anchorSegment = null;
       anchorPoint = null;
-      if (segments != null) {
-        segments.forEach(annotation -> panel.removeTemporaryAnnotation(annotation));
-      }
+      segments.forEach(panel::removeTemporaryAnnotation);//TODO:if this is broken, maybe sonar was wrong?
       segments = null;
       panel.activateGateSelectButton();
     }
@@ -110,9 +107,9 @@ public class PolygonGateAdapter extends MouseInputAdapter {
   private void updateTemporaryAnnotation() {
     Point2D previousVertex = null;
     if (segments != null) {
-      segments.stream().forEach(segment -> panel.removeTemporaryAnnotation(segment));
+      segments.stream().forEach(panel::removeTemporaryAnnotation);
     }
-    segments = new ArrayList<XYLineAnnotation>();
+    segments = new ArrayList<>();
     for (Point2D v : vertices) {
       if (previousVertex == null) {
         previousVertex = v;
@@ -122,6 +119,6 @@ public class PolygonGateAdapter extends MouseInputAdapter {
         previousVertex = v;
       }
     }
-    segments.stream().forEach(segment -> panel.addTemporaryAnnotation(segment));
+    segments.stream().forEach(panel::addTemporaryAnnotation);
   }
 }

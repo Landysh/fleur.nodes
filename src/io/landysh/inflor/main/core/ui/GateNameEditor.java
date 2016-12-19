@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.nodes.createGates.ui;
+package io.landysh.inflor.main.core.ui;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;

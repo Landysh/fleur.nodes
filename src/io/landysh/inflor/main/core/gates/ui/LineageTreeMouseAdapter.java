@@ -39,9 +39,9 @@ import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.GateUtilities;
 import io.landysh.inflor.main.core.plots.ChartSpec;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
+import io.landysh.inflor.main.core.ui.ChartEditorDialog;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.nodes.createGates.CreateGatesNodeDialog;
-import io.landysh.inflor.main.knime.nodes.createGates.ui.ChartEditorDialog;
 
 public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private CreateGatesNodeDialog parent;
@@ -62,33 +62,24 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       //Pull out the dataFrame from the root node.
       FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) tree.getModel().getRoot()).getUserObject();
       //Extract gates from tree object path. 
-      Supplier<ArrayList<AbstractGate>> supplier = () -> new ArrayList<AbstractGate>();
       ArrayList<AbstractGate> parentGates = Arrays.asList(elements)
           .stream()
           .filter(pathObject -> pathObject instanceof DefaultMutableTreeNode)
           .map(pathObject -> ((DefaultMutableTreeNode) pathObject).getUserObject())
           .filter(nodeObject -> nodeObject instanceof AbstractGate)
           .map(nodeObject -> (AbstractGate) nodeObject)
-          .collect(Collectors.toCollection(supplier));
+          .collect(Collectors.toCollection(ArrayList::new));
+      
       //Calculate the path mask and apply to dataFrame to create a filtered frame.
       BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates);
       FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
-      if (parentGates.size()>=1){
+      if (!parentGates.isEmpty()){
         String ids = parentGates.get(parentGates.size()-1).getID();
         filteredFrame.setID(ids);
       }
       Window topFrame = SwingUtilities.getWindowAncestor(this.parent.getPanel());
-      ArrayList<AbstractGate> siblingGates = new ArrayList<>();
-      
-      if (selectedNode.getSiblingCount()!=1){
-        for (int i=0;i<selectedNode.getSiblingCount();i++){
-          DefaultMutableTreeNode currentSibling = (DefaultMutableTreeNode) selectedNode.getParent().getChildAt(i);
-          if (currentSibling!=selectedNode&&currentSibling.getUserObject() instanceof AbstractGate){
-            siblingGates.add((AbstractGate) currentSibling.getUserObject());
-          }
-        }
-      }
-      
+      ArrayList<AbstractGate> siblingGates = findSiblingGates(selectedNode);
+            
       if(selectedObject instanceof AbstractGate){
         ChartEditorDialog dialog = new ChartEditorDialog(topFrame, filteredFrame, siblingGates);
         popDialog(dialog);
@@ -101,6 +92,20 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
         popDialog(dialog);
       }
     }   
+  }
+
+  private ArrayList<AbstractGate> findSiblingGates(DefaultMutableTreeNode selectedNode) {
+    ArrayList<AbstractGate> siblingGates = new ArrayList<>();
+    
+    if (selectedNode.getSiblingCount()!=1){
+      for (int i=0;i<selectedNode.getSiblingCount();i++){
+        DefaultMutableTreeNode currentSibling = (DefaultMutableTreeNode) selectedNode.getParent().getChildAt(i);
+        if (currentSibling!=selectedNode&&currentSibling.getUserObject() instanceof AbstractGate){
+          siblingGates.add((AbstractGate) currentSibling.getUserObject());
+        }
+      }
+    }
+    return siblingGates;
   }
 
   private void popDialog(ChartEditorDialog dialog) {

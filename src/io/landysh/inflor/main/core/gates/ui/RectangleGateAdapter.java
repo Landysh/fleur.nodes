@@ -27,9 +27,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import io.landysh.inflor.main.core.plots.FCSChartPanel;
+import io.landysh.inflor.main.core.ui.GateNameEditor;
 import io.landysh.inflor.main.core.ui.LookAndFeel;
 import io.landysh.inflor.main.core.utils.ChartUtils;
-import io.landysh.inflor.main.knime.nodes.createGates.ui.GateNameEditor;
 
 public class RectangleGateAdapter extends MouseInputAdapter {
   private FCSChartPanel panel;
@@ -48,7 +48,7 @@ public class RectangleGateAdapter extends MouseInputAdapter {
   }
 
   private void updateVerticies() {
-    if (!(vert0 == null && vert1 == null)) {
+    if (vert0 != null && vert1 != null) {
       x0 = Math.min(vert0.getX(), vert1.getX());
       x1 = Math.max(vert0.getX(), vert1.getX());
       y0 = Math.min(vert0.getY(), vert1.getY());
@@ -68,7 +68,6 @@ public class RectangleGateAdapter extends MouseInputAdapter {
           LookAndFeel.DEFAULT_STROKE, LookAndFeel.DEFAULT_GATE_COLOR);
       panel.addTemporaryAnnotation(tempAnn);
       // Pop a gate editor dialog
-      // Window topFrame = SwingUtilities.getWindowAncestor(panel);
       GateNameEditor dialog = new GateNameEditor();
       dialog.setVisible(true);
       // On Close...
