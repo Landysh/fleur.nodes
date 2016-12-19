@@ -54,3 +54,7 @@ bin/
 
 #Eclipse Folders
 .metadata/
+.settings/org.sonarlint.eclipse.core.prefs
+sonar-project.properties
+*.sonar_lock
+.sonar/report-task.txt
