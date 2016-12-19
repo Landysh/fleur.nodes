@@ -23,16 +23,16 @@ package io.landysh.inflor.main.core.compensation;
 import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import io.landysh.inflor.main.core.dataStructures.DomainObject;
-import io.landysh.inflor.main.core.dataStructures.FCSDimension;
-import io.landysh.inflor.main.core.dataStructures.FCSFrame;
+import io.landysh.inflor.main.core.data.DomainObject;
+import io.landysh.inflor.main.core.data.FCSDimension;
+import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -43,11 +43,11 @@ public class SpilloverCompensator extends DomainObject {
   private DenseMatrix64F compMatrix;
   private double[][] rawMatrix;
 
-  public SpilloverCompensator(HashMap<String, String> keywords) {
-    this(keywords, null);
+  public SpilloverCompensator(Map<String, String> referenceHeader) {
+    this(referenceHeader, null);
   }
 
-  public SpilloverCompensator(HashMap<String, String> keywords, String priorUUID) {
+  public SpilloverCompensator(Map<String, String> keywords, String priorUUID) {
     super(priorUUID);
     if (keywords.containsKey("$SPILL") || keywords.containsKey("SPILL")) {
       rawMatrix = parseSpillover(keywords);
@@ -85,7 +85,7 @@ public class SpilloverCompensator extends DomainObject {
     return compParameters;
   }
 
-  private double[][] parseSpillover(HashMap<String, String> keywords) {
+  private double[][] parseSpillover(Map<String, String> keywords) {
     String spill = null;
 
     // Check for spillover keywords
