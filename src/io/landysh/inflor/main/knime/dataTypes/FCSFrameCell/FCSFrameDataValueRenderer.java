@@ -93,9 +93,9 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
       FCSDimension[] arr = dataFrame.getData().toArray(new FCSDimension[dataFrame.getColumnCount()]);
       for (FCSDimension dim : arr){
         dimensionSummary += dim.getDisplayName();
-        dimensionSummary+="    ";
-        dimensionSummary+=dim.getPreferredTransform().toString();
-        dimensionSummary+="\n";
+        dimensionSummary +="    ";
+        dimensionSummary +=dim.getPreferredTransform().toString();
+        dimensionSummary +="\n";
       }
       return dimensionSummary;
     }
@@ -104,7 +104,7 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
       String fileSummary = "";
       fileSummary+=dataFrame.getPrefferedName();
       fileSummary+="\n";
-      fileSummary+= dataFrame.getRowCount();
+      fileSummary+= Integer.toString(dataFrame.getRowCount());
       fileSummary+="\n";
       fileSummary+= dataFrame.getKeywordValue("$CYT");
       fileSummary+="\n";
