@@ -60,9 +60,9 @@ public class PlotUtils {
   public static AbstractFCChart createPlot(ChartSpec plotSpec) {
     PlotTypes type = plotSpec.getPlotType();
     AbstractFCChart newPlot = null;
-    if (type.equals(PlotTypes.Density)) {
+    if (type.equals(PlotTypes.DENSITY)) {
       newPlot = new DensityPlot(plotSpec);
-    } else if (type.equals(PlotTypes.Histogram)) {
+    } else if (type.equals(PlotTypes.HISTOGRAM)) {
       newPlot = new HistogramPlot(plotSpec);
     } else {
       throw new RuntimeException("No valid plot type selected.");

@@ -40,14 +40,14 @@
       </portType>
 </extension>
 <extension point="org.knime.core.DataType">
-   <DataType cellClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell" factoryClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellFactory">
-      <serializer cellClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell" serializerClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell$Serializer">
+   <DataType cellClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" factoryClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameCellFactory">
+      <serializer cellClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" serializerClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell$Serializer">
       </serializer>
    </DataType>
 </extension>
 <extension point="org.knime.core.DataValueRenderer">
-   <dataValue valueClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameDataValue">
-      <renderer rendererFactoryClass="io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellRenererFactory" suggestAsDefault="true">
+   <dataValue valueClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameDataValue">
+      <renderer rendererFactoryClass="io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameCellRenererFactory" suggestAsDefault="true">
       </renderer>
    </dataValue>
 </extension>

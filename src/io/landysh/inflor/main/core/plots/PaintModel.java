@@ -29,14 +29,10 @@ public class PaintModel {
   double[] levelValues;
   Paint[] paint;
   private int levels;
-  // private double zMin;
-  // private double zMax;
   private ColorSchemes colorScheme;
 
   public PaintModel(ColorSchemes colorScheme, double zMin, double zMax) {
 
-    // this.zMin = zMin;
-    // this.zMax = zMax;
     this.colorScheme = colorScheme;
 
     levels = (int) zMax;
@@ -50,7 +46,7 @@ public class PaintModel {
   private Paint[] createPaintArray(int levels) {
     Paint[] colorScale = new Paint[levels];
 
-    if (colorScheme == ColorSchemes.Color) {
+    if (colorScheme == ColorSchemes.COLOR) {
       float startH = 200 / 360f;
       float deltaH = startH / levels;
 
@@ -58,7 +54,7 @@ public class PaintModel {
         float hue = startH - (i) * deltaH;
         colorScale[i] = Color.getHSBColor(hue, 0.7f, 1f);
       }
-    } else if (colorScheme == ColorSchemes.GrayScale) {
+    } else if (colorScheme == ColorSchemes.GRAYSCALE) {
       float startV = 200 / 360f;
       float deltaV = startV / levels;
 
@@ -87,5 +83,4 @@ public class PaintModel {
   public double getThreshold() {
     return levels;
   }
-
 }

@@ -51,7 +51,7 @@ import io.landysh.inflor.main.core.plots.PlotUtils;
 import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.*;
 
 /**
  * This is the model implementation of Transform.
@@ -121,7 +121,7 @@ public class TransformNodeModel extends NodeModel {
   }
 
   private void createTransformSet(BufferedDataTable[] inData, ExecutionContext exec, int columnIndex) {
-    List<FCSFrame> fileList = new ArrayList<FCSFrame>();
+    List<FCSFrame> fileList = new ArrayList<>();
     for (DataRow inRow : inData[0]) {
       FCSFrame fcsStore = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
       fileList.add(fcsStore);

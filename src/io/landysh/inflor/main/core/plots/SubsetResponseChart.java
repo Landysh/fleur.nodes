@@ -60,7 +60,7 @@ public class SubsetResponseChart {
       }
     }
     double zMin = Double.MAX_VALUE;
-    double zMax = Double.MIN_VALUE;
+    double zMax = 1;
     int i = 0;
     for (Entry<String, FCSDimension> e : dataModel.entrySet()) {
       double[] data = e.getValue().getData();

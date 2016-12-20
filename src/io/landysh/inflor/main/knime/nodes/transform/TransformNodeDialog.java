@@ -58,7 +58,7 @@ import io.landysh.inflor.main.core.transforms.AbstractTransform;
 import io.landysh.inflor.main.core.transforms.LogicleTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.*;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.
