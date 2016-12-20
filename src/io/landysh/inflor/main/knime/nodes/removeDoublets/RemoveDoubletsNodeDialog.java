@@ -15,7 +15,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 import io.landysh.inflor.main.core.singlets.PuleProperties;
 import io.landysh.inflor.main.core.singlets.SingletsModel;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "RemoveDoublets" Node.

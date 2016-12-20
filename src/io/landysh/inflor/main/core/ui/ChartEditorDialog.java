@@ -5,8 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -49,9 +47,6 @@ public class ChartEditorDialog extends JDialog {
   private FCSFrame dataFrame;
 
   private boolean isOK = false;
-  private JComboBox<FCSDimension> domainParameterSelector;
-  private JComboBox<FCSDimension> rangeParameterSelector;
-  private AbstractFCChart previewPlot;
   private FCSChartPanel chartPanel;
   private GateCreationToolBar gatingToolBar;
   private List<AbstractGate> gates;
@@ -100,12 +95,7 @@ public class ChartEditorDialog extends JDialog {
   private JButton createCancelButton() {
     JButton button = new JButton();
     button.setText("Cancel");
-    button.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        setVisible(false);
-      }
-    });
+    button.addActionListener(e -> setVisible(false));
     return button;
   }
 
@@ -118,9 +108,9 @@ public class ChartEditorDialog extends JDialog {
    final JPanel buttonPanel = new JPanel(new FlowLayout());
    buttonPanel.add(okButton);
    buttonPanel.add(cancelButton);
-   domainParameterSelector = new JComboBox<>();
+   JComboBox<FCSDimension> domainParameterSelector = new JComboBox<>();
    Component domainAxisGroup = createAxisGroup(HORIZONTAL_AXIS_GROUP_LABEL, domainParameterSelector);
-   rangeParameterSelector = new JComboBox<>();
+   JComboBox<FCSDimension> rangeParameterSelector = new JComboBox<>();
    Component rangeAxisGroup = createAxisGroup(RANGE_AXIS_GROUP_LABEL, rangeParameterSelector);
    
    if (originalSpec!=null){
@@ -130,7 +120,7 @@ public class ChartEditorDialog extends JDialog {
      localSpec.setDomainAxisName(guessDomainDimension(dataFrame).getShortName());
      localSpec.setRangeAxisName(guessRangeDimension(dataFrame).getShortName());
      localSpec.setParentID(dataFrame.getID());
-     localSpec.setPlotType(PlotTypes.Density);
+     localSpec.setPlotType(PlotTypes.DENSITY);
    }
    
    localSpec.setParentID(dataFrame.getID());
@@ -138,22 +128,16 @@ public class ChartEditorDialog extends JDialog {
    setSelection(localSpec.getDomainAxisName(), domainParameterSelector);
    setSelection(localSpec.getRangeAxisName(), rangeParameterSelector);
    previewPanel = createPreviewPanel();
-   domainParameterSelector.addActionListener(new ActionListener() {
-     @Override
-     public void actionPerformed(final ActionEvent e) {
-       FCSDimension dimension = (FCSDimension) domainParameterSelector.getModel().getSelectedItem();
-       localSpec.setDomainAxisName(dimension.getShortName());
-       updatePreviewPlot();
-     }
-   });
-   rangeParameterSelector.addActionListener(new ActionListener() {
-     @Override
-     public void actionPerformed(final ActionEvent e) {
+   domainParameterSelector.addActionListener(e ->{
+     FCSDimension dimension = (FCSDimension) domainParameterSelector.getModel().getSelectedItem();
+     localSpec.setDomainAxisName(dimension.getShortName());
+     updatePreviewPlot();
+     });
+
+   rangeParameterSelector.addActionListener(e -> {
        FCSDimension dimension = (FCSDimension) rangeParameterSelector.getModel().getSelectedItem();
        localSpec.setRangeAxisName(dimension.getShortName());
-      updatePreviewPlot();
-     }
-   });
+      updatePreviewPlot();});
     // GridLayout
    
    GridBagConstraints gbc = new GridBagConstraints();
@@ -199,7 +183,7 @@ public class ChartEditorDialog extends JDialog {
   }
 
   private FCSChartPanel createPreviewPanel() {
-    previewPlot = PlotUtils.createPlot(localSpec);
+    AbstractFCChart previewPlot = PlotUtils.createPlot(localSpec);
     JFreeChart chart = previewPlot.createChart(dataFrame);
     chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
     gatingToolBar = new GateCreationToolBar(chartPanel);
@@ -223,13 +207,9 @@ public class ChartEditorDialog extends JDialog {
   private JButton createOkButton() {
     JButton button  = new JButton();
     button.setText("Ok");
-    button.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
+    button.addActionListener(e -> {
         isOK = true;
-        setVisible(false);
-      }
-    });
+        setVisible(false);});
     return button;
   }
 

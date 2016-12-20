@@ -72,7 +72,7 @@ public class PolygonGateAdapter extends MouseInputAdapter {
       GateNameEditor dialog = new GateNameEditor();
       dialog.setVisible(true);
       // On Close...
-      if (dialog.isOK) {
+      if (dialog.isOK()) {
         PolygonGateAnnotation finalPolygon = new PolygonGateAnnotation(dialog.getGateName(),
             panel.getDomainAxisName(), panel.getRangeAxisName(), polygon,
             LookAndFeel.DEFAULT_STROKE, LookAndFeel.DEFAULT_GATE_COLOR);

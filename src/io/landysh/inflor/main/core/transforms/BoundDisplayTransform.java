@@ -58,6 +58,7 @@ public class BoundDisplayTransform extends AbstractTransform {
     return transformedData;
   }
 
+  @Override
   public double getMinTranformedValue() {
     return boundaryMin;
   }
@@ -67,39 +68,36 @@ public class BoundDisplayTransform extends AbstractTransform {
   }
 
   @Override
-  public double transform(double d) {
-    if (d < boundaryMin) {
-      d = boundaryMin;
-    } else if (d > boundaryMax) {
-      d = boundaryMax;
+  public double transform(double value) {
+    double tValue;
+    if (value < boundaryMin) {
+      tValue = boundaryMin;
+    } else if (value > boundaryMax) {
+      tValue = boundaryMax;
     } else {
-      // noop
+      tValue = value;
     }
-    return d;
+    return tValue;
   }
 
   @Override
   public double inverse(double value) {
-    // TODO Auto-generated method stub
-    return 0;
+    return value;
   }
 
   @Override
   public double getMaxTransformedValue() {
-    // TODO Auto-generated method stub
     return boundaryMax;
   }
 
   @Override
   public double getMinRawValue() {
-    // TODO Auto-generated method stub
-    return -1;
+    return boundaryMin;
   }
 
   @Override
   public double getMaxRawValue() {
-    // TODO Auto-generated method stub
-    return -1;
+    return boundaryMax;
   }
 
   @Override

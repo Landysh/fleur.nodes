@@ -27,7 +27,7 @@ import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.ui.GateCreationToolBar;
 import io.landysh.inflor.main.core.plots.FCSChartPanel;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.

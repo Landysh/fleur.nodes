@@ -22,6 +22,8 @@ package io.landysh.inflor.main.core.plots;
 
 public class LogicleTickFormatter {
 
+  private LogicleTickFormatter(){}
+  
   /**
    * @param value - an integer wholly divisble by 10.
    * @return Tick label such as "10eN"

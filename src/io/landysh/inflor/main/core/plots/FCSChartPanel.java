@@ -60,7 +60,7 @@ public class FCSChartPanel extends ChartPanel {
   private static final String DELETE_ANNOTATIONS_KEY = "delete selected annotations";
 
   private FCSFrame data;
-  private List<XYGateAnnotation> selectedAnnotations = new ArrayList<XYGateAnnotation>();
+  private transient List<XYGateAnnotation> selectedAnnotations = new ArrayList<>();
   private HashMap<XYGateAnnotation, XYTextAnnotation> gateAnnotations = new HashMap<>();
   private double xHandleSize;
   private double yHandleSize;
@@ -137,12 +137,15 @@ public class FCSChartPanel extends ChartPanel {
     Map<Boolean, List<XYGateAnnotation>> gateSelection = gateAnnotations.keySet().stream()
         .collect(Collectors.partitioningBy(annotation -> annotation.containsPoint(p)));
 
-    selectedAnnotations = gateSelection.get(new Boolean(true)).stream()
+    selectedAnnotations = gateSelection
+        .get(true)
+        .stream()
         .map(annotation -> updateSelectionStatus(annotation, true)).collect(Collectors.toList());
 
     // unselected annotations get selecetion cleared
-    gateSelection.get(new Boolean(false))
-        .forEach(annotation -> updateSelectionStatus(annotation, false));
+    gateSelection
+      .get(false)
+      .forEach(annotation -> updateSelectionStatus(annotation, false));
   }
 
   private XYGateAnnotation updateSelectionStatus(XYGateAnnotation priorAnnotation,
@@ -153,14 +156,12 @@ public class FCSChartPanel extends ChartPanel {
     } else {
       udpatedAnnotation = priorAnnotation.cloneDefault();
     }
-    if (priorAnnotation != null) {
-      udpateAnnotation(priorAnnotation, udpatedAnnotation);
-    }
+    udpateAnnotation(priorAnnotation, udpatedAnnotation);
     return udpatedAnnotation;
   }
 
   public void translateSelectedAnnotations(double dx, double dy) {
-    if (selectedAnnotations != null && selectedAnnotations.size() >= 1) {
+    if (selectedAnnotations != null && !selectedAnnotations.isEmpty()) {
       List<XYGateAnnotation> translatedAnnoations = selectedAnnotations.stream()
           .map(annotation -> moveAnnotation(annotation, dx, dy)).collect(Collectors.toList());
       selectedAnnotations = translatedAnnoations;
@@ -174,21 +175,21 @@ public class FCSChartPanel extends ChartPanel {
   }
 
   public void deleteSelectedAnnotations() {
-    selectedAnnotations.forEach(annotation -> removeGateAnnotation(annotation));
+    selectedAnnotations.forEach(this::removeGateAnnotation);
   }
 
   public boolean hasGatesAtPoint(Point2D v) {
     List<XYGateAnnotation> matchingVertices = selectedAnnotations.stream()
         .filter(annotation -> annotation.matchesVertex(v, xHandleSize, yHandleSize))
         .collect(Collectors.toList());
-    if (matchingVertices.size() >= 1) {
+    if (!matchingVertices.isEmpty()) {
       return true;
     }
     return false;
   }
 
   public void adjustGatesAtPoint(Point2D v, double dx, double dy) {
-    if (selectedAnnotations != null && selectedAnnotations.size() >= 1) {
+    if (selectedAnnotations != null && !selectedAnnotations.isEmpty()) {
       List<XYGateAnnotation> adjustedAnnotrations = selectedAnnotations.stream()
           .map(annotation -> updateGateVertex(annotation, v, xHandleSize, yHandleSize, dx, dy))
           .collect(Collectors.toList());
@@ -215,7 +216,7 @@ public class FCSChartPanel extends ChartPanel {
     ActionListener[] action = selectionButton.getActionListeners();
     for (ActionListener act : action) {
       if (act instanceof SelectionButtonListener) {
-        ActionEvent event = new ActionEvent(selectionButton, 42, "What was the question again?");//TODO: Are these args relevant?
+        ActionEvent event = new ActionEvent(selectionButton, 42, "What was the question again?");
         act.actionPerformed(event);
       }
     }
@@ -230,7 +231,7 @@ public class FCSChartPanel extends ChartPanel {
     List<AbstractGate> gates = gateAnnotations
                                           .keySet()
                                           .stream()
-                                          .map(ann -> ChartUtils.createGate(ann))
+                                          .map(ChartUtils::createGate)
                                           .collect(Collectors.toList());
     
     gates.forEach(gate -> gate.setParentID(data.getID()));
@@ -241,18 +242,20 @@ public class FCSChartPanel extends ChartPanel {
   public void createAnnotations(List<AbstractGate> gates){
     gates
       .stream()
-      .filter(gate -> isPlotable(gate))
-      .map(gate -> ChartUtils.createAnnotation(gate))
-      .forEach(annotation -> createGateAnnotation(annotation));
+      .filter(this::isPlotable)
+      .map(ChartUtils::createAnnotation)
+      .forEach(this::createGateAnnotation);
   }
 
   private boolean isPlotable(AbstractGate gate) {
+    boolean isPlotable;
     if (gate.getDomainAxisName().equals(spec.getDomainAxisName()) && 
         gate.getRangeAxisName().equals(spec.getRangeAxisName())){
-      return true;
+      isPlotable = true;
     } else {
-      return false;
+      isPlotable = false;
     }
+    return isPlotable;
   }
 
   public FCSFrame getDataFrame() {

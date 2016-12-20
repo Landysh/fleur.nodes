@@ -66,7 +66,9 @@ public class SpilloverCompensator extends DomainObject {
     rawMatrix = new double[inDimensionList.length][outDimensionList.length];
     for (int i=0;i<inDimensionList.length;i++){
       for (int j=0;j<outDimensionList.length;j++){
-        rawMatrix[i][j] = spilloverValues[i*j + i];
+        int flatIndex = i*outDimensionList.length + j;
+        double value = spilloverValues[flatIndex];
+        rawMatrix[i][j] = value;
       }
     }
     compMatrix = new DenseMatrix64F(rawMatrix);
@@ -128,7 +130,7 @@ public class SpilloverCompensator extends DomainObject {
     }
   }
 
-  public FCSFrame compensateFCSFrame(FCSFrame dataFrame) throws InvalidProtocolBufferException {
+  public FCSFrame compensateFCSFrame(FCSFrame dataFrame, boolean retainUncomped) throws InvalidProtocolBufferException {
     FCSFrame newFrame = dataFrame.deepCopy();
     double[][] x = new double[compParameters.length][newFrame.getRowCount()];
 
@@ -158,6 +160,15 @@ public class SpilloverCompensator extends DomainObject {
       dimension.setShortName("[" + dimension.getShortName() + "]");
     }
     newFrame.setCompRef(this.getID());
+    
+    if (retainUncomped){
+      for (int i = 0; i < compParameters.length; i++) {
+        FCSDimension dimension = FCSUtilities.findCompatibleDimension(dataFrame, compParameters[i]);
+        newFrame.addDimension(dimension);
+      }
+    }
+    
+    
     return newFrame;
   }
 
@@ -183,7 +194,7 @@ public class SpilloverCompensator extends DomainObject {
     double[] spills = new double[ inDimCount * outDimCount];
     for (int i=0;i<inDimCount;i++){
       for (int j=0;j<outDimCount;j++){
-        spills[j*i+i] = rawMatrix[i][j];
+        spills[i*outDimCount+j] = rawMatrix[i][j];
       }
     }
     return spills;
@@ -200,8 +211,7 @@ public class SpilloverCompensator extends DomainObject {
     return isEmpty;
   }
 
-  public FCSFrame compensateFCSFrame(FCSFrame columnStore, boolean retainUncomped) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+//  public FCSFrame compensateFCSFrame(FCSFrame dataFrame) throws InvalidProtocolBufferException {
+//    return compensateFCSFrame(dataFrame, false);
+//  }
 }

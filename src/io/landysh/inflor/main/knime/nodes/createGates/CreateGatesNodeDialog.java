@@ -33,7 +33,7 @@ import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.core.gates.ui.LineageTreeMouseAdapter;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.

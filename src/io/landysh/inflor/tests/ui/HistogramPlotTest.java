@@ -33,10 +33,10 @@ public class HistogramPlotTest extends ApplicationFrame {
     FCSFrame dataFrame = FCSFileReader.read(logiclePath);
 
     SpilloverCompensator compr = new SpilloverCompensator(dataFrame.getKeywords());
-    dataFrame = compr.compensateFCSFrame(dataFrame);
+    dataFrame = compr.compensateFCSFrame(dataFrame, false);
 
     ChartSpec spec = new ChartSpec();
-    spec.setPlotType(PlotTypes.Histogram);
+    spec.setPlotType(PlotTypes.HISTOGRAM);
     spec.setDomainAxisName("PE-Texas-Red-A");
     LogicleTransform transform = new LogicleTransform();
     double[] data = FCSUtilities.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").getData();

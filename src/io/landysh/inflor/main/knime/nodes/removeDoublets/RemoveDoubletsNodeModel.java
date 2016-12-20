@@ -24,7 +24,7 @@ import org.knime.core.node.NodeSettingsWO;
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.singlets.SingletsModel;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 import io.landysh.inflor.main.knime.nodes.fcs.read.ReadFCSSetNodeModel;
 
 /**

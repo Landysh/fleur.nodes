@@ -24,7 +24,7 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "SummaryStatistics" Node. Extract basic summary statistics from a

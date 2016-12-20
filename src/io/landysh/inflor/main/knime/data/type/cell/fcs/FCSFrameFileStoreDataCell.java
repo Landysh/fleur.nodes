@@ -18,7 +18,7 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
+package io.landysh.inflor.main.knime.data.type.cell.fcs;
 
 import java.io.IOException;
 
@@ -36,17 +36,20 @@ import io.landysh.inflor.main.core.data.FCSFrame;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 
+  // the logger instance
+  private static final NodeLogger logger = NodeLogger.getLogger(FCSFrameFileStoreDataCell.class);
+  
   public static final class Serializer implements DataCellSerializer<FCSFrameFileStoreDataCell> {
 
     @Override
     public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
-        final byte[] bytes = new byte[input.readInt()];
+        byte[] bytes = new byte[input.readInt()];
         input.readFully(bytes);
         FCSFrame cStore = FCSFrame.load(bytes);
         return new FCSFrameFileStoreDataCell(cStore);
-      } catch (final Exception e) {
-        e.printStackTrace();
+      } catch (Exception e) {
+        logger.error("Unable to deserialize cell", e);
         throw new IOException("Error during deserialization");
       }
     }
@@ -64,28 +67,28 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
   /**
    * A cell type matching the functionality of the ColumnStorePortObject.
    */
-  private final FCSFrame m_data;
+  private final FCSFrame mData;
 
   FCSFrameFileStoreDataCell(FCSFrame dataFrame) {
     
     // Use with deserializer.
     super();
-    m_data = dataFrame;
+    mData = dataFrame;
   }
 
   public FCSFrameFileStoreDataCell(FileStore fs, FCSFrame dataFrame) {
     super(fs);
-    m_data = dataFrame;
+    mData = dataFrame;
   }
 
   @Override
   public String toString() {
-    return m_data.toString();
+    return mData.toString();
   }
 
   @Override
   public FCSFrame getFCSFrameValue() {
-    return m_data;
+    return mData;
   }
   
   /**
@@ -94,7 +97,7 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
   @Override
   protected boolean equalsDataCell(final DataCell dataCell) {
     FCSFrameFileStoreDataCell fcsCell = (FCSFrameFileStoreDataCell)dataCell;
-    return m_data.getID().equals(fcsCell.getFCSFrameValue().getID());
+    return mData.getID().equals(fcsCell.getFCSFrameValue().getID());
   }
   
   /**

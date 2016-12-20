@@ -7,7 +7,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelectio
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "ApplyCompensation" Node.

@@ -37,19 +37,17 @@ public class LogicleNumberFormat extends NumberFormat {
 
   @Override
   public StringBuffer format(double arg0, StringBuffer arg1, FieldPosition arg2) {
-    // double[] tickPositions = transform.getAxisValues();
     double val = transform.inverse(arg0);
     int iVal = (int) Math.round(val);
 
 
-    String tickLabel = null;
+    String tickLabel;
     if (Math.abs(iVal) <= 990) {
       tickLabel = Integer.toString(iVal);
     } else {
       tickLabel = LogicleTickFormatter.findLogTick(iVal);
     }
-    StringBuffer buffer = new StringBuffer(tickLabel);
-    return buffer;
+    return new StringBuffer(tickLabel);
   }
 
   @Override
@@ -61,7 +59,6 @@ public class LogicleNumberFormat extends NumberFormat {
   @Override
   public Number parse(String arg0, ParsePosition arg1) {
     double d = Double.parseDouble(arg0);
-    double number = transform.transform(d);
-    return number;
+    return transform.transform(d);
   }
 }

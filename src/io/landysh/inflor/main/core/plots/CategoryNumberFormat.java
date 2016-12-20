@@ -37,13 +37,12 @@ public class CategoryNumberFormat extends NumberFormat {
 
   @Override
   public StringBuffer format(double arg0, StringBuffer arg1, FieldPosition arg2) {
-    StringBuffer buffer = new StringBuffer(labelMap.get((int) arg0));
-    return buffer;
+    return new StringBuffer(labelMap.get((int) arg0));
   }
 
   @Override
   public StringBuffer format(long arg0, StringBuffer arg1, FieldPosition arg2) {
-    // TODO Auto-generated method stub
+    // TODO I still dont understand this but it seems to work?
     return null;
   }
 

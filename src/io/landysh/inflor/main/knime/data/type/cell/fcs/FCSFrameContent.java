@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
+package io.landysh.inflor.main.knime.data.type.cell.fcs;
 
 import java.io.IOException;
 

@@ -32,7 +32,7 @@ public class ContourPlotTest_UI extends ApplicationFrame {
     final FCSFrame dataStore = FCSFileReader.read(logiclePath);
 
     ChartSpec spec = new ChartSpec();
-    spec.setPlotType(PlotTypes.Density);
+    spec.setPlotType(PlotTypes.DENSITY);
     spec.setDomainAxisName("FSC-A");
     spec.setRangeAxisName("SSC-A");
     FCSDimension X = FCSUtilities.findCompatibleDimension(dataStore, spec.getDomainAxisName());

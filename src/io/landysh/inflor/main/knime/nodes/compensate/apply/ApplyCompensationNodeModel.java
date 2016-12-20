@@ -2,7 +2,6 @@ package io.landysh.inflor.main.knime.nodes.compensate.apply;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.knime.core.data.DataCell;
@@ -24,7 +23,6 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-import org.knime.core.node.defaultnodesettings.DialogComponentColumnFilter;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 import org.knime.core.node.port.PortObject;
@@ -34,12 +32,10 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.utils.FCSConcatenator;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameCellColumnFilter;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameDataValue;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameDataValue;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortObject;
 import io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortSpec;
 

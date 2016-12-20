@@ -41,8 +41,9 @@ public class CellLineageTree extends JTree {
 
   private DefaultMutableTreeNode root;
   private FCSFrame rootFrame;
-  private DefaultMutableTreeNode currentNode;
+  private DefaultMutableTreeNode currentNode;//scope issue on stream.  maybe a dirty hack.
 
+  
   public CellLineageTree(FCSFrame rootFrame, List<Hierarchical> nodePool) {
     this.setCellRenderer(new TreeCellPlotRenderer());
     this.rootFrame = rootFrame;
@@ -69,11 +70,11 @@ public class CellLineageTree extends JTree {
     DefaultTreeModel tree = new DefaultTreeModel(root);
     currentNode = root;
 
-    List<DefaultMutableTreeNode> nodesToCheck = new ArrayList<DefaultMutableTreeNode>();
+    List<DefaultMutableTreeNode> nodesToCheck = new ArrayList<>();
     nodesToCheck.add(root);
-    while (nodesToCheck.size()>0){
+    while (!nodesToCheck.isEmpty()){
       String parentID = ((DomainObject) currentNode.getUserObject()).getID();
-      List<DefaultMutableTreeNode> dmtNodes = new ArrayList<DefaultMutableTreeNode>(); 
+      List<DefaultMutableTreeNode> dmtNodes = new ArrayList<>(); 
       for (Hierarchical node: nodePool){
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(node);
         if (node.getParentID()!=null && node.getParentID().equals(parentID)){
@@ -83,11 +84,11 @@ public class CellLineageTree extends JTree {
           node.setParentID(rootFrame.getID());
           dmtNodes.add(childNode);  
           nodesToCheck.add(childNode);
-        };
+        }
       }
       dmtNodes.forEach(child -> tree.insertNodeInto(child, currentNode, currentNode.getChildCount()));
       nodesToCheck.remove(currentNode);
-      if (nodesToCheck.size()>0){
+      if (!nodesToCheck.isEmpty()){
         currentNode = nodesToCheck.get(0);
       }
     }

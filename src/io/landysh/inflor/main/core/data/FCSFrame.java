@@ -28,6 +28,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -84,7 +85,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public FCSFrame(String priorUUID, Map<String, String> keywords, int rowCount) {
     super(priorUUID);
     this.keywords = keywords;
-    columnData = new TreeSet<FCSDimension>();
+    columnData = new TreeSet<>();
     this.rowCount = rowCount;
     preferredName = getKeywordValue(DEFAULT_PREFFERED_NAME_KEYWORD);
   }
@@ -118,13 +119,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public String getKeywordValue(String keyword) {
-    String result = null;
-    try {
-      result = keywords.get(keyword).trim();
-    } catch (NullPointerException npe) {
-      // No operation, just return a null value.
-    }
-    return result;
+    return keywords.get(keyword).trim();
   }
 
 
@@ -174,9 +169,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     }
 
     // add the keywords.
-    for (final String s : keywords.keySet()) {
-      final String key = s;
-      final String value = keywords.get(s);
+    for (Entry<String, String> s : keywords.entrySet()) {
+      final String key = s.getKey();
+      final String value = s.getValue();
       final Message.Keyword.Builder keyBuilder = Message.Keyword.newBuilder();
       keyBuilder.setKey(key);
       keyBuilder.setValue(value);
@@ -225,8 +220,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     
     // build the message
     final Message buffer = messageBuilder.build();
-    final byte[] bytes = buffer.toByteArray();
-    return bytes;
+    return buffer.toByteArray();
   }
 
   private Builder buildTransform(FCSDimension fcsdim) {
@@ -265,7 +259,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     final Message loadedMessage = Message.parseFrom(bytes);
 
     // Load the keywords
-    final HashMap<String, String> keywords = new HashMap<String, String>();
+    final HashMap<String, String> keywords = new HashMap<>();
     for (int i = 0; i < loadedMessage.getKeywordCount(); i++) {
       final Keyword keyword = loadedMessage.getKeyword(i);
       final String key = keyword.getKey();
@@ -321,25 +315,20 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
         double w = tBuffer.getLogicleW();
         double m = tBuffer.getLogicleM();
         double a = tBuffer.getLogicleA();
-        LogicleTransform transform = new LogicleTransform(t, w, m, a);
-        return transform;
-      } else if (tBuffer.getTransformType().equals(TransformType.LOGARITHMIC.toString())) {
-        LogrithmicTransform transform =
-            new LogrithmicTransform(tBuffer.getLogMin(), tBuffer.getLogMax());
-        return transform;
+        return new LogicleTransform(t, w, m, a);
+      } else if (tBuffer.getTransformType().equals(TransformType.LOGARITHMIC.toString())) {            
+        return new LogrithmicTransform(tBuffer.getLogMin(), tBuffer.getLogMax());
 
       } else if (tBuffer.getTransformType().equals(TransformType.BOUNDARY.toString())) {
-        BoundDisplayTransform transform =
-            new BoundDisplayTransform(tBuffer.getBoundMin(), tBuffer.getBoundMax());
-        return transform;
+        return new BoundDisplayTransform(tBuffer.getBoundMin(), tBuffer.getBoundMax());
       } else {
-        System.out.print("Oh shit.");
+        throw new IllegalArgumentException("Unsupported transform type.");
       }
     }
     return null;
   }
 
-  public static FCSFrame load(FileInputStream input) throws Exception {
+  public static FCSFrame load(FileInputStream input) throws IOException {
     final byte[] buffer = new byte[input.available()];
     int bytesRead = input.read(buffer);
     if (bytesRead==buffer.length){
@@ -377,13 +366,12 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public FCSFrame deepCopy() throws InvalidProtocolBufferException {
     byte[] bytes = this.save();
-    FCSFrame newFrame = FCSFrame.load(bytes);
-    return newFrame;
+    return FCSFrame.load(bytes);
   }
 
   public void addSubset(Subset subset) {
     if (this.subsets==null){
-      this.subsets = new ArrayList<Subset>();
+      this.subsets = new ArrayList<>();
     }
     this.subsets.add(subset);
   }

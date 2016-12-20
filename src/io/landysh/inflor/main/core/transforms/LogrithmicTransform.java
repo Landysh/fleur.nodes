@@ -62,16 +62,18 @@ public class LogrithmicTransform extends AbstractTransform {
 
   @Override
   public double transform(double value) {
+    double newValue;
     if (value < min) {
-      value = min;
+      newValue = min;
+    } else {
+      newValue = value;
     }
-    return Math.log10(value);
+    return Math.log10(newValue);
   }
 
   @Override
   public double inverse(double value) {
-    // TODO Auto-generated method stub
-    return 0;
+    return Math.pow(10, value);
   }
 
   @Override

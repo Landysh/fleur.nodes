@@ -31,17 +31,17 @@ public abstract class AbstractTransform extends DomainObject implements Serializ
     super(priorUUID);
   }
 
-  abstract public double[] transform(double[] rawData);
+  public abstract double[] transform(double[] rawData);
 
-  abstract public double transform(double value);
+  public abstract double transform(double value);
 
-  abstract public double inverse(double value);
+  public abstract double inverse(double value);
 
-  abstract public double getMinTranformedValue();
+  public abstract double getMinTranformedValue();
 
-  abstract public double getMaxTransformedValue();
+  public abstract double getMaxTransformedValue();
 
-  abstract public double getMinRawValue();
+  public abstract double getMinRawValue();
 
-  abstract public double getMaxRawValue();
+  public abstract double getMaxRawValue();
 }

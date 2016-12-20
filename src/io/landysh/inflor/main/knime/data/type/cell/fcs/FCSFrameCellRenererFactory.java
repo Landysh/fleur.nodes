@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
+package io.landysh.inflor.main.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.DataValueRenderer;

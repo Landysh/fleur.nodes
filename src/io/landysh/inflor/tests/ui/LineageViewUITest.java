@@ -31,18 +31,18 @@ public class LineageViewUITest extends ApplicationFrame {
     final FCSFrame dataStore = reader.getColumnStore();
 
     ChartSpec ly = new ChartSpec();
-    ly.setPlotType(PlotTypes.Density);
+    ly.setPlotType(PlotTypes.DENSITY);
     ly.setDomainAxisName("SSC-W");
     ly.setRangeAxisName("SSC-A");
 
     ChartSpec ly2 = new ChartSpec();
-    ly2.setPlotType(PlotTypes.Density);
+    ly2.setPlotType(PlotTypes.DENSITY);
     ly2.setDomainAxisName("FSC-A");
     ly2.setRangeAxisName("SSC-A");
 
 
     ChartSpec ly3 = new ChartSpec();
-    ly3.setPlotType(PlotTypes.Density);
+    ly3.setPlotType(PlotTypes.DENSITY);
     ly3.setDomainAxisName("FSC-A");
     ly3.setRangeAxisName("SSC-A");
     ly3.setParentID(ly.getID());

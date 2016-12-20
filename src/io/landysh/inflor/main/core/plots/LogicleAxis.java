@@ -47,18 +47,11 @@ public class LogicleAxis extends NumberAxis {
   }
 
   public double transformValue(double value) {
-    double transformedValue = transform.transform(value);
-    return transformedValue;
+    return transform.transform(value);
   }
 
   public double inverseValue(double value) {
-    double invertedValue = transform.inverse(value);
-    return invertedValue;
-  }
-
-  @Override
-  public void setRange(Range range) {
-    super.setRange(range);
+    return transform.inverse(value);
   }
 
   /**

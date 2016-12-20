@@ -1,4 +1,4 @@
-package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
+package io.landysh.inflor.main.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.node.util.ColumnFilter;

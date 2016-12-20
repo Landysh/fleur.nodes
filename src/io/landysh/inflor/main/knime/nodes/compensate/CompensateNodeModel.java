@@ -29,7 +29,7 @@ import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Compensate. Will extract a compensation matrix from am FCS
@@ -80,7 +80,7 @@ public class CompensateNodeModel extends NodeModel {
 
 
       // now create the output row
-      final FCSFrame outStore = compr.compensateFCSFrame(columnStore);
+      final FCSFrame outStore = compr.compensateFCSFrame(columnStore, false);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);

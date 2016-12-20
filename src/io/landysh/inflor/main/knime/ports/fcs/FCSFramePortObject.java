@@ -27,9 +27,9 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
 import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameContent;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameContent;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 public class FCSFramePortObject extends FileStorePortObject {
 

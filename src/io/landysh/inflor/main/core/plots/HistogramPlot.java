@@ -48,8 +48,8 @@ public class HistogramPlot extends AbstractFCChart {
   }
 
   @Override
-  public void setSpec(ChartSpec spec) {
-    // TODO Auto-generated method stub
+  public void setSpec(ChartSpec newSpec) {
+    this.spec = newSpec;
   }
 
   @Override
@@ -74,7 +74,6 @@ public class HistogramPlot extends AbstractFCChart {
     renderer.setSeriesShape(0, ShapeUtilities.createDiamond(Float.MIN_VALUE));// Make the points
                                                                               // invisible
     XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);
-    JFreeChart chart = new JFreeChart(plot);
-    return chart;
+    return new JFreeChart(plot);
   }
 }

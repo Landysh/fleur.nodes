@@ -3,8 +3,6 @@ package io.landysh.inflor.main.core.ui;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +22,9 @@ public class GateNameEditor extends JDialog {
 
   protected ChartPanel panel;
 
-  private JButton m_okButton = null;
-  private JButton m_cancelButton = null;
-  public boolean isOK = false;
+  private JButton mOkButton = null;
+  private JButton mCancelButton = null;
+  private boolean isOK = false;
   private String gateName = "";
 
 
@@ -45,15 +43,10 @@ public class GateNameEditor extends JDialog {
   }
 
   private JButton createCancelButton() {
-    m_cancelButton = new JButton();
-    m_cancelButton.setText("Cancel");
-    m_cancelButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        setVisible(false);
-      }
-    });
-    return m_cancelButton;
+    mCancelButton = new JButton();
+    mCancelButton.setText("Cancel");
+    mCancelButton.addActionListener(e-> setVisible(false));
+    return mCancelButton;
   }
 
   private JPanel createContentPanel() {
@@ -72,45 +65,45 @@ public class GateNameEditor extends JDialog {
     gbc.anchor = GridBagConstraints.SOUTHEAST;
     gbc.gridy = 2;
     final JPanel buttonPanel = new JPanel(new FlowLayout());
-    m_okButton = createOkButton();
-    m_cancelButton = createCancelButton();
-    buttonPanel.add(m_okButton);
-    buttonPanel.add(m_cancelButton);
+    mOkButton = createOkButton();
+    mCancelButton = createCancelButton();
+    buttonPanel.add(mOkButton);
+    buttonPanel.add(mCancelButton);
     contentPanel.add(buttonPanel, gbc);
 
     return contentPanel;
   }
 
   private JComboBox<String> createGateNameBox() {
-    JComboBox<String> comboBox = new JComboBox<String>();
-    DEFAULT_GATE_NAMES.stream().sequential().forEachOrdered(name -> comboBox.addItem(name));
+    JComboBox<String> comboBox = new JComboBox<>();
+    DEFAULT_GATE_NAMES.stream().sequential().forEachOrdered(comboBox::addItem);
 
     comboBox.setEditable(NAME_EDITABLE);
 
-    comboBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        gateName = (String) comboBox.getSelectedItem();
-      }
-    });
+    comboBox.addActionListener(e -> gateName = (String) comboBox.getSelectedItem());
     comboBox.setSelectedIndex(0);
     return comboBox;
   }
 
   private JButton createOkButton() {
-    m_okButton = new JButton();
-    m_okButton.setText("Ok");
-    m_okButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        isOK = true;
+    mOkButton = new JButton();
+    mOkButton.setText("Ok");
+    mOkButton.addActionListener(e -> {
+        setOK(true);
         setVisible(false);
-      }
     });
-    return m_okButton;
+    return mOkButton;
   }
 
   public String getGateName() {
     return gateName;
+  }
+
+  public boolean isOK() {
+    return isOK;
+  }
+
+  public void setOK(boolean isOK) {
+    this.isOK = isOK;
   }
 }

@@ -18,7 +18,7 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package io.landysh.inflor.main.knime.dataTypes.FCSFrameCell;
+package io.landysh.inflor.main.knime.data.type.cell.fcs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

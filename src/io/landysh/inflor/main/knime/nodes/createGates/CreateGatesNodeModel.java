@@ -34,7 +34,7 @@ import io.landysh.inflor.main.core.data.Subset;
 import io.landysh.inflor.main.core.gates.AbstractGate;
 import io.landysh.inflor.main.core.gates.GateUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of CreateGates.

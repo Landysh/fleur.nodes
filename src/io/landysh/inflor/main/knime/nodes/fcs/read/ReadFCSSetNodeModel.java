@@ -37,7 +37,7 @@ import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
 import io.landysh.inflor.main.knime.core.NodeUtilities;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of ReadFCSSet.

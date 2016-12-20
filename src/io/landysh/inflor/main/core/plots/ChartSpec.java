@@ -33,7 +33,7 @@ public class ChartSpec extends DomainObject implements Hierarchical{
    */
   private static final long serialVersionUID = 7153659120835974973L;
 
-  private static final PlotTypes DEFAULT_CHART_TYPE = PlotTypes.Density;
+  private static final PlotTypes DEFAULT_CHART_TYPE = PlotTypes.DENSITY;
 
   private String parentID;
   private PlotTypes plotType = DEFAULT_CHART_TYPE;

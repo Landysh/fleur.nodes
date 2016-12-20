@@ -52,7 +52,7 @@ public class LogicleNumberAxis extends NumberAxis {
   @Override
   public List<NumberTick> refreshTicks(Graphics2D g2, AxisState state, Rectangle2D dataArea,
       RectangleEdge edge) {
-    List<NumberTick> ticks = new ArrayList<NumberTick>();
+    List<NumberTick> ticks = new ArrayList<>();
     double[] suggestedTicks = logicle.getAxisValues();
     if (suggestedTicks[0] >= 0) {
       double tick1Value = logicle.getMinTranformedValue();
@@ -72,7 +72,7 @@ public class LogicleNumberAxis extends NumberAxis {
       double tickDangerRatio = 0;
       if (ticks.size() >= 2) {
         double firstPositiveTick = logicle.inverse(ticks.get(1).getValue());
-        tickDangerRatio = (value / firstPositiveTick);
+        tickDangerRatio = value / firstPositiveTick;
       }
       if (tickDangerRatio < 0.5 || tickDangerRatio > 2) {
         String label = this.getNumberFormatOverride().format(td);

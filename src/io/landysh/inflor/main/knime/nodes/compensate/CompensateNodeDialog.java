@@ -23,7 +23,7 @@ import org.knime.core.node.NotConfigurableException;
 
 import io.landysh.inflor.main.core.data.FCSFrame;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
-import io.landysh.inflor.main.knime.dataTypes.FCSFrameCell.FCSFrameFileStoreDataCell;
+import io.landysh.inflor.main.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.

@@ -71,7 +71,7 @@ public class RectangleGateAdapter extends MouseInputAdapter {
       GateNameEditor dialog = new GateNameEditor();
       dialog.setVisible(true);
       // On Close...
-      if (dialog.isOK) {
+      if (dialog.isOK()) {
         XYGateAnnotation finalAnnotation = tempAnn.cloneDefault();
         finalAnnotation.setSubsetName(dialog.getGateName());
         finalAnnotation.setDomainAxisName(panel.getDomainAxisName());

@@ -31,11 +31,11 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   private static final long serialVersionUID = 1L;
   
-  private static final double LOGICLE_W_PERCENTILE = 5;
-  private static final double dt = 262144;
-  private static final double dw = 0.5;
-  private static final double dm = 4.5;
-  private static final double da = 0;
+  private static final double LOGICLE_W_PERCENTILE = 1;
+  private static final double DEFAULT_T = 262144;
+  private static final double DEFAULT_W = 0.5;
+  private static final double DEFAULT_M = 4.5;
+  private static final double DEFAULT_A = 0;
   
   transient FastLogicle logicle;
   
@@ -58,7 +58,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   }
   
   public LogicleTransform() {
-    this(dt, dw, dm, da, null);
+    this(DEFAULT_T, DEFAULT_W, DEFAULT_M, DEFAULT_A, null);
   }
   
   @Override
@@ -93,24 +93,25 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   @Override
   public double transform(double value) {
+    double newValue;
     if (value < getMinRawValue()) {
-      value = getMinRawValue();
+      newValue = getMinRawValue();
     } else if (value >= getMaxRawValue()) {
-      value = getMaxRawValue();
+      newValue = getMaxRawValue();
     } else {
-      // noop
+      newValue = value;
     }
 
-    if (value == logicle.T) {
+    if (newValue == logicle.T) {
       return 1;
     }
-    return logicle.scale(value);
+    return logicle.scale(newValue);
   }
 
   @Override
   public double inverse(double value) {
     if (value == 1) {
-      return logicle.T;// TODO: Is that right?
+      return logicle.T;
     } else {
       return logicle.inverse(value);
     }

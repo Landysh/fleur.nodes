@@ -39,11 +39,9 @@ import io.landysh.inflor.main.core.utils.FCSUtilities;
 
 public class DensityPlot extends AbstractFCChart {
 
-  ChartSpec spec;
   private ColorSchemes colorScheme = ChartingDefaults.DEFAULT_COLOR_SCHEME;
   private XYPlot plot;
   private Histogram2D histogram;
-  
 
   public DensityPlot(ChartSpec spec, String priorUUID) {
     super(priorUUID, spec);
