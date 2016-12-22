@@ -2,7 +2,7 @@ package tests.java.inflor.unit;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.singlets.SingletsModel;
+import main.java.inflor.core.singlets.SingletsModel;
 
 public class SingletsModelTest {
   // Define Constants

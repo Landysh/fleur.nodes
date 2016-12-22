@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.transforms.LogicleTransform;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
+import main.java.inflor.core.transforms.LogicleTransform;
 
 public class LogicleTransformTest {
   // Define Constants

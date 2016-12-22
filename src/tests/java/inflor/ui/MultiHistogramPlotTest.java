@@ -14,13 +14,13 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.main.core.plots.SubsetResponseChart;
-import io.landysh.inflor.main.core.transforms.AbstractTransform;
-import io.landysh.inflor.main.core.transforms.LogicleTransform;
-import io.landysh.inflor.main.core.utils.FCSUtilities;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
+import main.java.inflor.core.plots.SubsetResponseChart;
+import main.java.inflor.core.transforms.AbstractTransform;
+import main.java.inflor.core.transforms.LogicleTransform;
+import main.java.inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class MultiHistogramPlotTest extends ApplicationFrame {

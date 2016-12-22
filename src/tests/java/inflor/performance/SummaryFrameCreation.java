@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.landysh.inflor.main.core.utils.FCSUtilities;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
+import main.java.inflor.core.utils.FCSUtilities;
 
 public class SummaryFrameCreation {
   static final int numFiles = 10;
