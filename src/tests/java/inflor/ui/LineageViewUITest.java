@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.ui;
+package tests.java.inflor.ui;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.core.gates.RectangleGate;
 import io.landysh.inflor.main.core.plots.ChartSpec;
 import io.landysh.inflor.main.core.plots.PlotTypes;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 @SuppressWarnings("serial")
 public class LineageViewUITest extends ApplicationFrame {

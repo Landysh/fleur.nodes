@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.unit;
+package tests.java.inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.data.FCSFrame;
+import main.java.inflor.core.data.FCSFrame;
 
 public class EventFrameTest {
 

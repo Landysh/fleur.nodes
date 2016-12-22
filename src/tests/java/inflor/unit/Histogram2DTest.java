@@ -1,8 +1,8 @@
-package io.landysh.inflor.tests.unit;
+package tests.java.inflor.unit;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.data.Histogram2D;
+import main.java.inflor.core.data.Histogram2D;
 
 import static org.junit.Assert.assertEquals;
 

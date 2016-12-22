@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.ui;
+package tests.java.inflor.ui;
 
 
 import javax.swing.JPanel;
@@ -7,9 +7,6 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import io.landysh.inflor.main.core.compensation.SpilloverCompensator;
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.ui.GateCreationToolBar;
 import io.landysh.inflor.main.core.plots.ChartSpec;
 import io.landysh.inflor.main.core.plots.FCSChartPanel;
@@ -17,6 +14,9 @@ import io.landysh.inflor.main.core.plots.HistogramPlot;
 import io.landysh.inflor.main.core.plots.PlotTypes;
 import io.landysh.inflor.main.core.transforms.LogicleTransform;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
+import main.java.inflor.core.compensation.SpilloverCompensator;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 @SuppressWarnings("serial")
 public class HistogramPlotTest extends ApplicationFrame {

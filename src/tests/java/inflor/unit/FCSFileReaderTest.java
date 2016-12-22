@@ -1,11 +1,11 @@
-package io.landysh.inflor.tests.unit;
+package tests.java.inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
   // Define Constants

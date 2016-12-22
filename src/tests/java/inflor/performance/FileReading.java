@@ -1,11 +1,11 @@
-package io.landysh.inflor.tests.performance;
+package tests.java.inflor.performance;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 public class FileReading {
   static final int numFiles = 10;

@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.performance;
+package tests.java.inflor.performance;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.landysh.inflor.main.core.data.FCSDimension;
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.utils.FCSUtilities;
+import main.java.inflor.core.data.FCSDimension;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 public class SummaryFrameCreation {
   static final int numFiles = 10;

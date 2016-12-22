@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.unit;
+package tests.java.inflor.unit;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

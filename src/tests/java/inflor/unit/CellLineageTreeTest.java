@@ -1,4 +1,4 @@
-package io.landysh.inflor.tests.unit;
+package tests.java.inflor.unit;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -7,11 +7,11 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import io.landysh.inflor.main.core.data.FCSFrame;
-import io.landysh.inflor.main.core.fcs.FCSFileReader;
 import io.landysh.inflor.main.core.gates.Hierarchical;
 import io.landysh.inflor.main.core.gates.RectangleGate;
 import io.landysh.inflor.main.core.ui.CellLineageTree;
+import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 
 public class CellLineageTreeTest{
 
