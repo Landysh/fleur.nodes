@@ -23,9 +23,14 @@
 <node after="inflor.createGates" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.summaryStats.SummaryStatisticsNodeFactory" id="inflor.summaryStatistics"/>
 <node after="inflor.readFCSSet" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.compensate.CompensateNodeFactory" id="inflor.compensate"/>
 <node after="inflor.compensate" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.transform.TransformNodeFactory" id="iinflor.transform"/>
-<node after="inflor.compensate" category-path="/inflor" factory-class="io.landysh.inflor.main.knime.nodes.experimental.extractCompensation.ExtractCommpensationNodeFactory" id="inflor.ExtractCommpensation"/>
-<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.experimental.comp.fj9.ExtractCompJONodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.extractCompJo.ExtractCompJONodeFactory"/>
-<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.compensate.apply.ApplyCompensationNodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.ApplyCompensationNodeFactory"/>
+<node after="inflor.compensate" category-path="/inflor" factory-class="main.java.inflor.knime.nodes.compensation.extract.fromfcs.ExtractCommpensationNodeFactory" id="inflor.ExtractCommpensation"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.compensation.extractfj9mtx.ExtractCompJONodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.extractCompJo.ExtractCompJONodeFactory"/>
+<node category-path="/" factory-class="io.landysh.inflor.main.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" id="io.landysh.inflor.main.knime.nodes.experimental.ApplyCompensationNodeFactory"/>
+<node category-path="/" factory-class="main.java.inflor.knime.nodes.utility.extractsubset.ExtractTrainingSetNodeFactory" id="src.main.java.knime.nodes.utility.extractsubset.ExtractTrainingSetNodeFactory"/>
+<node
+      deprecated="false"
+      factory-class="main.java.inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">
+</node>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -35,7 +40,7 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.FCSFramePort" objectClass="io.landysh.inflor.main.knime.ports.fcs.FCSFramePortObject" objectSerializer="io.landysh.inflor.main.knime.ports.fcs.FCSFramePortObject$Serializer" specClass="io.landysh.inflor.main.knime.ports.fcs.FCSFramePortSpec" specSerializer="io.landysh.inflor.main.knime.ports.fcs.FCSFramePortSpec$Serializer"/>
+      <portType color="#9B30FF" hidden="false" name="Inflor.FCSFramePort" objectClass="main.java.inflor.knime.ports.fcs.FCSFramePortObject" objectSerializer="main.java.inflor.knime.ports.fcs.FCSFramePortObject$Serializer" specClass="main.java.inflor.knime.ports.fcs.FCSFramePortSpec" specSerializer="main.java.inflor.knime.ports.fcs.FCSFramePortSpec$Serializer"/>
       <portType color="#F300FF" hidden="false" name="Inflor.compMatrix" objectClass="io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortObject" objectSerializer="io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortObject$Serializer" specClass="io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortSpec" specSerializer="io.landysh.inflor.main.knime.ports.compensation.CompMatrixPortSpec$Serializer">
       </portType>
 </extension>
