@@ -45,55 +45,51 @@ public class TransformNodeSettings {
   private static final String TRANSFORM_MAP_KEY = "Transfomations";
   private static final String SELECTED_COLUMN_KEY = "Selected Column";
 
-  private String m_selectedColumn;
-  private TreeMap<String, AbstractTransform> m_transforms =
-      new TreeMap<String, AbstractTransform>();
-
-  public TransformNodeSettings() {}
+  private String mSelectedColumn;
+  private TreeMap<String, AbstractTransform> mTransforms = new TreeMap<>();
 
   public void save(NodeSettingsWO settings) {
-    settings.addString(SELECTED_COLUMN_KEY, m_selectedColumn);
-    NodeUtilities.saveSerializable(settings, TRANSFORM_MAP_KEY, m_transforms);
+    settings.addString(SELECTED_COLUMN_KEY, mSelectedColumn);
+    NodeUtilities.saveSerializable(settings, TRANSFORM_MAP_KEY, mTransforms);
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {
-    m_selectedColumn = settings.getString(SELECTED_COLUMN_KEY);
+    mSelectedColumn = settings.getString(SELECTED_COLUMN_KEY);
     Map<String, Serializable> serMap = NodeUtilities.loadMap(settings, TRANSFORM_MAP_KEY);
-    m_transforms = new TreeMap<>();
+    mTransforms = new TreeMap<>();
     for (Entry<String, Serializable> e : serMap.entrySet()) {
       if (e.getValue() instanceof AbstractTransform){
-        m_transforms.put(e.getKey(), (AbstractTransform) e.getValue());
+        mTransforms.put(e.getKey(), (AbstractTransform) e.getValue());
       }
     }
-    int i=0;
   }
 
   public void addTransform(String key, AbstractTransform value) {
-    m_transforms.put(key, value);
+    mTransforms.put(key, value);
   }
 
   public void removeTransform(String key) {
-    m_transforms.remove(key);
+    mTransforms.remove(key);
   }
 
   public void setSelectedColumn(String selectedItem) {
-    m_selectedColumn = selectedItem;
+    mSelectedColumn = selectedItem;
   }
 
   public String getSelectedColumn() {
-    return m_selectedColumn;
+    return mSelectedColumn;
   }
 
   public AbstractTransform getTransform(String name) {
-    return m_transforms.get(name);
+    return mTransforms.get(name);
   }
 
   public void setTransform(AbstractTransform newValue, String key) {
-    this.m_transforms.put(key, newValue);
+    this.mTransforms.put(key, newValue);
   }
 
   public TreeMap<String, AbstractTransform> getAllTransorms() {
-    return this.m_transforms;
+    return this.mTransforms;
   }
 
   public void validate(NodeSettingsRO settings) {
@@ -101,8 +97,7 @@ public class TransformNodeSettings {
   }
 
   public void reset() {
-    //m_selectedColumn = null;
-    m_transforms.clear();
+    mTransforms.clear();
   }
   
   public void optimizeTransforms(List<FCSFrame> dataSet) {
