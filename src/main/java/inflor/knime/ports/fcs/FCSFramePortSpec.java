@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.ModelContent;
@@ -15,7 +16,6 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortObjectSpecZipInputStream;
 import org.knime.core.node.port.PortObjectSpecZipOutputStream;
 
-import main.java.inflor.core.fcs.FCSSummaryPanel;
 
 public class FCSFramePortSpec implements PortObjectSpec {
 
@@ -100,7 +100,7 @@ public class FCSFramePortSpec implements PortObjectSpec {
 
   @Override
   public JComponent[] getViews() {
-    return new JComponent[] {new FCSSummaryPanel(keywords)};
+    return new JComponent[] {new JLabel("TODO")};
   }
 
   public void save(PortObjectSpecZipOutputStream out) {

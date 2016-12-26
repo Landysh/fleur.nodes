@@ -40,7 +40,7 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
     final ArrayList<String> validFiles = new ArrayList<String>();
     for (final File file : files) {
       final String filePath = file.getAbsolutePath();
-      if (FCSFileReader.isValidFCS(filePath) == true) {
+      if (FCSFileReader.isValidFCS(filePath)) {
         validFiles.add(filePath);
       } else if (file.isDirectory()) {
         System.out.println("Directory " + file.getName());

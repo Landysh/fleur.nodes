@@ -207,5 +207,5 @@ public class TSNENodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {/**TODO**/}
+  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {/*TODO*/}
 }

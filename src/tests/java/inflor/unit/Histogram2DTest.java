@@ -68,16 +68,13 @@ public class Histogram2DTest {
     Histogram2D testHistogram = new Histogram2D(xData, xMin, xMax, yData, yMin, yMax);
 
     double[] initValues = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    double[] xBinsTruth = {0, 0, 0, 1, 1, 1, 2, 2, 2};
-    double[] yBinsTruth = {0, 1, 2, 0, 1, 2, 0, 1, 2};
     double xWidthTruth = 1;
     double yWidthTruth = 1;
 
     double[] zValuesTruth = {0, 2, 0, 1, 0, 1, 1, 0, 0};
 
     // Test
-    testHistogram.populateHistogram(xBinsTruth, yBinsTruth, initValues, xData, yData, xWidthTruth,
-        yWidthTruth, yBinCount);
+    testHistogram.populateHistogram(initValues, xData, yData, xWidthTruth, yWidthTruth, yBinCount);
     double[] zValuesTest = testHistogram.getZValues();
 
     // Assert

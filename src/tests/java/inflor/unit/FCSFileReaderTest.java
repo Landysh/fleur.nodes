@@ -21,11 +21,11 @@ public class FCSFileReaderTest {
     // Test
 
     // Assert
-    assertEquals(r.pathToFile, path1);
-    assertEquals(r.beginText, (Integer) 256);
-    assertEquals(r.endText, (Integer) 511);
-    assertEquals(r.beginData, (Integer) 576);
-    assertEquals(r.dataType, "I");
+    assertEquals(r.getPathToFile(), path1);
+    assertEquals(r.getBeginText(), (Integer) 256);
+    assertEquals(r.getEndText(), (Integer) 511);
+    assertEquals(r.getBeginData(), (Integer) 576);
+    assertEquals(r.getDataType(), "I");
     // assertEquals( r.bitMap, new Integer[] {16,16});
     System.out.println("FCSFileReaderTest testInitialization completed.");
 
