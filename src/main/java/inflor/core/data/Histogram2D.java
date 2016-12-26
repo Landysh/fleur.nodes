@@ -32,17 +32,17 @@ public class Histogram2D {
     yBinWidth = (yMax - yMin) / yBinCount;
 
     initializeHistogram(xBinCount, xBinWidth, xMin, yBinCount, yBinWidth, yMin);
-    populateHistogram(xBins, yBins, zValues, xData, yData, xBinWidth, yBinWidth, yBinCount);
+    populateHistogram(zValues, xData, yData, xBinWidth, yBinWidth, yBinCount);
 
   }
 
-  public double[] populateHistogram(double[] xBins, double[] yBins, double[] zValues,
+  public double[] populateHistogram(double[] zValues,
       double[] xData, double[] yData, double xBinWidth, double yBinWidth, int yBinCount) {
     for (int i = 0; i < xData.length; i++) {
       double x = xData[i];
       double y = yData[i];
-      int xBin = (int) ((double) x / xBinWidth);
-      int yBin = (int) ((double) y / yBinWidth);
+      int xBin = (int) (x / xBinWidth);
+      int yBin = (int) (y / yBinWidth);
       int histogramIndex = yBinCount * xBin + yBin;
       if (histogramIndex < 0) {
         histogramIndex = 0;
@@ -92,28 +92,6 @@ public class Histogram2D {
 
   public BitSet getNonEmptyBins() {
     BitSet bits = new BitSet(zValues.length);
-    for (int i = 0; i < zValues.length; i++) {
-      if (zValues[i] != 0) {
-        bits.set(i);
-      }
-    }
-    return bits;
-  }
-
-  public BitSet getNonEdgeBins() {
-    BitSet bits = new BitSet(zValues.length);
-    for (int i = 0; i < xBinCount; i++) {
-      for (int j = 0; j < yBinCount; j++) {
-        if (!(i == 0 || i == (xBinCount - 1))) {
-          bits.set(i * yBinCount + j);
-        } else if (!(j == 0 || j == (yBinCount - 1))) {
-          bits.set(i * yBinCount + j);
-        } else {
-          // NOOP TODO Just bad?
-        }
-      }
-    }
-
     for (int i = 0; i < zValues.length; i++) {
       if (zValues[i] != 0) {
         bits.set(i);

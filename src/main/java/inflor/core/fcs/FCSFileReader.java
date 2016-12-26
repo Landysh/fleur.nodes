@@ -41,63 +41,48 @@ public class FCSFileReader {
   private static final String DEFAULT_ENCODING = "UTF-8";
   // From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
   private static final int BEGIN_FCS_VERSION_OFFSET = 0;
-  private static final int END_FCSVersionOffset = 5;
+  private static final int END_FCS_VERSION_OFFSSET = 5;
 
-  private static final int FIRSTBYTE_BeginTextOffset = 10;
-  private static final int LASTBYTE_BeginTextOffset = 17;
-  private static final int FIRSTBYTE_EndTextOffset = 18;
-  private static final int LASTBYTE_EndTextOffset = 25;
+  private static final int BEGIN_BEGIN_TEXT_OFFSET = 10;
+  private static final int END_END_TEXT_OFFSET = 17;
+  
+  private static final int FIRST_BYTE_ENDTEXT_OFFSET = 18;
+  private static final int LAST_BYTE_ENDTEXT_OFFSET = 25;
 
-  private static final int FIRSTBYTE_BeginDataOffset = 26;
-  private static final int LASTBYTE_BeginDataOffset = 33;
-  private static final int FIRSTBYTE_EndDataOffset = 34;
-  private static final int LASTBYTE_EndDataOffset = 41;
+  private static final int FIRST_BYTE_BEGINDATA_OFFSET = 26;
+  private static final int LAST_BYTE_BEGINDATA_OFFSET = 33;
+  
+  private static final int FIRST_BYTE_END_DATA_OFFSET = 34;
+  private static final int LAST_BYTE_END_DATA_OFFSET = 41;
+  
+  //Errors and warnings
   private static final String ERROR_UNABLE_TO_CREATE_HASH = "Unable to create hashcode";
 
-  public static boolean isValidFCS(String filePath) {
-    boolean isValid = false;
-    try {
-      @SuppressWarnings("unused")
-      final FCSFileReader reader = new FCSFileReader(filePath);
-      isValid = true;
-    } catch (final Exception e) {
-      // noop
-    }
-    return isValid;
-  }
-
   // file properties
-  public final String pathToFile;
-  public final RandomAccessFile FCSFile;
-  public final Integer beginText;
-  public final Integer endText;
-  public final Integer beginData;
-  public final String dataType;
-  public final Integer[] bitMap;
-  public final FCSFrame columnStore;
-  public final String[] fileDimensionList;
+  final String pathToFile;
+  final RandomAccessFile fcsFile;
+  final Integer beginText;
+  final Integer endText;
+  final Integer beginData;
+  final String dataType;
+  final Integer[] bitMap;
+  final FCSFrame columnStore;
+  final String[] fileDimensionList;
   TreeSet<FCSDimension> data;
-  public String[] compParameterList = null;
+  String[] compParameterList = null;
 
   // Constructor
-  public FCSFileReader(String path_to_file) throws Exception {
+  public FCSFileReader(String filePath) throws Exception {
     // Open the file
-    pathToFile = path_to_file;
+    pathToFile = filePath;
     final File f = new File(pathToFile);
-    FCSFile = new RandomAccessFile(f, "r");
+    fcsFile = new RandomAccessFile(f, "r");
 
     // text specific properties
-    beginText = readOffset(FIRSTBYTE_BeginTextOffset, LASTBYTE_BeginTextOffset);
-    endText = readOffset(FIRSTBYTE_EndTextOffset, LASTBYTE_EndTextOffset);
+    beginText = readOffset(BEGIN_BEGIN_TEXT_OFFSET, END_END_TEXT_OFFSET);
+    endText = readOffset(FIRST_BYTE_ENDTEXT_OFFSET, LAST_BYTE_ENDTEXT_OFFSET);
     final HashMap<String, String> header = readHeader();
-    header.put("FCSVersion", readFCSVersion(FCSFile));
-
-    // Try to validate the header.
-    if (FCSUtilities.validateHeader(header) == false) {
-      final Exception e = new Exception("Invalid FCS Header.");
-      e.printStackTrace();
-      throw e;
-    }
+    header.put("FCSVersion", readFCSVersion(fcsFile));
 
     fileDimensionList = FCSUtilities.parseDimensionList(header);
 
@@ -105,11 +90,11 @@ public class FCSFileReader {
     columnStore = new FCSFrame(header, rowCount);
 
     // data specific properties
-    beginData = readOffset(FIRSTBYTE_BeginDataOffset, LASTBYTE_BeginDataOffset);
-    readOffset(FIRSTBYTE_EndDataOffset, LASTBYTE_EndDataOffset);
+    beginData = readOffset(FIRST_BYTE_BEGINDATA_OFFSET, LAST_BYTE_BEGINDATA_OFFSET);
+    readOffset(FIRST_BYTE_END_DATA_OFFSET, LAST_BYTE_END_DATA_OFFSET);
     bitMap = createBitMap(header);
     dataType = columnStore.getKeywordValue("$DATATYPE");
-    data = new TreeSet<FCSDimension>();
+    data = new TreeSet<>();
   }
 
   private String calculateSHA(byte[] inBytes) throws NoSuchAlgorithmException {
@@ -127,7 +112,7 @@ public class FCSFileReader {
   }
 
   public void close() throws IOException {
-    FCSFile.close();
+    fcsFile.close();
   }
 
   private Integer[] createBitMap(HashMap<String, String> keywords) {
@@ -154,7 +139,7 @@ public class FCSFileReader {
 
   public void initRowReader() {
     try {
-      FCSFile.seek(beginData);
+      fcsFile.seek(beginData);
     } catch (final IOException e) {
       e.printStackTrace();
     }
@@ -162,7 +147,7 @@ public class FCSFileReader {
 
   public void readData() throws IOException {
     data = new TreeSet<>();
-    FCSFile.seek(beginData);
+    fcsFile.seek(beginData);
 
     double[][] rawData = new double[columnStore.getRowCount()][fileDimensionList.length];
     for (int i = 0; i < rawData.length; i++) {
@@ -193,8 +178,8 @@ public class FCSFileReader {
   }
 
   public String readFCSVersion(RandomAccessFile raFile) throws IOException {
-      FCSFile.seek(0);
-      final byte[] bytes = new byte[END_FCSVersionOffset - BEGIN_FCS_VERSION_OFFSET + 1];
+      fcsFile.seek(0);
+      final byte[] bytes = new byte[END_FCS_VERSION_OFFSSET - BEGIN_FCS_VERSION_OFFSET + 1];
       raFile.read(bytes);
       return new String(bytes, DEFAULT_ENCODING);
   }
@@ -202,7 +187,7 @@ public class FCSFileReader {
   private double[] readFloatRow(double[] row) throws IOException {
     for (int i = 0; i < row.length; i++) {
       final byte[] bytes = new byte[bitMap[i] / 8];
-      FCSFile.read(bytes);
+      fcsFile.read(bytes);
       row[i] = ByteBuffer.wrap(bytes).getFloat();
     }
     return row;
@@ -211,15 +196,15 @@ public class FCSFileReader {
   private HashMap<String, String> readHeader() throws IOException {
     // Delimiter is first UTF-8 character in the text section
     final byte[] delimiterBytes = new byte[1];
-    FCSFile.seek(beginText);
-    FCSFile.read(delimiterBytes);
+    fcsFile.seek(beginText);
+    fcsFile.read(delimiterBytes);
     final String delimiter = new String(delimiterBytes);
 
     // Read the rest of the text bytes, this will contain the keywords
     final int textLength = endText - beginText + 1;
     final byte[] keywordBytes = new byte[textLength];
 
-    FCSFile.read(keywordBytes);
+    fcsFile.read(keywordBytes);
     String rawKeywords = new String(keywordBytes, DEFAULT_ENCODING);
     if (rawKeywords.length() > 0
         && rawKeywords.charAt(rawKeywords.length() - 1) == delimiter.charAt(0)) {
@@ -250,22 +235,21 @@ public class FCSFileReader {
 
   private double[] readIntegerRow(double[] row) throws IOException {
     for (int i = 0; i < row.length; i++) {
-      Short I = null;
+      Short shortI;
       final byte[] bytes = new byte[bitMap[i] / 8];
-      FCSFile.read(bytes);
-      I = ByteBuffer.wrap(bytes).getShort();
-      row[i] = I;
+      fcsFile.read(bytes);
+      shortI = ByteBuffer.wrap(bytes).getShort();
+      row[i] = shortI;
     }
     return row;
   }
 
   private int readOffset(int start, int end) throws IOException {
     final byte[] bytes = new byte[end - start + 1];
-    FCSFile.seek(start);
-    FCSFile.read(bytes);
+    fcsFile.seek(start);
+    fcsFile.read(bytes);
     final String s = new String(bytes, DEFAULT_ENCODING);
-    final int offSet = Integer.parseInt(s.trim());
-    return offSet;
+    return Integer.parseInt(s.trim());
   }
 
   public double[] readRow() throws IOException {
@@ -315,5 +299,35 @@ public class FCSFileReader {
       e.printStackTrace();
       return null;
     }
+  }
+
+  public String getPathToFile() {
+    return pathToFile;
+  }
+
+  public Integer getBeginText() {
+    return beginText;
+  }
+
+  public Integer getEndText() {
+    return endText;
+  }
+
+  public Integer getBeginData() {
+    return beginData;
+  }
+  public String getDataType() {
+    return dataType;
+  }
+
+  public static boolean isValidFCS(String filePath) {
+    boolean isValid = false;
+    try {
+      FCSFileReader reader = new FCSFileReader(filePath);
+      isValid = FCSUtilities.validateHeader(reader.getHeader());
+    } catch (Exception e) {
+      isValid = false;
+    }
+    return isValid;
   }
 }
