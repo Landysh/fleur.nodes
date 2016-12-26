@@ -3,6 +3,7 @@ package main.java.inflor.knime.nodes.fcs.read;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -99,20 +99,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
         .forEach(map -> map.entrySet()
             .forEach(entry -> updateContent(content, entry)));
 
-
-    BinaryOperator<TreeSet<FCSDimension>> accumulator = new BinaryOperator<TreeSet<FCSDimension>>() {
-    @Override
-    public TreeSet<FCSDimension> apply(TreeSet<FCSDimension> t, TreeSet<FCSDimension> u) {
-      t.addAll(u);
-      return t;
-    }};
-
     // Collect all parameter for experiment in one Hashset.
     Optional<TreeSet<FCSDimension>> opt = filePaths
       .stream()
       .map(FCSFileReader::readNoData)
-      .map(cs -> cs.getData())
-      .reduce(accumulator);
+      .map(FCSFrame::getData)
+      .reduce(this::merge);
     
     
     if (opt.isPresent()){
@@ -127,15 +119,22 @@ public class ReadFCSSetNodeModel extends NodeModel {
       logger.info(dimensionNames);
       content.put(NodeUtilities.DIMENSION_NAMES_KEY, dimensionNames);
     }
-    
-
     return content;
+  }
+
+  private TreeSet<FCSDimension> merge(TreeSet<FCSDimension> a, TreeSet<FCSDimension> b) {
+    a.addAll(b);
+    return a;
   }
 
   private void updateContent(HashMap<String, String> content, Entry<String, String> entry) {
     if (content.containsKey(entry.getKey())) {
       String currentValue = content.get(entry.getKey());
-      currentValue = currentValue + "||" + entry.getValue();
+      String[] cvString = currentValue.split(NodeUtilities.DELIMITER_REGEX);
+      if (!Arrays.asList(cvString).contains(entry.getValue())){
+        currentValue = currentValue + NodeUtilities.DELIMITER + entry.getValue();
+        content.put(entry.getKey(), currentValue);
+      }
     } else {
       content.put(entry.getKey(), entry.getValue());
     }
@@ -204,7 +203,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
           "Reading file " + (currentFileIndex + 1) + " of: " + fileCount);
       currentFileIndex++;
     } catch (IOException e) {
-      logger.warn("IO Exception", e);//TODO
+      logger.error("Row not added for frame: " + currentFileIndex, e);
     }
   }
 
@@ -217,7 +216,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     final ArrayList<String> validFiles = new ArrayList<>();
     for (final File file : files) {
       final String filePath = file.getAbsolutePath();
-      if (FCSFileReader.isValidFCS(filePath) == true) {
+      if (FCSFileReader.isValidFCS(filePath)) {
         validFiles.add(filePath);
       } else if (file.isDirectory()) {
         logger.info("Directory " + file.getName());
