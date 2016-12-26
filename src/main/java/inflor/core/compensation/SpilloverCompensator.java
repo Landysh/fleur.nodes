@@ -38,7 +38,6 @@ import main.java.inflor.core.utils.FCSUtilities;
 @SuppressWarnings("serial")
 public class SpilloverCompensator extends DomainObject {
 
-  private static final Object COMP_MATRIX_KEYWORD = "$SPILL";
   private static final double COMP_MATRIX_ZERO_THRESHOLD = 0.000001;
   // Compensation details
   private String[] compParameters;
@@ -91,7 +90,7 @@ public class SpilloverCompensator extends DomainObject {
   private double[][] parseSpillover(Map<String, String> keywords) {
 
     String spill;
-    // Check for spillover keywords
+    // TODO: double check this, it looks wrong. Extract constants. 
     if (keywords.containsKey("$SPILLOVER")) {
       spill = keywords.get("SPILLOVER");
     } else if (keywords.containsKey("SPILL")) {
@@ -208,8 +207,4 @@ public class SpilloverCompensator extends DomainObject {
     }
     return isEmpty;
   }
-
-//  public FCSFrame compensateFCSFrame(FCSFrame dataFrame) throws InvalidProtocolBufferException {
-//    return compensateFCSFrame(dataFrame, false);
-//  }
 }
