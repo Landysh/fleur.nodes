@@ -27,9 +27,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelColumnFilter2;
 import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
-import main.java.inflor.core.sne.tsne.barneshut.BHTSne;
 import main.java.inflor.core.sne.tsne.barneshut.BHTSne2;
-import main.java.inflor.core.sne.tsne.barneshut.ParallelBHTsne;
 import main.java.inflor.core.sne.utils.MatrixOps;
 
 /**
