@@ -1,5 +1,7 @@
 package main.java.inflor.core.sne.tsne;
 
+import org.knime.core.node.CanceledExecutionException;
+
 /**
 *
 * Author: Leif Jonsson (leif.jonsson@gmail.com)
@@ -11,10 +13,10 @@ package main.java.inflor.core.sne.tsne;
 */
 public interface TSne {
 
-	double [][] tsne(double[][] X, int k, int initial_dims, double perplexity);
-	double [][] tsne(double[][] X, int k, int initial_dims, double perplexity, int maxIterations);
+	double [][] tsne(double[][] X, int k, int initial_dims, double perplexity) throws CanceledExecutionException;
+	double [][] tsne(double[][] X, int k, int initial_dims, double perplexity, int maxIterations) throws CanceledExecutionException;
 
-	double [][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity, int max_iter, boolean use_pca);
+	double [][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity, int max_iter, boolean use_pca) throws CanceledExecutionException;
 
 	static class R {
 		double [][] P;

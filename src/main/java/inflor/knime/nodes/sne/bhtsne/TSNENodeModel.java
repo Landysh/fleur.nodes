@@ -28,6 +28,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 import main.java.inflor.core.sne.tsne.barneshut.BHTSne;
+import main.java.inflor.core.sne.tsne.barneshut.BHTSne2;
 import main.java.inflor.core.sne.tsne.barneshut.ParallelBHTsne;
 import main.java.inflor.core.sne.utils.MatrixOps;
 
@@ -83,15 +84,23 @@ public class TSNENodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpec)
       throws InvalidSettingsException {
-    final DataTableSpec newColSpec = createTableSpec();
+    final DataTableSpec newColSpec = createTableSpec(inSpec[0]);
     final DataTableSpec outSpec = new DataTableSpec(inSpec[0], newColSpec);
     return new DataTableSpec[] {outSpec};
   }
 
-  private DataTableSpec createTableSpec() {
+  private DataTableSpec createTableSpec(DataTableSpec inSpec) {
     DataColumnSpec[] colSpecs = new DataColumnSpec[2];
-    colSpecs[0] = new DataColumnSpecCreator("TSNE1", DoubleCell.TYPE).createSpec();
-    colSpecs[1] = new DataColumnSpecCreator("TSNE2", DoubleCell.TYPE).createSpec();
+    String tSNE1Name = "TSNE1";
+    while (inSpec.containsName(tSNE1Name)){
+      tSNE1Name+="*";
+    }
+    String tSNE2Name = "TSNE2";
+    while (inSpec.containsName(tSNE2Name)){
+      tSNE2Name+="*";
+    }
+    colSpecs[0] = new DataColumnSpecCreator(tSNE1Name, DoubleCell.TYPE).createSpec();
+    colSpecs[1] = new DataColumnSpecCreator(tSNE2Name, DoubleCell.TYPE).createSpec();
     return new DataTableSpec(colSpecs);
   }
 
@@ -101,16 +110,43 @@ public class TSNENodeModel extends NodeModel {
   @Override
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
-
+    
+    exec.setProgress(0.01);
+    exec.setMessage("Data read");
     double[][] data = readData(inData[0], exec);
+    exec.setProgress(0.05);
+    exec.setMessage("Scaling data.");
     data = MatrixOps.centerAndScale(data);
+    exec.setProgress(0.1);
+    exec.setMessage("Initializing bhtSNE");
+    BHTSne2 bht = new BHTSne2();
+    int N = data.length;
+    int D = data[0].length;
+    bht.init(data, N, D, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), false, 0.5);
+    exec.setProgress(0.15);
+    exec.setMessage("Main Loop: ");
+    ExecutionContext iterExec = exec.createSubExecutionContext(1);
+    ArrayList<double[][]> resultList = new ArrayList<>();
+    boolean keepGoing = true;
+    while (keepGoing){
+      double num = bht.getCurrentIteration();
+      double den = bht.getMaxIterations();
+      iterExec.setProgress(num/den);
+      iterExec.setMessage("Iteration: " + num);
+      iterExec.checkCanceled();
+      double[][] yCurrent = bht.runInteractively();
+      if (yCurrent[0].length==0){
+        keepGoing = false;
+      } else {
+        keepGoing = true;
+        resultList.add(yCurrent);
+      }
+    }
+    
+    
+    final double[][] yFinal = resultList.get(resultList.size()-1);
 
-    BHTSne bht = new ParallelBHTsne();
-
-    final double[][] y = bht.tsne(data, modelInitDims.getIntValue(), -1, modelPerplexity.getDoubleValue(),
-        modelIterations.getIntValue(), false);
-
-    final DataTableSpec newColSpec = createTableSpec();
+    final DataTableSpec newColSpec = createTableSpec(inData[0].getSpec());
     final DataTableSpec spec = new DataTableSpec(inData[0].getSpec(), newColSpec);
 
     final BufferedDataContainer container = exec.createDataContainer(spec);
@@ -120,7 +156,7 @@ public class TSNENodeModel extends NodeModel {
     while (rowIterator.hasNext()) {
       final RowKey rowKey = new RowKey("Row " + rowCount);
       final DataRow inCols = rowIterator.next();
-      final double[] tsneCols = y[(int) rowCount];
+      final double[] tsneCols = yFinal[(int) rowCount];
       final DoubleCell tsne1 = new DoubleCell(tsneCols[0]);
       final DoubleCell tsne2 = new DoubleCell(tsneCols[1]);
       final DataCell[] tsneCells = new DataCell[] {tsne1, tsne2};
@@ -183,14 +219,14 @@ public class TSNENodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {/**TODO**/}
+  protected void reset() {/*TODO*/}
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {/**TODO**/}
+      throws IOException, CanceledExecutionException {/*TODO*/}
 
   /**
    * {@inheritDoc}

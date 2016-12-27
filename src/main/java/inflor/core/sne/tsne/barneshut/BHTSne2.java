@@ -30,43 +30,64 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.knime.core.node.CanceledExecutionException;
-import org.knime.core.node.ExecutionContext;
 
 import main.java.inflor.core.sne.tsne.*;
 import main.java.inflor.core.sne.utils.*;
 
-public class BHTSne implements BarnesHutTSne {
+public class BHTSne2 implements InteractiveBHTSNE {
 
+  private static final int INTERACTIVE_CHUNK_SIZE = 5;
+  private static final String ERROR_THETA_CANT_BE_ZERO = 
+      "The Barnes Hut implementation does not support exact inference yet";
   protected final Distance distance = new EuclideanDistance();
-  private ExecutionContext exec;
+  private boolean exact;
+  private int maxIterations;
+  private int N;
+  private int dimCount;
+  private double[] dY;
+  private double[] uY;
+  private int[] row_P;
+  private int[] col_P;
+  private double[] val_P;
+  private int K;
+  private double[] P;
+  private double theta;
+  private double[] Y;
+  private double momentum;
+  private double final_momentum;
+  private int stop_lying_iter;
+  private int mom_switch_iter;
+  private double eta;
+  private double[] gains;
+  private int currentIter;
 
   @Override
-  public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity) throws CanceledExecutionException {
+  public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity) {
     return tsne(X, no_dims, initial_dims, perplexity, 20000, true);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int maxIterations) throws CanceledExecutionException {
+      int maxIterations) {
     return tsne(X, no_dims, initial_dims, perplexity, maxIterations, true);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca) throws CanceledExecutionException {
+      int max_iter, boolean use_pca) {
     return tsne(X, no_dims, initial_dims, perplexity, max_iter, use_pca, 0.5);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca, double theta) throws CanceledExecutionException {
+      int max_iter, boolean use_pca, double theta) {
     int N = X.length;
     int D = X[0].length;
-    return run(X, N, D, no_dims, initial_dims, perplexity, max_iter, use_pca, theta);
+    init(X, N, D, no_dims, initial_dims, perplexity, max_iter, use_pca, theta);
+    return runInteractively();
   }
 
   private double[] flatten(double[][] x) {
@@ -92,192 +113,6 @@ public class BHTSne implements BarnesHutTSne {
 
   static double sign_tsne(double x) {
     return (x == .0 ? .0 : (x < .0 ? -1.0 : 1.0));
-  }
-
-  // Perform t-SNE
-  double[][] run(double[][] Xin, int N, int D, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca, double theta) throws CanceledExecutionException {
-    boolean exact = (theta == .0) ? true : false;
-    if (exact)
-      throw new IllegalArgumentException(
-          "The Barnes Hut implementation does not support exact inference yet (theta==0.0), if you want exact t-SNE please use one of the standard t-SNE implementations (FastTSne for instance)");
-
-    if (use_pca && D > initial_dims && initial_dims > 0) {
-      PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
-      Xin = pca.pca(Xin, initial_dims);
-      D = initial_dims;
-      System.out.println("X:Shape after PCA is = " + Xin.length + " x " + Xin[0].length);
-    }
-    double[] X = flatten(Xin);
-
-    double[] Y = new double[N * no_dims];
-    System.out.println("X:Shape is = " + N + " x " + D);
-    // Determine whether we are using an exact algorithm
-    if (N - 1 < 3 * perplexity) {
-      throw new IllegalArgumentException("Perplexity too large for the number of data points!\n");
-    }
-    System.out.printf("Using no_dims = %d, perplexity = %f, and theta = %f\n", no_dims, perplexity,
-        theta);
-
-    // Set learning parameters
-    double total_time = 0;
-    int stop_lying_iter = 250, mom_switch_iter = 250;
-    double momentum = .5, final_momentum = .8;
-    double eta = 200.0;
-
-    // Allocate some memory
-    double[] dY = new double[N * no_dims];
-    double[] uY = new double[N * no_dims];
-    double[] gains = new double[N * no_dims];
-    for (int i = 0; i < N * no_dims; i++)
-      gains[i] = 1.0;
-
-    // Normalize input data (to prevent numerical problems)
-    System.out.println("Computing input similarities...");
-    long start = System.currentTimeMillis();
-    // zeroMean(X, N, D);
-    double max_X = .0;
-    for (int i = 0; i < N * D; i++) {
-      if (X[i] > max_X)
-        max_X = X[i];
-    }
-
-    for (int i = 0; i < N * D; i++)
-      X[i] /= max_X;
-
-    double[] P = null;
-    int K = (int) (3 * perplexity);
-    int[] row_P = new int[N + 1];
-    int[] col_P = new int[N * K];
-    double[] val_P = new double[N * K];
-    /**
-     * _row_P = (int*) malloc((N + 1) * sizeof(int)); _col_P = (int*) calloc(N * K, sizeof(int));
-     * _val_P = (double*) calloc(N * K, sizeof(double));
-     */
-    // Compute input similarities for exact t-SNE
-    if (exact) {
-
-      // Compute similarities
-      P = new double[N * N];
-      computeGaussianPerplexity(X, N, D, P, perplexity);
-
-      // Symmetrize input similarities
-      System.out.println("Symmetrizing...");
-      int nN = 0;
-      for (int n = 0; n < N; n++) {
-        int mN = 0;
-        for (int m = n + 1; m < N; m++) {
-          P[nN + m] += P[mN + n];
-          P[mN + n] = P[nN + m];
-          mN += N;
-        }
-        nN += N;
-      }
-      double sum_P = .0;
-      for (int i = 0; i < N * N; i++)
-        sum_P += P[i];
-      for (int i = 0; i < N * N; i++)
-        P[i] /= sum_P;
-    }
-
-    // Compute input similarities for approximate t-SNE
-    else {
-
-      // Compute asymmetric pairwise input similarities
-      computeGaussianPerplexity(X, N, D, row_P, col_P, val_P, perplexity, K);
-
-      // Verified that val_P,col_P,row_P is the same at this point
-
-      // Symmetrize input similarities
-      SymResult res = symmetrizeMatrix(row_P, col_P, val_P, N);
-      row_P = res.sym_row_P;
-      col_P = res.sym_col_P;
-      val_P = res.sym_val_P;
-
-      double sum_P = .0;
-      for (int i = 0; i < row_P[N]; i++)
-        sum_P += val_P[i];
-      for (int i = 0; i < row_P[N]; i++)
-        val_P[i] /= sum_P;
-    }
-    long end = System.currentTimeMillis();
-
-    // Lie about the P-values
-    if (exact) {
-      for (int i = 0; i < N * N; i++)
-        P[i] *= 12.0;
-    } else {
-      for (int i = 0; i < row_P[N]; i++)
-        val_P[i] *= 12.0;
-    }
-
-    // Initialize solution (randomly)
-    for (int i = 0; i < N * no_dims; i++)
-      Y[i] = ThreadLocalRandom.current().nextDouble() * 0.0001;
-
-    // Perform main training loop
-    if (exact)
-      System.out.printf("Done in %4.2f seconds!\nLearning embedding...\n", (end - start) / 1000.0);
-    else
-      System.out.printf("Done in %4.2f seconds (sparsity = %f)!\nLearning embedding...\n",
-          (end - start) / 1000.0, (double) row_P[N] / ((double) N * (double) N));
-    start = System.currentTimeMillis();
-    for (int iter = 0; iter < max_iter; iter++) {
-      
-      if (exec!=null&&iter%20==0){
-        exec.setMessage("Executing: " + iter);
-        exec.setProgress(iter/max_iter);
-        exec.checkCanceled();
-      }
-      
-      if (exact)
-        computeExactGradient(P, Y, N, no_dims, dY);
-      // Compute (approximate) gradient
-      else
-        computeGradient(P, row_P, col_P, val_P, Y, N, no_dims, dY, theta);
-
-      updateGradient(N, no_dims, Y, momentum, eta, dY, uY, gains);
-
-      // Make solution zero-mean
-      zeroMean(Y, N, no_dims);
-
-      // Stop lying about the P-values after a while, and switch momentum
-      if (iter == stop_lying_iter) {
-        if (exact) {
-          for (int i = 0; i < N * N; i++)
-            P[i] /= 12.0;
-        } else {
-          for (int i = 0; i < row_P[N]; i++)
-            val_P[i] /= 12.0;
-        }
-      }
-      if (iter == mom_switch_iter)
-        momentum = final_momentum;
-
-      // Print out progress
-      if ((iter > 0 && iter % 50 == 0) || iter == max_iter - 1) {
-        end = System.currentTimeMillis();
-        double C = .0;
-        if (exact)
-          C = evaluateError(P, Y, N, no_dims);
-        else
-          C = evaluateError(row_P, col_P, val_P, Y, N, no_dims, theta); // doing approximate
-                                                                        // computation here!
-        if (iter == 0)
-          System.out.printf("Iteration %d: error is %f\n", iter + 1, C);
-        else {
-          total_time += (end - start) / 1000.0;
-          System.out.printf("Iteration %d: error is %f (50 iterations in %4.2f seconds)\n", iter, C,
-              (end - start) / 1000.0);
-        }
-        start = System.currentTimeMillis();
-      }
-    }
-    end = System.currentTimeMillis();
-    total_time += (end - start) / 1000.0;
-
-    System.out.printf("Fitting performed in %4.2f seconds.\n", total_time);
-    return expand(Y, N, no_dims);
   }
 
   void updateGradient(int N, int no_dims, double[] Y, double momentum, double eta, double[] dY,
@@ -501,11 +336,6 @@ public class BHTSne implements BarnesHutTSne {
       System.out.println("Perplexity should be lower than K!");
 
     // Allocate the memory we need
-    /**
-     * _row_P = (int*) malloc((N + 1) * sizeof(int)); _col_P = (int*) calloc(N * K, sizeof(int));
-     * _val_P = (double*) calloc(N * K, sizeof(double)); if(*_row_P == null || *_col_P == null ||
-     * *_val_P == null) { Rcpp::stop("Memory allocation failed!\n"); }
-     */
     int[] row_P = _row_P;
     int[] col_P = _col_P;
     double[] val_P = _val_P;
@@ -523,17 +353,6 @@ public class BHTSne implements BarnesHutTSne {
       obj_X[n] = new DataPoint(D, n, row);
     }
     tree.create(obj_X);
-
-    // VERIFIED THAT TREES LOOK THE SAME
-    // System.out.println("Created Tree is: ");
-    // AdditionalInfoProvider pp = new AdditionalInfoProvider() {
-    // @Override
-    // public String provideInfo(Node node) {
-    // return "" + obj_X[node.index].index();
-    // }
-    // };
-    // TreePrinter printer = new TreePrinter(pp);
-    // printer.printTreeHorizontal(tree.getRoot());
 
     // Loop over all points to find nearest neighbors
     System.out.println("Building tree...");
@@ -931,9 +750,179 @@ public class BHTSne implements BarnesHutTSne {
       }
     }
   }
-  
-  public void setExecutionContext(ExecutionContext exec){
-    this.exec = exec;
+
+  @Override
+  public double[][] runInteractively() {
+    if (currentIter<maxIterations){
+      int localMaxIter;
+      if(currentIter + INTERACTIVE_CHUNK_SIZE >= maxIterations){
+        localMaxIter = maxIterations-currentIter;
+      } else {
+        localMaxIter = INTERACTIVE_CHUNK_SIZE;
+      }
+      
+      for (int localIter = 0; localIter < localMaxIter; localIter++) {
+        System.out.println(currentIter);
+        if (exact){
+          computeExactGradient(P, Y, N, dimCount, dY);
+        }
+        else{
+          computeGradient(P, row_P, col_P, val_P, Y, N, dimCount, dY, theta);
+        }
+
+        updateGradient(N, dimCount, Y, momentum, eta, dY, uY, gains);
+
+        // Make solution zero-mean
+        zeroMean(Y, N, dimCount);
+
+        liarLiar(currentIter);
+        //check momentum switch
+        if (currentIter == mom_switch_iter){
+          momentum = final_momentum;
+        }
+      currentIter++;
+      }
+      return expand(Y, N, dimCount);
+    } else {
+      return new double[][]{{}} ;
     }
-  
+  }
+
+  private void liarLiar(int iter) {
+    // Stop lying about the P-values after a while, and switch momentum
+    if (iter == stop_lying_iter) {
+      if (exact) {
+        for (int i = 0; i < N * N; i++)
+          P[i] /= 12.0;
+      } else {
+        for (int i = 0; i < row_P[N]; i++)
+          val_P[i] /= 12.0;
+      }
+    }
+  }
+
+  // Perform t-SNE
+  @Override
+  public void init(double[][] inX, int N, int D, int dimCount, int initDimCount, double perplexity,
+      int maxIterations, boolean usePCA, double theta) {
+    this.maxIterations = maxIterations;
+    this.N = N;
+    this.dimCount = dimCount;
+    this.theta = theta;
+    this.exact = (theta == .0) ? true : false;
+    this.currentIter = 0;
+    if (exact){
+      throw new IllegalArgumentException(ERROR_THETA_CANT_BE_ZERO);
+    }
+      
+
+    if (usePCA && D > initDimCount && initDimCount > 0) {
+      PrincipalComponentAnalysis pca = new PrincipalComponentAnalysis();
+      inX = pca.pca(inX, initDimCount);
+      D = initDimCount;
+    }
+    double[] X = flatten(inX);
+
+    Y = new double[N * dimCount];
+    // Determine whether we are using an exact algorithm
+    if (N - 1 < 3 * perplexity) {
+      throw new IllegalArgumentException("Perplexity too large for the number of data points!\n");
+    }
+
+    // Set learning parameters
+    stop_lying_iter = 250; 
+    mom_switch_iter = 250;
+    momentum = .5; 
+    final_momentum = .8;
+    eta = 200.0;
+
+    // Allocate some memory
+    this.dY = new double[N * dimCount];
+    this.uY = new double[N * dimCount];
+    gains = new double[N * dimCount];
+    for (int i = 0; i < N * dimCount; i++)
+      gains[i] = 1.0;
+
+    double[] s = X.clone();
+    Arrays.sort(s);
+    double max_X = s[s.length-1];
+
+    for (int i = 0; i < N * D; i++){
+      X[i] /= max_X;
+    }
+
+    P = null;
+    K = (int) (3 * perplexity);
+    row_P = new int[N + 1];
+    col_P = new int[N * K];
+    val_P = new double[N * K];
+
+    // Compute input similarities for exact t-SNE
+    if (exact) {
+
+      // Compute similarities
+      P = new double[N * N];
+      computeGaussianPerplexity(X, N, D, P, perplexity);
+
+      // Symmetrize input similarities
+      int nN = 0;
+      for (int n = 0; n < N; n++) {
+        int mN = 0;
+        for (int m = n + 1; m < N; m++) {
+          P[nN + m] += P[mN + n];
+          P[mN + n] = P[nN + m];
+          mN += N;
+        }
+        nN += N;
+      }
+      double sum_P = .0;
+      for (int i = 0; i < N * N; i++)
+        sum_P += P[i];
+      for (int i = 0; i < N * N; i++)
+        P[i] /= sum_P;
+    }
+
+    // Compute input similarities for approximate t-SNE
+    else {
+
+      // Compute asymmetric pairwise input similarities
+      computeGaussianPerplexity(X, N, D, row_P, col_P, val_P, perplexity, K);
+
+      // Verified that val_P,col_P,row_P is the same at this point
+
+      // Symmetrize input similarities
+      SymResult res = symmetrizeMatrix(row_P, col_P, val_P, N);
+      row_P = res.sym_row_P;
+      col_P = res.sym_col_P;
+      val_P = res.sym_val_P;
+
+      double sum_P = .0;
+      for (int i = 0; i < row_P[N]; i++)
+        sum_P += val_P[i];
+      for (int i = 0; i < row_P[N]; i++)
+        val_P[i] /= sum_P;
+    }
+    
+    // Lie about the P-values
+    if (exact) {
+      for (int i = 0; i < N * N; i++)
+        P[i] *= 12.0;
+    } else {
+      for (int i = 0; i < row_P[N]; i++)
+        val_P[i] *= 12.0;
+    }
+
+    // Initialize solution (randomly)
+    for (int i = 0; i < N * dimCount; i++){
+      Y[i] = ThreadLocalRandom.current().nextDouble() * 0.0001;
+    }
+  }
+
+  public int getMaxIterations() {
+    return maxIterations;
+  }
+
+  public int getCurrentIteration() {
+    return currentIter;
+  }
 }
