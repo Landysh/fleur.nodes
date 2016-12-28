@@ -96,18 +96,29 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
 
     private int writeRow(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
       BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mCount.getIntValue());
+      
+      DataCell[] cells;
       for (int i=0;i<mask.length();i++){
         if (mask.get(i)){
-          double[] dimensionValues = dataFrame.getDimensionRow(i);
-          String[] subsetValues = dataFrame.getSubsetRow(i);
-          final DataCell[] cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
-          for (int j=0;j<dimensionValues.length;j++){
-            cells[j] = new DoubleCell(dimensionValues[j]);
+          if (dataFrame.getSubsets().isEmpty()){
+            double[] dimensionValues = dataFrame.getDimensionRow(i);
+            cells = new DataCell[dimensionValues.length + 1];
+            for (int j=0;j<dimensionValues.length;j++){
+              cells[j] = new DoubleCell(dimensionValues[j]);
+            }
+          } else {
+            double[] dimensionValues = dataFrame.getDimensionRow(i);
+            String[] subsetValues = dataFrame.getSubsetRow(i);
+            cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
+            for (int j=0;j<dimensionValues.length;j++){
+              cells[j] = new DoubleCell(dimensionValues[j]);
+            }
+            for (int k=0;k<subsetValues.length;k++){
+              cells [dimensionValues.length + k ] = new StringCell(subsetValues[k]);
+            }
           }
-          for (int k=0;k<subsetValues.length;k++){
-            cells [dimensionValues.length + k ] = new StringCell(subsetValues[k]);
-          }
-          cells[dimensionValues.length + subsetValues.length] = new StringCell(dataFrame.getPrefferedName());
+
+          cells[cells.length-1] = new StringCell(dataFrame.getPrefferedName());
           final RowKey rowKey = new RowKey("Row " + rowIndex++);
           final DataRow tableRow = new DefaultRow(rowKey, cells);
           container.addRowToTable(tableRow);
@@ -121,16 +132,28 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
       DataColumnProperties properties = inSpec.getColumnSpec(columnName).getProperties();
       String rawDimensionNames = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
       String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
-      String rawSubsetNames = properties.getProperty(NodeUtilities.SUBSET_NAMES_KEY);
-      String[] subsetNames = rawSubsetNames.split(NodeUtilities.DELIMITER_REGEX);
-      int outColumnCount = subsetNames.length + dimensionNames.length + 1;
-      DataColumnSpec[] colSpecs = new DataColumnSpec[outColumnCount];
-      for (int i=0;i<dimensionNames.length;i++){
-        colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
-      }
       
-      for (int i = 0;i<subsetNames.length;i++){
-        colSpecs[i + dimensionNames.length] = new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
+      DataColumnSpec[] colSpecs;
+      int outColumnCount;
+
+      if (properties.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
+        String rawSubsetNames = properties.getProperty(NodeUtilities.SUBSET_NAMES_KEY);
+        String[] subsetNames = rawSubsetNames.split(NodeUtilities.DELIMITER_REGEX);
+        outColumnCount = subsetNames.length + dimensionNames.length + 1;
+        colSpecs = new DataColumnSpec[outColumnCount];
+        for (int i=0;i<dimensionNames.length;i++){
+          colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
+        }
+        
+        for (int i = 0;i<subsetNames.length;i++){
+          colSpecs[i + dimensionNames.length] = new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
+        }
+      } else {
+        outColumnCount = dimensionNames.length + 1;
+        colSpecs = new DataColumnSpec[outColumnCount];
+        for (int i=0;i<dimensionNames.length;i++){
+          colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
+        }
       }
       
       colSpecs[outColumnCount-1] = new DataColumnSpecCreator("Source", StringCell.TYPE).createSpec();
@@ -142,7 +165,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
      * {@inheritDoc}
      */
     @Override
-    protected void reset() {/**TODO**/}
+    protected void reset() {/*TODO*/}
 
     /**
      * {@inheritDoc}
@@ -196,7 +219,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     @Override
     protected void loadInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/**TODO**/}
+            CanceledExecutionException {/*TODO*/}
     
     /**
      * {@inheritDoc}
@@ -204,5 +227,5 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     @Override
     protected void saveInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/**TODO**/}
+            CanceledExecutionException {/*TODO*/}
 }
