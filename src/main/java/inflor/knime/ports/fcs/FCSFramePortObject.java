@@ -18,6 +18,7 @@ import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.ModelContent;
 import org.knime.core.node.ModelContentRO;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortObjectZipInputStream;
 import org.knime.core.node.port.PortObjectZipOutputStream;
@@ -32,6 +33,9 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 public class FCSFramePortObject extends FileStorePortObject {
 
+  private static final NodeLogger logger = NodeLogger.getLogger(FCSFramePortObject.class);
+
+  
   public static final class Serializer extends PortObjectSerializer<FCSFramePortObject> {
 
     @Override
@@ -102,7 +106,7 @@ public class FCSFramePortObject extends FileStorePortObject {
       final FileInputStream input = new FileInputStream(file);
       vectorStore = FCSFrame.load(input);
     } catch (final Exception e) {
-      e.printStackTrace();
+      logger.error("Unable to deserialize port object", e);
       throw new IOException();
     }
     return vectorStore;
@@ -148,7 +152,7 @@ public class FCSFramePortObject extends FileStorePortObject {
   private void load(final PortObjectZipInputStream in, final PortObjectSpec spec)
       throws IOException, CanceledExecutionException {
     m_spec = (FCSFramePortSpec) spec;
-    m_columnStore = new WeakReference<FCSFrameContent>(null);
+    m_columnStore = new WeakReference<>(null);
     final ModelContentRO contentRO = ModelContent.loadFromXML(in);
     try {
       m_columnNames = Arrays.asList(contentRO.getStringArray(COLUMNS_NAME));
@@ -174,7 +178,6 @@ public class FCSFramePortObject extends FileStorePortObject {
 
   @Override
   public JComponent[] getViews() {
-    // TODO Auto-generated method stub
-    return null;
+    return new JComponent[]{};
   }
 }
