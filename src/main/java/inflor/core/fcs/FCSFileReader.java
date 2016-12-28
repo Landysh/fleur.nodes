@@ -24,12 +24,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
@@ -54,9 +56,6 @@ public class FCSFileReader {
   
   private static final int FIRST_BYTE_END_DATA_OFFSET = 34;
   private static final int LAST_BYTE_END_DATA_OFFSET = 41;
-  
-  //Errors and warnings
-  private static final String ERROR_UNABLE_TO_CREATE_HASH = "Unable to create hashcode";
 
   // file properties
   final String pathToFile;
@@ -71,8 +70,7 @@ public class FCSFileReader {
   TreeSet<FCSDimension> data;
   String[] compParameterList = null;
 
-  // Constructor
-  public FCSFileReader(String filePath) throws Exception {
+  public FCSFileReader(String filePath) throws IOException {
     // Open the file
     pathToFile = filePath;
     final File f = new File(pathToFile);
@@ -96,21 +94,7 @@ public class FCSFileReader {
     dataType = columnStore.getKeywordValue("$DATATYPE");
     data = new TreeSet<>();
   }
-
-  private String calculateSHA(byte[] inBytes) throws NoSuchAlgorithmException {
-    StringBuffer buffer = null;
-    final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-    messageDigest.update(inBytes);
-
-    final byte[] bytes = messageDigest.digest();
-    buffer = new StringBuffer();
-    for (final byte b : bytes) {
-      buffer.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-    }
-
-    return buffer.toString();
-  }
-
+  
   public void close() throws IOException {
     fcsFile.close();
   }
@@ -129,7 +113,7 @@ public class FCSFileReader {
     return map;
   }
 
-  public FCSFrame getColumnStore() {
+  public FCSFrame getFCSFrame() {
     return columnStore;
   }
 
@@ -137,12 +121,8 @@ public class FCSFileReader {
     return columnStore.getKeywords();
   }
 
-  public void initRowReader() {
-    try {
-      fcsFile.seek(beginData);
-    } catch (final IOException e) {
-      e.printStackTrace();
-    }
+  public void initRowReader() throws IOException {
+     fcsFile.seek(beginData);
   }
 
   public void readData() throws IOException {
@@ -222,14 +202,10 @@ public class FCSFileReader {
         header.put(key, value);
       }
     }
-    String sha256;
-    try {
-      sha256 = calculateSHA(keywordBytes);
-      header.put("SHA-256", sha256);
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-      throw new IOException(ERROR_UNABLE_TO_CREATE_HASH);
-    }
+    
+    HashFunction md = Hashing.sha256();
+    HashCode code = md.hashBytes(keywordBytes);
+    header.put("SHA-256", code.toString());
     return header;
   }
 
@@ -271,7 +247,7 @@ public class FCSFileReader {
     try {
       reader = new FCSFileReader(filePath);
       reader.readData();
-      return reader.getColumnStore();
+      return reader.getFCSFrame();
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -283,7 +259,7 @@ public class FCSFileReader {
     try {
       reader = new FCSFileReader(filePath);
       reader.initColumnStoreNoData();
-      return reader.getColumnStore();
+      return reader.getFCSFrame();
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -296,8 +272,7 @@ public class FCSFileReader {
       reader = new FCSFileReader(filePath);
       return reader.getHeader();
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      return new HashMap<>();
     }
   }
 
