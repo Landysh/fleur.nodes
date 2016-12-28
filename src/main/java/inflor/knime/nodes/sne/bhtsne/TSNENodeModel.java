@@ -89,16 +89,19 @@ public class TSNENodeModel extends NodeModel {
 
   private DataTableSpec createTableSpec(DataTableSpec inSpec) {
     DataColumnSpec[] colSpecs = new DataColumnSpec[2];
-    String tSNE1Name = "TSNE1";
-    while (inSpec.containsName(tSNE1Name)){
-      tSNE1Name+="*";
+    
+    StringBuilder tSNE1Name = new StringBuilder("TSNE1");
+    while (inSpec.containsName(tSNE1Name.toString())){
+      tSNE1Name.append("*");
     }
-    String tSNE2Name = "TSNE2";
-    while (inSpec.containsName(tSNE2Name)){
-      tSNE2Name+="*";
+    colSpecs[0] = new DataColumnSpecCreator(tSNE1Name.toString(), DoubleCell.TYPE).createSpec();
+    
+    StringBuilder tSNE2Name = new StringBuilder("TSNE2");
+    while (inSpec.containsName(tSNE2Name.toString())){
+      tSNE2Name.append("*");
     }
-    colSpecs[0] = new DataColumnSpecCreator(tSNE1Name, DoubleCell.TYPE).createSpec();
-    colSpecs[1] = new DataColumnSpecCreator(tSNE2Name, DoubleCell.TYPE).createSpec();
+    colSpecs[1] = new DataColumnSpecCreator(tSNE2Name.toString(), DoubleCell.TYPE).createSpec();
+    
     return new DataTableSpec(colSpecs);
   }
 
@@ -118,9 +121,9 @@ public class TSNENodeModel extends NodeModel {
     exec.setProgress(0.1);
     exec.setMessage("Initializing bhtSNE");
     BHTSne2 bht = new BHTSne2();
-    int N = data.length;
-    int D = data[0].length;
-    bht.init(data, N, D, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), false, 0.5);
+    int n = data.length;
+    int d = data[0].length;
+    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5);
     exec.setProgress(0.15);
     exec.setMessage("Main Loop: ");
     ExecutionContext iterExec = exec.createSubExecutionContext(1);
@@ -180,7 +183,7 @@ public class TSNENodeModel extends NodeModel {
    */
   @Override
   protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {/**TODO**/}
+      throws IOException, CanceledExecutionException {/*TODO*/}
 
   /**
    * {@inheritDoc}
