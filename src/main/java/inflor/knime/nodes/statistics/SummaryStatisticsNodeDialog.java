@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.summaryStats;
+package main.java.inflor.knime.nodes.statistics;
 
 import java.awt.BorderLayout;
 import java.awt.Window;

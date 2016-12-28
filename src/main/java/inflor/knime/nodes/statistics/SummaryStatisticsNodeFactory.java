@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.summaryStats;
+package main.java.inflor.knime.nodes.statistics;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

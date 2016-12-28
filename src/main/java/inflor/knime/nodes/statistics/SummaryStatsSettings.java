@@ -1,11 +1,13 @@
-package main.java.inflor.knime.nodes.summaryStats;
+package main.java.inflor.knime.nodes.statistics;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
@@ -19,13 +21,20 @@ public class SummaryStatsSettings {
   
   private static final String STATS_KEY = "Statistic Definitions";
   
+  private static final NodeLogger logger = NodeLogger.getLogger(SummaryStatisticsNodeModel.class);
+
+  
   public SummaryStatsSettings(){
-    stats = new ArrayList<StatSpec>();
+    stats = new ArrayList<>();
   }
   
   public void save(NodeSettingsWO settings) {
     settings.addString(SELECTED_COLUMN_KEY, modelSelectedColumn);
-    NodeUtilities.saveSerializable(settings, STATS_KEY, (Serializable) stats);
+    try {
+      NodeUtilities.saveSerializable(settings, STATS_KEY, (Serializable) stats);
+    } catch (IOException e) {
+      logger.error(NodeUtilities.getSaveSerializableErrorMessage(), e);
+    }
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {
