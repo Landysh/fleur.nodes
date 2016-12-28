@@ -98,11 +98,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     }
   }
 
-  public int getColumnCount() {
-    return getColumnNames().size();
+  public int getDimensionCount() {
+    return getDimensionNames().size();
   }
 
-  public ArrayList<String> getColumnNames() {
+  public ArrayList<String> getDimensionNames() {
     return columnData
         .stream()
         .map(FCSDimension::getShortName)
@@ -135,17 +135,17 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
   
   public double[] getDimensionRow(int index, boolean transformData) {
-    final double[] row = new double[getColumnCount()];
+    final double[] row = new double[getDimensionCount()];
     int i = 0;
     if (transformData){
-      for (String shortName: getColumnNames()) {
+      for (String shortName: getDimensionNames()) {
         FCSDimension dim = getFCSDimensionByShortName(shortName);
         double rawValue = dim.getData()[index];
         row[i] = dim.getPreferredTransform().transform(rawValue);
         i++;
         }
     } else {
-      for (String shortName: getColumnNames()) {
+      for (String shortName: getDimensionNames()) {
         FCSDimension dim = getFCSDimensionByShortName(shortName);
         row[i] = dim.getData()[index];
         i++;
@@ -177,7 +177,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     messageBuilder.setEventCount(this.rowCount);
 
     // add the dimension names.
-    for (final String name : getColumnNames()) {
+    for (final String name : getDimensionNames()) {
       messageBuilder.addDimNames(name);
     }
 
