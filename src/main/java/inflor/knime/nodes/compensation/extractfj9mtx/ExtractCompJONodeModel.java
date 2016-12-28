@@ -56,6 +56,9 @@ public class ExtractCompJONodeModel extends NodeModel {
     private static final String EMPTY_MATRIX_WARNING = "This compensation matrix has only spillover values of zero. Compensation will not modify the input data.";
     
     private ExtractCompJoSettings modelSettings = new ExtractCompJoSettings();
+    private SpilloverCompensator viewCompensator;
+
+    private boolean isExecuted = false;
     
 
     /**
@@ -78,12 +81,13 @@ public class ExtractCompJONodeModel extends NodeModel {
       try {
         
         SpilloverCompensator compr = readCompensationFromMTXFile(modelSettings.getFilePath());
-
+        viewCompensator = compr;
         CompMatrixPortSpec spec = createPortSpec(compr);
         if (compr.isEmpty()){
           logger.warn(EMPTY_MATRIX_WARNING);
         }
         CompMatrixPortObject portObject = new CompMatrixPortObject(spec, compr.getSpilloverValues());
+        isExecuted = true;
         return new PortObject[] {portObject};
       } catch (final Exception e) {
         logger.error("Execution Failed. See debug console for details.", e);
@@ -148,9 +152,8 @@ public class ExtractCompJONodeModel extends NodeModel {
      */
     @Override
     protected void reset() {
-        // TODO Code executed on reset.
-        // Models build during execute are cleared here.
-        // Also data handled in load/saveInternals will be erased here.
+      viewCompensator = null;
+      isExecuted = false;
     }
 
     /**
@@ -232,6 +235,14 @@ public class ExtractCompJONodeModel extends NodeModel {
         // of). Save here only the other internals that need to be preserved
         // (e.g. data used by the views).
 
+    }
+
+    public SpilloverCompensator getCompensator() {
+      return viewCompensator;
+    }
+    
+    public boolean isExecuted() {
+      return isExecuted;
     }
 
 }

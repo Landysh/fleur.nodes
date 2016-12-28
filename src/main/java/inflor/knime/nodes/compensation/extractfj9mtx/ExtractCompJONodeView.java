@@ -18,7 +18,13 @@
  */
 package main.java.inflor.knime.nodes.compensation.extractfj9mtx;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import org.knime.core.node.NodeView;
+
+import main.java.inflor.core.compensation.SpilloverCompensator;
+import main.java.inflor.core.compensation.SpilloverRenderer;
 
 /**
  * <code>NodeView</code> for the "ExtractCompJO" Node.
@@ -28,6 +34,8 @@ import org.knime.core.node.NodeView;
  */
 public class ExtractCompJONodeView extends NodeView<ExtractCompJONodeModel> {
 
+  private JPanel summary;
+
     /**
      * Creates a new view.
      * 
@@ -35,9 +43,7 @@ public class ExtractCompJONodeView extends NodeView<ExtractCompJONodeModel> {
      */
     protected ExtractCompJONodeView(final ExtractCompJONodeModel nodeModel) {
         super(nodeModel);
-
-        // TODO instantiate the components of the view here.
-
+        summary = new JPanel();
     }
 
     /**
@@ -46,14 +52,15 @@ public class ExtractCompJONodeView extends NodeView<ExtractCompJONodeModel> {
     @Override
     protected void modelChanged() {
 
-        // TODO retrieve the new model from your nodemodel and 
-        // update the view.
-        ExtractCompJONodeModel nodeModel = 
-            (ExtractCompJONodeModel)getNodeModel();
-        assert nodeModel != null;
-        
-        // be aware of a possibly not executed nodeModel! The data you retrieve
-        // from your nodemodel could be null, emtpy, or invalid in any kind.
+        ExtractCompJONodeModel nodeModel = getNodeModel();
+        assert nodeModel != null;        
+        if (nodeModel.isExecuted()){
+          SpilloverCompensator compr = nodeModel.getCompensator();
+          summary = SpilloverRenderer.toJPanel(compr);
+          JScrollPane sp = new JScrollPane(summary);
+          setComponent(sp);
+          summary.revalidate();
+        }
         
     }
 
@@ -61,19 +68,13 @@ public class ExtractCompJONodeView extends NodeView<ExtractCompJONodeModel> {
      * {@inheritDoc}
      */
     @Override
-    protected void onClose() {
-    
-        // TODO things to do when closing the view
-    }
+    protected void onClose() {/* noop*/}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void onOpen() {
-
-        // TODO things to do when opening the view
-    }
+    protected void onOpen() {/* noop*/}
 
 }
 
