@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
 import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.singlets.PuleProperties;
 

@@ -2,10 +2,8 @@ package main.java.inflor.knime.nodes.portToTableCell;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 import org.knime.core.data.DataCell;
-import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
@@ -13,7 +11,6 @@ import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
-import org.knime.core.data.renderer.DataValueRenderer;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;

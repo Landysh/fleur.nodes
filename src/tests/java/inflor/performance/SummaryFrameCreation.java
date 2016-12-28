@@ -2,17 +2,15 @@ package tests.java.inflor.performance;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
 import main.java.inflor.core.utils.FCSUtilities;
 
 public class SummaryFrameCreation {
-  static final int numFiles = 10;
+  static final int FILE_COUNT = 10;
   ArrayList<FCSFrame> dataSet = new ArrayList<FCSFrame>();
 
   public static void main(String[] args) throws Exception {
@@ -32,8 +30,6 @@ public class SummaryFrameCreation {
       }
     }
 
-
-    HashMap<String, FCSDimension> dataset = new HashMap<String, FCSDimension>();
     System.out.println("Reading data started");
 
     List<FCSFrame> fcsList = validFiles.parallelStream()
@@ -43,6 +39,7 @@ public class SummaryFrameCreation {
 
     long start = System.currentTimeMillis();
     
+    @SuppressWarnings("unused")
     FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(fcsList, 10000);
     
     long end = System.currentTimeMillis();
