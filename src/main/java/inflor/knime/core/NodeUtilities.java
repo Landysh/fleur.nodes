@@ -46,6 +46,7 @@ public class NodeUtilities {
   
   public static final String DELIMITER = "||";
   public static final String DELIMITER_REGEX = "\\|\\|";
+  private static final String SAVE_SERIALIZABLE_ERROR_MESSAGE = "Failed to save objects";
 
   
   
@@ -65,16 +66,12 @@ public class NodeUtilities {
     }
   }
 
-  public static void saveSerializable(NodeSettingsWO settings, String key, Serializable ser) {
+  public static void saveSerializable(NodeSettingsWO settings, String key, Serializable ser) throws IOException {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     ObjectOutputStream oos;
-    try {
-      oos = new ObjectOutputStream(bos);
-      oos.writeObject(ser);
-      oos.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    oos = new ObjectOutputStream(bos);
+    oos.writeObject(ser);
+    oos.flush();
     byte[] chartBytes = bos.toByteArray();
     settings.addByteArray(key, chartBytes);
   }
@@ -99,14 +96,13 @@ public class NodeUtilities {
     // Collect all parameter for experiment in one Hashset.
     dataSet
       .stream()
-      .map(frame -> frame.getColumnNames())
+      .map(frame -> frame.getDimensionNames())
       .forEach(dimensionList -> shortNames.addAll(dimensionList));
     String dimensionNames = "";
     for (String name : shortNames) {
       dimensionNames = dimensionNames + name + "||";
     }
     dimensionNames = dimensionNames.substring(0, dimensionNames.length() - 2);
-    System.out.println(dimensionNames);
     content.put(DIMENSION_NAMES_KEY, dimensionNames);
 
     return content;
@@ -132,25 +128,24 @@ public class NodeUtilities {
       HashSet<Serializable> loadedObject = (HashSet<Serializable>) ois.readObject();
       return loadedObject;
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new InvalidSettingsException("Unable to parse object set");
+      throw new InvalidSettingsException(e);
     }
   }
   
+  @SuppressWarnings("unchecked")//TODO how bad is this?
   public static List<Serializable> loadList(NodeSettingsRO settings, String key) throws InvalidSettingsException {
     try {
       byte[] bytes = settings.getByteArray(key);
       ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
       ObjectInputStream ois;
       ois = new ObjectInputStream(bis);
-      @SuppressWarnings("unchecked")
-      List<Serializable> loadedObject = (List<Serializable>) ois.readObject();
-      return loadedObject;
+      return (List<Serializable>) ois.readObject();
     } catch (Exception e) {
-      e.printStackTrace();
-      throw new InvalidSettingsException("Unable to parse object list");
+      throw new InvalidSettingsException(e);
     }
   }
-  
-  
+
+  public static String getSaveSerializableErrorMessage() {
+    return SAVE_SERIALIZABLE_ERROR_MESSAGE;
+  }
 }

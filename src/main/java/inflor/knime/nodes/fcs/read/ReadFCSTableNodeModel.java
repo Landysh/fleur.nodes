@@ -80,7 +80,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
     DataTableSpec[] specs = null;
     try {
       final FCSFileReader reader = new FCSFileReader(mFileLocation.getStringValue());
-      final FCSFrame eventsFrame = reader.getColumnStore();
+      final FCSFrame eventsFrame = reader.getFCSFrame();
       specs = createPortSpecs(eventsFrame);
       reader.close();
     } catch (final Exception e) {
@@ -91,7 +91,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
   }
 
   private DataTableSpec createDataSpec(FCSFrame columnStore) throws InvalidSettingsException {
-    List<String> columnNames = columnStore.getColumnNames();
+    List<String> columnNames = columnStore.getDimensionNames();
     DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.size()];
     for (String columnName : columnNames) {
       int specIndex = FCSUtilities.findParameterNumnberByName(columnStore.getKeywords(), columnName) - 1;
@@ -133,7 +133,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
       reader = new FCSFileReader(mFileLocation.getStringValue());
       Map<String, String> keywords = reader.getHeader();
 
-      FCSFrame columnStore = reader.getColumnStore();
+      FCSFrame columnStore = reader.getFCSFrame();
       DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
 
       // Read header section
@@ -149,12 +149,12 @@ public class ReadFCSTableNodeModel extends NodeModel {
       reader.initRowReader();
       for (Integer j = 0; j < columnStore.getRowCount(); j++) {
         final RowKey rowKey = new RowKey(j.toString());
-        DataCell[] dataCells = new DataCell[columnStore.getColumnCount()];
+        DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
 
         final double[] fcsRow = reader.readRow();
         // for each uncomped parameter
         int k = 0;
-        while (k < columnStore.getColumnCount()) {
+        while (k < columnStore.getDimensionCount()) {
           // add uncomped data
           dataCells[k] = new DoubleCell(fcsRow[k]);
           k++;

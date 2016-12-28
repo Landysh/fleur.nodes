@@ -62,7 +62,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
     FCSFramePortSpec spec = null;
     try {
       final FCSFileReader FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
-      final FCSFrame columnStore = FCSReader.getColumnStore();
+      final FCSFrame columnStore = FCSReader.getFCSFrame();
       spec = createPortSpec(columnStore);
       FCSReader.close();
     } catch (final Exception e) {
@@ -75,7 +75,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
 
   private FCSFramePortSpec createPortSpec(FCSFrame eventsFrame) {
     final FCSFramePortSpec spec = new FCSFramePortSpec(eventsFrame.getKeywords(),
-        eventsFrame.getColumnNames().toArray(new String[eventsFrame.getColumnCount()]), eventsFrame.getRowCount());
+        eventsFrame.getDimensionNames().toArray(new String[eventsFrame.getDimensionCount()]), eventsFrame.getRowCount());
     return spec;
   }
 
@@ -97,7 +97,7 @@ public class ReadFCSFrameNodeModel extends NodeModel {
       exec.checkCanceled();
       FCSReader.readData();
       exec.setProgress(0.9, "data read.");
-      final FCSFrame columnStore = FCSReader.getColumnStore();
+      final FCSFrame columnStore = FCSReader.getFCSFrame();
       final FCSFramePortSpec spec = createPortSpec(columnStore);
       final FCSFramePortObject port =
           FCSFramePortObject.createPortObject(spec, columnStore, filestore);

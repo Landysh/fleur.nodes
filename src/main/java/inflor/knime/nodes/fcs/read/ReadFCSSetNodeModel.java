@@ -91,8 +91,10 @@ public class ReadFCSSetNodeModel extends NodeModel {
     List<Map<String, String>> headers = filePaths
         .stream()
         .map(FCSFileReader::readHeaderOnly)
+        .filter(map -> !map.isEmpty())
         .collect(Collectors.toList());
-
+    
+    
     final HashMap<String, String> content = new HashMap<>();
     // Merge all keywords.
     headers

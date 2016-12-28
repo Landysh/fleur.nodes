@@ -36,24 +36,25 @@ import main.java.inflor.core.transforms.LogrithmicTransform;
 import main.java.inflor.core.transforms.TransformType;
 
 public class PlotUtils {
-
-  public static ValueAxis createAxis(String Name, AbstractTransform transform) {
+  
+  private PlotUtils(){}
+  
+  public static ValueAxis createAxis(String name, AbstractTransform transform) {
     if (transform instanceof BoundDisplayTransform) {
-      NumberAxis axis = new NumberAxis(Name);
+      NumberAxis axis = new NumberAxis(name);
       BoundDisplayTransform bdt = (BoundDisplayTransform) transform;
       axis.setRange(new Range(bdt.getMinTranformedValue(), bdt.getMaxValue()));
       return axis;
     } else if (transform instanceof LogicleTransform) {
       LogicleTransform llt = (LogicleTransform) transform;
-      LogicleNumberAxis axis = new LogicleNumberAxis(Name, llt);
-      return axis;
+      return new LogicleNumberAxis(name, llt);
     } else if (transform instanceof LogrithmicTransform) {
-      NumberAxis axis = new NumberAxis(Name);
+      NumberAxis axis = new NumberAxis(name);
       LogrithmicTransform logTransform = (LogrithmicTransform) transform;
       axis.setRange(new Range(logTransform.getMin(), logTransform.getMax()));
       return axis;
     } else {
-      throw new RuntimeException("Transformation type not supported. Yet.");
+      throw new IllegalArgumentException("Transformation type not supported. Yet.");
     }
   }
 
@@ -65,25 +66,24 @@ public class PlotUtils {
     } else if (type.equals(PlotTypes.HISTOGRAM)) {
       newPlot = new HistogramPlot(plotSpec);
     } else {
-      throw new RuntimeException("No valid plot type selected.");
+      //noop
     }
     return newPlot;
   }
 
   public static AbstractTransform createDefaultTransform(TransformType selectedType) {
 
-    AbstractTransform newTransform;
+    AbstractTransform newTransform = null;
 
-    if (selectedType == TransformType.LINEAR) {
-      newTransform = new BoundDisplayTransform(0, 262144);
-    } else if (selectedType == TransformType.BOUNDARY) {
+    if (selectedType == TransformType.LINEAR
+        ||selectedType == TransformType.BOUNDARY) {
       newTransform = new BoundDisplayTransform(0, 262144);
     } else if (selectedType == TransformType.LOGARITHMIC) {
       newTransform = new LogrithmicTransform(100, 262144);
     } else if (selectedType == TransformType.LOGICLE) {
       newTransform = new LogicleTransform();
     } else {
-      throw new RuntimeException("Invslid transform type selected.");
+      //noop
     }
     return newTransform;
   }

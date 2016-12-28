@@ -192,7 +192,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     for (DataRow row : table) {
       FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
       dataSet.add(dataFrame);
-      List<String> newParameters =dataFrame.getColumnNames();
+      List<String> newParameters =dataFrame.getDimensionNames();
       parameterSet.addAll(newParameters);
     }
     FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, DEFAULT_SUMMARY_FRAME_EVENT_COUNT);

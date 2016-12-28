@@ -96,7 +96,7 @@ public class FCSFramePortObject extends FileStorePortObject {
     m_spec = spec;
     final FCSFrameContent content = new FCSFrameContent(vectorStore);
     m_columnStore = new WeakReference<>(content);
-    m_columnNames = vectorStore.getColumnNames();
+    m_columnNames = vectorStore.getDimensionNames();
   }
 
   private FCSFrame deserialize() throws IOException {

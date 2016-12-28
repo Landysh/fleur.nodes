@@ -38,7 +38,7 @@ public class FCSFileReaderTest {
 
     // Test
     reader.readData();
-    final FCSFrame dataStore = reader.getColumnStore();
+    final FCSFrame dataStore = reader.getFCSFrame();
 
     final double[] fcs =
         {400, 600, 300, 500, 600, 500, 800, 200, 300, 800, 900, 400, 200, 600, 400};
@@ -69,7 +69,7 @@ public class FCSFileReaderTest {
     // Test
     final FCSFileReader reader = new FCSFileReader(logiclePath);
     reader.readData();
-    final FCSFrame dataStore = reader.getColumnStore();
+    final FCSFrame dataStore = reader.getFCSFrame();
     final int testRowCount = dataStore.getRowCount();
 
 

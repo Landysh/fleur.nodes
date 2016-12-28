@@ -20,6 +20,7 @@
  */
 package main.java.inflor.knime.nodes.transform.create;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
@@ -39,6 +41,7 @@ import main.java.inflor.core.transforms.LogrithmicTransform;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.core.utils.MatrixUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
+import main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeModel;
 
 public class TransformNodeSettings {
 
@@ -48,9 +51,15 @@ public class TransformNodeSettings {
   private String mSelectedColumn;
   private TreeMap<String, AbstractTransform> mTransforms = new TreeMap<>();
 
+  private static final NodeLogger logger = NodeLogger.getLogger(SummaryStatisticsNodeModel.class);
+  
   public void save(NodeSettingsWO settings) {
     settings.addString(SELECTED_COLUMN_KEY, mSelectedColumn);
-    NodeUtilities.saveSerializable(settings, TRANSFORM_MAP_KEY, mTransforms);
+    try {
+      NodeUtilities.saveSerializable(settings, TRANSFORM_MAP_KEY, mTransforms);
+    } catch (IOException e) {
+      logger.error(NodeUtilities.getSaveSerializableErrorMessage(), e);
+    }
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {

@@ -4,6 +4,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class SpilloverRenderer {
+  
+  private SpilloverRenderer(){}
 
   public static JPanel toJPanel(SpilloverCompensator compr) {
     JPanel panel = new JPanel();

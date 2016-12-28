@@ -90,7 +90,7 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
 
     private String createDimensionSummary(FCSFrame dataFrame) {
       String dimensionSummary = "\n";
-      FCSDimension[] arr = dataFrame.getData().toArray(new FCSDimension[dataFrame.getColumnCount()]);
+      FCSDimension[] arr = dataFrame.getData().toArray(new FCSDimension[dataFrame.getDimensionCount()]);
       for (FCSDimension dim : arr){
         dimensionSummary += dim.getDisplayName();
         dimensionSummary +="    ";

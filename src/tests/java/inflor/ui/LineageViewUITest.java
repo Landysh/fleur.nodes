@@ -28,7 +28,7 @@ public class LineageViewUITest extends ApplicationFrame {
     String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
     final FCSFileReader reader = new FCSFileReader(logiclePath);
     reader.readData();
-    final FCSFrame dataStore = reader.getColumnStore();
+    final FCSFrame dataStore = reader.getFCSFrame();
 
     ChartSpec ly = new ChartSpec();
     ly.setPlotType(PlotTypes.DENSITY);

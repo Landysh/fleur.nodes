@@ -82,7 +82,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
       final FCSFrame columnStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
-      final SingletsModel model = new SingletsModel(columnStore.getColumnNames().toArray(new String[columnStore.getColumnNames().size()]));
+      final SingletsModel model = new SingletsModel(columnStore.getDimensionNames().toArray(new String[columnStore.getDimensionNames().size()]));
       final double[] areaData = columnStore.getFCSDimensionByShortName(areaColumn).getData();
       final double[] heightData = columnStore.getFCSDimensionByShortName(heightColumn).getData();//TODO: DisplayName or shortName?
       final double[] ratio = model.buildModel(areaData, heightData);
