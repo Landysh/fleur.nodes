@@ -15,30 +15,30 @@
    
 <extension point="org.knime.workbench.repository.nodes">
 <node
-       after="ReadFCSSetNodeFactory"
+      category-path="/inflor/read"
+      deprecated="false"
+      factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory"/>
+<node
+       after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory"
        category-path="/inflor/read"
        deprecated="false"
        factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
 <node
-      after="ReadFCSSetNodeFactory"
+      after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory"
       category-path="/inflor/read"
       deprecated="false"
       factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSFrameNodeFactory"/>
-<node
-      category-path="/inflor/read"
-      deprecated="false"
-      factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory"/>
 <node
       category-path="/inflor/comp"
       deprecated="false"
       factory-class="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
 <node
-      after="ApplyCompensationNodeFactory"
+      after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"
       category-path="/inflor/comp"
       deprecated="false"
       factory-class="main.java.inflor.knime.nodes.compensation.extract.fromfcs.ExtractCommpensationNodeFactory"/>
 <node
-      after="ApplyCompensationNodeFactory"
+      after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"
       category-path="/inflor/comp"
       deprecated="false"
       factory-class="main.java.inflor.knime.nodes.compensation.extractfj9mtx.ExtractCompJONodeFactory"/>
