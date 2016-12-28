@@ -395,6 +395,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public List<Subset> getSubsets() {
+    if (subsets==null){
+    }
     return subsets;
   }
 
