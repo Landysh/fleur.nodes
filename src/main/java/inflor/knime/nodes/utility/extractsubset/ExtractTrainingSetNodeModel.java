@@ -83,39 +83,27 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
         for (DataRow inRow: inData[0]){
           FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(frameIndex);
           FCSFrame dataFrame = cell.getFCSFrameValue();
-          if (rowIndex%1000 == 0){
-            exec.setProgress((double) rowIndex/(inData[0].size()*mCount.getIntValue()));
-            exec.setMessage("Down sampling: " + dataFrame.getPrefferedName());
-          }
-          rowIndex = writeRow(container, rowIndex, dataFrame);          
+          rowIndex = writeRows(container, rowIndex, dataFrame);
+          //update the progress bar
+          exec.checkCanceled();
+          exec.setProgress((double) rowIndex/(inData[0].size()*mCount.getIntValue()));
+          exec.setMessage("Down sampling: " + dataFrame.getPrefferedName());
         }
         container.close();
         BufferedDataTable out = container.getTable();
         return new BufferedDataTable[]{out};
     }
 
-    private int writeRow(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
+    private int writeRows(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
       BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mCount.getIntValue());
       
       DataCell[] cells;
       for (int i=0;i<mask.length();i++){
         if (mask.get(i)){
           if (dataFrame.getSubsets().isEmpty()){
-            double[] dimensionValues = dataFrame.getDimensionRow(i);
-            cells = new DataCell[dimensionValues.length + 1];
-            for (int j=0;j<dimensionValues.length;j++){
-              cells[j] = new DoubleCell(dimensionValues[j]);
-            }
+            cells = writeCellsWithOnlyDimensionColumns(dataFrame, i);
           } else {
-            double[] dimensionValues = dataFrame.getDimensionRow(i);
-            String[] subsetValues = dataFrame.getSubsetRow(i);
-            cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
-            for (int j=0;j<dimensionValues.length;j++){
-              cells[j] = new DoubleCell(dimensionValues[j]);
-            }
-            for (int k=0;k<subsetValues.length;k++){
-              cells [dimensionValues.length + k ] = new StringCell(subsetValues[k]);
-            }
+            cells = writeCellsWithSubsetColumns(dataFrame, i);
           }
 
           cells[cells.length-1] = new StringCell(dataFrame.getPrefferedName());
@@ -125,6 +113,30 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
         }
       }
       return rowIndex;
+    }
+
+    private DataCell[] writeCellsWithOnlyDimensionColumns(FCSFrame dataFrame, int i) {
+      DataCell[] cells;
+      double[] dimensionValues = dataFrame.getDimensionRow(i);
+      cells = new DataCell[dimensionValues.length + 1];
+      for (int j=0;j<dimensionValues.length;j++){
+        cells[j] = new DoubleCell(dimensionValues[j]);
+      }
+      return cells;
+    }
+
+    private DataCell[] writeCellsWithSubsetColumns(FCSFrame dataFrame, int i) {
+      DataCell[] cells;
+      double[] dimensionValues = dataFrame.getDimensionRow(i);
+      String[] subsetValues = dataFrame.getSubsetRow(i);
+      cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
+      for (int j=0;j<dimensionValues.length;j++){
+        cells[j] = new DoubleCell(dimensionValues[j]);
+      }
+      for (int k=0;k<subsetValues.length;k++){
+        cells [dimensionValues.length + k ] = new StringCell(subsetValues[k]);
+      }
+      return cells;
     }
 
     private DataTableSpec createSpec(DataTableSpec inSpec) {
@@ -146,6 +158,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
         }
         
         for (int i = 0;i<subsetNames.length;i++){
+          
           colSpecs[i + dimensionNames.length] = new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
         }
       } else {
@@ -165,7 +178,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
      * {@inheritDoc}
      */
     @Override
-    protected void reset() {/*TODO*/}
+    protected void reset() {/*noop*/}
 
     /**
      * {@inheritDoc}
@@ -219,7 +232,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     @Override
     protected void loadInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/*TODO*/}
+            CanceledExecutionException {/*noop*/}
     
     /**
      * {@inheritDoc}
@@ -227,5 +240,5 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     @Override
     protected void saveInternals(final File internDir,
             final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/*TODO*/}
+            CanceledExecutionException {/*noop*/}
 }
