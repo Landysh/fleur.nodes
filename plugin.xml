@@ -61,7 +61,7 @@
 <node
       category-path="/inflor/analyze"
       deprecated="false"
-      factory-class="main.java.inflor.knime.nodes.summaryStats.SummaryStatisticsNodeFactory"/>
+      factory-class="main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
 <node
       category-path="/inflor/analyze"
       deprecated="false"
