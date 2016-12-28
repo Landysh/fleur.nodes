@@ -18,50 +18,59 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.transform;
+package main.java.inflor.knime.nodes.transform.create;
 
+import org.knime.core.node.NodeDialogPane;
+import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
 
 /**
- * <code>NodeView</code> for the "Transorm" Node.
+ * <code>NodeFactory</code> for the "Transorm" Node.
  * 
  *
  * @author Aaron Hart
  */
-public class TransformNodeView extends NodeView<TransformNodeModel> {
+public class TransformNodeFactory extends NodeFactory<TransformNodeModel> {
 
   /**
-   * Creates a new view.
-   * 
-   * @param nodeModel The model (class: {@link TransformNodeModel})
+   * {@inheritDoc}
    */
-  protected TransformNodeView(final TransformNodeModel nodeModel) {
-    super(nodeModel);
-    // TODO: generated method stub
+  @Override
+  public TransformNodeModel createNodeModel() {
+    return new TransformNodeModel();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  protected void modelChanged() {
-    // TODO: generated method stub
+  public int getNrNodeViews() {
+    return 1;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  protected void onClose() {
-    // TODO: generated method stub
+  public NodeView<TransformNodeModel> createNodeView(final int viewIndex,
+      final TransformNodeModel nodeModel) {
+    return new TransformNodeView(nodeModel);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  protected void onOpen() {
-    // TODO: generated method stub
+  public boolean hasDialog() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public NodeDialogPane createNodeDialogPane() {
+    return new TransformNodeDialog();
   }
 
 }

@@ -18,15 +18,13 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.transform;
+package main.java.inflor.knime.nodes.transform.create;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -46,6 +44,7 @@ import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.DataAwareNodeDialogPane;
 import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
@@ -58,7 +57,7 @@ import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.transforms.LogicleTransform;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.*;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.
@@ -67,6 +66,8 @@ import main.java.inflor.knime.data.type.cell.fcs.*;
  */
 
 public class TransformNodeDialog extends DataAwareNodeDialogPane {
+  
+  private static final NodeLogger logger = NodeLogger.getLogger(TransformNodeDialog.class);
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
@@ -76,7 +77,6 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
   private ArrayList<FCSFrame> dataSet;
   private JPanel transformPanel;
   private JProgressBar progressBar;
-  private JScrollPane scrollPane;
 
   protected TransformNodeDialog() {
     super();
@@ -116,7 +116,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
   }
 
   private HashMap<String, FCSDimension> findMatchingDimensions(String name) {
-    HashMap<String, FCSDimension> result = new HashMap<String, FCSDimension>();
+    HashMap<String, FCSDimension> result = new HashMap<>();
     for (FCSFrame dataFrame : dataSet) {
       String key = dataFrame.getPrefferedName();
       FCSDimension value = FCSUtilities.findCompatibleDimension(dataFrame, name);
@@ -136,14 +136,10 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     optionsPanel.add(Box.createVerticalGlue());
     optionsPanel.add(Box.createHorizontalGlue());
     // Select Input data
-    fcsColumnBox = new JComboBox<String>(new String[] {NO_COLUMNS_AVAILABLE_WARNING});
+    fcsColumnBox = new JComboBox<>(new String[] {NO_COLUMNS_AVAILABLE_WARNING});
     fcsColumnBox.setSelectedIndex(0);
-    fcsColumnBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
-      }
-    });
+    fcsColumnBox.addActionListener( e -> 
+        modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
     optionsPanel.add(fcsColumnBox);
     progressBar = new JProgressBar();
     optionsPanel.add(progressBar);
@@ -193,11 +189,11 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
       throw new NotConfigurableException("target column not in column list");
     }
 
-    // read the sample names;
+    // read the sample names
     final BufferedDataTable table = input[0];
 
     // Hold on to a reference of the data so we can plot it later.
-    dataSet = new ArrayList<FCSFrame>();
+    dataSet = new ArrayList<>();
     for (final DataRow row : table) {
       final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
       dataSet.add(dataFrame);
@@ -205,7 +201,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
 
     transformPanel = new JPanel();
     populateTransformPanel(transformPanel);
-    scrollPane = new JScrollPane(transformPanel);
+    JScrollPane scrollPane = new JScrollPane(transformPanel);
     scrollPane.setPreferredSize(new Dimension(400, 600));
     analysisTab.add(scrollPane, BorderLayout.CENTER);
     modelSettings.optimizeTransforms(dataSet);
@@ -232,7 +228,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
         gbc.gridy++;
       }
     } catch (InterruptedException | ExecutionException e) {
-      e.printStackTrace();
+      logger.error("Update transform panel failed.", e);
     }
   }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<knimeNode icon="./default.png" type="Manipulator" xmlns="http://knime.org/node/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://knime.org/node/v2.10 http://knime.org/node/v2.10.xsd">
+    <name>Create Transformations</name>
+    
+    <shortDescription>
+        
+    </shortDescription>
+    
+    <fullDescription>
+        <intro>
+        	A node to create and optimize transformations based on a column of FCS Frames.
+        	This node seeks to enable intuitive visualization of flow cytometry data by incorporating optimized display 
+        	transformations on a per dimension basis.  
+        	For a more detailed discussion of this topic see:<br/><br/>
+        	<b>Interpreting flow cytometry data: a guide for the perplexed</b><br/>
+			Leonore A Herzenberg, James Tung, Wayne A Moore, Leonard A Herzenberg, David R Parks<br/>
+			doi:10.1038/ni0706-681<br/><br/>
+        </intro>
+        
+        
+        <option name="Selected Column">The column of FCS Frames for which optimal display transformations will be generated.</option>
+        <option name="Preview Pane">
+        	A list of plots showing the optimized display function on the domain axis. 
+        	The range axis shows each input file with density bands showing the distribution of data for each file.
+        </option>
+        
+
+
+    </fullDescription>
+    
+    <ports>
+        <inPort index="0" name="FCS Data">A KNIME table containing at least one FCS Frame column</inPort>
+        <outPort index="0" name="Data with Transformations">The input table but with the added display transformation functions</outPort>
+    </ports>    
+    <views>
+        <view index="0" name="name of first view">Description of first view...</view>
+        <!--view index="1" name="name of second view">Description of second view...</view-->
+    </views>
+</knimeNode>

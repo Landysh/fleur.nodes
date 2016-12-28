@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.transform;
+package main.java.inflor.knime.nodes.transform.create;
 
 import java.io.File;
 import java.io.IOException;

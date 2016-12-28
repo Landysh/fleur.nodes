@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.transform;
+package main.java.inflor.knime.nodes.transform.create;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
