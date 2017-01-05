@@ -48,7 +48,12 @@ public class BooleanGate extends AbstractGate {
     validate();
     final BitSetAccumulator acc = new BitSetAccumulator(operator);
     final BitSet result =
-        references.values().parallelStream().map(g -> g.evaluate(data)).reduce(acc).get();
+        references
+        .values()
+        .parallelStream()
+        .map(g -> g.evaluate(data))
+        .reduce(acc)
+        .get();
     return result;
   }
 
