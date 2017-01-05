@@ -22,31 +22,33 @@ package main.java.inflor.core.utils;
 
 public class MatrixUtilities {
 
-  public static double[][] pow(double[][] X, int p) {
-    for (int i = 0; i < X.length; i++) {
-      for (int j = 0; j < X[0].length; j++) {
-        X[i][j] = Math.pow(X[i][j], p);
+  private MatrixUtilities(){}
+  
+  public static double[][] pow(double[][] x, int p) {
+    for (int i = 0; i < x.length; i++) {
+      for (int j = 0; j < x[0].length; j++) {
+        x[i][j] = Math.pow(x[i][j], p);
       }
     }
-    return X;
+    return x;
   }
 
-  public static double[][] transpose(double[][] X) {
-    double[][] XT = new double[X[0].length][X.length];
-    for (int i = 0; i < X.length; i++) {
-      for (int j = 0; j < X[0].length; j++) {
-        XT[j][i] = X[i][j];
+  public static double[][] transpose(double[][] x) {
+    double[][] xT = new double[x[0].length][x.length];
+    for (int i = 0; i < x.length; i++) {
+      for (int j = 0; j < x[0].length; j++) {
+        xT[j][i] = x[i][j];
       }
     }
-    return XT;
+    return xT;
   }
 
   public static double[] appendVectors(double[] data, double[] data2) {
     if (data == null && data2 == null) {
       return null;
-    } else if (data == null && data2 != null) {
+    } else if (data == null) {
       return data2;
-    } else if (data != null && data2 == null) {
+    } else if (data2 == null) {
       return data;
     } else {
       double[] result = new double[data.length + data2.length];
@@ -61,5 +63,20 @@ public class MatrixUtilities {
       }
       return result;
     }
+  }
+
+  public static double[] flatten(double[][] spills) {
+    double[] flat;
+    if (spills.length>0){
+      flat = new double[spills.length*spills[0].length];
+      for (int i=0;i<spills.length;i++){
+        for (int j=0;j<spills[0].length;j++){
+          flat[i*spills[0].length + j] = spills[i][j];
+        }
+      }
+    }else {
+      flat = new double[]{};
+    }
+    return flat;
   }
 }
