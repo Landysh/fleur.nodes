@@ -69,7 +69,7 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
 
   public String getDisplayName() {
     if (stainName != null && stainName.trim().length() != 0) {
-      return shortName + ": " + stainName;
+      return stainName + ": "+ shortName;
     } else {
       return shortName;
     }
