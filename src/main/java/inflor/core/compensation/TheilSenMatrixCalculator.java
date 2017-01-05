@@ -22,12 +22,12 @@ import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.nodes.statistics.StatSpec;
 import main.java.inflor.knime.nodes.statistics.StatType;
 
-public class MatrixCalculator {
+public class TheilSenMatrixCalculator {
   
   private static final String MSG_MAPPED_FILE_NOT_FOUND = "Mapped file not found in supplied data list";
   private static final String MSG_EMPTY_COMP_LIST = "Input list should contain at least 1 FCSFrame";
 
-  private static final Logger LOGGER = Logger.getLogger( MatrixCalculator.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger( TheilSenMatrixCalculator.class.getName() );
 
   private static final String SUBSET_NAME_SCATTER = "INFLOR_COMP_SCATTER";
 
@@ -40,7 +40,7 @@ public class MatrixCalculator {
   private ArrayList<String> ignoredDimensions = new ArrayList<>();
   private List<FCSFrame> dataList;
   
-  public MatrixCalculator(List<FCSFrame> newDataList){
+  public TheilSenMatrixCalculator(List<FCSFrame> newDataList){
     dataList = newDataList;
     Optional<FCSFrame> anyFrame = dataList.stream().findAny();
     if (anyFrame.isPresent()){
@@ -59,7 +59,7 @@ public class MatrixCalculator {
     }
   }
   
-  public MatrixCalculator(List<FCSFrame> newDataList, Map<String, String> compensationMap, List<String> inDims, List<String> outDims) {
+  public TheilSenMatrixCalculator(List<FCSFrame> newDataList, Map<String, String> compensationMap, List<String> inDims, List<String> outDims) {
     dataList = newDataList;
 
     inDimensions = inDims
