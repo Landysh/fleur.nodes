@@ -207,25 +207,6 @@ public class MatrixCalculator {
     RangeGate gate = new RangeGate(SUBSET_NAME_SCATTER, new String[]{outName}, new double[]{min}, new double[]{max});
     BitSet mask = gate.evaluate(fcsFrame);
     FCSFrame fcsFrameFilt = FCSUtilities.filterColumnStore(mask, fcsFrame);
-//    FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(fcsFrameFilt, ParameterTypes.FORWARD_SCATTER);
-//    Percentile pFSC = new Percentile();
-//    pFSC.setData(fscDim.getData());
-//    double fscMin = pFSC.evaluate(1.);
-//    double fscMax = pFSC.evaluate(99.); 
-//    
-//    FCSDimension sscDim = FCSUtilities.findPreferredDimensionType(fcsFrameFilt, ParameterTypes.SIDE_SCATTER);
-//    Percentile pSSC = new Percentile();
-//    pSSC.setData(sscDim.getData());
-//    double sscMin = pSSC.evaluate(1);
-//    double sscMax = pSSC.evaluate(99); 
-//    
-//    RangeGate scatter = new RangeGate(SUBSET_NAME_SCATTER, 
-//                                      new String[]{fscDim.getShortName(), sscDim.getShortName()}, 
-//                                      new double[]{fscMin, sscMin}, new double[]{fscMax, sscMax});
-//    
-//    BitSet scatterMask = scatter.evaluate(fcsFrame);
-//    
-//    FCSFrame scatterFilteredFrame = FCSUtilities.filterColumnStore(scatterMask, fcsFrame);
     
     int downSize = 1000;
     
@@ -235,7 +216,8 @@ public class MatrixCalculator {
     double[] filteredX = finalFrame.getFCSDimensionByShortName(outName).getData();
     
     for (int i=0;i<inDims.size();i++){
-      double[] filteredY = finalFrame.getFCSDimensionByShortName(inDims.get(i)).getData();
+      String name = inDims.get(i);
+      double[] filteredY = finalFrame.getFCSDimensionByShortName(name).getData();
       spills[i] = TheilSenEstimator.evaluate(filteredX, filteredY);
     }
     return spills;
