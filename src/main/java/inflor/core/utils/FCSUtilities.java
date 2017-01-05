@@ -20,7 +20,9 @@
  */
 package main.java.inflor.core.utils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,11 +34,12 @@ import java.util.stream.Collectors;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.FCSFileReader;
 import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.singlets.PuleProperties;
 
 public class FCSUtilities {
-  
+    
   private static final String REGEX_IS_COMPENSATED = "\\[.*\\]";
 
   private FCSUtilities(){
@@ -179,22 +182,23 @@ public class FCSUtilities {
   }
 
   public static FCSFrame createSummaryFrame(List<FCSFrame> fcsList, Integer maxEventsPerFrame) {
-    Integer dataSize = fcsList
+    Optional<Integer> optDataSize = fcsList
       .stream()
-      .map(dataFrame -> dataFrame.getRowCount())
-      .min(Integer::compare).get();
-    final Integer finalSize;
-    if (dataSize>maxEventsPerFrame){
-      finalSize = maxEventsPerFrame;
-    } else {
-      finalSize = dataSize;
-    }
+      .map(FCSFrame::getRowCount)
+      .min(Integer::compare);
     
-    return fcsList
-        .stream()
-        .map(dataFrame -> FCSUtilities.downSample(dataFrame, finalSize))
-        .reduce(new FCSConcatenator())
-        .get();
+    int minDataSize = optDataSize.isPresent() ? optDataSize.get() : 0;
+    
+    final Integer finalSize = (minDataSize > maxEventsPerFrame) ? maxEventsPerFrame : minDataSize;
+    
+    Optional<FCSFrame> optReturn = fcsList
+    .stream()
+    .map(dataFrame -> FCSUtilities.downSample(dataFrame, finalSize))
+    .reduce(new FCSConcatenator());
+    
+    
+    return optReturn.isPresent() ? optReturn.get() : null;
+    
   }
 
   private static FCSFrame downSample(FCSFrame dataFrame, Integer dataSize) {
@@ -265,5 +269,31 @@ public class FCSUtilities {
 
   public static boolean isCompensated(String compParName) {
     return compParName.matches(REGEX_IS_COMPENSATED);
+  }
+  
+  public static boolean isFluorescent(String shortName){
+    boolean isFluorescent = true;
+    if (ParameterTypes.TIME.matches(shortName)||
+        ParameterTypes.FORWARD_SCATTER.matches(shortName)||
+        ParameterTypes.SIDE_SCATTER.matches(shortName)){
+      isFluorescent = false;
+    }
+    return isFluorescent;
+  }
+
+  public static List<FCSFrame> readValidFiles(String path) {
+    /**
+     * Returns an unsorted list of valid FCS Files from the chosen directory.
+     */
+    final File folder = new File(path);
+    final File[] files = folder.listFiles();
+    
+    return Arrays.asList(files)
+            .stream()
+            .parallel()
+            .map(File::getAbsolutePath)
+            .filter(FCSFileReader::isValidFCS)
+            .map(FCSFileReader::read)
+            .collect(Collectors.toList());
   }
 }
