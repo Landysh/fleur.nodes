@@ -88,12 +88,11 @@ public class PlotUtils {
     return newTransform;
   }
 
-  public static LookupPaintScale createPaintScale(double zMin, double zMax,
-      ColorSchemes colorScheme) {
-    PaintModel pm = new PaintModel(colorScheme, zMin, zMax);
+  public static LookupPaintScale createPaintScale(double zMax,ColorSchemes colorScheme) {
+    PaintModel pm = new PaintModel(colorScheme, zMax);
     Paint[] paints = pm.getPaints();
     double[] levels = pm.getLevels();
-    LookupPaintScale paintScale = new LookupPaintScale(0, pm.getThreshold(), Color.red);
+    LookupPaintScale paintScale = new LookupPaintScale(0, pm.getThreshold(), Color.GRAY);
     for (int i = 0; i < levels.length; i++) {
       paintScale.add(levels[i], paints[i]);
     }
@@ -101,8 +100,8 @@ public class PlotUtils {
   }
 
   public static AbstractTransform createDefaultTransform(String parameterName) {
-    if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.ForwardScatter.matches(parameterName)
-        || ParameterTypes.SideScatter.matches(parameterName)|| ParameterTypes.TIME.matches(parameterName)) {
+    if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.FORWARD_SCATTER.matches(parameterName)
+        || ParameterTypes.SIDE_SCATTER.matches(parameterName)|| ParameterTypes.TIME.matches(parameterName)) {
       return new BoundDisplayTransform();
     } else {
       return new LogicleTransform();

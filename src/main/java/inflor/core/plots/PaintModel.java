@@ -31,7 +31,7 @@ public class PaintModel {
   private int levels;
   private ColorSchemes colorScheme;
 
-  public PaintModel(ColorSchemes colorScheme, double zMin, double zMax) {
+  public PaintModel(ColorSchemes colorScheme, double zMax) {
 
     this.colorScheme = colorScheme;
 
@@ -65,7 +65,7 @@ public class PaintModel {
     } else {
       // fallback, should not be used.
       for (int i = 0; i < colorScale.length; i++) {
-        colorScale[i] = Color.getHSBColor(i / 360f, i / 360f, i / 100);
+        colorScale[i] = Color.getHSBColor(i / 360f, i / 360f, i / 100f);
       }
     }
 

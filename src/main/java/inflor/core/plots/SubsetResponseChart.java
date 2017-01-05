@@ -99,7 +99,7 @@ public class SubsetResponseChart {
     renderer.setBlockHeight(0.5);
     renderer.setBlockAnchor(RectangleAnchor.LEFT);
 
-    PaintScale paintScale = PlotUtils.createPaintScale(zMin, zMax, ChartingDefaults.DEFAULT_COLOR_SCHEME);
+    PaintScale paintScale = PlotUtils.createPaintScale(zMax, ChartingDefaults.DEFAULT_COLOR_SCHEME);
     renderer.setPaintScale(paintScale);
 
     // Add to panel.
