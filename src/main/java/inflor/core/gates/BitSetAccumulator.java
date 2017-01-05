@@ -33,18 +33,16 @@ public class BitSetAccumulator implements BinaryOperator<BitSet> {
 
   @Override
   public BitSet apply(BitSet t, BitSet u) {
-    t = (BitSet) t.clone();
-    if (operator.equals(BitSetOperator.NOT) == true) {
-      t.andNot(u);
-      return t;
-
-    } else if (operator.equals(BitSetOperator.AND) == true) {
-      t.and(u);
-      return t;
+    BitSet outBitset = (BitSet) t.clone();
+    if (operator.equals(BitSetOperator.NOT)) {
+      outBitset.andNot(u);
+    } else if (operator.equals(BitSetOperator.AND)) {
+      outBitset.and(u);
 
     } else {
-      t.or(u);
-      return t;
+      outBitset.or(u);
     }
+    return outBitset;
+
   }
 }
