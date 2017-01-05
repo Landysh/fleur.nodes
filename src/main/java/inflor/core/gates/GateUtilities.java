@@ -32,6 +32,7 @@ public class GateUtilities {
   public static final String SUMMARY_FRAME_ID = "Summary";
   public static final String UNGATED_SUBSET_ID = "Ungated";
   
+  private GateUtilities(){}
   
   public static BitSet applyGatingPath(FCSFrame dataFrame, List<AbstractGate> gates){
     BinaryOperator<BitSet> accumulator = new BitSetAccumulator(BitSetOperator.AND);
@@ -44,7 +45,6 @@ public class GateUtilities {
     if (maybeMask.isPresent()){
       return maybeMask.get();
     } else {
-      System.out.println("DEBUG: Returned empty gating path");
       BitSet allInclusiveSet = new BitSet(dataFrame.getRowCount());
       allInclusiveSet.set(0, allInclusiveSet.size()-1);
       return allInclusiveSet;
