@@ -60,7 +60,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
 
   private DataTableSpec createSpec(DataTableSpec inSpec) {
     DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
-    List<DataColumnSpec> cspecs = new ArrayList<DataColumnSpec>();
+    List<DataColumnSpec> cspecs = new ArrayList<>();
     for (StatSpec spec: modelSettings.getStatSpecs()){
       DataColumnSpec cspec = new DataColumnSpecCreator(spec.toString(), DoubleCell.TYPE).createSpec();
       cspecs.add(cspec);
@@ -126,7 +126,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
    */
   @Override
   protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 
   /**
    * {@inheritDoc}
@@ -141,14 +141,14 @@ public class SummaryStatisticsNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {}
+  protected void reset() {/*noop*/}
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 
   /**
    * {@inheritDoc}

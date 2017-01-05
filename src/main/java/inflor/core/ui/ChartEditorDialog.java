@@ -75,7 +75,7 @@ public class ChartEditorDialog extends JDialog {
   }
 
   private FCSDimension guessDomainDimension(FCSFrame fcsFrame) {
-    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.ForwardScatter);
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.FORWARD_SCATTER);
     if (domainDimension!=null){
       return domainDimension;
     } else {
@@ -84,7 +84,7 @@ public class ChartEditorDialog extends JDialog {
   }
   
   private FCSDimension guessRangeDimension(FCSFrame fcsFrame) {
-    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.SideScatter);
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.SIDE_SCATTER);
     if (domainDimension!=null){
       return domainDimension;
     } else {

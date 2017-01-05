@@ -58,8 +58,7 @@ public class NodeUtilities {
       ByteArrayInputStream bis = new ByteArrayInputStream(chartBytes);
       ObjectInputStream ois;
       ois = new ObjectInputStream(bis);
-      Map<String, Serializable> loadedObject = (Map<String, Serializable>) ois.readObject();
-      return loadedObject;
+      return (Map<String, Serializable>) ois.readObject();
     } catch (Exception e) {
       e.printStackTrace();
       throw new InvalidSettingsException("Unable to parse map object");
@@ -85,13 +84,13 @@ public class NodeUtilities {
     HashSet<String> shortNames = new HashSet<>();
     List<Map<String, String>> headers = dataSet
         .stream()
-        .map(frame -> frame.getKeywords())
+        .map(FCSFrame::getKeywords)
         .collect(Collectors.toList());
     
     // Merge all keywords.
     headers
         .forEach(map -> map.entrySet()
-            .forEach(entry -> updateContent(content, entry, shortNames)));
+            .forEach(entry -> updateContent(content, entry)));
 
     // Collect all parameter for experiment in one Hashset.
     dataSet
@@ -108,11 +107,11 @@ public class NodeUtilities {
     return content;
   }
   
-  private void updateContent(HashMap<String, String> content, Entry<String, String> entry,
-      HashSet<String> shortNames) {
+  private void updateContent(HashMap<String, String> content, Entry<String, String> entry) {
     if (content.containsKey(entry.getKey())) {
       String currentValue = content.get(entry.getKey());
       currentValue = currentValue + "||" + entry.getValue();
+      entry.setValue(currentValue);//TODO: Possible bug?
     } else {
       content.put(entry.getKey(), entry.getValue());
     }

@@ -35,14 +35,7 @@ public class StatSpec extends DomainObject implements Serializable{
   }
 
   public Double evaluate(FCSFrame dataFrame){
-    Double result = stat.evaluate(dataFrame, refDimension, args);
-    return result;    
-  }
-  
-  @Override
-  public StatSpec clone(){
-    StatSpec clone = new StatSpec(refDimension, refSubsetID, stat, args, getID());
-    return clone;
+    return stat.evaluate(dataFrame, refDimension, args);    
   }
 
   public void setStatType(StatType newType) {
@@ -72,6 +65,10 @@ public class StatSpec extends DomainObject implements Serializable{
   @Override
   public String toString(){
     return stat.getLabel(refSubsetID, refDimension, args);
+  }
+
+  public StatSpec copy() {
+     return new StatSpec(refDimension, refSubsetID, stat, args, getID());
   }
   
 }

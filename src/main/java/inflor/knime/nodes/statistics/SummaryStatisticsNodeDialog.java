@@ -2,8 +2,6 @@ package main.java.inflor.knime.nodes.statistics;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,31 +61,16 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
   private JPanel createOptionsPanel() {
     JPanel optionsPanel = new JPanel();
     
-    fcsColumnBox = new JComboBox<String>();
-    fcsColumnBox.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        modelSettings.setSelectedColumn((String) fcsColumnBox.getSelectedItem());
-        
-      }
-    });
+    fcsColumnBox = new JComboBox<>();
+    fcsColumnBox.addActionListener(e -> modelSettings.setSelectedColumn(
+        (String) fcsColumnBox.getSelectedItem()));
     optionsPanel.add(fcsColumnBox);
     JButton addButton = new JButton("+");
-    addButton.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        popStatEditorDialog();
-      }
-    });
+    addButton.addActionListener(e -> popStatEditorDialog());
     optionsPanel.add(addButton);
     
     JButton removeButton = new JButton("-");
-    removeButton.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    removeButton.addActionListener(e -> {
         int row = table.getSelectedRow();
         int column = table.getSelectedColumn();
         if (row!=-1&&column!=-1){
@@ -96,7 +79,6 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
           DefaultTableModel tableModel = (DefaultTableModel)table.getModel();
           tableModel.removeRow(row);
         }
-      }
     });
     optionsPanel.add(removeButton);
 
@@ -108,7 +90,7 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
 
     StatEditorDialog dialog = new StatEditorDialog(topFrame, Arrays.asList(dimensionNames), Arrays.asList(subsetNames));
     dialog.setVisible(true);
-    if (dialog.isOK) {
+    if (dialog.isOK()) {
       modelSettings.addStatSpec(dialog.getStatSpec());
       updateStatsPanel();
     }
@@ -120,14 +102,13 @@ public class SummaryStatisticsNodeDialog extends NodeDialogPane {
       this.statsTab.remove(statsPanel);
       statsPanel = new JPanel();
       List<StatSpec> statSpecs = modelSettings.getStatSpecs();
-      //List<String> statTable = statSpecs.stream().map(spec -> spec.toString()).collect(Collectors.toList());
       String[] columnNames = new String[]{"Summary"};
       DefaultTableModel model = new DefaultTableModel(columnNames, 0);
       
       statSpecs
         .stream()
         .map(str -> new StatSpec[]{str})
-        .forEach(row -> model.addRow(row));
+        .forEach(model::addRow);
       
       table = new JTable(model);
       table.setDefaultEditor(Object.class, null);

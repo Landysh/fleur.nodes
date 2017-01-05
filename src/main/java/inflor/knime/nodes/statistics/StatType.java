@@ -21,8 +21,7 @@ public enum StatType {
         FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
         double[] data = referenceDim.getData();
         Median median = new Median();
-        Double result = median.evaluate(data);  
-        return result;
+        return median.evaluate(data);
       }
 
       @Override
@@ -35,8 +34,7 @@ public enum StatType {
         FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
         double[] data = referenceDim.getData();
         Mean mean = new Mean();
-        Double result = mean.evaluate(data);          
-        return result;
+        return mean.evaluate(data);
       }
 
       @Override
@@ -50,8 +48,7 @@ public enum StatType {
         FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
         double[] data = referenceDim.getData();
         StandardDeviation stdev = new StandardDeviation();
-        Double result = stdev.evaluate(data);              
-        return result;
+        return stdev.evaluate(data);
       }
 
       @Override
@@ -65,8 +62,7 @@ public enum StatType {
         double[] data = referenceDim.getData();
         StandardDeviation stdev = new StandardDeviation();
         Mean mean = new Mean();
-        Double result = stdev.evaluate(data)/mean.evaluate(data);
-        return result;
+        return stdev.evaluate(data)/mean.evaluate(data);
       }
 
       @Override
@@ -125,8 +121,7 @@ public enum StatType {
             if (childAncestors.contains(parent)){
               BitSet childMask = child.get().evaluate(childAncestors);
               BitSet parentMask = parent.get().evaluate(parentAncestors);
-              Double result = (double) (childMask.cardinality()/parentMask.cardinality());
-              return result;
+              return (double) (childMask.cardinality()/parentMask.cardinality());
             }
           }
         }
@@ -136,6 +131,16 @@ public enum StatType {
       @Override
       public String getLabel(String subsetLabel, String dimensionLabel, String[] args) {
         return subsetLabel + "Frequency of Parent";
+      }
+    }, COUNT {
+      @Override
+      public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
+        return (double) dataFrame.getRowCount();
+      }
+
+      @Override
+      public String getLabel(String subsetLabel, String dimensionLabel, String[] args) {
+        return "Count: " + subsetLabel;
       }
     };
 
