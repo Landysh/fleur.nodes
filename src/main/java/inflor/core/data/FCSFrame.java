@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,7 +65,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   // data properties
   private Integer rowCount = -1;
 
-  private ArrayList<Subset> subsets;
+  private ArrayList<Subset> subsets = new ArrayList<>();
 
   // minimal constructor, use with .load()
   public FCSFrame() {
@@ -395,9 +396,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public List<Subset> getSubsets() {
-    if (subsets==null){
-      subsets = new ArrayList<>();//TODO make this never null to begin with?
-    }
     return subsets;
   }
 
@@ -410,5 +408,24 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       i++;
     }
     return row;
+  }
+
+  public boolean hasSubset(String subsetNameScatter) {
+    for (Subset s:subsets){
+      if (s.getLabel().equals(subsetNameScatter)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean hasDimension(String shortName) {
+    Iterator<FCSDimension> iter = columnData.iterator();
+    while (iter.hasNext()){
+      if (iter.next().getShortName().equals(shortName)){
+        return true;
+      }
+    }
+    return false;
   }
 }
