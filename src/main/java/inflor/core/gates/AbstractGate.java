@@ -30,7 +30,12 @@ import main.java.inflor.core.data.FCSFrame;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {
+  
 
+  protected String parentID;
+  protected HashMap<String, String> customInfo;
+
+  
   public AbstractGate(String priorUUID) {
     super(priorUUID);
   }
@@ -45,9 +50,6 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
    * @see RangeGate
    */
 
-  protected String parentID;
-  protected HashMap<String, String> custom_info;
-
   /**
    * 
    * @param data - The input data. Must contain entries for all of this.getDimensionNames().
@@ -57,11 +59,11 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
   public abstract BitSet evaluate(FCSFrame data);
 
   public String getInfo(String name) {
-    return custom_info.get(name);
+    return customInfo.get(name);
   }
 
   public String setInfo(String key, String value) {
-    return custom_info.put(key, value);
+    return customInfo.put(key, value);
   }
 
   /**
@@ -76,7 +78,7 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
    * 
    * @throws IllegalStateException
    */
-  public abstract void validate() throws IllegalStateException;
+  public abstract void validate();
   public abstract String getDomainAxisName();
   public abstract String getRangeAxisName();
   public abstract String getLabel();
