@@ -105,7 +105,7 @@ public class DensityPlot extends AbstractFCChart {
   private XYBlockRenderer updateRenderer(Histogram2D histogram) {
     BitSet nonEmptyMask = histogram.getNonEmptyBins();
     double[] z = FCSUtilities.filterColumn(nonEmptyMask, histogram.getZValues());
-    LookupPaintScale paintScale = PlotUtils.createPaintScale(0, Doubles.max(z), colorScheme);
+    LookupPaintScale paintScale = PlotUtils.createPaintScale(Doubles.max(z), colorScheme);
     
     
     // Renderer configuration
