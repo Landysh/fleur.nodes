@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.jfree.chart.axis.AxisState;
 import org.jfree.chart.axis.NumberAxis;
@@ -37,11 +38,11 @@ import org.jfree.ui.TextAnchor;
 @SuppressWarnings("serial")
 public class CategoricalNumberAxis extends NumberAxis {
 
-  private HashMap<Integer, String> lableMap;
+  private HashMap<Integer, String> labelMap;
 
   public CategoricalNumberAxis(String name, HashMap<Integer, String> lableMap) {
     super(name);
-    this.lableMap = lableMap;
+    this.labelMap = lableMap;
 
     Integer[] yValues = lableMap.keySet().toArray(new Integer[lableMap.size()]);
     double yMin = Double.MAX_VALUE;
@@ -64,9 +65,9 @@ public class CategoricalNumberAxis extends NumberAxis {
   @Override
   public List<NumberTick> refreshTicks(Graphics2D g2, AxisState state, Rectangle2D dataArea,
       RectangleEdge edge) {
-    List<NumberTick> ticks = new ArrayList<NumberTick>();
-    for (Integer i : lableMap.keySet()) {
-      ticks.add(new NumberTick(i, lableMap.get(i), TextAnchor.CENTER_RIGHT, TextAnchor.CENTER, 0));
+    List<NumberTick> ticks = new ArrayList<>();
+    for (Entry<Integer, String> entry : labelMap.entrySet()) {
+      ticks.add(new NumberTick(entry.getKey(), entry.getValue(), TextAnchor.CENTER_RIGHT, TextAnchor.CENTER, 0));
     }
     return ticks;
   }
