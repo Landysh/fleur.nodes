@@ -296,4 +296,14 @@ public class FCSUtilities {
             .map(FCSFileReader::read)
             .collect(Collectors.toList());
   }
+
+  public static FCSFrame createConcatenatedFrame(List<FCSFrame> dataSet) {
+      
+      Optional<FCSFrame> optReturn = dataSet
+      .stream()
+      .parallel()
+      .reduce(new FCSConcatenator());
+      
+      return optReturn.isPresent() ? optReturn.get() : null;
+  }
 }

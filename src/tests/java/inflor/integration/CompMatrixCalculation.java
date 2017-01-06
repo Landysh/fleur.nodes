@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import main.java.inflor.core.compensation.MatrixCalculator;
+import main.java.inflor.core.compensation.TheilSenMatrixCalculator;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
 
@@ -28,7 +28,7 @@ import main.java.inflor.core.fcs.FCSFileReader;
           .map(FCSFileReader::read)
           .collect(Collectors.toList());
       
-      MatrixCalculator mCalc = new MatrixCalculator(streamedFiles);      
+      TheilSenMatrixCalculator mCalc = new TheilSenMatrixCalculator(streamedFiles);      
       mCalc.removeCompDimension("Blue Vid-A");
       Optional<FCSFrame> apcFrame = streamedFiles.stream().filter(f -> f.getPrefferedName().equals("BEADS_APC_G08.fcs")).findAny();
       if (apcFrame.isPresent()){//it is

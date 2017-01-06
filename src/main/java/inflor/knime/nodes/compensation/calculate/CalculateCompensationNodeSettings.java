@@ -11,7 +11,7 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.compensation.MatrixCalculator;
+import main.java.inflor.core.compensation.TheilSenMatrixCalculator;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.utils.FCSUtilities;
 
@@ -29,7 +29,7 @@ public class CalculateCompensationNodeSettings {
   
   String mPath = DEFAULT_PATH;
   
-  MatrixCalculator compCalculator;
+  TheilSenMatrixCalculator compCalculator;
     
   public String getPath() {
     return mPath;
@@ -38,7 +38,7 @@ public class CalculateCompensationNodeSettings {
   public void setPath(String newPath) {
     mPath = newPath; 
     List<FCSFrame> dataList = FCSUtilities.readValidFiles(newPath);
-    compCalculator = new MatrixCalculator(dataList);
+    compCalculator = new TheilSenMatrixCalculator(dataList);
   }
 
   public void save(NodeSettingsWO settings) {
@@ -77,9 +77,9 @@ public class CalculateCompensationNodeSettings {
         List<String> inDimensions = Arrays.asList(settings.getStringArray(KEY_INPUT_DIMENSIONS));
         List<String> outDimensions = Arrays.asList(settings.getStringArray(KEY_OUTPUT_DIMENSIONS));
         
-        compCalculator = new MatrixCalculator(dataList, mCompMap, inDimensions, outDimensions);
+        compCalculator = new TheilSenMatrixCalculator(dataList, mCompMap, inDimensions, outDimensions);
       } else {
-        compCalculator = new MatrixCalculator(dataList);
+        compCalculator = new TheilSenMatrixCalculator(dataList);
       }
     } else {
       throw new InvalidSettingsException(MSG_CHOOSE_VALID_FOLDER);
