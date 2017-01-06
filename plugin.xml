@@ -28,10 +28,8 @@
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.utility.extractsubset.ExtractTrainingSetNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">
 </node>
-<node
-      category-path="/inflor/comp"
-      deprecated="false"
-      factory-class="main.java.inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
+<node category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
+<node category-path="/" factory-class="main.java.inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory" id="main.java.inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
