@@ -41,12 +41,14 @@ import main.java.inflor.core.data.FCSFrame;
 
 public class NodeUtilities {
   
-  public static final String DIMENSION_NAMES_KEY = "DIMENSION_NAMES_KEY";
-  public static final String SUBSET_NAMES_KEY = "SUBSET_NAMES_KEY";
+  public static final String DIMENSION_NAMES_KEY = "DIMENSION_NAMES";
+  public static final String SUBSET_NAMES_KEY = "SUBSET_NAMES";
   
   public static final String DELIMITER = "||";
   public static final String DELIMITER_REGEX = "\\|\\|";
   private static final String SAVE_SERIALIZABLE_ERROR_MESSAGE = "Failed to save objects";
+  public static final String DISPLAY_NAMES_KEY = "DISPLAY_NAMES";
+  public static final String SHORT_NAME_KEY = "$PNN";
 
   
   
