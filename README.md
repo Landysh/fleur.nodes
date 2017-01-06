@@ -8,3 +8,4 @@ Still in early alpha, do not use in production. Nodes will change drastically an
 
 ### Useage 
 See the [wiki](https://github.com/AaronNHart/Inflor/wiki)!
+![image](Inflor/wiki/sne.png)
