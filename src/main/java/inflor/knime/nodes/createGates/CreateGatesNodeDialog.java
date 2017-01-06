@@ -45,7 +45,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
-  private static final Integer DEFAULT_SUMMARY_FRAME_EVENT_COUNT = 10000;
+  private static final Integer DEFAULT_SUMMARY_FRAME_EVENT_COUNT = 100000;
 
   public CreateGatesNodeSettings m_settings;
 
@@ -195,10 +195,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       List<String> newParameters =dataFrame.getDimensionNames();
       parameterSet.addAll(newParameters);
     }
-    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, DEFAULT_SUMMARY_FRAME_EVENT_COUNT);
-    summaryFrame.setID(GateUtilities.SUMMARY_FRAME_ID);
-    selectSampleBox.addItem(summaryFrame);
-    dataSet.forEach(dataFrame -> selectSampleBox.addItem(dataFrame));
+    //FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, DEFAULT_SUMMARY_FRAME_EVENT_COUNT);
+    FCSFrame concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
+    concatenatedFrame.setID(GateUtilities.SUMMARY_FRAME_ID);
+    selectSampleBox.addItem(concatenatedFrame);
+    dataSet.forEach(selectSampleBox::addItem);
     selectSampleBox.setSelectedIndex(0);
     updateLineageTree();
   }
