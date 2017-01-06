@@ -101,17 +101,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
         .forEach(map -> map.entrySet()
             .forEach(entry -> updateContent(content, entry)));
 
-    // Collect all parameter for experiment in one Hashset.
-    Optional<TreeSet<FCSDimension>> opt = filePaths
+    // Collect all dimensions for experiment in one Hashset.
+    Optional<TreeSet<FCSDimension>> optionalDimensions = filePaths
       .stream()
       .map(FCSFileReader::readNoData)
       .map(FCSFrame::getData)
       .reduce(this::merge);
     
     
-    if (opt.isPresent()){
-      TreeSet<FCSDimension> set = opt.get();
-      ArrayList<String> shortNames = set.stream()
+    if (optionalDimensions.isPresent()){
+      //Add dimension names string
+      ArrayList<String> shortNames = optionalDimensions.get().stream()
       .sequential()
       .filter(distinctByKey(FCSDimension::getShortName))
       .map(FCSDimension::getShortName)
@@ -120,6 +120,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
       String dimensionNames = String.join(NodeUtilities.DELIMITER, shortNames);
       logger.info(dimensionNames);
       content.put(NodeUtilities.DIMENSION_NAMES_KEY, dimensionNames);
+      
+      //create and add display names string
+      ArrayList<String> displayNames = optionalDimensions.get().stream()
+      .sequential()
+      .filter(distinctByKey(FCSDimension::getShortName))
+      .map(FCSDimension::getDisplayName)
+      .collect(Collectors.toCollection(ArrayList::new));
+      
+      String displayNamesString = String.join(NodeUtilities.DELIMITER, displayNames);
+      logger.info(displayNamesString);
+      content.put(NodeUtilities.DISPLAY_NAMES_KEY, displayNamesString);
     }
     return content;
   }
@@ -154,6 +165,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     DataColumnSpec[] colSpecs = new DataColumnSpec[] {dcs};
     return new DataTableSpec(colSpecs);
   }
+  
   //dont listen to sonar, used in createColumnPropertiesContent
   private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
     //http://stackoverflow.com/questions/23699371/java-8-distinct-by-property

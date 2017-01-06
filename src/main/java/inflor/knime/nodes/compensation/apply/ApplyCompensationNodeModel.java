@@ -120,73 +120,76 @@ public class ApplyCompensationNodeModel extends NodeModel {
     }
 
     private DataTableSpec createSpec(PortObjectSpec[] inSpecs) {
-      CompMatrixPortSpec compMatrixSpec = (CompMatrixPortSpec) inSpecs[0];
-      DataTableSpec dataTableSpec = (DataTableSpec) inSpecs[1];
+      CompMatrixPortSpec matrixSpec = (CompMatrixPortSpec) inSpecs[0];
+      DataTableSpec tableSpec = (DataTableSpec) inSpecs[1];
       String columnName = mSelectedColumn.getColumnName();
-      DataColumnSpec selectedColSpec = dataTableSpec.getColumnSpec(columnName);
-      DataColumnProperties properties = selectedColSpec.getProperties();
-      String dimensionNameString = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-      String[] oldDimensionNames = dimensionNameString.split(NodeUtilities.DELIMITER_REGEX);
-      String[] updatedNames = updateDimensionNames(oldDimensionNames, compMatrixSpec);
-      String combinedNames = String.join(NodeUtilities.DELIMITER, updatedNames);
-      
-      HashMap<String, String> newColumnNames = new HashMap<>();
-      newColumnNames.put(NodeUtilities.DIMENSION_NAMES_KEY, combinedNames);
-      DataColumnProperties newProps = properties.cloneAndOverwrite(newColumnNames);
-      
       DataColumnSpecCreator creator = new DataColumnSpecCreator(columnName, FCSFrameFileStoreDataCell.TYPE);
+
+      DataColumnProperties newProps = updateColumnProperties(matrixSpec, tableSpec, columnName);
+      
       creator.setProperties(newProps);
       DataColumnSpec newSpec = creator.createSpec();
-      DataColumnSpec[] colSpecs = new DataColumnSpec[dataTableSpec.getColumnNames().length];
+      DataColumnSpec[] colSpecs = new DataColumnSpec[tableSpec.getColumnNames().length];
       for (int i=0;i<colSpecs.length;i++){
-        DataColumnSpec currentSpec = dataTableSpec.getColumnSpec(i);
+        DataColumnSpec currentSpec = tableSpec.getColumnSpec(i);
         if (currentSpec.getName().equals(columnName)){
           colSpecs[i] = newSpec;
         } else {
-          colSpecs[i] = dataTableSpec.getColumnSpec(i);
+          colSpecs[i] = tableSpec.getColumnSpec(i);
         }
       }
       return new DataTableSpec(colSpecs);
     }
-    
-    private String[] updateDimensionNames(String[] oldNames, CompMatrixPortSpec compMatrixSpec) {
-      String[] inCompNames = compMatrixSpec.getInputDimensions();
-      String[] outCompNames = compMatrixSpec.getOutputDimensions();
-      ArrayList<String> newNames = new ArrayList<>();
+
+    private DataColumnProperties updateColumnProperties(CompMatrixPortSpec matrixSpec,
+        DataTableSpec tableSpec, String columnName) {
+      DataColumnSpec selectedColSpec = tableSpec.getColumnSpec(columnName);
+      DataColumnProperties properties = selectedColSpec.getProperties();
+      
+      HashMap<String, String> newProperties = new HashMap<>();
+      //old dimension names
+      String dimensionNameString = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+      String[] oldDimensionNames = dimensionNameString.split(NodeUtilities.DELIMITER_REGEX);
+
+      //old display names
+      String displayNameString = properties.getProperty(NodeUtilities.DISPLAY_NAMES_KEY);
+      String[] oldDisplayNames = displayNameString.split(NodeUtilities.DELIMITER_REGEX);
+      
+      String[] inCompNames = matrixSpec.getInputDimensions();
+      ArrayList<String> newShortNames = new ArrayList<>();
+      ArrayList<String> newDisplayNames = new ArrayList<>();
       
       //for each input dimension name
-      for (String oldName:oldNames){
-        int inCompIndex = Arrays.asList(inCompNames).indexOf(oldName);
+      for (int i=0;i<oldDimensionNames.length;i++){
+        int inCompIndex = Arrays.asList(inCompNames).indexOf(oldDimensionNames[i]);
         //if it isn't in the list of dimensions to compensate, add it to the list of output dimensions
         if (inCompIndex==-1){
-          newNames.add(oldName);
+          newShortNames.add(oldDimensionNames[i]);
+          newDisplayNames.add(oldDisplayNames[i]);
         //Otherwise, if we keep uncompensated parameters, add the . 
         } else {
-          newNames.add(FCSUtilities.formatCompStainName(oldName));
+          newShortNames.add(FCSUtilities.formatCompStainName(oldDimensionNames[i]));
+          newDisplayNames.add(FCSUtilities.formatCompStainName(oldDisplayNames[i]));
         }
       }
       
       if (mRetainUncomped.getBooleanValue()){
         //now add uncomped dimension names if desired
-        for (String name:inCompNames){
-          newNames.add(name);
+        for (int i=0;i<inCompNames.length;i++){
+          newShortNames.add(inCompNames[i]);
+          int dimIndex = Arrays.asList(oldDimensionNames).indexOf(inCompNames[i]);
+          newDisplayNames.add(oldDisplayNames[dimIndex]);
         }
       }
       
-      //and finally any compensated names not already added. Should only matter for spectral later.
-      for (String name:outCompNames){
-        if (!newNames.contains(name)){
-          newNames.add(name);
-        }
-      }
+      String shortNamesString = String.join(NodeUtilities.DELIMITER, newShortNames);
+      newProperties.put(NodeUtilities.DIMENSION_NAMES_KEY, shortNamesString);
       
-      String[] dimensionArray = new String[newNames.size()];
-      for (int i=0;i<newNames.size();i++){
-        dimensionArray[i] = newNames.get(i);
-      }  
-      return dimensionArray;
+      String displayNamesString = String.join(NodeUtilities.DELIMITER, newDisplayNames);
+      newProperties.put(NodeUtilities.DISPLAY_NAMES_KEY, displayNamesString);
+      
+      return properties.cloneAndOverwrite(newProperties);
     }
-
 
     /**
      * {@inheritDoc}

@@ -3,6 +3,8 @@ package main.java.inflor.knime.nodes.utility.extractsubset;
 import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
@@ -144,7 +146,8 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
       DataColumnProperties properties = inSpec.getColumnSpec(columnName).getProperties();
       String rawDimensionNames = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
       String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
-      
+      String rawDisplayNames = properties.getProperty(NodeUtilities.DISPLAY_NAMES_KEY);
+      String[] displayNames = rawDisplayNames.split(NodeUtilities.DELIMITER_REGEX);
       DataColumnSpec[] colSpecs;
       int outColumnCount;
 
@@ -154,7 +157,12 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
         outColumnCount = subsetNames.length + dimensionNames.length + 1;
         colSpecs = new DataColumnSpec[outColumnCount];
         for (int i=0;i<dimensionNames.length;i++){
-          colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
+          DataColumnSpecCreator creator = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE);
+          Map<String, String> content = new HashMap<>();
+          content.put(NodeUtilities.SHORT_NAME_KEY, dimensionNames[i]);
+          DataColumnProperties props = new DataColumnProperties(content);
+          creator.setProperties(props);
+          colSpecs[i] = creator.createSpec();
         }
         
         for (int i = 0;i<subsetNames.length;i++){
@@ -164,8 +172,8 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
       } else {
         outColumnCount = dimensionNames.length + 1;
         colSpecs = new DataColumnSpec[outColumnCount];
-        for (int i=0;i<dimensionNames.length;i++){
-          colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
+        for (int i=0;i<displayNames.length;i++){
+          colSpecs[i] = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE).createSpec();
         }
       }
       
