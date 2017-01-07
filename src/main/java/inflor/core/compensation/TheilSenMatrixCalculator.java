@@ -15,7 +15,6 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.gates.RangeGate;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
@@ -73,7 +72,7 @@ public class TheilSenMatrixCalculator {
     for (Entry<String, String> entry: compensationMap.entrySet()){
       Optional<FCSFrame> mappedFrame = dataList
           .stream()
-          .filter(frame -> frame.getPrefferedName().matches(entry.getValue()))
+          .filter(frame -> frame.getDisplayName().matches(entry.getValue()))
           .findAny();
       if (mappedFrame.isPresent()){
         dataMap.put(entry.getKey(), mappedFrame.get());
@@ -100,7 +99,7 @@ public class TheilSenMatrixCalculator {
         //noop
       } else {
         valid = valid&&hasDimension;
-        status.add("Missing dimension: " + e.getKey() + " in " + e.getValue().getPrefferedName());
+        status.add("Missing dimension: " + e.getKey() + " in " + e.getValue().getDisplayName());
       }
       //Check that each file is used only once. 
       for (Entry<String, FCSFrame> e2: dataSet2.entrySet()){
@@ -112,7 +111,7 @@ public class TheilSenMatrixCalculator {
         boolean equalKeys = e1k.equals(e2k);
         if (equalValues&&(!equalKeys)){
             valid = false;
-            status.add("Duplicate entries for: " + e.getKey() + " and: " + e2.getKey() + "->" + e2.getValue().getPrefferedName());
+            status.add("Duplicate entries for: " + e.getKey() + " and: " + e2.getKey() + "->" + e2.getValue().getDisplayName());
         }
       }
     }
@@ -176,7 +175,7 @@ public class TheilSenMatrixCalculator {
   
   public void overrideMapping(String shortName, String newValue) {
     dataMap.remove(shortName);
-    Optional<FCSFrame> newFrame = dataList.stream().filter(frame -> frame.getPrefferedName().equals(newValue)).findAny();
+    Optional<FCSFrame> newFrame = dataList.stream().filter(frame -> frame.getDisplayName().equals(newValue)).findAny();
     if (newFrame.isPresent()){
       dataMap.put(shortName, newFrame.get());
     } else {
@@ -238,7 +237,7 @@ public class TheilSenMatrixCalculator {
   public List<String> getPossibleFilesNames(){
     return dataList
         .stream()
-        .map(FCSFrame::getPrefferedName)
+        .map(FCSFrame::getDisplayName)
         .collect(Collectors.toList());
   }
 }
