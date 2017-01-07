@@ -65,7 +65,7 @@ public class HistogramPlot extends AbstractFCChart {
         transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
 
     DefaultXYDataset dataset = new DefaultXYDataset();
-    dataset.addSeries(dataFrame.getPrefferedName(), hist.getData());
+    dataset.addSeries(dataFrame.getDisplayName(), hist.getData());
 
     ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.getDisplayName(), transform);
     ValueAxis rangeAxis = new NumberAxis(spec.getRangeAxisName());

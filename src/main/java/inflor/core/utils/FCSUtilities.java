@@ -32,6 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.knime.base.node.mine.bfn.DegreeOfAffinity;
+
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
@@ -41,6 +43,8 @@ import main.java.inflor.core.singlets.PuleProperties;
 public class FCSUtilities {
     
   private static final String REGEX_IS_COMPENSATED = "\\[.*\\]";
+  private static final String DEFAULT_PREFFERED_NAME_KEYWORD = "$FIL";
+  public static final String KEY_FILENAME = "File name when read.";
 
   private FCSUtilities(){
     
@@ -305,5 +309,15 @@ public class FCSUtilities {
       .reduce(new FCSConcatenator());
       
       return optReturn.isPresent() ? optReturn.get() : null;
+  }
+
+  public static String chooseDisplayName(FCSFrame fcsFrame) {
+    if (fcsFrame.getKeywords().containsKey(DEFAULT_PREFFERED_NAME_KEYWORD)){
+      String defaultKeywordValue = fcsFrame.getKeywords().get(DEFAULT_PREFFERED_NAME_KEYWORD);
+      if (defaultKeywordValue!=null&&!"".equals(defaultKeywordValue)){
+        return defaultKeywordValue;
+      }
+    }
+    return fcsFrame.getKeywordValue(KEY_FILENAME);
   }
 }

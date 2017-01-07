@@ -89,7 +89,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
           //update the progress bar
           exec.checkCanceled();
           exec.setProgress((double) rowIndex/(inData[0].size()*mCount.getIntValue()));
-          exec.setMessage("Down sampling: " + dataFrame.getPrefferedName());
+          exec.setMessage("Down sampling: " + dataFrame.getDisplayName());
         }
         container.close();
         BufferedDataTable out = container.getTable();
@@ -108,7 +108,7 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
             cells = writeCellsWithSubsetColumns(dataFrame, i);
           }
 
-          cells[cells.length-1] = new StringCell(dataFrame.getPrefferedName());
+          cells[cells.length-1] = new StringCell(dataFrame.getDisplayName());
           final RowKey rowKey = new RowKey("Row " + rowIndex++);
           final DataRow tableRow = new DefaultRow(rowKey, cells);
           container.addRowToTable(tableRow);

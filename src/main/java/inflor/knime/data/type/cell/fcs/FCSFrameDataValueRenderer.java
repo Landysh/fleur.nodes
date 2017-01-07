@@ -102,7 +102,7 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
 
     private String createFileSummary(FCSFrame dataFrame) {
       String fileSummary = "";
-      fileSummary+=dataFrame.getPrefferedName();
+      fileSummary+=dataFrame.getDisplayName();
       fileSummary+="\n";
       fileSummary+= Integer.toString(dataFrame.getRowCount());
       fileSummary+="\n";
