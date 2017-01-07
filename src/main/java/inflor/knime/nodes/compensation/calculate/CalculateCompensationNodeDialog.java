@@ -5,15 +5,18 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -29,6 +32,7 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.ui.ButtonColumn;
+import main.java.inflor.core.ui.TableColumnAdjuster;
 
 /**
  * <code>NodeDialog</code> for the "CalculateCompensation" Node. This node attempts to construct a
@@ -43,16 +47,19 @@ import main.java.inflor.core.ui.ButtonColumn;
  */
 
 public class CalculateCompensationNodeDialog extends NodeDialogPane {
+  private static final int BUTTON_COLUMN_INDEX = 0;
+  private static final int DIMENSION_COLUMN_INDEX = 1;
+  private static final int CONTROL_FILE_COLUMN_INDEX = 2;
 
-  private static final NodeLogger logger =
+  private static final NodeLogger LOGGER =
       NodeLogger.getLogger(CalculateCompensationNodeDialog.class);
 
   private static final Object[] COMP_MAP_TABLE_COLUMN_NAMES =
       new String[] {"Marker", "Compensation Control", "Remove"};
 
   private CalculateCompensationNodeSettings mSettings;
-  
-  private JPanel compMapPanel = new JPanel();
+
+  private JPanel compMapPanel = new JPanel(new BorderLayout());
 
 
   private JComboBox<String> comboBox = new JComboBox<>();
@@ -78,8 +85,8 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
 
   private Component createFileChooser() {
     JPanel panel = new JPanel();
-    comboBox.setPreferredSize(new Dimension(200, (int) comboBox.getPreferredSize().getHeight()));
-
+    comboBox.setPreferredSize(new Dimension(400, (int) comboBox.getPreferredSize().getHeight()));
+    comboBox.setEditable(true);
     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     browseButton.addActionListener(e -> {
       int status = fileChooser.showOpenDialog(panel);
@@ -105,7 +112,7 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
     if (!mSettings.getPath().equals(CalculateCompensationNodeSettings.DEFAULT_PATH)) {
       try {
         mSettings.load(settings);
-        updateCompensationMapPanel(); 
+        updateCompensationMapPanel();
       } catch (InvalidSettingsException e) {
         throw new NotConfigurableException("Failed to load Settings.", e);
       }
@@ -118,44 +125,54 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
   private void updateCompensationMapPanel() {
 
     compMapPanel.removeAll();
-    //Create table model
+    // Create table model
     DefaultTableModel tM = new DefaultTableModel();
     Object[][] tableContent = createTableContent();
     tM.setDataVector(tableContent, COMP_MAP_TABLE_COLUMN_NAMES);
     JTable table = new JTable(tM);
-    table.getColumnModel().getColumn(0).setPreferredWidth(100);
-    table.getColumnModel().getColumn(1).setPreferredWidth(200);
-    table.getColumnModel().getColumn(2).setPreferredWidth(50);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    TableColumnAdjuster adj = new TableColumnAdjuster(table);
+    adj.adjustColumns();
 
-    //Setup combo box for file selector. 
+    table.getColumnModel().getColumn(BUTTON_COLUMN_INDEX).setMaxWidth(50);
+
+    // Setup combo box for file selector.
     JComboBox<String> fcsFrameComboBox = new JComboBox<>();
     mSettings.getFileNames().forEach(fcsFrameComboBox::addItem);
     fcsFrameComboBox.addActionListener(e -> {
       int modelRow = table.getSelectedRow();
-      if (modelRow >=0){
-        String dimension = (String) table.getModel().getValueAt(modelRow, 0);
-        String newValue = (String) table.getModel().getValueAt(modelRow, 1);
+      if (modelRow >= 0) {
+        String dimension = (String) table.getModel().getValueAt(modelRow, DIMENSION_COLUMN_INDEX);
+        String newValue = (String) table.getModel().getValueAt(modelRow, CONTROL_FILE_COLUMN_INDEX);
         mSettings.modifyDimension(dimension, newValue);
+        updateCompensationMapPanel();
       }
     });
-    table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(fcsFrameComboBox));
+    table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(fcsFrameComboBox));
 
-    //Create button column.
+    // Create button column.
     @SuppressWarnings("serial")
     Action delete = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         JTable table = (JTable) e.getSource();
         int modelRow = Integer.parseInt(e.getActionCommand());
-        mSettings.removeDimension((String) table.getModel().getValueAt(modelRow, 0));
+        mSettings.removeDimension(
+            (String) table.getModel().getValueAt(modelRow, DIMENSION_COLUMN_INDEX));
         ((DefaultTableModel) table.getModel()).removeRow(modelRow);
+        updateCompensationMapPanel();
       }
     };
-    ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
+    ButtonColumn buttonColumn = new ButtonColumn(table, delete, BUTTON_COLUMN_INDEX);
     buttonColumn.setMnemonic(KeyEvent.VK_D);
-
-    //update it all.
-    compMapPanel.add(table);
+    compMapPanel.add(table, BorderLayout.CENTER);
+    
+    //Create the warnings list.
+    List<String> warnings = mSettings.getWarnings();
+    JPanel warningsPanel = new JPanel();
+    warningsPanel.setLayout(new BoxLayout(warningsPanel, BoxLayout.Y_AXIS));
+    warnings.stream().map(JLabel::new).forEach(warningsPanel::add);
+    compMapPanel.add(warningsPanel, BorderLayout.SOUTH);
     compMapPanel.revalidate();
     compMapPanel.repaint();
   }
@@ -167,10 +184,16 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
     for (Entry<String, FCSFrame> entry : compMap.entrySet()) {
       JButton button = new JButton(entry.getKey());
       button.addActionListener(e -> {
+        // TODO not called?
         JButton sourceButton = (JButton) e.getSource();
         mSettings.removeDimension(sourceButton.getText());
+        updateCompensationMapPanel();
       });
-      table[i] = new Object[] {entry.getKey(), entry.getValue().getPrefferedName(), button};
+      Object[] tableRow = new Object[3];
+      tableRow[BUTTON_COLUMN_INDEX] = button;
+      tableRow[DIMENSION_COLUMN_INDEX] = entry.getKey();
+      tableRow[CONTROL_FILE_COLUMN_INDEX] = entry.getValue().getDisplayName();
+      table[i] = tableRow;
       i++;
     }
     return table;
