@@ -1,10 +1,11 @@
-Inflor
+#Inflor
 --------------------------------------------
 Open Source Flow Cytometry Nodes for KNIME.
 
 
-### Installation
- Build automation _in progress_.
+## Installation
+Still in early alpha, do not use in production. Nodes will change drastically and without notice! If you insist on giving it a try and don't want to build it yourself, [contact me](mailto: aaron dot hart at gmail dot com).
 
-### Useage 
-_coming soon_
+## Useage 
+See the [wiki](https://github.com/AaronNHart/Inflor/wiki)!  
+![image](https://github.com/AaronNHart/Inflor/blob/master/wiki/sne.png?raw=true)
