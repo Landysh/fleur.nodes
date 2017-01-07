@@ -69,8 +69,8 @@ public interface FCSFrameDataValue extends DataValue {
         protected int compareDataValues(final DataValue v1, final DataValue v2) {
           FCSFrameDataValue df1 = (FCSFrameDataValue) v1;
           FCSFrameDataValue df2 = (FCSFrameDataValue) v2;
-          String s1 = df1.getFCSFrameValue().getPrefferedName();
-          String s2 = df2.getFCSFrameValue().getPrefferedName();
+          String s1 = df1.getFCSFrameValue().getDisplayName();
+          String s2 = df2.getFCSFrameValue().getDisplayName();
           return s1.compareTo(s2);
         }
       };

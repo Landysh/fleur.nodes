@@ -30,9 +30,9 @@ import main.java.inflor.core.fcs.FCSFileReader;
       
       TheilSenMatrixCalculator mCalc = new TheilSenMatrixCalculator(streamedFiles);      
       mCalc.removeCompDimension("Blue Vid-A");
-      Optional<FCSFrame> apcFrame = streamedFiles.stream().filter(f -> "BEADS_APC_G08.fcs".equals(f.getPrefferedName())).findAny();
+      Optional<FCSFrame> apcFrame = streamedFiles.stream().filter(f -> "BEADS_APC_G08.fcs".equals(f.getDisplayName())).findAny();
       if (apcFrame.isPresent()){//it is
-        mCalc.overrideMapping("APC-A",apcFrame.get().getPrefferedName());
+        mCalc.overrideMapping("APC-A",apcFrame.get().getDisplayName());
       }
       
       double[][] mtx = mCalc.calculate();

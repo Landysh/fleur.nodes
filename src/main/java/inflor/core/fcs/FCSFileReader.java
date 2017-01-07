@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -40,6 +42,9 @@ import main.java.inflor.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 
+  private static final Logger LOGGER = Logger.getLogger( FCSFileReader.class.getName() );
+
+  
   private static final String DEFAULT_ENCODING = "UTF-8";
   // From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
   private static final int BEGIN_FCS_VERSION_OFFSET = 0;
@@ -65,7 +70,7 @@ public class FCSFileReader {
   final Integer beginData;
   final String dataType;
   final Integer[] bitMap;
-  final FCSFrame columnStore;
+  final FCSFrame fcsFrame;
   final String[] fileDimensionList;
   TreeSet<FCSDimension> data;
   String[] compParameterList = null;
@@ -81,17 +86,18 @@ public class FCSFileReader {
     endText = readOffset(FIRST_BYTE_ENDTEXT_OFFSET, LAST_BYTE_ENDTEXT_OFFSET);
     final HashMap<String, String> header = readHeader();
     header.put("FCSVersion", readFCSVersion(fcsFile));
+    header.put(FCSUtilities.KEY_FILENAME, f.getName());
 
     fileDimensionList = FCSUtilities.parseDimensionList(header);
 
     final int rowCount = Integer.parseInt(header.get("$TOT"));
-    columnStore = new FCSFrame(header, rowCount);
+    fcsFrame = new FCSFrame(header, rowCount);
 
     // data specific properties
     beginData = readOffset(FIRST_BYTE_BEGINDATA_OFFSET, LAST_BYTE_BEGINDATA_OFFSET);
     readOffset(FIRST_BYTE_END_DATA_OFFSET, LAST_BYTE_END_DATA_OFFSET);
     bitMap = createBitMap(header);
-    dataType = columnStore.getKeywordValue("$DATATYPE");
+    dataType = fcsFrame.getKeywordValue("$DATATYPE");
     data = new TreeSet<>();
   }
   
@@ -106,7 +112,7 @@ public class FCSFileReader {
     final Integer[] map = new Integer[rawParameterNames.length];
     for (int i = 1; i <= map.length; i++) {
       final String key = "$P" + (i) + "B";
-      final String value = columnStore.getKeywordValue(key);
+      final String value = fcsFrame.getKeywordValue(key);
       final Integer byteSize = Integer.parseInt(value);
       map[i - 1] = byteSize;
     }
@@ -114,11 +120,11 @@ public class FCSFileReader {
   }
 
   public FCSFrame getFCSFrame() {
-    return columnStore;
+    return fcsFrame;
   }
 
   public Map<String, String> getHeader() {
-    return columnStore.getKeywords();
+    return fcsFrame.getKeywords();
   }
 
   public void initRowReader() throws IOException {
@@ -129,7 +135,7 @@ public class FCSFileReader {
     data = new TreeSet<>();
     fcsFile.seek(beginData);
 
-    double[][] rawData = new double[columnStore.getRowCount()][fileDimensionList.length];
+    double[][] rawData = new double[fcsFrame.getRowCount()][fileDimensionList.length];
     for (int i = 0; i < rawData.length; i++) {
       double[] row = readRow();
       rawData[i] = row;
@@ -144,7 +150,7 @@ public class FCSFileReader {
       data.add(newDimension);
     }
 
-    columnStore.setData(data);
+    fcsFrame.setData(data);
   }
   
   public void initColumnStoreNoData() throws IOException {
@@ -154,7 +160,7 @@ public class FCSFileReader {
       FCSDimension newDimension = FCSUtilities.buildFCSDimension(pIndex, getHeader());
       data.add(newDimension);
     }
-    columnStore.setData(data);
+    fcsFrame.setData(data);
   }
 
   public String readFCSVersion(RandomAccessFile raFile) throws IOException {
@@ -234,9 +240,9 @@ public class FCSFileReader {
      */
 
     double[] row = new double[fileDimensionList.length];
-    if (dataType.equals("F")) {
+    if ("F".equals(dataType)) {
       row = readFloatRow(row);
-    } else if (dataType.equals("I")) {
+    } else if ("I".equals(dataType)) {
       row = readIntegerRow(row);
     }
     return row;
@@ -249,7 +255,7 @@ public class FCSFileReader {
       reader.readData();
       return reader.getFCSFrame();
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.FINE, "Unable to read file.", e);
       return null;
     }
   }
@@ -261,7 +267,7 @@ public class FCSFileReader {
       reader.initColumnStoreNoData();
       return reader.getFCSFrame();
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.FINE, "Unable to read file.", e);
       return null;
     }
   }
@@ -272,6 +278,7 @@ public class FCSFileReader {
       reader = new FCSFileReader(filePath);
       return reader.getHeader();
     } catch (Exception e) {
+      LOGGER.log(Level.FINE, "Header unreadable.", e);
       return new HashMap<>();
     }
   }
@@ -301,6 +308,7 @@ public class FCSFileReader {
       FCSFileReader reader = new FCSFileReader(filePath);
       isValid = FCSUtilities.validateHeader(reader.getHeader());
     } catch (Exception e) {
+      LOGGER.log(Level.FINE, "Invalid File:" + filePath, e);
       isValid = false;
     }
     return isValid;

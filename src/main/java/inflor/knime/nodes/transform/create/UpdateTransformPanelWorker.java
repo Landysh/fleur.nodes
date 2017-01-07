@@ -69,7 +69,7 @@ public class UpdateTransformPanelWorker extends SwingWorker<ArrayList<ChartPanel
       ArrayList<FCSFrame> dataSet2) {
     TreeMap<String, FCSDimension> dataModel = new TreeMap<>();
     for (FCSFrame dataFrame : dataSet2) {
-      dataModel.put(dataFrame.getPrefferedName(),
+      dataModel.put(dataFrame.getDisplayName(),
           FCSUtilities.findCompatibleDimension(dataFrame, parametername));
     }
     return dataModel;

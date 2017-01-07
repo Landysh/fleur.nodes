@@ -49,7 +49,7 @@ public class CalculateCompensationNodeSettings {
     String[] mapValues = new String[mCompMap.size()];
     for (Entry<String, FCSFrame> entry:mCompMap.entrySet()){
       mapKeys[i] = entry.getKey();
-      mapValues[i] = entry.getValue().getPrefferedName();
+      mapValues[i] = entry.getValue().getDisplayName();
       i++;
     }
     settings.addStringArray(KEY_MAP_KEYS, mapKeys);
@@ -116,5 +116,9 @@ public class CalculateCompensationNodeSettings {
       formattedDimensionNames[i] = "[" + getOutDims()[i] + "]";
     }
     return formattedDimensionNames;
+  }
+
+  public List<String> getWarnings() {
+    return compCalculator.getStatus();
   }
 }

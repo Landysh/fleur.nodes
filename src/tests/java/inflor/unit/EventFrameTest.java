@@ -24,7 +24,7 @@ public class EventFrameTest {
     final FCSFrame cs = new FCSFrame(trueUUID, header, trueRowCount);
     final String testValue = cs.getKeywords().get(trueKey);
     final int testRowCount = cs.getRowCount();
-    String testPrefName = cs.getPrefferedName();
+    String testPrefName = cs.getDisplayName();
 
     // Assert
     assertEquals("keyword", trueValue, testValue);

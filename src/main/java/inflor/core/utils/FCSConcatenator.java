@@ -38,7 +38,7 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
     FCSFrame mergedFrame = new FCSFrame(mergedHeader, arg0.getRowCount() + arg1.getRowCount());
     TreeSet<FCSDimension> mergedData = mergeData(arg0, arg1);
     mergedFrame.setData(mergedData);
-    mergedFrame.setPreferredName("Concatenated Frame");
+    mergedFrame.setDisplayName("Concatenated Frame");
     
     return mergedFrame;
     

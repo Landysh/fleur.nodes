@@ -118,7 +118,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
   private HashMap<String, FCSDimension> findMatchingDimensions(String name) {
     HashMap<String, FCSDimension> result = new HashMap<>();
     for (FCSFrame dataFrame : dataSet) {
-      String key = dataFrame.getPrefferedName();
+      String key = dataFrame.getDisplayName();
       FCSDimension value = FCSUtilities.findCompatibleDimension(dataFrame, name);
       if (value!=null){
         result.put(key, value);
