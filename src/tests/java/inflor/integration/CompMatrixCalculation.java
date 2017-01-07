@@ -15,7 +15,7 @@ import main.java.inflor.core.fcs.FCSFileReader;
     ArrayList<FCSFrame> dataSet = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-      String path = CompensationTestDatasets.OMIP16.getPath();
+      String path = CompensationTestDatasets.OMIP_16.getPath();
       final File folder = new File(path);
       
       File[] files = folder.listFiles();
@@ -30,7 +30,7 @@ import main.java.inflor.core.fcs.FCSFileReader;
       
       TheilSenMatrixCalculator mCalc = new TheilSenMatrixCalculator(streamedFiles);      
       mCalc.removeCompDimension("Blue Vid-A");
-      Optional<FCSFrame> apcFrame = streamedFiles.stream().filter(f -> f.getPrefferedName().equals("BEADS_APC_G08.fcs")).findAny();
+      Optional<FCSFrame> apcFrame = streamedFiles.stream().filter(f -> "BEADS_APC_G08.fcs".equals(f.getPrefferedName())).findAny();
       if (apcFrame.isPresent()){//it is
         mCalc.overrideMapping("APC-A",apcFrame.get().getPrefferedName());
       }
