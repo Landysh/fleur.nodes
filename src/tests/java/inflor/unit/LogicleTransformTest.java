@@ -18,11 +18,11 @@ public class LogicleTransformTest {
     // Setup
     FCSFrame data = FCSFileReader.read(logiclePath);
     LogicleTransform transform = new LogicleTransform();
-    double[] tData = transform.transform(data.getFCSDimensionByShortName("FSC-A").getData());
+    double[] tData = transform.transform(data.getDimension("FSC-A").getData());
     // Test
 
     // Assert
-    assertEquals(data.getFCSDimensionByShortName("FSC-A").getData().length, tData.length);
+    assertEquals(data.getDimension("FSC-A").getData().length, tData.length);
 
     // assertEquals( r.bitMap, new Integer[] {16,16});
     System.out.println("LogicleTransformTest::testInitialization completed.");

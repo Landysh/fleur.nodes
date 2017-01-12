@@ -80,8 +80,8 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
 
     // Do the modeling
     final SingletsModel model = new SingletsModel(inSpec.columnNames);
-    final double[] area = inColumnStore.getFCSDimensionByShortName(m_AreaColumn.getStringValue()).getData();
-    final double[] height = inColumnStore.getFCSDimensionByShortName(m_HeightColumn.getStringValue()).getData();
+    final double[] area = inColumnStore.getDimension(m_AreaColumn.getStringValue()).getData();
+    final double[] height = inColumnStore.getDimension(m_HeightColumn.getStringValue()).getData();
     final double[] ratio = model.buildModel(area, height);
     final BitSet mask = model.scoreModel(ratio);
 
