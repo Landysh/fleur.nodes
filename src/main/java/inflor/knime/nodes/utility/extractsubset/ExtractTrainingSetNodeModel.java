@@ -26,6 +26,7 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
@@ -36,217 +37,246 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 
 /**
- * This is the model implementation of ExtractTrainingSet.
- * Extracts data from an FCS frame column to a standard KNIME Table. Data may be transformed and gating information included for downstream ML applications.
+ * This is the model implementation of ExtractTrainingSet. Extracts data from an FCS frame column to
+ * a standard KNIME Table. Data may be transformed and gating information included for downstream ML
+ * applications.
  *
  * @author Aaron Hart
  */
 public class ExtractTrainingSetNodeModel extends NodeModel {
-    
-    // the logger instance
-    private static final NodeLogger logger = NodeLogger
-            .getLogger(ExtractTrainingSetNodeModel.class);
 
-	static final String KEY_PERFILE_EVENT_COUNT = "Count";
-    static final int DEFAULT_COUNT = 5000;
+  // the logger instance
+  private static final NodeLogger logger = NodeLogger.getLogger(ExtractTrainingSetNodeModel.class);
 
-    static final int MIN_COUNT = 0;
-    static final int MAX_COUNT = Integer.MAX_VALUE;
 
-    static final String KEY_SELECTED_COLUMN = "Selected column";
-    static final String DEFAULT_COLUMN = "none";
-    
-    private SettingsModelColumnName mSelectedColumn = new SettingsModelColumnName(KEY_SELECTED_COLUMN, DEFAULT_COLUMN);
-    private SettingsModelIntegerBounded mCount = new SettingsModelIntegerBounded(
-        KEY_PERFILE_EVENT_COUNT,
-        DEFAULT_COUNT,
-        MIN_COUNT, MAX_COUNT);
 
-    /**
-     * Constructor for the node model.
-     */
-    protected ExtractTrainingSetNodeModel() {
-        super(1, 1);
+  static final String KEY_SELECTED_COLUMN = "Selected column";
+  static final String DEFAULT_COLUMN = "none";
+  private SettingsModelColumnName mSelectedColumn =
+      new SettingsModelColumnName(KEY_SELECTED_COLUMN, DEFAULT_COLUMN);
+
+
+  public static final String KEY_TRANSFORM_DATA = "Transform?";
+  public static final boolean DEFAULT_TRANSFORM = true;
+  private SettingsModelBoolean mTransform =
+      new SettingsModelBoolean(KEY_TRANSFORM_DATA, DEFAULT_TRANSFORM);
+
+  public static final String KEY_DOWNSAMPLE_DATA = "Downsample?";
+  public static final boolean DEFAULT_DOWNSAMPLE = false;
+  private SettingsModelBoolean mDownsample =
+      new SettingsModelBoolean(KEY_DOWNSAMPLE_DATA, DEFAULT_DOWNSAMPLE);
+
+  static final String KEY_PERFILE_EVENT_COUNT = "Count";
+  static final int DEFAULT_COUNT = 5000;
+  static final int MIN_COUNT = 0;
+  static final int MAX_COUNT = Integer.MAX_VALUE;
+
+  private SettingsModelIntegerBounded mCount =
+      new SettingsModelIntegerBounded(KEY_PERFILE_EVENT_COUNT, DEFAULT_COUNT, MIN_COUNT, MAX_COUNT);
+
+
+
+  /**
+   * Constructor for the node model.
+   */
+  protected ExtractTrainingSetNodeModel() {
+    super(1, 1);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
+      final ExecutionContext exec) throws Exception {
+
+    logger.info("ExtractTrainingSetNodeModel executing.");
+
+    DataTableSpec outputSpec = createSpec(inData[0].getSpec());
+    BufferedDataContainer container = exec.createDataContainer(outputSpec);
+    int frameIndex = inData[0].getSpec().findColumnIndex(mSelectedColumn.getStringValue());
+    int rowIndex = -1;
+    for (DataRow inRow : inData[0]) {
+      FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(frameIndex);
+      FCSFrame dataFrame = cell.getFCSFrameValue();
+      rowIndex = writeRows(container, rowIndex, dataFrame);
+      // update the progress bar
+      exec.checkCanceled();
+      exec.setProgress((double) rowIndex / (inData[0].size() * mCount.getIntValue()));
+      exec.setMessage("Down sampling: " + dataFrame.getDisplayName());
     }
+    container.close();
+    BufferedDataTable out = container.getTable();
+    return new BufferedDataTable[] {out};
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
-
-        logger.info("ExtractTrainingSetNodeModel executing.");
-
-        DataTableSpec outputSpec = createSpec(inData[0].getSpec());
-        BufferedDataContainer container = exec.createDataContainer(outputSpec);
-        int frameIndex = inData[0].getSpec().findColumnIndex(mSelectedColumn.getStringValue());
-        int rowIndex = -1;
-        for (DataRow inRow: inData[0]){
-          FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(frameIndex);
-          FCSFrame dataFrame = cell.getFCSFrameValue();
-          rowIndex = writeRows(container, rowIndex, dataFrame);
-          //update the progress bar
-          exec.checkCanceled();
-          exec.setProgress((double) rowIndex/(inData[0].size()*mCount.getIntValue()));
-          exec.setMessage("Down sampling: " + dataFrame.getDisplayName());
-        }
-        container.close();
-        BufferedDataTable out = container.getTable();
-        return new BufferedDataTable[]{out};
-    }
-
-    private int writeRows(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
+  private int writeRows(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
+    if (mDownsample.getBooleanValue()) {
       BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mCount.getIntValue());
-      
-      DataCell[] cells;
-      for (int i=0;i<mask.length();i++){
-        if (mask.get(i)){
-          if (dataFrame.getSubsets().isEmpty()){
-            cells = writeCellsWithOnlyDimensionColumns(dataFrame, i);
-          } else {
-            cells = writeCellsWithSubsetColumns(dataFrame, i);
-          }
-
-          cells[cells.length-1] = new StringCell(dataFrame.getDisplayName());
-          final RowKey rowKey = new RowKey("Row " + rowIndex++);
-          final DataRow tableRow = new DefaultRow(rowKey, cells);
-          container.addRowToTable(tableRow);
+      for (int i = 0; i < mask.length(); i++) {
+        if (mask.get(i)) {
+          rowIndex = badWriteRow(container, rowIndex, dataFrame, i);
         }
       }
-      return rowIndex;
-    }
-
-    private DataCell[] writeCellsWithOnlyDimensionColumns(FCSFrame dataFrame, int i) {
-      DataCell[] cells;
-      double[] dimensionValues = dataFrame.getDimensionRow(i);
-      cells = new DataCell[dimensionValues.length + 1];
-      for (int j=0;j<dimensionValues.length;j++){
-        cells[j] = new DoubleCell(dimensionValues[j]);
+    } else {
+      for (int i = 0; i < dataFrame.getRowCount(); i++) {
+        rowIndex = badWriteRow(container, rowIndex, dataFrame, i);
       }
-      return cells;
     }
+    return rowIndex;
+  }
 
-    private DataCell[] writeCellsWithSubsetColumns(FCSFrame dataFrame, int i) {
-      DataCell[] cells;
-      double[] dimensionValues = dataFrame.getDimensionRow(i);
-      String[] subsetValues = dataFrame.getSubsetRow(i);
-      cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
-      for (int j=0;j<dimensionValues.length;j++){
-        cells[j] = new DoubleCell(dimensionValues[j]);
+  private int badWriteRow(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame,
+      int i) {
+    DataCell[] cells;
+    if (dataFrame.getSubsets().isEmpty()) {
+      cells = writeCellsWithOnlyDimensionColumns(dataFrame, i);
+    } else {
+      cells = writeCellsWithSubsetColumns(dataFrame, i);
+    }
+    cells[cells.length - 1] = new StringCell(dataFrame.getDisplayName());
+    final RowKey rowKey = new RowKey("Row " + rowIndex++);
+    final DataRow tableRow = new DefaultRow(rowKey, cells);
+    container.addRowToTable(tableRow);
+    return rowIndex;
+  }
+
+  private DataCell[] writeCellsWithOnlyDimensionColumns(FCSFrame dataFrame, int i) {
+    DataCell[] cells;
+    double[] dimensionValues = dataFrame.getRow(i, mTransform.getBooleanValue());
+    cells = new DataCell[dimensionValues.length + 1];
+    for (int j = 0; j < dimensionValues.length; j++) {
+      cells[j] = new DoubleCell(dimensionValues[j]);
+    }
+    return cells;
+  }
+
+  private DataCell[] writeCellsWithSubsetColumns(FCSFrame dataFrame, int i) {
+    DataCell[] cells;
+    double[] dimensionValues = dataFrame.getRow(i, mTransform.getBooleanValue());
+    String[] subsetValues = dataFrame.getSubsetRow(i);
+    cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
+    for (int j = 0; j < dimensionValues.length; j++) {
+      cells[j] = new DoubleCell(dimensionValues[j]);
+    }
+    for (int k = 0; k < subsetValues.length; k++) {
+      cells[dimensionValues.length + k] = new StringCell(subsetValues[k]);
+    }
+    return cells;
+  }
+
+  private DataTableSpec createSpec(DataTableSpec inSpec) {
+    String columnName = mSelectedColumn.getColumnName();
+    DataColumnProperties properties = inSpec.getColumnSpec(columnName).getProperties();
+    String rawDimensionNames = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+    String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
+    String rawDisplayNames = properties.getProperty(NodeUtilities.DISPLAY_NAMES_KEY);
+    String[] displayNames = rawDisplayNames.split(NodeUtilities.DELIMITER_REGEX);
+    DataColumnSpec[] colSpecs;
+    int outColumnCount;
+
+    if (properties.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)) {
+      String rawSubsetNames = properties.getProperty(NodeUtilities.SUBSET_NAMES_KEY);
+      String[] subsetNames = rawSubsetNames.split(NodeUtilities.DELIMITER_REGEX);
+      outColumnCount = subsetNames.length + dimensionNames.length + 1;
+      colSpecs = new DataColumnSpec[outColumnCount];
+      for (int i = 0; i < dimensionNames.length; i++) {
+        DataColumnSpecCreator creator = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE);
+        Map<String, String> content = new HashMap<>();
+        content.put(NodeUtilities.SHORT_NAME_KEY, dimensionNames[i]);
+        DataColumnProperties props = new DataColumnProperties(content);
+        creator.setProperties(props);
+        colSpecs[i] = creator.createSpec();
       }
-      for (int k=0;k<subsetValues.length;k++){
-        cells [dimensionValues.length + k ] = new StringCell(subsetValues[k]);
+
+      for (int i = 0; i < subsetNames.length; i++) {
+
+        colSpecs[i + dimensionNames.length] =
+            new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
       }
-      return cells;
-    }
-
-    private DataTableSpec createSpec(DataTableSpec inSpec) {
-      String columnName = mSelectedColumn.getColumnName();
-      DataColumnProperties properties = inSpec.getColumnSpec(columnName).getProperties();
-      String rawDimensionNames = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-      String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
-      String rawDisplayNames = properties.getProperty(NodeUtilities.DISPLAY_NAMES_KEY);
-      String[] displayNames = rawDisplayNames.split(NodeUtilities.DELIMITER_REGEX);
-      DataColumnSpec[] colSpecs;
-      int outColumnCount;
-
-      if (properties.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
-        String rawSubsetNames = properties.getProperty(NodeUtilities.SUBSET_NAMES_KEY);
-        String[] subsetNames = rawSubsetNames.split(NodeUtilities.DELIMITER_REGEX);
-        outColumnCount = subsetNames.length + dimensionNames.length + 1;
-        colSpecs = new DataColumnSpec[outColumnCount];
-        for (int i=0;i<dimensionNames.length;i++){
-          DataColumnSpecCreator creator = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE);
-          Map<String, String> content = new HashMap<>();
-          content.put(NodeUtilities.SHORT_NAME_KEY, dimensionNames[i]);
-          DataColumnProperties props = new DataColumnProperties(content);
-          creator.setProperties(props);
-          colSpecs[i] = creator.createSpec();
-        }
-        
-        for (int i = 0;i<subsetNames.length;i++){
-          
-          colSpecs[i + dimensionNames.length] = new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
-        }
-      } else {
-        outColumnCount = dimensionNames.length + 1;
-        colSpecs = new DataColumnSpec[outColumnCount];
-        for (int i=0;i<displayNames.length;i++){
-          colSpecs[i] = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE).createSpec();
-        }
+    } else {
+      outColumnCount = dimensionNames.length + 1;
+      colSpecs = new DataColumnSpec[outColumnCount];
+      for (int i = 0; i < displayNames.length; i++) {
+        colSpecs[i] = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE).createSpec();
       }
-      
-      colSpecs[outColumnCount-1] = new DataColumnSpecCreator("Source", StringCell.TYPE).createSpec();
-      
-      return new DataTableSpec(colSpecs);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void reset() {/*noop*/}
+    colSpecs[outColumnCount - 1] =
+        new DataColumnSpecCreator("Source", StringCell.TYPE).createSpec();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
-            throws InvalidSettingsException {
-      DataTableSpec inSpec = inSpecs[0];
-      if (mSelectedColumn.getColumnName() == DEFAULT_COLUMN){
-        for (int i=0;i<inSpec.getNumColumns();i++){
-          inSpec.getColumnSpec(i).getType().equals(FCSFrameFileStoreDataCell.TYPE);
-          mSelectedColumn.setSelection(inSpec.getName(), false);
-        }
+    return new DataTableSpec(colSpecs);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void reset() {/* noop */}
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
+      throws InvalidSettingsException {
+    DataTableSpec inSpec = inSpecs[0];
+    if (mSelectedColumn.getColumnName() == DEFAULT_COLUMN) {
+      for (int i = 0; i < inSpec.getNumColumns(); i++) {
+        inSpec.getColumnSpec(i).getType().equals(FCSFrameFileStoreDataCell.TYPE);
+        mSelectedColumn.setSelection(inSpec.getName(), false);
       }
-      DataTableSpec outSpec = createSpec(inSpec);
-      return new DataTableSpec[]{outSpec};
     }
+    DataTableSpec outSpec = createSpec(inSpec);
+    return new DataTableSpec[] {outSpec};
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveSettingsTo(final NodeSettingsWO settings) {        
-        mCount.saveSettingsTo(settings);
-        mSelectedColumn.saveSettingsTo(settings);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveSettingsTo(final NodeSettingsWO settings) {
+    mTransform.saveSettingsTo(settings);
+    mDownsample.saveSettingsTo(settings);
+    mCount.saveSettingsTo(settings);
+    mSelectedColumn.saveSettingsTo(settings);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        mCount.loadSettingsFrom(settings);
-        mSelectedColumn.loadSettingsFrom(settings);
-    }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void validateSettings(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        mCount.validateSettings(settings);
-        mSelectedColumn.validateSettings(settings);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/*noop*/}
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveInternals(final File internDir,
-            final ExecutionMonitor exec) throws IOException,
-            CanceledExecutionException {/*noop*/}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
+      throws InvalidSettingsException {
+    mCount.loadSettingsFrom(settings);
+    mSelectedColumn.loadSettingsFrom(settings);
+    mTransform.loadSettingsFrom(settings);
+    mDownsample.loadSettingsFrom(settings);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+    mCount.validateSettings(settings);
+    mSelectedColumn.validateSettings(settings);
+    mTransform.validateSettings(settings);
+    mDownsample.validateSettings(settings);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {/* noop */}
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+      throws IOException, CanceledExecutionException {/* noop */}
 }

@@ -243,23 +243,19 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public double[] getDimensionRow(int index) {
-    return getDimensionRow(index, true);
-  }
-
-  public double[] getDimensionRow(int index, boolean transformData) {
+  public double[] getRow(int index, boolean transformData) {
     final double[] row = new double[getDimensionCount()];
     int i = 0;
     if (transformData){
       for (String shortName: getDimensionNames()) {
-        FCSDimension dim = getFCSDimensionByShortName(shortName);
+        FCSDimension dim = getDimension(shortName);
         double rawValue = dim.getData()[index];
         row[i] = dim.getPreferredTransform().transform(rawValue);
         i++;
         }
     } else {
       for (String shortName: getDimensionNames()) {
-        FCSDimension dim = getFCSDimensionByShortName(shortName);
+        FCSDimension dim = getDimension(shortName);
         row[i] = dim.getData()[index];
         i++;
         }
@@ -275,7 +271,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return name;
   }
 
-  public FCSDimension getFCSDimensionByShortName(String shortName) {
+  public FCSDimension getDimension(String shortName) {
     Optional<FCSDimension> matchingDimension = columnData
         .stream()
         .filter(dimension -> shortName.equals(dimension.getShortName()))

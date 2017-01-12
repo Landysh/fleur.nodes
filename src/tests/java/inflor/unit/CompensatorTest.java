@@ -76,8 +76,8 @@ public class CompensatorTest {
     // Test
     SpilloverCompensator compr = new SpilloverCompensator(dataFrame.getKeywords());
     dataFrame = compr.compensateFCSFrame(dataFrame, false);
-    double[] actual = dataFrame.getFCSDimensionByShortName("FSC-A").getData();
-    double[] truth = dataFrame.getFCSDimensionByShortName("FSC-A").getData();
+    double[] actual = dataFrame.getDimension("FSC-A").getData();
+    double[] truth = dataFrame.getDimension("FSC-A").getData();
 
     // Assert
     for (int i = 0; i < truth.length; i++) {

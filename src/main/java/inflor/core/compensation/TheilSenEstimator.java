@@ -15,10 +15,30 @@ public class TheilSenEstimator {
         }
       }
       Median median = new Median();
-      
-      return median.evaluate(ms);
+      double mValue = median.evaluate(ms);
+      if (mValue > 0.3&& mValue<1)
+        System.out.print(mValue);
+      return mValue;
     } else {
       throw new IllegalArgumentException("x and y must not be null and must have a length > 0");
     }
+  }
+
+  public static double evaluate2(String outName, String name, double[] x1,
+      double[] x2, double[] y1,
+      double[] y2) {
+    double[] spills = new double[x1.length*x2.length];
+    if (x1.length==y1.length&&x2.length==y2.length){
+      for (int i=0;i<x1.length;i++){
+        for (int j=0;j<x2.length;j++){
+          spills[i*x2.length + j] = (y2[j]-y1[i])/(x2[j] - x1[i]);
+        }
+      }
+    }
+    Median median = new Median();
+    double mValue = median.evaluate(spills);
+    if (mValue > 0.3&& mValue<1)
+      System.out.print(mValue);
+    return mValue;
   }
 }

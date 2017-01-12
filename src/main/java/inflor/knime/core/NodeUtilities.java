@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.knime.core.node.InvalidSettingsException;
@@ -50,7 +52,8 @@ public class NodeUtilities {
   public static final String DISPLAY_NAMES_KEY = "DISPLAY_NAMES";
   public static final String SHORT_NAME_KEY = "$PNN";
 
-  
+  private static final Logger LOGGER = Logger.getLogger(NodeUtilities.class.getName());
+
   
   @SuppressWarnings("unchecked")
   public static Map<String, Serializable> loadMap(NodeSettingsRO settings, String key)
@@ -62,7 +65,7 @@ public class NodeUtilities {
       ois = new ObjectInputStream(bis);
       return (Map<String, Serializable>) ois.readObject();
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.FINE, "Unable to parse map object",e);
       throw new InvalidSettingsException("Unable to parse map object");
     }
   }
@@ -77,7 +80,7 @@ public class NodeUtilities {
     settings.addByteArray(key, chartBytes);
   }
   
-  public Map<String, String> createColumnPropertiesContent(List<FCSFrame> dataSet) throws Exception {
+  public Map<String, String> createColumnPropertiesContent(List<FCSFrame> dataSet) {
     /**
      * Creates column properties for an FCS Set by looking all of the headers and setting shared
      * keyword values.
@@ -97,15 +100,14 @@ public class NodeUtilities {
     // Collect all parameter for experiment in one Hashset.
     dataSet
       .stream()
-      .map(frame -> frame.getDimensionNames())
-      .forEach(dimensionList -> shortNames.addAll(dimensionList));
+      .map(FCSFrame::getDimensionNames)
+      .forEach(shortNames::addAll);
     String dimensionNames = "";
     for (String name : shortNames) {
       dimensionNames = dimensionNames + name + "||";
     }
     dimensionNames = dimensionNames.substring(0, dimensionNames.length() - 2);
     content.put(DIMENSION_NAMES_KEY, dimensionNames);
-
     return content;
   }
   

@@ -79,6 +79,7 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
     if (!mSettings.getPath().equals(CalculateCompensationNodeSettings.DEFAULT_PATH)) {
       updateCompensationMapPanel();
     }
+    firstTab.setPreferredSize(new Dimension(400,600));
     firstTab.revalidate();
     firstTab.repaint();
   }
@@ -182,15 +183,8 @@ public class CalculateCompensationNodeDialog extends NodeDialogPane {
     Object[][] table = new Object[compMap.size()][3];
     int i = 0;
     for (Entry<String, FCSFrame> entry : compMap.entrySet()) {
-      JButton button = new JButton(entry.getKey());
-      button.addActionListener(e -> {
-        // TODO not called?
-        JButton sourceButton = (JButton) e.getSource();
-        mSettings.removeDimension(sourceButton.getText());
-        updateCompensationMapPanel();
-      });
       Object[] tableRow = new Object[3];
-      tableRow[BUTTON_COLUMN_INDEX] = button;
+      tableRow[BUTTON_COLUMN_INDEX] = "remove";
       tableRow[DIMENSION_COLUMN_INDEX] = entry.getKey();
       tableRow[CONTROL_FILE_COLUMN_INDEX] = entry.getValue().getDisplayName();
       table[i] = tableRow;

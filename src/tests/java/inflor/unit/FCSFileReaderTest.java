@@ -45,8 +45,8 @@ public class FCSFileReaderTest {
     final double[] ssc =
         {300, 300, 600, 200, 800, 500, 600, 400, 100, 200, 400, 800, 900, 700, 500};
 
-    double[] testFCS = dataStore.getFCSDimensionByShortName("FCS").getData();
-    double[] testSSC = dataStore.getFCSDimensionByShortName("SSC").getData();
+    double[] testFCS = dataStore.getDimension("FCS").getData();
+    double[] testSSC = dataStore.getDimension("SSC").getData();
 
     // Assert
     for (int i = 0; i < fcs.length; i++) {
@@ -73,8 +73,8 @@ public class FCSFileReaderTest {
     final int testRowCount = dataStore.getRowCount();
 
 
-    double[] testFCS = dataStore.getFCSDimensionByShortName("FSC-A").getData();
-    double[] testSSC = dataStore.getFCSDimensionByShortName("SSC-A").getData();
+    double[] testFCS = dataStore.getDimension("FSC-A").getData();
+    double[] testSSC = dataStore.getDimension("SSC-A").getData();
 
     int fewCount = 10;
     double[] testFSCFirstFew = new double[fewCount];

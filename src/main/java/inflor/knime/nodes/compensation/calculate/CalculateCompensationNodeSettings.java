@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
@@ -30,6 +32,7 @@ public class CalculateCompensationNodeSettings {
   String mPath = DEFAULT_PATH;
   
   TheilSenMatrixCalculator compCalculator;
+  private ExecutionContext executionContext;
     
   public String getPath() {
     return mPath;
@@ -120,5 +123,13 @@ public class CalculateCompensationNodeSettings {
 
   public List<String> getWarnings() {
     return compCalculator.getStatus();
+  }
+
+  public void setContext(ExecutionContext exec) {
+    compCalculator.setContext(exec);
+    }
+
+  public double[][] calculate() throws CanceledExecutionException {
+    return compCalculator.calculate();
   }
 }

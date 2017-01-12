@@ -62,10 +62,10 @@ public class ConvertMatrixNodeModel extends NodeModel {
         String[] outDimNames = inSpec.getOutputDimensions();
         Double[] spills = cmpo.getSpilloverValues();
         if (inDimNames.length*outDimNames.length == spills.length){
-          for (int i=0;i<outDimNames.length;i++){
-            for (int j=0;j<inDimNames.length;j++){
-              DataCell[] row = new DataCell[] {new StringCell(outDimNames[i]), 
-                                               new StringCell(inDimNames[j]),
+          for (int i=0;i<inDimNames.length;i++){
+            for (int j=0;j<outDimNames.length;j++){
+              DataCell[] row = new DataCell[] {new StringCell(outDimNames[j]), 
+                                               new StringCell(inDimNames[i]),
                                                new DoubleCell(spills[i*inDimNames.length + j])};
               DataRow  dataRow = new DefaultRow("Row " + i*inDimNames.length + j, row);
               container.addRowToTable(dataRow);
