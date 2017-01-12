@@ -12,9 +12,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.ExecutionContext;
+
+import com.google.common.primitives.Doubles;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.gates.RangeGate;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
@@ -23,6 +28,11 @@ import main.java.inflor.knime.nodes.statistics.StatType;
 
 public class TheilSenMatrixCalculator {
   
+  private static final int SCATTER_MAX = 100;
+  private static final int SCATTER_MIN = 90;
+  private static final int HIGH_MIN = 50;
+  private static final int LOW_MAX = 10;
+  private static final int MAX_K = 1000;
   private static final String MSG_MAPPED_FILE_NOT_FOUND = "Mapped file not found in supplied data list";
   private static final String MSG_EMPTY_COMP_LIST = "Input list should contain at least 1 FCSFrame";
 
@@ -38,6 +48,7 @@ public class TheilSenMatrixCalculator {
   private ArrayList<String> outDimensions = new ArrayList<>();
   private ArrayList<String> ignoredDimensions = new ArrayList<>();
   private List<FCSFrame> dataList;
+  private ExecutionContext exec;
   
   public TheilSenMatrixCalculator(List<FCSFrame> newDataList){
     dataList = newDataList;
@@ -184,10 +195,15 @@ public class TheilSenMatrixCalculator {
     isValid = validate();
   }
 
-  public double[][] calculate() {
+  public double[][] calculate() throws CanceledExecutionException {
     if (isValid){
       double[][] mtx = new double[outDimensions.size()][inDimensions.size()];
       for (int i=0;i<outDimensions.size();i++){
+        if (exec!=null){
+          exec.checkCanceled();
+          exec.setMessage("Processing: " + outDimensions.get(i) + " -> " + dataMap.get(outDimensions.get(i)).getDisplayName());
+          exec.setProgress((double)i/outDimensions.size());
+        }
         mtx[i] = estimateSpillovers(outDimensions.get(i), inDimensions, dataMap.get(outDimensions.get(i)));
       }
       return mtx;
@@ -196,30 +212,86 @@ public class TheilSenMatrixCalculator {
     }
   }
 
-  private double[] estimateSpillovers(String outName, ArrayList<String> inDims, FCSFrame fcsFrame) {
+  private double[] estimateSpillovers(String primaryName, ArrayList<String> inDims, FCSFrame fcsFrame) {
     double[] spills = new double[inDims.size()];
-    double[] x = fcsFrame.getFCSDimensionByShortName(outName).getData();
-    Percentile p = new Percentile();
-    p.setData(x);
-    double min = p.evaluate(90.);
-    double max = fcsFrame.getFCSDimensionByShortName(outName).getRange(); 
-    RangeGate gate = new RangeGate(SUBSET_NAME_SCATTER, new String[]{outName}, new double[]{min}, new double[]{max});
-    BitSet mask = gate.evaluate(fcsFrame);
-    FCSFrame fcsFrameFilt = FCSUtilities.filterColumnStore(mask, fcsFrame);
     
-    int downSize = 1000;
+    BitSet[] sampleMasks = downsample(fcsFrame, primaryName);
     
-    int finalSize = fcsFrameFilt.getRowCount() < downSize ? fcsFrameFilt.getRowCount() : downSize; 
-    BitSet dsMask = BitSetUtils.getShuffledMask(fcsFrameFilt.getRowCount(), finalSize);
-    FCSFrame finalFrame = FCSUtilities.filterColumnStore(dsMask, fcsFrameFilt);
-    double[] filteredX = finalFrame.getFCSDimensionByShortName(outName).getData();
-    
+    FCSFrame lowFrame = FCSUtilities.filterColumnStore(sampleMasks[0], fcsFrame);
+    FCSFrame highFrame = FCSUtilities.filterColumnStore(sampleMasks[1], fcsFrame);
+
     for (int i=0;i<inDims.size();i++){
-      String name = inDims.get(i);
-      double[] filteredY = finalFrame.getFCSDimensionByShortName(name).getData();
-      spills[i] = TheilSenEstimator.evaluate(filteredX, filteredY);
+      String secondaryFrame = inDims.get(i);
+      double[] x1 = lowFrame.getDimension(primaryName).getData();
+      double[] x2 = highFrame.getDimension(primaryName).getData();
+      double[] y1 = lowFrame.getDimension(secondaryFrame).getData();
+      double[] y2 = highFrame.getDimension(secondaryFrame).getData();
+      spills[i] = TheilSenEstimator.evaluate2(primaryName, secondaryFrame, x1, x2, y1, y2);
     }
     return spills;
+  }
+
+  private BitSet[] downsample(FCSFrame fcsFrame, String shortName) {
+    FCSDimension primaryDimension = fcsFrame.getDimension(shortName);
+    double[] x = primaryDimension.getData();
+    //Filter values within advertised dynamic range
+    double max = primaryDimension.getRange();//TODO verify -> fencepost
+    RangeGate g = new RangeGate(null, new String[] {shortName}, new double[]{Doubles.min(x)}, new double[]{max});
+    BitSet dynamicMask = g.evaluate(fcsFrame);
+    double[] dynamicX = FCSUtilities.filterColumn(dynamicMask, x);
+    //Find bitmask for top n% of dynamic events in control sample. 
+    Percentile p = new Percentile();
+    p.setData(dynamicX);
+    double p90 = p.evaluate(SCATTER_MIN);
+    double p100 = p.evaluate(SCATTER_MAX);
+    BitSet brightMask = (new RangeGate(null, new String[]{shortName}, new double[]{p90}, new double[]{p100})).evaluate(fcsFrame);
+    FCSFrame filteredFrame = FCSUtilities.filterColumnStore(brightMask, fcsFrame);
+    //estimate scatter gate
+    FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, ParameterTypes.FORWARD_SCATTER);
+    double fscMin = Doubles.min(fscDim.getData());
+    double fscMax = Doubles.max(fscDim.getData());
+
+    FCSDimension sscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, ParameterTypes.SIDE_SCATTER);
+    double sscMin = Doubles.min(sscDim.getData());
+    double sscMax = Doubles.max(sscDim.getData());
+    
+    BitSet scatterMask = (new RangeGate(
+        null, 
+        new String[]{fscDim.getShortName(), sscDim.getShortName()}, 
+        new double[]{fscMin, sscMin}, 
+        new double[]{fscMax, sscMax}))
+      .evaluate(fcsFrame);
+    
+    //combine the inRange mask and the scatter mask to create final mask.
+    BitSet finalMask = (BitSet) scatterMask.clone();
+    finalMask.and(dynamicMask);
+    //do percentile split 
+    double[] repX = FCSUtilities.filterColumn(finalMask, x);
+    if (repX.length>MAX_K){
+      BitSet k = BitSetUtils.getShuffledMask(repX.length, MAX_K);
+      repX = FCSUtilities.filterColumn(k, repX);
+    }
+    p.setData(repX);
+    double low = p.evaluate(LOW_MAX);
+    double high = p.evaluate(HIGH_MIN);
+    
+    ArrayList<Integer> lowList = new ArrayList<>();
+    ArrayList<Integer> highList = new ArrayList<>();
+
+    for (int i=0;i<finalMask.size();i++){
+      if (finalMask.get(i)){
+        if (x[i]<low){
+          lowList.add(i);
+        } else if (x[i]>high){
+          highList.add(i);
+        } 
+      }
+    }
+    BitSet lowBits = new BitSet(x.length);
+    lowList.forEach(lowBits::set);
+    BitSet highBits = new BitSet(x.length);
+    highList.forEach(highBits::set);
+    return new BitSet[] {lowBits, highBits};
   }
 
   public String[] getOutputDims() {
@@ -239,5 +311,9 @@ public class TheilSenMatrixCalculator {
         .stream()
         .map(FCSFrame::getDisplayName)
         .collect(Collectors.toList());
+  }
+
+  public void setContext(ExecutionContext exec) {
+    this.exec = exec;
   }
 }
