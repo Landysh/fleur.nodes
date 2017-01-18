@@ -2,7 +2,6 @@ package tests.java.inflor.ui;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.UIDefaults;
@@ -19,8 +18,8 @@ import main.java.inflor.core.plots.PlotTypes;
 import main.java.inflor.core.ui.CellLineageTree;
 
 @SuppressWarnings("serial")
-public class LineageViewUITest extends ApplicationFrame {
-  public LineageViewUITest(String title) throws Exception {
+public class LineageViewFrame extends ApplicationFrame {
+  public LineageViewFrame(String title) throws Exception {
     super(title);
 
     List<Hierarchical> testSpecs = new ArrayList<Hierarchical>();
@@ -70,7 +69,7 @@ public class LineageViewUITest extends ApplicationFrame {
   }
 
   public static void main(String[] args) throws Exception {
-    LineageViewUITest test = new LineageViewUITest("ContourPlotTest");
+    LineageViewFrame test = new LineageViewFrame("ContourPlotTest");
     test.pack();
     test.setSize(new Dimension(400, 700));
     test.setVisible(true);
