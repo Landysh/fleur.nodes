@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package main.java.inflor.knime.nodes.gating;
 
 import java.awt.Window;
 import java.awt.event.MouseEvent;
@@ -40,7 +40,6 @@ import main.java.inflor.core.plots.ChartSpec;
 import main.java.inflor.core.ui.CellLineageTree;
 import main.java.inflor.core.ui.ChartEditorDialog;
 import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.nodes.createGates.CreateGatesNodeDialog;
 
 public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private CreateGatesNodeDialog parent;
@@ -111,9 +110,9 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
     dialog.setVisible(true);
     if (dialog.isOK()) {
       FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) parent.lineageTree.getModel().getRoot()).getUserObject();
-      parent.m_settings.addNode(dialog.getChartSpec(), dataFrame.getID());
+      parent.mSettings.addNode(dialog.getChartSpec(), dataFrame.getID());
       List<AbstractGate> gates = dialog.getGates();
-      gates.forEach(gate -> parent.m_settings.addNode(gate, dataFrame.getID()));
+      gates.forEach(gate -> parent.mSettings.addNode(gate, dataFrame.getID()));
       parent.updateLineageTree();
     }
     dialog.dispose();

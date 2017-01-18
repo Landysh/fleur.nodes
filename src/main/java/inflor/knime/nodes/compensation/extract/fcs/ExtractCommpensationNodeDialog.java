@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.extract.fromfcs;
+package main.java.inflor.knime.nodes.compensation.extract.fcs;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.extract.fromfcs;
+package main.java.inflor.knime.nodes.compensation.extract.fcs;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
