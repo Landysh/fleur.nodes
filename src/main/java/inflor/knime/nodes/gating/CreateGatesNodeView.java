@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.createGates;
+package main.java.inflor.knime.nodes.gating;
 
 import org.knime.core.node.NodeView;
 

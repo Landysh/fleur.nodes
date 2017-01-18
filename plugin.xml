@@ -14,16 +14,16 @@
    -->2
    
 <extension point="org.knime.workbench.repository.nodes">
-<node category-path="/inflor/read" deprecated="false" factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory"/>
+<node category-path="/inflor/read" deprecated="false" factory-class="main.java.inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
 <node after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
 <node after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSFrameNodeFactory"/>
 <node category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fromfcs.ExtractCommpensationNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extractfj9mtx.ExtractCompJONodeFactory"/>
+<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
+<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
 <node category-path="/inflor/transform" deprecated="false" factory-class="main.java.inflor.knime.nodes.transform.create.TransformNodeFactory"/>
 <node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
 <node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
-<node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.createGates.CreateGatesNodeFactory"/>
+<node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.utility.extractsubset.ExtractTrainingSetNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">

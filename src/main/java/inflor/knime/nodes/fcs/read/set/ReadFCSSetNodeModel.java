@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read;
+package main.java.inflor.knime.nodes.fcs.read.set;
 
 import java.io.File;
 import java.io.IOException;

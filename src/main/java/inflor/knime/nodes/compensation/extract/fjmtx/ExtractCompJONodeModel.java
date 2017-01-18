@@ -16,7 +16,7 @@
  *  along with this program; if not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  */
-package main.java.inflor.knime.nodes.compensation.extractfj9mtx;
+package main.java.inflor.knime.nodes.compensation.extract.fjmtx;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<knimeNode icon="./default.png" type="Source" xmlns="http://knime.org/node/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://knime.org/node/v2.10 http://knime.org/node/v2.10.xsd">
+    <name>Read Compensation (FlowJo mtx)</name>
+    
+    <shortDescription>
+        Extract a compensation matrix from a text file generated with FlowJo (Legacy Mac version). This has only been tested with exports from version 9 of FlowJo.
+    </shortDescription>
+    
+    <fullDescription>
+        <intro>Insert long description here...</intro>
+        
+        
+        <option name="Selected File"> The mtx file as exported from FlowJo.</option>
+
+    </fullDescription>
+    
+    <ports>
+        <outPort index="0" name="Compensation Matrix">Use with Apply Compensation</outPort>
+    </ports>    
+    <views>
+        <view index="0" name="name of first view">Description of first view...</view>
+    </views>
+</knimeNode>
