@@ -148,7 +148,12 @@ public class CreateGatesNodeModel extends NodeModel {
 
   private Subset createSubset(AbstractGate gate, FCSFrame outStore) {
     BitSet mask = gate.evaluate(outStore);
-    Subset subset = new Subset(gate.getLabel(), mask, gate.getParentID(), gate.getID());
+    Subset subset = new Subset(gate.getLabel(), 
+                               mask, gate.getParentID(), 
+                               gate.getID(), 
+                               gate.getType(), 
+                               gate.getDimensions(), 
+                               gate.getDescriptors());
     return subset;
   }
 

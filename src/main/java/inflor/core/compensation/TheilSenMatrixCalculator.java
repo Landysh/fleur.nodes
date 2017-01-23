@@ -22,6 +22,7 @@ import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.gates.RangeGate;
+import main.java.inflor.core.logging.LogFactory;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.nodes.compensation.calculate.ParticleType;
@@ -36,7 +37,8 @@ public class TheilSenMatrixCalculator {
   private static final String MSG_MAPPED_FILE_NOT_FOUND = "Mapped file not found in supplied data list";
   private static final String MSG_EMPTY_COMP_LIST = "Input list should contain at least 1 FCSFrame";
 
-  private static final Logger LOGGER = Logger.getLogger(TheilSenMatrixCalculator.class.getName());
+  private static final Logger LOGGER = LogFactory.createLogger(TheilSenMatrixCalculator.class.getName());
+  
   private static final String KEY_US_BEADS = "Unstained Beads";
   private static final String KEY_US_CELLS = "Unstained Cells";
   private static final ParticleType DEFAULT_PARTICLE_TYPE = ParticleType.BEADS;
@@ -118,18 +120,7 @@ public class TheilSenMatrixCalculator {
         }
         //Check that each file is used only once. 
         for (Entry<String, FCSFrame> e2: dataSet2.entrySet()){
-          if (e2.getKey()!=KEY_US_BEADS && e2.getKey()!=KEY_US_CELLS){
-            String e1k = e.getKey();
-            String e2k = e2.getKey();
-            FCSFrame e1v = e.getValue();
-            FCSFrame e2v = e2.getValue();
-            boolean equalValues = e2v.equals(e1v);
-            boolean equalKeys = e1k.equals(e2k);
-            if (equalValues&&(!equalKeys)){
-                valid = false;
-                status.add("Duplicate entries for: " + e.getKey() + " and: " + e2.getKey() + "->" + e2.getValue().getDisplayName());
-            }
-          }
+          valid = duplicateEntries(valid, e, e2);
         } 
       } else {
         if (e.getValue()==null){
@@ -139,6 +130,24 @@ public class TheilSenMatrixCalculator {
       }
     }
     return valid;
+  }
+
+  private boolean duplicateEntries(boolean valid, Entry<String, FCSFrame> entry1,
+      Entry<String, FCSFrame> entry2) {
+    boolean localValid = valid;
+    if (entry2.getKey()!=KEY_US_BEADS && entry2.getKey()!=KEY_US_CELLS){
+      String e1k = entry1.getKey();
+      String e2k = entry2.getKey();
+      FCSFrame e1v = entry1.getValue();
+      FCSFrame e2v = entry2.getValue();
+      boolean equalValues = e2v.equals(e1v);
+      boolean equalKeys = e1k.equals(e2k);
+      if (equalValues&&(!equalKeys)){
+        localValid = false;
+        status.add("Duplicate entries for: " + entry1.getKey() + " and: " + entry2.getKey() + "->" + entry2.getValue().getDisplayName());
+      }
+    }
+    return localValid;
   }
 
   private Map<String, FCSFrame> initializeDataSet(List<String> fluorescentDims, List<FCSFrame> dataList){

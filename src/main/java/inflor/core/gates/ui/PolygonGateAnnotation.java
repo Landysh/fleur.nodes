@@ -87,18 +87,16 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
 
   public double[] getDomainPoints() {
     double[] domainPoints = new double[polygonPoints.length / 2];
-    for (int i = 0; i < polygonPoints.length; i++) {
+    for (int i = 0; i < polygonPoints.length; i+=2) {
       domainPoints[i / 2] = polygonPoints[i];
-      i++;
     }
     return domainPoints;
   }
 
   public double[] getRangePoints() {
     double[] rangePoints = new double[polygonPoints.length / 2];
-    for (int i = 0; i < polygonPoints.length; i++) {
+    for (int i = 0; i < polygonPoints.length; i+=2) {
       rangePoints[i / 2] = polygonPoints[i + 1];
-      i++;
     }
     return rangePoints;
   }
@@ -107,15 +105,14 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
   public boolean matchesVertex(Point2D v, double xHandleSize, double yHandleSize) {
     double[] x = getDomainPoints();
     double[] y = getRangePoints();
-    double xMin = (v.getX() - xHandleSize);
-    double xMax = (v.getX() + xHandleSize);
-    double yMin = (v.getY() - yHandleSize);
-    double yMax = (v.getY() + yHandleSize);
+    double xMin = v.getX() - xHandleSize;
+    double xMax = v.getX() + xHandleSize;
+    double yMin = v.getY() - yHandleSize;
+    double yMax = v.getY() + yHandleSize;
     for (int i = 0; i < x.length; i++) {
-      if (xMin <= x[i] && x[i] <= xMax) {
-        if (yMin <= y[i] && y[i] <= yMax) {
-          return true;
-        }
+      if (xMin <= x[i]&&x[i] <= xMax&&
+          yMin <= y[i]&&y[i] <= yMax) {
+        return true;
       }
     }
     return false;
@@ -126,24 +123,22 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
       double yHandleSize) {
     double[] x = getDomainPoints();
     double[] y = getRangePoints();
-    double xMin = (v.getX() - xHandleSize);
-    double xMax = (v.getX() + xHandleSize);
-    double yMin = (v.getY() - yHandleSize);
-    double yMax = (v.getY() + yHandleSize);
+    double xMin = v.getX() - xHandleSize;
+    double xMax = v.getX() + xHandleSize;
+    double yMin = v.getY() - yHandleSize;
+    double yMax = v.getY() + yHandleSize;
     for (int i = 0; i < x.length; i++) {
-      if (xMin <= x[i] && x[i] <= xMax) {
-        if (yMin <= y[i] && y[i] <= yMax) {
+      if (xMin <= x[i] && x[i] <= xMax&&
+          yMin <= y[i] && y[i] <= yMax){
           x[i] = x[i] + dx;
           y[i] = y[i] + dy;
-        }
       }
     }
 
     double[] newPoints = new double[polygonPoints.length];
-    for (int i = 0; i < newPoints.length; i++) {
+    for (int i = 0; i < newPoints.length; i+=2) {
       newPoints[i] = x[i / 2];
       newPoints[i + 1] = y[i / 2];
-      i++;
     }
 
     return new PolygonGateAnnotation(subsetName, domainAxisName, rangeAxisName, newPoints,
