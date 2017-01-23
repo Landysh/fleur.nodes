@@ -1,19 +1,16 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on December 14, 2016 by Aaron Hart
@@ -24,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,7 +59,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   private String compReference;
   private Integer rowCount = -1;
   private ArrayList<Subset> subsets = new ArrayList<>();
-  
+
   /**
    * Store keywords and numeric columns in a persistable object.
    * 
@@ -79,16 +77,16 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     this.rowCount = rowCount;
     displayName = FCSUtilities.chooseDisplayName(this);
   }
-  
+
   // minimal constructor, use with .load()
   public FCSFrame() {
     super(null);
   }
-  
+
   private static BitSet extractMaskFromSubsetMessage(Message.Subset subsetMessage) {
     BitSet mask = new BitSet(subsetMessage.getMaskCount());
-    for (int j=0;j<mask.size();j++){
-      if (subsetMessage.getMask(j)){
+    for (int j = 0; j < mask.size(); j++) {
+      if (subsetMessage.getMask(j)) {
         mask.set(j);
       }
     }
@@ -99,13 +97,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     final Message loadedMessage = Message.parseFrom(bytes);
 
     // Load the keywords
-    final HashMap<String, String> keywords = new HashMap<>();
-    for (int i = 0; i < loadedMessage.getKeywordCount(); i++) {
-      final Keyword keyword = loadedMessage.getKeyword(i);
-      final String key = keyword.getKey();
-      final String value = keyword.getValue();
-      keywords.put(key, value);
-    }
+    final HashMap<String, String> keywords = loadKeywords(loadedMessage);
+
     // Load the Dimensions
     final int rowCount = loadedMessage.getEventCount();
     final FCSFrame fcsFrame = new FCSFrame(loadedMessage.getId(), keywords, rowCount);
@@ -115,9 +108,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       Dimension dim = loadedMessage.getDimension(j);
       String priorUUID = dim.getId();
       dimen[j] = priorUUID;
-      final FCSDimension currentDimension =
-          new FCSDimension(priorUUID, fcsFrame.getRowCount(), dim.getIndex(), dim.getPnn(),
-              dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr());
+      final FCSDimension currentDimension = new FCSDimension(priorUUID, fcsFrame.getRowCount(),
+          dim.getIndex(), dim.getPnn(), dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr());
       for (int i = 0; i < currentDimension.getSize(); i++) {
         currentDimension.getData()[i] = dim.getData(i);
       }
@@ -125,44 +117,78 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       currentDimension.setPreferredTransform(preferredTransform);
       fcsFrame.addDimension(currentDimension);
     }
-    
-    //Read back the subsets
-    if (loadedMessage.getSubsetCount()>0){
-      for (int i=0;i<loadedMessage.getSubsetCount();i++){
+
+    // load the subsets
+    if (loadedMessage.getSubsetCount() > 0) {
+      for (int i = 0; i < loadedMessage.getSubsetCount(); i++) {
         Message.Subset subsetMessage = loadedMessage.getSubset(i);
-        BitSet mask = extractMaskFromSubsetMessage(subsetMessage);
-        Subset subset = new Subset(subsetMessage.getName(), 
-                                   mask, 
-                                   subsetMessage.getParentID(),
-                                   subsetMessage.getId());
-      fcsFrame.addSubset(subset);
+        Subset subset = loadSubset(subsetMessage);
+        fcsFrame.addSubset(subset);
       }
     }
     fcsFrame.setDisplayName(FCSUtilities.chooseDisplayName(fcsFrame));
     return fcsFrame;
   }
+
+  private static HashMap<String, String> loadKeywords(final Message loadedMessage) {
+    final HashMap<String, String> keywords = new HashMap<>();
+    for (int i = 0; i < loadedMessage.getKeywordCount(); i++) {
+      final Keyword keyword = loadedMessage.getKeyword(i);
+      final String key = keyword.getKey();
+      final String value = keyword.getValue();
+      keywords.put(key, value);
+    }
+    return keywords;
+  }
+
+  private static Subset loadSubset(Message.Subset subsetMessage) {
+    BitSet mask = extractMaskFromSubsetMessage(subsetMessage);
+
+    int dimensionCount = subsetMessage.getDimensionsCount();
+    String[] dimensions = null;
+    if (dimensionCount > 0) {
+      dimensions = new String[dimensionCount];
+      for (int j = 0; j < dimensionCount; j++)
+        dimensions[j] = subsetMessage.getDimensions(j);
+    }
+
+    int descriptorCount = subsetMessage.getDoubleValueCount();
+    Double[] descriptors = null;
+    if (descriptorCount > 0) {
+      descriptors = new Double[descriptorCount];
+      for (int j = 0; j < descriptorCount; j++)
+        descriptors[j] = subsetMessage.getDoubleValue(j);
+    }
+
+
+    return new Subset(subsetMessage.getName(), mask, subsetMessage.getParentID(),
+        subsetMessage.getId(), subsetMessage.getSubsetType(), dimensions, descriptors);
+  }
+
   public static FCSFrame load(FileInputStream input) throws IOException {
     final byte[] buffer = new byte[input.available()];
     int bytesRead = input.read(buffer);
-    if (bytesRead==buffer.length){
+    if (bytesRead == buffer.length) {
       return FCSFrame.load(buffer);
     } else {
       throw new IOException(LOAD_FAILURE);
     }
   }
+
   private static AbstractTransform readTransform(Dimension dim) {
     if (dim.hasPreferredTransform()) {
       Transform tBuffer = dim.getPreferredTransform();
-      if (tBuffer.getTransformType().equals(TransformType.LOGICLE.toString())) {
+      String transType = tBuffer.getTransform().name();
+      if (transType.equals(TransformType.LOGICLE.toString())) {
         double t = tBuffer.getLogicleT();
         double w = tBuffer.getLogicleW();
         double m = tBuffer.getLogicleM();
         double a = tBuffer.getLogicleA();
         return new LogicleTransform(t, w, m, a);
-      } else if (tBuffer.getTransformType().equals(TransformType.LOGARITHMIC.toString())) {            
+      } else if (transType.equals(TransformType.LOGARITHMIC.toString())) {
         return new LogrithmicTransform(tBuffer.getLogMin(), tBuffer.getLogMax());
 
-      } else if (tBuffer.getTransformType().equals(TransformType.BOUNDARY.toString())) {
+      } else if (transType.equals(TransformType.BOUNDARY.toString())) {
         return new BoundDisplayTransform(tBuffer.getBoundMin(), tBuffer.getBoundMax());
       } else {
         throw new IllegalArgumentException("Unsupported transform type.");
@@ -170,7 +196,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     }
     return null;
   }
-  
+
   public void addDimension(FCSDimension newDim) {
     if (rowCount == newDim.getSize()) {
       columnData.add(newDim);
@@ -181,12 +207,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public void addSubset(Subset subset) {
-    if (this.subsets==null){
-      this.subsets = new ArrayList<>();
-    }
     this.subsets.add(subset);
   }
-
 
   private Builder buildTransform(FCSDimension fcsdim) {
     // Set the preferred transformation.
@@ -194,18 +216,18 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     AbstractTransform transform = fcsdim.getPreferredTransform();
     if (transform instanceof LogicleTransform) {
       LogicleTransform logicle = (LogicleTransform) transform;
-      tBuilder.setTransformType(TransformType.LOGICLE.toString());
+      tBuilder.setTransform(Message.Transform.Type.LOGICLE);
       tBuilder.setLogicleT(logicle.getT());
       tBuilder.setLogicleW(logicle.getW());
       tBuilder.setLogicleM(logicle.getM());
       tBuilder.setLogicleA(logicle.getA());
     } else if (transform instanceof LogrithmicTransform) {
       LogrithmicTransform logTransform = (LogrithmicTransform) transform;
-      tBuilder.setTransformType(TransformType.LOGARITHMIC.toString());
+      tBuilder.setTransform(Message.Transform.Type.LOG);
       tBuilder.setLogMin(logTransform.getMinRawValue());
       tBuilder.setLogMax(logTransform.getMaxRawValue());
     } else if (transform instanceof BoundDisplayTransform) {
-      tBuilder.setTransformType(TransformType.BOUNDARY.toString());
+      tBuilder.setTransform(Message.Transform.Type.BOUNDARY);
       BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) transform;
       tBuilder.setBoundMin(boundaryTransform.getMinTranformedValue());
       tBuilder.setBoundMax(boundaryTransform.getMaxTransformedValue());
@@ -218,7 +240,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public int compareTo(String arg0) {
     return this.getDisplayName().compareTo(arg0);
   }
-  
+
   public FCSFrame deepCopy() throws InvalidProtocolBufferException {
     byte[] bytes = this.save();
     return FCSFrame.load(bytes);
@@ -237,28 +259,26 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public ArrayList<String> getDimensionNames() {
-    return columnData
-        .stream()
-        .map(FCSDimension::getShortName)
+    return columnData.stream().map(FCSDimension::getShortName)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public double[] getRow(int index, boolean transformData) {
     final double[] row = new double[getDimensionCount()];
     int i = 0;
-    if (transformData){
-      for (String shortName: getDimensionNames()) {
+    if (transformData) {
+      for (String shortName : getDimensionNames()) {
         FCSDimension dim = getDimension(shortName);
         double rawValue = dim.getData()[index];
         row[i] = dim.getPreferredTransform().transform(rawValue);
         i++;
-        }
+      }
     } else {
-      for (String shortName: getDimensionNames()) {
+      for (String shortName : getDimensionNames()) {
         FCSDimension dim = getDimension(shortName);
         row[i] = dim.getData()[index];
         i++;
-        }
+      }
     }
     return row;
   }
@@ -272,11 +292,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public FCSDimension getDimension(String shortName) {
-    Optional<FCSDimension> matchingDimension = columnData
-        .stream()
-        .filter(dimension -> shortName.equals(dimension.getShortName()))
-        .findAny();
-    if (matchingDimension.isPresent()){
+    Optional<FCSDimension> matchingDimension = columnData.stream()
+        .filter(dimension -> shortName.equals(dimension.getShortName())).findAny();
+    if (matchingDimension.isPresent()) {
       return matchingDimension.get();
     } else {
       return null;
@@ -298,9 +316,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public String[] getSubsetRow(int index) {
     final String[] row = new String[getSubsets().size()];
     int i = 0;
-    for (Subset s: subsets) {
+    for (Subset s : subsets) {
       boolean value = s.getMembers().get(index);
-      if (value){
+      if (value) {
         row[i] = s.getLabel() + "+";
       } else {
         row[i] = s.getLabel() + "-";
@@ -316,8 +334,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public boolean hasDimension(String shortName) {
     Iterator<FCSDimension> iter = columnData.iterator();
-    while (iter.hasNext()){
-      if (iter.next().getShortName().equals(shortName)){
+    while (iter.hasNext()) {
+      if (iter.next().getShortName().equals(shortName)) {
         return true;
       }
     }
@@ -325,8 +343,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public boolean hasSubset(String subsetNameScatter) {
-    for (Subset s:subsets){
-      if (s.getLabel().equals(subsetNameScatter)){
+    for (Subset s : subsets) {
+      if (s.getLabel().equals(subsetNameScatter)) {
         return true;
       }
     }
@@ -354,8 +372,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       final Message.Keyword newKeyword = keyBuilder.build();
       messageBuilder.addKeyword(newKeyword);
     }
-    // add the FCS Dimensions.    
-    for (FCSDimension dim : columnData){
+    // add the FCS Dimensions.
+    for (FCSDimension dim : columnData) {
       Message.Dimension.Builder dimBuilder = Message.Dimension.newBuilder();
       dimBuilder.setIndex(dim.getIndex());
       dimBuilder.setPnn(dim.getShortName());
@@ -364,7 +382,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       dimBuilder.setPneF2(dim.getPNEF2());
       dimBuilder.setPnr(dim.getRange());
       dimBuilder.setId(dim.getID());
-      
+
       // Add the numeric data
       final double[] rawArray = dim.getData();
       for (final double value : rawArray) {
@@ -376,27 +394,38 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       final Message.Dimension fcsdim = dimBuilder.build();
       messageBuilder.addDimension(fcsdim);
     }
-    
-    //Add subsets
-    if (subsets!=null){
-      for (Subset s:subsets){
-        Message.Subset.Builder sBuilder = Message.Subset.newBuilder();
-        sBuilder.setId(s.getID());
-        sBuilder.setParentID(s.getParentID());
-        sBuilder.setName(s.getLabel());
-        BitSet mask = s.getMembers();
-        for (int i=0;i<mask.size();i++){
-          sBuilder.addMask(mask.get(i));
-        }
-      Message.Subset subset = sBuilder.build();
-      messageBuilder.addSubset(subset);
-      }
-     
+
+    // Add subsets
+    if (subsets != null) {
+      subsets.forEach(subset -> saveSubset(messageBuilder, subset));
     }
-    
+
     // build the message
     final Message buffer = messageBuilder.build();
     return buffer.toByteArray();
+  }
+
+  private void saveSubset(final Message.Builder messageBuilder, Subset currentSubset) {
+    Message.Subset.Builder sBuilder = Message.Subset.newBuilder();
+    sBuilder.setId(currentSubset.getID());
+    sBuilder.setParentID(currentSubset.getParentID());
+    sBuilder.setName(currentSubset.getLabel());
+    sBuilder.setSubsetType(currentSubset.getType());
+    sBuilder.setOverrideID(currentSubset.getOverrideID());
+
+    String[] dimensions = currentSubset.getDimensions();
+    if (dimensions != null)
+      sBuilder.addAllDimensions(Arrays.asList(dimensions));
+
+    Double[] descriptors = currentSubset.getDescriptors();
+    if (descriptors != null)
+      sBuilder.addAllDoubleValue(Arrays.asList(descriptors));
+
+    BitSet mask = currentSubset.getMembers();
+    for (int i = 0; i < mask.size(); i++)
+      sBuilder.addMask(mask.get(i));
+    Message.Subset subset = sBuilder.build();
+    messageBuilder.addSubset(subset);
   }
 
   public void save(FileOutputStream out) throws IOException {

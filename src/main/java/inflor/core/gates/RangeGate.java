@@ -27,12 +27,14 @@ import org.w3c.dom.Element;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.proto.FCSFrameProto;
+import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 import main.java.inflor.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {
 
   private static final long serialVersionUID = -4829977491684130257L;
-  ArrayList<RangeDimension> dimensions = new ArrayList<RangeDimension>();
+  ArrayList<RangeDimension> dimensions = new ArrayList<>();
   private String label;
 
   public RangeGate(String label, String[] names, double[] min, double[] max, String priorUUID) {
@@ -88,8 +90,10 @@ public class RangeGate extends AbstractGate {
   }
 
   public String[] getDimensionNames() {
-    String[] names = (String[]) dimensions.stream().map(dim -> dim.getName()).toArray();
-    return names;
+    return (String[]) dimensions
+                        .stream()
+                        .map(RangeDimension::getName)
+                        .toArray();
   }
 
   @Override
@@ -99,10 +103,10 @@ public class RangeGate extends AbstractGate {
   }
 
   @Override
-  public void validate() throws IllegalStateException {
+  public void validate() throws IllegalArgumentException {
     if (dimensions == null || dimensions.size() <= 1) {
       final String message = "A range gate must have at least 1 dimension";
-      final IllegalStateException ise = new IllegalStateException(message);
+      final IllegalArgumentException ise = new IllegalArgumentException(message);
       ise.printStackTrace();
       throw ise;
     }
@@ -143,7 +147,7 @@ public class RangeGate extends AbstractGate {
       }
     }
   }
-
+  @Override
   public String getLabel() {
     return this.label;
   }
@@ -154,5 +158,29 @@ public class RangeGate extends AbstractGate {
   
   public double getMaxValue(int i) {
     return dimensions.get(i).max;
+  }
+
+  @Override
+  public Type getType() {
+    return FCSFrameProto.Message.Subset.Type.RANGE;
+  }
+
+  @Override
+  public String[] getDimensions() {
+    String[] dimensionNames = new String[dimensions.size()];
+    for (int i=0;i<dimensionNames.length;i++)
+      dimensionNames[i] = dimensions.get(i).getName();
+    return dimensionNames;
+  }
+
+  @Override
+  public Double[] getDescriptors() {
+    int size = dimensions.size()*2;
+    Double[] descriptors = new Double[size];
+    for (int i=0;i<dimensions.size();i++){
+      descriptors[2*i] = dimensions.get(i).min;
+      descriptors[2*i+1] = dimensions.get(i).max;
+    }
+    return descriptors;
   }
 }

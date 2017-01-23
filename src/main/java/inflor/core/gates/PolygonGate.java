@@ -28,6 +28,8 @@ import org.w3c.dom.Element;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.proto.FCSFrameProto;
+import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 import main.java.inflor.core.utils.FCSUtilities;
 
 public class PolygonGate extends AbstractGate {
@@ -42,18 +44,18 @@ public class PolygonGate extends AbstractGate {
   String rangeName;
   ArrayList<Double> domainPoints;
   ArrayList<Double> rangePoints;
-
+  
   public PolygonGate(String label, String domainName, double[] domainPoints, String rangeName,
       double[] rangePoints, String priorUUID) {
     super(priorUUID);
     this.gateLabel = label;
     this.domainName = domainName;
     this.rangeName = rangeName;
-    this.domainPoints = new ArrayList<Double>();
+    this.domainPoints = new ArrayList<>();
     for (double d : domainPoints) {
       this.domainPoints.add(d);
     }
-    this.rangePoints = new ArrayList<Double>();
+    this.rangePoints = new ArrayList<>();
     for (double d : rangePoints) {
       this.rangePoints.add(d);
     }
@@ -110,6 +112,7 @@ public class PolygonGate extends AbstractGate {
     if (domainPoints.size() < 3 || rangePoints.size() < 3) {
       final String message = "A polygon requires at least 3 verticies!";
       final IllegalStateException ise = new IllegalStateException(message);
+      
       ise.printStackTrace();
       throw ise;
     }
@@ -135,18 +138,41 @@ public class PolygonGate extends AbstractGate {
   public String getRangeAxisName() {
     return rangeName;
   }
-
+  
+  @Override
   public String getLabel() {
     return this.gateLabel;
   }
 
   public double[] getFlatVertexArray() {
     double[] result = new double[2*domainPoints.size()];
-    for(int i=0;i<result.length;i++){
+    for(int i=0;i<result.length;i+=2){
       result[i] = domainPoints.get(i/2);
       result[i+1] = rangePoints.get(i/2);
-      i++;
     }
     return result;
+  }
+
+  @Override
+  public Type getType() {
+    return FCSFrameProto.Message.Subset.Type.POLYGON;
+  }
+
+  @Override
+  public String[] getDimensions() {
+    return new String[] {domainName, rangeName};
+  }
+
+  @Override
+  public Double[] getDescriptors() {
+    /**
+     * Only recasting to big D double. 
+     * Proto likes have big D, JFree little d. 
+     */
+    double[] flatVertices = getFlatVertexArray();
+    Double[] descriptors = new Double[getFlatVertexArray().length];
+    for (int i=0;i<flatVertices.length;i++) 
+      descriptors[i] = flatVertices[i];
+    return descriptors;
   }
 }
