@@ -21,13 +21,16 @@
 package main.java.inflor.core.gates;
 
 import java.util.BitSet;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
+import main.java.inflor.core.data.DomainObject;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.proto.FCSFrameProto.Message;
 
-public class BooleanGate extends AbstractGate {
+public class BooleanGate extends DomainObject {
 
   /**
    * 
@@ -43,7 +46,6 @@ public class BooleanGate extends AbstractGate {
     this.label = label;
   }
 
-  @Override
   public BitSet evaluate(FCSFrame data) {
     validate();
     final BitSetAccumulator acc = new BitSetAccumulator(operator);
@@ -65,13 +67,11 @@ public class BooleanGate extends AbstractGate {
     operator = op;
   }
 
-  @Override
   public Element toXMLElement() {
     // TODO Auto-generated method stub
     return null;
   }
 
-  @Override
   public void validate() throws IllegalStateException {
     if (operator != null) {
       final String message = "A boolean operator must be selected.";
@@ -87,18 +87,11 @@ public class BooleanGate extends AbstractGate {
       throw ise;
     }
   }
-
-  @Override
-  public String getDomainAxisName() {
-    return null;
+  
+  public Message.Subset.Type getType (){
+	  return Message.Subset.Type.BOOLEAN;
   }
 
-  @Override
-  public String getRangeAxisName() {
-    return null;
-  }
-
-  @Override
   public String getLabel() {
     return this.label;
   }

@@ -195,8 +195,9 @@ public class ReadFCSSetNodeModel extends NodeModel {
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
     fileCount = filePaths.size();
     exec.checkCanceled();
+    int downSize = calculatePreviewSize(container);
     filePaths.parallelStream().map(FCSFileReader::read)
-        .forEach(columnStore -> addRow(columnStore, container, exec));
+        .forEach(columnStore -> addRow(columnStore, container, exec, downSize));
     exec.checkCanceled();
 
 
@@ -207,10 +208,18 @@ public class ReadFCSSetNodeModel extends NodeModel {
   }
 
   private synchronized void addRow(FCSFrame dataFrame, BufferedDataContainer container,
-      ExecutionContext exec) {
-    if (previewFrame == null) {
-      BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), calculatePreviewSize(container));
+      ExecutionContext exec, int downSize) {
+	
+	//Update the preview frame
+	if (previewFrame == null) {
+      BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), downSize);
+      previewFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
+    } else {
+    	BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), downSize);
+    	FCSFrame previewChunk = FCSUtilities.filterColumnStore(mask, dataFrame);
+    	FCSUtilities.createConcatenatedFrame(Arrays.asList(new FCSFrame[]{previewFrame, previewChunk}));
     }
+	//create the row
     final RowKey key = new RowKey("Row " + currentFileIndex);
     final String fsName = currentFileIndex + "ColumnStore.fs";
     FileStore fileStore;
@@ -251,15 +260,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
       perFileCount = minCount;
       logger.warn("1 or more files do not have enough events for specified sample size.  Using: " + minCount + " instead.");
     }
-    
+    //Check that we don't exceed a "reasonable" number of events.
     if (perFileCount*fileCount>mFileMax.getIntValue()){
       perFileCount = mFileMax.getIntValue()/numFiles;
-      logger.warn("1 or more files do not have enough events for specified sample size.  Using: " + finalFileCount + " instead.");
+      logger.warn("The resulting preview frame is too large. Using: " + perFileCount + " events per file instead.");
     } 
-    
-    
-    
-    return 1000;
+    return perFileCount * fileCount;
   }
 
   private ArrayList<String> getFilePaths(String dirPath) {

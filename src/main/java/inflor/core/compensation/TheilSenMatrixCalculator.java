@@ -20,12 +20,12 @@ import com.google.common.primitives.Doubles;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.ParticleType;
 import main.java.inflor.core.fcs.ParameterTypes;
 import main.java.inflor.core.gates.RangeGate;
 import main.java.inflor.core.logging.LogFactory;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.nodes.compensation.calculate.ParticleType;
 
 public class TheilSenMatrixCalculator {
   
@@ -354,7 +354,7 @@ public class TheilSenMatrixCalculator {
     return particleTypeMap;
   }
 
-  public ParticleType getParticleType(String key) {
+  public main.java.inflor.core.data.ParticleType getParticleType(String key) {
     return particleTypeMap.get(key);
   }
 }

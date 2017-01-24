@@ -32,6 +32,7 @@ import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.ParticleType;
 import main.java.inflor.core.ui.ButtonColumn;
 import main.java.inflor.core.ui.TableColumnAdjuster;
 

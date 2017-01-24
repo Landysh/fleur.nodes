@@ -14,6 +14,7 @@ import org.knime.core.node.NodeSettingsWO;
 
 import main.java.inflor.core.compensation.TheilSenMatrixCalculator;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.ParticleType;
 import main.java.inflor.core.utils.FCSUtilities;
 
 public class CalculateCompensationNodeSettings {

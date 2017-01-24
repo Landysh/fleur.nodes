@@ -43,6 +43,12 @@ public class FCSUtilities {
   private static final String REGEX_IS_COMPENSATED = "\\[.*\\]";
   private static final String DEFAULT_PREFFERED_NAME_KEYWORD = "$FIL";
   public static final String KEY_FILENAME = "File name when read.";
+public static final String KEY_MERGE_MAP = "INFLOR_MERGE_MAP";
+public static final int MERGE_DIMENSION_INDEX = -2;
+public static final String MERGE_DIMENSION_NAME = "Merged_Samples";
+public static final CharSequence DELIMITER = "||";
+public static final String DELIMITER_REGEX = "\\|\\|";
+
 
   private FCSUtilities(){
     
