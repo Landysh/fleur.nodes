@@ -18,15 +18,11 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
  */
 public class ReadFCSSetNodeDialog extends DefaultNodeSettingsPane {
 
-  /**
-   * New pane for configuring ReadFCSSet node dialog. This is just a suggestion to demonstrate
-   * possible default dialog components.
-   */
   protected ReadFCSSetNodeDialog() {
     super();
     // Path to files.
     SettingsModelString pathModel =
-        new SettingsModelString(ReadFCSSetNodeModel.CFGKEY_PATH, ReadFCSSetNodeModel.DEFAULT_PATH);
+        new SettingsModelString(ReadFCSSetNodeModel.KEY_PATH, ReadFCSSetNodeModel.DEFAULT_PATH);
     DialogComponentFileChooser pathComponent = new DialogComponentFileChooser(pathModel,
         "ReadFCSSetPathHistory", JFileChooser.OPEN_DIALOG, true);
     addDialogComponent(pathComponent);
