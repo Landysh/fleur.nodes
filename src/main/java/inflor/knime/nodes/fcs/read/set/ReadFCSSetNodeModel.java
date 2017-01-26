@@ -12,11 +12,11 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.jblas.util.Logger;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
@@ -46,6 +46,7 @@ import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
 import main.java.inflor.core.utils.BitSetUtils;
+import main.java.inflor.core.utils.FCSConcatenator;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
 import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
@@ -82,7 +83,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
 
   private int currentFileIndex = 0;
   private int fileCount;
-  private FCSFrame previewFrame;
+  private String previewFrame;
 
   /**
    * Constructor for the node model.
@@ -97,11 +98,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
-    return new DataTableSpec[] {createSpec()};
+    return new DataTableSpec[] {createSpec(false)};
   }
 
 
-  private HashMap<String, String> createColumnPropertiesContent() {
+  private HashMap<String, String> createColumnPropertiesContent(boolean executing) {
     /**
      * Creates column properties for an FCS Set by looking all of the headers and setting shared
      * keyword values.
@@ -109,16 +110,14 @@ public class ReadFCSSetNodeModel extends NodeModel {
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
     List<Map<String, String>> headers = filePaths.stream().map(FCSFileReader::readHeaderOnly)
         .filter(map -> !map.isEmpty()).collect(Collectors.toList());
-
-
+    
     final HashMap<String, String> content = new HashMap<>();
     // Merge all keywords.
     headers.forEach(map -> map.entrySet().forEach(entry -> updateContent(content, entry)));
-
+    
     // Collect all dimensions for experiment in one Hashset.
     Optional<TreeSet<FCSDimension>> optionalDimensions = filePaths.stream()
         .map(FCSFileReader::readNoData).map(FCSFrame::getData).reduce(this::merge);
-
 
     if (optionalDimensions.isPresent()) {
       // Add dimension names string
@@ -134,12 +133,39 @@ public class ReadFCSSetNodeModel extends NodeModel {
       ArrayList<String> displayNames = optionalDimensions.get().stream().sequential()
           .filter(distinctByKey(FCSDimension::getShortName)).map(FCSDimension::getDisplayName)
           .collect(Collectors.toCollection(ArrayList::new));
-
+      
       String displayNamesString = String.join(NodeUtilities.DELIMITER, displayNames);
       logger.info(displayNamesString);
       content.put(NodeUtilities.DISPLAY_NAMES_KEY, displayNamesString);
+      
+      //Create preview frame
+      if (executing){
+        createPreviewFrame(filePaths, content);
+        content.put(FCSUtilities.PROP_KEY_PREVIEW_FRAME, previewFrame);
+      }
     }
     return content;
+  }
+
+  private void createPreviewFrame(final ArrayList<String> filePaths,
+      final HashMap<String, String> content) {
+    int downSize = calculatePreviewSize(content);
+    if (previewFrame==null&&downSize>0){
+      BinaryOperator<FCSFrame> concater = new FCSConcatenator();
+      Optional<FCSFrame> previewMaybe = filePaths
+          .parallelStream()
+          .map(FCSFileReader::read)
+          .map(frame -> downSample(frame, downSize))
+          .reduce(concater);
+       if (previewMaybe.isPresent()){
+         previewFrame = previewMaybe.get().saveAsString();
+       }
+    }
+  }
+  
+  private FCSFrame downSample(FCSFrame inFrame, int downSize){
+    BitSet mask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), downSize);
+    return FCSUtilities.filterColumnStore(mask, inFrame);
   }
 
   private TreeSet<FCSDimension> merge(TreeSet<FCSDimension> a, TreeSet<FCSDimension> b) {
@@ -160,11 +186,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
     }
   }
 
-  private DataTableSpec createSpec() {
+  private DataTableSpec createSpec(boolean executing) {
     DataColumnSpecCreator creator =
         new DataColumnSpecCreator("FCS Frame", FCSFrameFileStoreDataCell.TYPE);
     // Create properties
-    HashMap<String, String> content = createColumnPropertiesContent();
+    HashMap<String, String> content = createColumnPropertiesContent(executing);
     DataColumnProperties properties = new DataColumnProperties(content);
     creator.setProperties(properties);
     // Create spec
@@ -190,17 +216,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
     logger.info("Beginning Execution.");
     fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // Create the output spec and data container.
-    final DataTableSpec outSpec = createSpec();
+    final DataTableSpec outSpec = createSpec(true);
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
     fileCount = filePaths.size();
     exec.checkCanceled();
-    int downSize = calculatePreviewSize(container);
-    filePaths.parallelStream().map(FCSFileReader::read)
-        .forEach(columnStore -> addRow(columnStore, container, exec, downSize));
+    filePaths
+      .parallelStream()
+      .map(FCSFileReader::read)
+      .forEach(columnStore -> addRow(columnStore, container, exec));
     exec.checkCanceled();
-
-
+            
     // once we are done, we close the container and return its table
     container.close();
     final BufferedDataTable out = container.getTable();
@@ -208,17 +234,8 @@ public class ReadFCSSetNodeModel extends NodeModel {
   }
 
   private synchronized void addRow(FCSFrame dataFrame, BufferedDataContainer container,
-      ExecutionContext exec, int downSize) {
+      ExecutionContext exec) {
 	
-	//Update the preview frame
-	if (previewFrame == null) {
-      BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), downSize);
-      previewFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
-    } else {
-    	BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), downSize);
-    	FCSFrame previewChunk = FCSUtilities.filterColumnStore(mask, dataFrame);
-    	FCSUtilities.createConcatenatedFrame(Arrays.asList(new FCSFrame[]{previewFrame, previewChunk}));
-    }
 	//create the row
     final RowKey key = new RowKey("Row " + currentFileIndex);
     final String fsName = currentFileIndex + "ColumnStore.fs";
@@ -240,13 +257,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
     }
   }
 
-  private int calculatePreviewSize(BufferedDataContainer container) {
-    DataColumnSpec spec = container.getTableSpec().getColumnSpec(0);
+  private int calculatePreviewSize(HashMap<String, String> content) {
     //Count the files
-    String fileNames = spec.getProperties().getProperty("$FIL");
+    String fileNames = content.get("$FIL");
     int numFiles = fileNames.split(NodeUtilities.DELIMITER_REGEX).length;
     //minimum events per events per file
-    String countString = spec.getProperties().getProperty("$COUNT");
+    String countString = content.get(FCSUtilities.FCSKEY_EVENT_COUNT);
     String[] countStrings = countString.split(NodeUtilities.DELIMITER_REGEX);
     double[] counts = new double[countStrings.length];
     for (int i=0;i<countStrings.length;i++){
@@ -261,11 +277,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
       logger.warn("1 or more files do not have enough events for specified sample size.  Using: " + minCount + " instead.");
     }
     //Check that we don't exceed a "reasonable" number of events.
-    if (perFileCount*fileCount>mFileMax.getIntValue()){
+    if (perFileCount*fileCount>mPreviewMax.getIntValue()){
       perFileCount = mFileMax.getIntValue()/numFiles;
       logger.warn("The resulting preview frame is too large. Using: " + perFileCount + " events per file instead.");
     } 
-    return perFileCount * fileCount;
+    return perFileCount * numFiles;
   }
 
   private ArrayList<String> getFilePaths(String dirPath) {
@@ -306,7 +322,9 @@ public class ReadFCSSetNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {/* TODO */}
+  protected void reset() {
+    previewFrame = null;
+    }
 
   /**
    * {@inheritDoc}

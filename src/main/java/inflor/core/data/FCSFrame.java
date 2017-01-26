@@ -242,7 +242,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public FCSFrame deepCopy() throws InvalidProtocolBufferException {
-    byte[] bytes = this.save();
+    byte[] bytes = this.saveAsBytes();
     return FCSFrame.load(bytes);
   }
 
@@ -351,7 +351,17 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return false;
   }
 
-  public byte[] save() {
+  public byte[] saveAsBytes() {
+    final Message buffer = createMessage();
+    return buffer.toByteArray();
+  }
+  
+  public String saveAsString() {
+    final Message buffer = createMessage();
+    return buffer.toString();
+  }
+
+  private Message createMessage() {
     // create the builder
     final Message.Builder messageBuilder = Message.newBuilder();
     messageBuilder.setId(this.getID());
@@ -402,7 +412,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
     // build the message
     final Message buffer = messageBuilder.build();
-    return buffer.toByteArray();
+    return buffer;
   }
 
   private void saveSubset(final Message.Builder messageBuilder, Subset currentSubset) {
@@ -429,7 +439,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public void save(FileOutputStream out) throws IOException {
-    final byte[] message = this.save();
+    final byte[] message = this.saveAsBytes();
     out.write(message);
     out.flush();
   }

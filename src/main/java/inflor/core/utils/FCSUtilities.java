@@ -48,6 +48,8 @@ public static final int MERGE_DIMENSION_INDEX = -2;
 public static final String MERGE_DIMENSION_NAME = "Merged_Samples";
 public static final CharSequence DELIMITER = "||";
 public static final String DELIMITER_REGEX = "\\|\\|";
+public static final String PROP_KEY_PREVIEW_FRAME = "Inflor Preview Frame";
+public static final String FCSKEY_EVENT_COUNT = "$TOT";
 
 
   private FCSUtilities(){
