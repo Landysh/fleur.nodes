@@ -15,9 +15,14 @@ public class Histogram2D {
   private double[] xBins;
   private int yBinCount;
   private int xBinCount;
+  private double xMin;
+  private double yMin;
 
   public Histogram2D(double[] xData, double xMin, double xMax, double[] yData, double yMin,
       double yMax) {
+    
+    this.xMin = xMin;
+    this.yMin = yMin;
 
     this.xBinCount = ChartingDefaults.BIN_COUNT;
     this.yBinCount = ChartingDefaults.BIN_COUNT;
@@ -41,8 +46,8 @@ public class Histogram2D {
     for (int i = 0; i < xData.length; i++) {
       double x = xData[i];
       double y = yData[i];
-      int xBin = (int) (x / xBinWidth);
-      int yBin = (int) (y / yBinWidth);
+      int xBin = (int) ((x-xMin)/ xBinWidth);
+      int yBin = (int) ((y-yMin)/ yBinWidth);
       int histogramIndex = yBinCount * xBin + yBin;
       if (histogramIndex < 0) {
         histogramIndex = 0;
