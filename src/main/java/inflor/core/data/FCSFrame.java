@@ -409,10 +409,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     if (subsets != null) {
       subsets.forEach(subset -> saveSubset(messageBuilder, subset));
     }
-
-    // build the message
-    final Message buffer = messageBuilder.build();
-    return buffer;
+    return messageBuilder.build();
   }
 
   private void saveSubset(final Message.Builder messageBuilder, Subset currentSubset) {
@@ -421,7 +418,10 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     sBuilder.setParentID(currentSubset.getParentID());
     sBuilder.setName(currentSubset.getLabel());
     sBuilder.setSubsetType(currentSubset.getType());
-    sBuilder.setOverrideID(currentSubset.getOverrideID());
+    String overrideID = currentSubset.getOverrideID();
+    if (overrideID!=null){
+      sBuilder.setOverrideID(currentSubset.getOverrideID());
+    }
 
     String[] dimensions = currentSubset.getDimensions();
     if (dimensions != null)
@@ -459,5 +459,21 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   @Override
   public String toString() {
     return getDisplayName();
+  }
+
+  public FCSFrame getFilteredFrame(String referenceSubset) {
+    Optional<Subset> targetSubset = subsets
+      .stream()
+      .filter(sub->sub.getLabel().equals(referenceSubset))
+      .findAny();
+    
+    if (targetSubset.isPresent()){
+      Subset currentSubset = targetSubset.get();
+      List<Subset> ancestors = currentSubset.findAncestors(getSubsets());
+      BitSet mask = currentSubset.evaluate(ancestors);
+      return FCSUtilities.filterColumnStore(mask, this);
+    } else {
+      return null;
+    }
   }
 }
