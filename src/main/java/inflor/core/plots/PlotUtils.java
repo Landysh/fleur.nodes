@@ -22,6 +22,7 @@ package main.java.inflor.core.plots;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.logging.Logger;
 
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -29,6 +30,7 @@ import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.data.Range;
 
 import main.java.inflor.core.fcs.ParameterTypes;
+import main.java.inflor.core.logging.LogFactory;
 import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.transforms.BoundDisplayTransform;
 import main.java.inflor.core.transforms.LogicleTransform;
@@ -61,12 +63,15 @@ public class PlotUtils {
   public static AbstractFCChart createPlot(ChartSpec plotSpec) {
     PlotTypes type = plotSpec.getPlotType();
     AbstractFCChart newPlot = null;
-    if (type.equals(PlotTypes.DENSITY)) {
-      newPlot = new DensityPlot(plotSpec);
+    if (type.equals(PlotTypes.SCATTER)) {
+      newPlot = new ScatterPlot(plotSpec);
     } else if (type.equals(PlotTypes.HISTOGRAM)) {
       newPlot = new HistogramPlot(plotSpec);
+    } else if (type.equals(PlotTypes.DENSITY)) {
+      newPlot = new DensityPlot(plotSpec);
     } else {
-      //noop
+      Logger logger = LogFactory.createLogger(PlotUtils.class.getName());
+      logger.fine("PlotType not supported: " + type.name());
     }
     return newPlot;
   }
@@ -77,9 +82,9 @@ public class PlotUtils {
 
     if (selectedType == TransformType.LINEAR
         ||selectedType == TransformType.BOUNDARY) {
-      newTransform = new BoundDisplayTransform(0, 262144);
+      newTransform = new BoundDisplayTransform(Double.MAX_VALUE, Double.MAX_VALUE);
     } else if (selectedType == TransformType.LOGARITHMIC) {
-      newTransform = new LogrithmicTransform(100, 262144);
+      newTransform = new LogrithmicTransform(1, 1000000);
     } else if (selectedType == TransformType.LOGICLE) {
       newTransform = new LogicleTransform();
     } else {
@@ -102,7 +107,7 @@ public class PlotUtils {
   public static AbstractTransform createDefaultTransform(String parameterName) {
     if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.FORWARD_SCATTER.matches(parameterName)
         || ParameterTypes.SIDE_SCATTER.matches(parameterName)|| ParameterTypes.TIME.matches(parameterName)) {
-      return new BoundDisplayTransform();
+      return new BoundDisplayTransform(0,262144);
     } else {
       return new LogicleTransform();
     }
