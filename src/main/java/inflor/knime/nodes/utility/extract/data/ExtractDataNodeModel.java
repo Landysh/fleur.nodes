@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extractsubset;
+package main.java.inflor.knime.nodes.utility.extract.data;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +43,10 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
  *
  * @author Aaron Hart
  */
-public class ExtractTrainingSetNodeModel extends NodeModel {
+public class ExtractDataNodeModel extends NodeModel {
 
   // the logger instance
-  private static final NodeLogger logger = NodeLogger.getLogger(ExtractTrainingSetNodeModel.class);
+  private static final NodeLogger logger = NodeLogger.getLogger(ExtractDataNodeModel.class);
 
 
 
@@ -76,10 +76,14 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
 
 
 
+  private int rowIndex;
+
+
+
   /**
    * Constructor for the node model.
    */
-  protected ExtractTrainingSetNodeModel() {
+  protected ExtractDataNodeModel() {
     super(1, 1);
   }
 
@@ -95,11 +99,11 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     DataTableSpec outputSpec = createSpec(inData[0].getSpec());
     BufferedDataContainer container = exec.createDataContainer(outputSpec);
     int frameIndex = inData[0].getSpec().findColumnIndex(mSelectedColumn.getStringValue());
-    int rowIndex = -1;
+    rowIndex = 0;
     for (DataRow inRow : inData[0]) {
       FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(frameIndex);
       FCSFrame dataFrame = cell.getFCSFrameValue();
-      rowIndex = writeRows(container, rowIndex, dataFrame);
+      writeRows(container, dataFrame);
       // update the progress bar
       exec.checkCanceled();
       exec.setProgress((double) rowIndex / (inData[0].size() * mCount.getIntValue()));
@@ -110,23 +114,22 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
     return new BufferedDataTable[] {out};
   }
 
-  private int writeRows(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame) {
+  private void writeRows(BufferedDataContainer container, FCSFrame dataFrame) {
     if (mDownsample.getBooleanValue()) {
       BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mCount.getIntValue());
       for (int i = 0; i < mask.length(); i++) {
         if (mask.get(i)) {
-          rowIndex = badWriteRow(container, rowIndex, dataFrame, i);
+          badWriteRow(container, dataFrame, i);
         }
       }
     } else {
       for (int i = 0; i < dataFrame.getRowCount(); i++) {
-        rowIndex = badWriteRow(container, rowIndex, dataFrame, i);
+        badWriteRow(container, dataFrame, i);
       }
     }
-    return rowIndex;
   }
 
-  private int badWriteRow(BufferedDataContainer container, int rowIndex, FCSFrame dataFrame,
+  private void badWriteRow(BufferedDataContainer container, FCSFrame dataFrame,
       int i) {
     DataCell[] cells;
     if (dataFrame.getSubsets().isEmpty()) {
@@ -135,10 +138,10 @@ public class ExtractTrainingSetNodeModel extends NodeModel {
       cells = writeCellsWithSubsetColumns(dataFrame, i);
     }
     cells[cells.length - 1] = new StringCell(dataFrame.getDisplayName());
-    final RowKey rowKey = new RowKey("Row " + rowIndex++);
+    final RowKey rowKey = new RowKey("Row " + rowIndex);
     final DataRow tableRow = new DefaultRow(rowKey, cells);
     container.addRowToTable(tableRow);
-    return rowIndex;
+    rowIndex++;
   }
 
   private DataCell[] writeCellsWithOnlyDimensionColumns(FCSFrame dataFrame, int i) {

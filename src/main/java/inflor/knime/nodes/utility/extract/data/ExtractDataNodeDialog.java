@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extractsubset;
+package main.java.inflor.knime.nodes.utility.extract.data;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponent;
@@ -22,7 +22,7 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
  * 
  * @author Aaron Hart
  */
-public class ExtractTrainingSetNodeDialog extends DefaultNodeSettingsPane {
+public class ExtractDataNodeDialog extends DefaultNodeSettingsPane {
 
   private static final String LABEL_EVENTS_PER_FILE = "Events per file";
   private static final String LABEL_SELECTED_COLUMN = "Selected column";
@@ -35,13 +35,13 @@ public class ExtractTrainingSetNodeDialog extends DefaultNodeSettingsPane {
    * New pane for configuring ExtractTrainingSet node dialog. This is just a suggestion to
    * demonstrate possible default dialog components.
    */
-  protected ExtractTrainingSetNodeDialog() {
+  protected ExtractDataNodeDialog() {
     super();
 
     // the fcs column filter chooser.
     SettingsModelColumnName columnNameSM =
-        new SettingsModelColumnName(ExtractTrainingSetNodeModel.KEY_SELECTED_COLUMN,
-            ExtractTrainingSetNodeModel.DEFAULT_COLUMN);
+        new SettingsModelColumnName(ExtractDataNodeModel.KEY_SELECTED_COLUMN,
+            ExtractDataNodeModel.DEFAULT_COLUMN);
     DialogComponent fcsFrameDCCF = new DialogComponentColumnNameSelection(columnNameSM,
         LABEL_SELECTED_COLUMN, FCS_INPUT_INDEX, new FCSFrameCellColumnFilter());
     addDialogComponent(fcsFrameDCCF);
@@ -49,8 +49,8 @@ public class ExtractTrainingSetNodeDialog extends DefaultNodeSettingsPane {
 
     // Boolean for whether or not to transform when exporting the data
     DialogComponent transformBoolComp = new DialogComponentBoolean(
-        new SettingsModelBoolean(ExtractTrainingSetNodeModel.KEY_TRANSFORM_DATA,
-            ExtractTrainingSetNodeModel.DEFAULT_TRANSFORM),
+        new SettingsModelBoolean(ExtractDataNodeModel.KEY_TRANSFORM_DATA,
+            ExtractDataNodeModel.DEFAULT_TRANSFORM),
         LABEL_TRANSFORM_DATA);
     addDialogComponent(transformBoolComp);
 
@@ -59,17 +59,17 @@ public class ExtractTrainingSetNodeDialog extends DefaultNodeSettingsPane {
 
     // Boolean for whether or not to downsample the data.
     DialogComponent downsampleBoolComp = new DialogComponentBoolean(
-        new SettingsModelBoolean(ExtractTrainingSetNodeModel.KEY_DOWNSAMPLE_DATA,
-            ExtractTrainingSetNodeModel.DEFAULT_DOWNSAMPLE),
+        new SettingsModelBoolean(ExtractDataNodeModel.KEY_DOWNSAMPLE_DATA,
+            ExtractDataNodeModel.DEFAULT_DOWNSAMPLE),
         LABEL_DOWNSAMPLE_DATA);
     addDialogComponent(downsampleBoolComp);
 
     
     // event count per file
     addDialogComponent(new DialogComponentNumber(
-        new SettingsModelIntegerBounded(ExtractTrainingSetNodeModel.KEY_PERFILE_EVENT_COUNT,
-            ExtractTrainingSetNodeModel.DEFAULT_COUNT, ExtractTrainingSetNodeModel.MIN_COUNT,
-            ExtractTrainingSetNodeModel.MAX_COUNT),
+        new SettingsModelIntegerBounded(ExtractDataNodeModel.KEY_PERFILE_EVENT_COUNT,
+            ExtractDataNodeModel.DEFAULT_COUNT, ExtractDataNodeModel.MIN_COUNT,
+            ExtractDataNodeModel.MAX_COUNT),
         LABEL_EVENTS_PER_FILE, /* step */ 1000, /* componentwidth */ 10));
 
     closeCurrentGroup();

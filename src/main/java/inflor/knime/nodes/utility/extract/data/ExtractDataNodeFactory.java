@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extractsubset;
+package main.java.inflor.knime.nodes.utility.extract.data;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
@@ -11,14 +11,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class ExtractTrainingSetNodeFactory extends NodeFactory<ExtractTrainingSetNodeModel> {
+public class ExtractDataNodeFactory extends NodeFactory<ExtractDataNodeModel> {
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public ExtractTrainingSetNodeModel createNodeModel() {
-    return new ExtractTrainingSetNodeModel();
+  public ExtractDataNodeModel createNodeModel() {
+    return new ExtractDataNodeModel();
   }
 
   /**
@@ -33,9 +33,9 @@ public class ExtractTrainingSetNodeFactory extends NodeFactory<ExtractTrainingSe
    * {@inheritDoc}
    */
   @Override
-  public NodeView<ExtractTrainingSetNodeModel> createNodeView(final int viewIndex,
-      final ExtractTrainingSetNodeModel nodeModel) {
-    return new ExtractTrainingSetNodeView(nodeModel);
+  public NodeView<ExtractDataNodeModel> createNodeView(final int viewIndex,
+      final ExtractDataNodeModel nodeModel) {
+    return new ExtractDataNodeView(nodeModel);
   }
 
   /**
@@ -51,7 +51,7 @@ public class ExtractTrainingSetNodeFactory extends NodeFactory<ExtractTrainingSe
    */
   @Override
   public NodeDialogPane createNodeDialogPane() {
-    return new ExtractTrainingSetNodeDialog();
+    return new ExtractDataNodeDialog();
   }
 
 }
