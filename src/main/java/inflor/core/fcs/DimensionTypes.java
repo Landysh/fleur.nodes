@@ -20,7 +20,7 @@
  */
 package main.java.inflor.core.fcs;
 
-public enum ParameterTypes {
+public enum DimensionTypes {
   FORWARD_SCATTER(new String[] {".*fsc.*", ".*fcs.*", ".*forward.*", ".*size.*"}),
   SIDE_SCATTER(new String[] {".*side.*", ".*ssc.*", ".*orth.*"}),
   VIABILITY(new String[] {}), 
@@ -29,7 +29,7 @@ public enum ParameterTypes {
 
   private final String[] regi;
 
-  ParameterTypes(String[] regi) {
+  DimensionTypes(String[] regi) {
     this.regi = regi;
   }
 

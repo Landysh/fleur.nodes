@@ -21,7 +21,7 @@ import com.google.common.primitives.Doubles;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.data.ParticleType;
-import main.java.inflor.core.fcs.ParameterTypes;
+import main.java.inflor.core.fcs.DimensionTypes;
 import main.java.inflor.core.gates.RangeGate;
 import main.java.inflor.core.logging.LogFactory;
 import main.java.inflor.core.utils.BitSetUtils;
@@ -280,11 +280,11 @@ public class TheilSenMatrixCalculator {
     BitSet brightMask = (new RangeGate(null, new String[]{shortName}, new double[]{p90}, new double[]{p100})).evaluate(fcsFrame);
     FCSFrame filteredFrame = FCSUtilities.filterColumnStore(brightMask, fcsFrame);
     //estimate scatter gate
-    FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, ParameterTypes.FORWARD_SCATTER);
+    FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, DimensionTypes.FORWARD_SCATTER);
     double fscMin = Doubles.min(fscDim.getData());
     double fscMax = Doubles.max(fscDim.getData());
 
-    FCSDimension sscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, ParameterTypes.SIDE_SCATTER);
+    FCSDimension sscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, DimensionTypes.SIDE_SCATTER);
     double sscMin = Doubles.min(sscDim.getData());
     double sscMax = Doubles.max(sscDim.getData());
     

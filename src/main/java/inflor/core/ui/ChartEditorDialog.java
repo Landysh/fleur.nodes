@@ -19,7 +19,7 @@ import org.jfree.chart.JFreeChart;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.ParameterTypes;
+import main.java.inflor.core.fcs.DimensionTypes;
 import main.java.inflor.core.gates.AbstractGate;
 import main.java.inflor.core.gates.ui.GateCreationToolBar;
 import main.java.inflor.core.plots.AbstractFCChart;
@@ -76,7 +76,7 @@ public class ChartEditorDialog extends JDialog {
   }
 
   private FCSDimension guessDomainDimension(FCSFrame fcsFrame) {
-    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.FORWARD_SCATTER);
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, DimensionTypes.FORWARD_SCATTER);
     if (domainDimension!=null){
       return domainDimension;
     } else {
@@ -87,7 +87,7 @@ public class ChartEditorDialog extends JDialog {
   }
   
   private FCSDimension guessRangeDimension(FCSFrame fcsFrame) {
-    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, ParameterTypes.SIDE_SCATTER);
+    FCSDimension domainDimension = FCSUtilities.findPreferredDimensionType(fcsFrame, DimensionTypes.SIDE_SCATTER);
     if (domainDimension!=null){
       return domainDimension;
     } else {

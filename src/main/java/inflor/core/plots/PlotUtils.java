@@ -29,7 +29,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.data.Range;
 
-import main.java.inflor.core.fcs.ParameterTypes;
+import main.java.inflor.core.fcs.DimensionTypes;
 import main.java.inflor.core.logging.LogFactory;
 import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.transforms.BoundDisplayTransform;
@@ -105,8 +105,8 @@ public class PlotUtils {
   }
 
   public static AbstractTransform createDefaultTransform(String parameterName) {
-    if (ParameterTypes.DNA.matches(parameterName) || ParameterTypes.FORWARD_SCATTER.matches(parameterName)
-        || ParameterTypes.SIDE_SCATTER.matches(parameterName)|| ParameterTypes.TIME.matches(parameterName)) {
+    if (DimensionTypes.DNA.matches(parameterName) || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
+        || DimensionTypes.SIDE_SCATTER.matches(parameterName)|| DimensionTypes.TIME.matches(parameterName)) {
       return new BoundDisplayTransform(0,262144);
     } else {
       return new LogicleTransform();
