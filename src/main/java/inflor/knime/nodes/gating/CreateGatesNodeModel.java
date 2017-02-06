@@ -65,10 +65,7 @@ public class CreateGatesNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
-
-    final DataTableSpec[] outSpecs = createSpecs(inSpecs[0]);
-
-    return outSpecs;
+    return createSpecs(inSpecs[0]);
   }
 
   private DataTableSpec[] createSpecs(DataTableSpec inSpec) {
@@ -79,10 +76,10 @@ public class CreateGatesNodeModel extends NodeModel {
         .stream()
         .filter(node -> node instanceof AbstractGate)
         .map(node -> (AbstractGate) node)
-        .map(gate -> gate.getLabel())
+        .map(AbstractGate::getLabel)
         .collect(Collectors.toList());
     String subSetNamesString = String.join(NodeUtilities.DELIMITER, subsetNames);
-    Map<String, String> newProperties = new HashMap<String, String>();
+    Map<String, String> newProperties = new HashMap<>();
     newProperties.put(NodeUtilities.SUBSET_NAMES_KEY, subSetNamesString);
     DataColumnProperties newProps = properties.cloneAndOverwrite(newProperties);    
     DataColumnSpec cspec = inSpec.getColumnSpec(modelSettings.getSelectedColumn());
@@ -125,7 +122,7 @@ public class CreateGatesNodeModel extends NodeModel {
       gates
         .stream()
         .map(gate -> createSubset(gate, outStore))
-        .forEach(subset -> outStore.addSubset(subset));
+        .forEach(outStore::addSubset);
       
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
@@ -148,13 +145,12 @@ public class CreateGatesNodeModel extends NodeModel {
 
   private Subset createSubset(AbstractGate gate, FCSFrame outStore) {
     BitSet mask = gate.evaluate(outStore);
-    Subset subset = new Subset(gate.getLabel(), 
-                               mask, gate.getParentID(), 
-                               gate.getID(), 
-                               gate.getType(), 
-                               gate.getDimensions(), 
-                               gate.getDescriptors());
-    return subset;
+    return new Subset(gate.getLabel(), 
+        mask, gate.getParentID(), 
+        gate.getID(), 
+        gate.getType(), 
+        gate.getDimensions(), 
+        gate.getDescriptors());
   }
 
   /**
@@ -162,7 +158,7 @@ public class CreateGatesNodeModel extends NodeModel {
    */
   @Override
   protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 
   /**
    * {@inheritDoc}
@@ -178,18 +174,14 @@ public class CreateGatesNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {
-    // TODO Code executed on reset.
-    // Models build during execute are cleared here.
-    // Also data handled in load/saveInternals will be erased here.
-  }
+  protected void reset() {/*noop*/}
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 
   /**
    * {@inheritDoc}
@@ -200,10 +192,8 @@ public class CreateGatesNodeModel extends NodeModel {
     try {
       modelSettings.save(settings);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
   }
 
   /**
@@ -214,5 +204,4 @@ public class CreateGatesNodeModel extends NodeModel {
     modelSettings.validate(settings);
 
   }
-
 }

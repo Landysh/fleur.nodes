@@ -24,6 +24,7 @@ import main.java.inflor.core.gates.AbstractGate;
 import main.java.inflor.core.gates.ui.GateCreationToolBar;
 import main.java.inflor.core.plots.AbstractFCChart;
 import main.java.inflor.core.plots.ChartSpec;
+import main.java.inflor.core.plots.ChartingDefaults;
 import main.java.inflor.core.plots.FCSChartPanel;
 import main.java.inflor.core.plots.PlotTypes;
 import main.java.inflor.core.plots.PlotUtils;
@@ -79,7 +80,9 @@ public class ChartEditorDialog extends JDialog {
     if (domainDimension!=null){
       return domainDimension;
     } else {
-      return fcsFrame.getData().first();
+      return fcsFrame
+          .getData()
+          .first();
     }
   }
   
@@ -120,7 +123,7 @@ public class ChartEditorDialog extends JDialog {
      localSpec.setDomainAxisName(guessDomainDimension(dataFrame).getShortName());
      localSpec.setRangeAxisName(guessRangeDimension(dataFrame).getShortName());
      localSpec.setParentID(dataFrame.getID());
-     localSpec.setPlotType(PlotTypes.DENSITY);
+     localSpec.setPlotType(ChartingDefaults.DEFAULT_PLOT_TYPE);
    }
    
    localSpec.setParentID(dataFrame.getID());
