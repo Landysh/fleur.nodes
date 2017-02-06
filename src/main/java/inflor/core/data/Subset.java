@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import main.java.inflor.core.gates.BitSetAccumulator;
 import main.java.inflor.core.gates.BitSetOperator;
+import main.java.inflor.core.gates.GateUtilities;
 import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
@@ -60,10 +61,12 @@ public class Subset extends DomainObject {
     while(hasAncestors){
       Optional<Subset> parent = subsets
         .stream()
-        .filter(ss -> ss.getID().equals(this.getID()))
+        .filter(ss -> ss.getID().equals(this.getParentID()))
         .findAny();
       if (parent.isPresent()){
-        ancestors.add(parent.get());
+        if (!GateUtilities.SUMMARY_FRAME_ID.equals(parent.get().getParentID()))
+          ancestors.add(parent.get());
+        subsets.remove(parent.get());
       } else {
         hasAncestors = false;
       }
@@ -108,5 +111,16 @@ public class Subset extends DomainObject {
   
   public String[] getDimensions() {
     return dimensions;
+  }
+  public Subset filter(BitSet mask) {
+    BitSet newMembers = new BitSet(mask.cardinality());
+    int j=0;
+    for (int i=0;i<members.size();i++){
+      if (members.get(i)){
+        newMembers.set(j);
+        j++;
+      }
+    }
+    return new Subset(label, newMembers, parentID, getID(), getType(), dimensions, descriptors);
   }
 }
