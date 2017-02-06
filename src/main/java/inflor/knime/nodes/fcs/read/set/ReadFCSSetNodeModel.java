@@ -165,7 +165,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   
   private FCSFrame downSample(FCSFrame inFrame, int downSize){
     BitSet mask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), downSize);
-    return FCSUtilities.filterColumnStore(mask, inFrame);
+    return FCSUtilities.filterFrame(mask, inFrame);
   }
 
   private TreeSet<FCSDimension> merge(TreeSet<FCSDimension> a, TreeSet<FCSDimension> b) {
@@ -216,7 +216,6 @@ public class ReadFCSSetNodeModel extends NodeModel {
     logger.info("Beginning Execution.");
     fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // Create the output spec and data container.
-    final DataTableSpec outSpec = createSpec(true);
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
     fileCount = filePaths.size();
