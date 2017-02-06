@@ -44,4 +44,8 @@ public abstract class AbstractTransform extends DomainObject implements Serializ
   public abstract double getMinRawValue();
 
   public abstract double getMaxRawValue();
+
+  public abstract TransformType getType();
+  public abstract String        getDetails();
+
 }

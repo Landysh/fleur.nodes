@@ -144,7 +144,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   
   @Override
   public String toString() {
-    return "Logicle: w:" + w + " , @" + getID();
+    return getDetails()+ "@" + getID();
   }
 
 
@@ -166,5 +166,15 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   public double getA() {
     return this.a;
+  }
+
+  @Override
+  public TransformType getType() {
+    return TransformType.LOGICLE;
+  }
+
+  @Override
+  public String getDetails() {
+    return "t=" + t + ", w="+w+", m="+m+", a=" +a;
   }
 }
