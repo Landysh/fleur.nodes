@@ -216,6 +216,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     logger.info("Beginning Execution.");
     fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // Create the output spec and data container.
+    final DataTableSpec outSpec = createSpec(false);//TODO
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
     fileCount = filePaths.size();
