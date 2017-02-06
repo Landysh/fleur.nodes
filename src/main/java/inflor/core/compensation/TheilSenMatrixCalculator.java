@@ -248,8 +248,8 @@ public class TheilSenMatrixCalculator {
 
     BitSet[] sampleMasks = downsample(fcsFrame, primaryName);
     
-    FCSFrame lowFrame = FCSUtilities.filterColumnStore(sampleMasks[0], fcsFrame);
-    FCSFrame highFrame = FCSUtilities.filterColumnStore(sampleMasks[1], fcsFrame);
+    FCSFrame lowFrame = FCSUtilities.filterFrame(sampleMasks[0], fcsFrame);
+    FCSFrame highFrame = FCSUtilities.filterFrame(sampleMasks[1], fcsFrame);
 
     for (int i=0;i<secondaryDims.size();i++){
       String secondaryFrame = secondaryDims.get(i);
@@ -278,7 +278,7 @@ public class TheilSenMatrixCalculator {
     double p90 = p.evaluate(SCATTER_MIN);
     double p100 = p.evaluate(SCATTER_MAX);
     BitSet brightMask = (new RangeGate(null, new String[]{shortName}, new double[]{p90}, new double[]{p100})).evaluate(fcsFrame);
-    FCSFrame filteredFrame = FCSUtilities.filterColumnStore(brightMask, fcsFrame);
+    FCSFrame filteredFrame = FCSUtilities.filterFrame(brightMask, fcsFrame);
     //estimate scatter gate
     FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, DimensionTypes.FORWARD_SCATTER);
     double fscMin = Doubles.min(fscDim.getData());

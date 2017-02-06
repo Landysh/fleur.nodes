@@ -85,7 +85,7 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
     final BitSet mask = model.scoreModel(ratio);
 
     // Create the output
-    final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, inColumnStore);
+    final FCSFrame outStore = FCSUtilities.filterFrame(mask, inColumnStore);
     final FCSFramePortSpec outSpec =
         new FCSFramePortSpec(inSpec.getKeywords(), inSpec.getColumnNames(), outStore.getRowCount());
     final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);

@@ -78,7 +78,7 @@ public class DownsampleNodeModel extends NodeModel {
       outStore.setData(inColumnStore.getData());
     } else {
       final BitSet mask = BitSetUtils.getShuffledMask(inSize, downSize);
-      outStore = FCSUtilities.filterColumnStore(mask, inColumnStore);
+      outStore = FCSUtilities.filterFrame(mask, inColumnStore);
     }
 
     final FCSFramePortSpec outSpec = getSpec(inSpec);

@@ -88,7 +88,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
       BitSet mask = model.scoreModel(ratio);
 
       // now create the output row
-      final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, columnStore);
+      final FCSFrame outStore = FCSUtilities.filterFrame(mask, columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);

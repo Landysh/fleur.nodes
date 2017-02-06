@@ -84,7 +84,7 @@ public class TransformNodeSettings {
               Subset s = FCSUtilities.findCompatibleSubset(df, mReferenceSubset);
               List<Subset> ancestry = s.findAncestors(df.getSubsets());
               BitSet mask = s.evaluate(ancestry);
-              return FCSUtilities.filterColumnStore(mask, df);
+              return FCSUtilities.filterFrame(mask, df);
               })
           .collect(Collectors.toList());
     } else {

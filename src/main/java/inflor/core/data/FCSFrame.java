@@ -471,7 +471,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       Subset currentSubset = targetSubset.get();
       List<Subset> ancestors = currentSubset.findAncestors(getSubsets());
       BitSet mask = currentSubset.evaluate(ancestors);
-      return FCSUtilities.filterColumnStore(mask, this);
+      return FCSUtilities.filterFrame(mask, this);
     } else {
       return null;
     }
