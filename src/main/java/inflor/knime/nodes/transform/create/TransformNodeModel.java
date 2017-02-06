@@ -20,20 +20,33 @@
  */
 package main.java.inflor.knime.nodes.transform.create;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
+
+import org.jfree.chart.JFreeChart;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.DataTableSpecCreator;
+import org.knime.core.data.DataType;
 import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.def.StringCell;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
+import org.knime.core.data.image.png.PNGImageCell;
+import org.knime.core.data.image.png.PNGImageCellFactory;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
@@ -48,10 +61,15 @@ import org.knime.core.node.NodeSettingsWO;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.plots.PlotUtils;
+import main.java.inflor.core.plots.SubsetResponseChart;
 import main.java.inflor.core.transforms.AbstractTransform;
+import main.java.inflor.core.transforms.BoundDisplayTransform;
+import main.java.inflor.core.transforms.LogicleTransform;
+import main.java.inflor.core.transforms.LogrithmicTransform;
 import main.java.inflor.core.utils.FCSUtilities;
+import main.java.inflor.core.utils.MatrixUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.*;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Transform.
@@ -63,13 +81,21 @@ public class TransformNodeModel extends NodeModel {
 
   private static final NodeLogger logger = NodeLogger.getLogger(TransformNodeModel.class);
 
+  private static final String DIMENSION_NAMES_COLUMN_NAME = "Dimension Names";
+
+  private static final String TRANSFORM_DETAILS_COLUMN_NAME = "Transform Details";
+
+  private static final String TRANSFORM_PLOT_COLUMN_NAME = "Transform Plot";
+
   private TransformNodeSettings modelSettings = new TransformNodeSettings();
+
+  private int subtaskIndex;
 
   /**
    * Constructor for the node model.
    */
   protected TransformNodeModel() {
-    super(1, 1);
+    super(1, 2);
   }
 
   /**
@@ -78,30 +104,76 @@ public class TransformNodeModel extends NodeModel {
   @Override
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
-    logger.info("Executing: Create Gates");
     final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-
     // Create the output spec and data container.
-    final DataTableSpec outSpec = createSpecs(inData[0].getSpec())[0];
-    final BufferedDataContainer container = exec.createDataContainer(outSpec);
-    final String columnName = modelSettings.getSelectedColumn();
-    final int columnIndex = outSpec.findColumnIndex(columnName);
-    //Find a useful set of transforms:
+    exec.setProgress(0.01, "Initializing execution");
+    DataTableSpec[] outSpecs = createSpecs(inData[0].getSpec());
+    BufferedDataContainer container = exec.createDataContainer(outSpecs[0]);
+    String columnName = modelSettings.getSelectedColumn();
+    int columnIndex = outSpecs[0].findColumnIndex(columnName);
     
-    if (modelSettings.getAllTransorms().size()==0){
-      createTransformSet(inData, exec, columnIndex);
+    //Collect the input data.
+    exec.setMessage("Reading data");
+    ExecutionContext readExec = exec.createSubExecutionContext(0.25);
+    ArrayList<FCSFrame> dataSet = new ArrayList<>();       
+    int rowIndex = 0;
+    for (final DataRow inRow : inData[0]) {
+      FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
+      dataSet.add(dataFrame.deepCopy());
+      readExec.setProgress((double)rowIndex/inData[0].size(), "Reading: " + dataFrame.getDisplayName());
+      rowIndex++;
     }
     
-    TreeMap<String, AbstractTransform>  transformSet = modelSettings.getAllTransorms();
-       
+    //Filter it down to reference subset
+    exec.setMessage("filtering data");
+    ExecutionContext filterExec = exec.createSubExecutionContext(0.5);
+    String referenceSubset = modelSettings.getReferenceSubset();
+    List<FCSFrame> filteredData;
+    if (!referenceSubset.equals(TransformNodeSettings.DEFAULT_REFERENCE_SUBSET)){
+      subtaskIndex = 0;
+      filteredData = dataSet
+      .parallelStream()
+      .map(df -> filterDataFrame(filterExec, df, referenceSubset, dataSet.size()))
+      .collect(Collectors.toList());
+    } else {
+      filteredData = dataSet;
+    }
     
-    int i = 0;
+    //Create Default Transforms.
+    String[] dimensionNames = inData[0]
+        .getSpec()
+        .getColumnSpec(modelSettings.getSelectedColumn())
+        .getProperties()
+        .getProperty(NodeUtilities.DIMENSION_NAMES_KEY)
+        .split(NodeUtilities.DELIMITER_REGEX);
+    
+    Map<String, AbstractTransform> transformMap = Arrays
+      .asList(dimensionNames)
+      .stream()
+      .collect(Collectors.toMap(name -> name, PlotUtils::createDefaultTransform));
+
+    //Optimize the transform and record results.
+    exec.setMessage("Optimizing transforms");
+    ExecutionContext optimizeExec = exec.createSubExecutionContext(0.75);
+    BufferedDataContainer summaryContainer = exec.createDataContainer(outSpecs[1]);
+    subtaskIndex = 0;
+    transformMap
+      .entrySet()
+      .stream()
+      .forEach(entry -> optimizeTransform(filteredData, entry, summaryContainer, optimizeExec, transformMap.size()));
+    summaryContainer.close();
+    
+    //write the output table.
+    exec.setMessage("Writing output");
+    ExecutionContext writeExec = exec.createSubExecutionContext(1);
+    subtaskIndex = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
+      final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue().deepCopy();
+      writeExec.setProgress(subtaskIndex/(double)inData[0].size(), dataFrame.getDisplayName());
       // now create the output row
-      final FCSFrame outStore = applyTransforms(inStore, transformSet);
-      final String fsName = i + "ColumnStore.fs";
+      final FCSFrame outStore = applyTransforms(dataFrame, transformMap);
+      final String fsName = subtaskIndex + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
 
@@ -112,34 +184,100 @@ public class TransformNodeModel extends NodeModel {
           outCells[j] = inRow.getCell(j);
         }
       }
-      final DataRow outRow = new DefaultRow("Row " + i, outCells);
+      final DataRow outRow = new DefaultRow("Row " + subtaskIndex, outCells);
       container.addRowToTable(outRow);
-      i++;
+      subtaskIndex++;
     }
     container.close();
-    return new BufferedDataTable[] {container.getTable()};
+    return new BufferedDataTable[] {container.getTable(), summaryContainer.getTable()};
   }
 
-  private void createTransformSet(BufferedDataTable[] inData, ExecutionContext exec, int columnIndex) {
-    List<FCSFrame> fileList = new ArrayList<>();
-    for (DataRow inRow : inData[0]) {
-      FCSFrame fcsStore = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
-      fileList.add(fcsStore);
-    }
-    modelSettings.optimizeTransforms(fileList);
+  private FCSFrame filterDataFrame(ExecutionContext filterExec, FCSFrame df, String subsetName, int size) {
+    filterExec.setProgress((double) subtaskIndex/size, df.getDisplayName());
+    subtaskIndex++;
+    return df.getFilteredFrame(subsetName);
   }
 
-  private FCSFrame applyTransforms(FCSFrame inStore, TreeMap<String, AbstractTransform> treeMap) {
-    for (Entry<String, AbstractTransform> entry : treeMap.entrySet()) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(inStore, entry.getKey());
-      AbstractTransform optimizedTransform = entry.getValue();
-      dimension.setPreferredTransform(optimizedTransform);
+  private void optimizeTransform(List<FCSFrame> filteredData, Entry<String, AbstractTransform> entry, 
+      BufferedDataContainer transformSummaryContainer, ExecutionContext optimizeExec, Integer size) {
+    optimizeExec.setProgress((double) subtaskIndex/size, "Optimizing transform for: " +entry.getKey());
+    double[] data = mergeData(entry.getKey(), filteredData);
+    AbstractTransform at = entry.getValue();
+    if (entry.getValue() instanceof LogicleTransform) {
+      LogicleTransform logicle = (LogicleTransform) at;
+      logicle.optimizeW(data);
+    } else if (entry.getValue() instanceof LogrithmicTransform) {
+      LogrithmicTransform logTransform = (LogrithmicTransform) at;
+      logTransform.optimize(data);
+    } else if (entry.getValue() instanceof BoundDisplayTransform) {
+      BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) at;
+      boundaryTransform.optimize(data);
     }
-    return inStore;
+    
+    byte[] imageBytes = createTransformPlot(filteredData, entry, at);
+    try {
+      DataCell imageCell =  PNGImageCellFactory.create(imageBytes);
+      DataCell[] cells = new DataCell[]{new StringCell(at.getType().toString()), new StringCell(at.getDetails()), imageCell};
+      DataRow row = new DefaultRow(entry.getKey(), cells);
+      transformSummaryContainer.addRowToTable(row);
+    } catch (IOException e) {
+      logger.error("Unable to create imgage cell.", e);
+    } 
+
+  }
+
+  private byte[] createTransformPlot(List<FCSFrame> filteredData,
+      Entry<String, AbstractTransform> entry, AbstractTransform at) {
+    SubsetResponseChart chart = new SubsetResponseChart(entry.getKey(), at);
+    Map<String, FCSDimension> dataModel = createChartData(entry.getKey(), filteredData);
+    JFreeChart jfc = chart.createChart(dataModel);
+    BufferedImage objBufferedImage = jfc.createBufferedImage(400, 300);
+    ByteArrayOutputStream bas = new ByteArrayOutputStream();
+    try {
+      ImageIO.write(objBufferedImage, "png", bas);
+    } catch (IOException e) {
+      logger.error("Unable to create transform plot.", e);
+    }
+    
+    return bas.toByteArray();
+  }
+
+  private Map<String, FCSDimension> createChartData(String key, List<FCSFrame> filteredData) {
+    return filteredData
+        .stream()
+        .collect(Collectors.toMap(FCSFrame::getDisplayName, f -> f.getDimension(key)));
+  }
+
+  private double[] mergeData(String shortName, List<FCSFrame> dataSet2) {
+    double[] data = null;
+    for (FCSFrame frame : dataSet2) {
+      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
+      data = MatrixUtilities.appendVectors(data, dimension.getData());
+    }
+    return data;
+  }
+  
+  private FCSFrame applyTransforms(FCSFrame dataFrame, Map<String, AbstractTransform> transformMap) {   
+    for (Entry<String, AbstractTransform> entry : transformMap.entrySet()) {
+      FCSDimension dimension = dataFrame.getDimension(entry.getKey());
+      dimension.setPreferredTransform(entry.getValue());
+    }
+    return dataFrame;
   }
 
   private DataTableSpec[] createSpecs(DataTableSpec spec) {
-    return new DataTableSpec[] {spec};
+    DataTableSpec dataTableSpec = new DataTableSpecCreator(spec).createSpec();
+    DataTableSpecCreator transformDetailsCreator = new DataTableSpecCreator();
+    DataColumnSpec dimensionNamesColumn = 
+        new DataColumnSpecCreator(DIMENSION_NAMES_COLUMN_NAME, StringCell.TYPE).createSpec();
+    DataColumnSpec detailsColumn = 
+        new DataColumnSpecCreator(TRANSFORM_DETAILS_COLUMN_NAME, StringCell.TYPE).createSpec();
+    DataColumnSpec summaryPlotColumn = 
+        new DataColumnSpecCreator(TRANSFORM_PLOT_COLUMN_NAME, DataType.getType(PNGImageCell.class)).createSpec();  
+    DataColumnSpec[] transformDetailColumns = new DataColumnSpec[]{dimensionNamesColumn, detailsColumn, summaryPlotColumn};
+    transformDetailsCreator.addColumns(transformDetailColumns);
+    
+    return new DataTableSpec[] {dataTableSpec, transformDetailsCreator.createSpec()};
   }
 
   /**
@@ -156,26 +294,7 @@ public class TransformNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
-    
-    final DataTableSpec spec = inSpecs[0];
-    if (modelSettings.getSelectedColumn()==null){
-      for (final String name : spec.getColumnNames()) {
-        if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
-          modelSettings.setSelectedColumn(name);
-        }
-      }
-    }
-    DataColumnSpec selectedColumnSpec = spec.getColumnSpec(modelSettings.getSelectedColumn());
-    String shortNames = selectedColumnSpec.getProperties()
-        .getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-    String[] dimensionNames = shortNames.split(NodeUtilities.DELIMITER_REGEX);
-    for (String name : dimensionNames) {
-      if (modelSettings.getTransform(name) == null) {
-        modelSettings.addTransform(name, PlotUtils.createDefaultTransform(name));
-      }
-    }
-
-    return new DataTableSpec[] {inSpecs[0]};
+    return createSpecs(inSpecs[0]);
   }
 
   /**
@@ -208,12 +327,12 @@ public class TransformNodeModel extends NodeModel {
    */
   @Override
   protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {}
+      throws IOException, CanceledExecutionException {/*noop*/}
 }
