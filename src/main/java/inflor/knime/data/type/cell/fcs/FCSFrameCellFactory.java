@@ -26,22 +26,24 @@ import java.io.InputStream;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataCellFactory.FromInputStream;
+import org.knime.core.data.DataRow;
 import org.knime.core.data.DataType;
+import org.knime.core.data.container.AbstractCellFactory;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.util.FileUtil;
 
-public class FCSFrameCellFactory implements FromInputStream {
+public class FCSFrameCellFactory extends AbstractCellFactory implements FromInputStream {
 
-  private final FileStoreFactory m_fileStoreFactory;
+  private final FileStoreFactory mfileStoreFactory;
 
   public FCSFrameCellFactory() {
-    m_fileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+    mfileStoreFactory = FileStoreFactory.createNotInWorkflowFileStoreFactory();
   }
 
   public FCSFrameCellFactory(ExecutionContext exec) {
-    m_fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+    mfileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
   }
 
   @Override
@@ -51,13 +53,18 @@ public class FCSFrameCellFactory implements FromInputStream {
     output.close();
     final byte[] buffer = output.toByteArray();
     // Create the file store.
-    final FileStore fs = m_fileStoreFactory.createFileStore("column.store");
-    final FCSFrameFileStoreDataCell cell = new FCSFrameContent(buffer).toColumnStoreCell(fs);
-    return cell;
+    final FileStore fs = mfileStoreFactory.createFileStore("column.store");
+    return new FCSFrameContent(buffer).toColumnStoreCell(fs);
   }
 
   @Override
   public DataType getDataType() {
     return FCSFrameFileStoreDataCell.TYPE;
+  }
+
+  @Override
+  public DataCell[] getCells(DataRow row) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
