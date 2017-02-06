@@ -40,6 +40,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.Subset;
 
 public class NodeUtilities {
   
@@ -150,5 +151,17 @@ public class NodeUtilities {
 
   public static String getSaveSerializableErrorMessage() {
     return SAVE_SERIALIZABLE_ERROR_MESSAGE;
+  }
+
+  public static Serializable loadSerializeable(NodeSettingsRO settings, String key) throws InvalidSettingsException {
+    try {
+      byte[] bytes = settings.getByteArray(key);
+      ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+      ObjectInputStream ois;
+      ois = new ObjectInputStream(bis);
+      return (Serializable) ois.readObject();
+    } catch (Exception e) {
+      throw new InvalidSettingsException(e);
+    }
   }
 }
