@@ -20,6 +20,7 @@
  */
 package main.java.inflor.knime.nodes.transform.create;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -61,7 +62,7 @@ import org.knime.core.node.NodeSettingsWO;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.plots.PlotUtils;
-import main.java.inflor.core.plots.SubsetResponseChart;
+import main.java.inflor.core.plots.CategoryResponseChart;
 import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.transforms.BoundDisplayTransform;
 import main.java.inflor.core.transforms.LogicleTransform;
@@ -228,9 +229,10 @@ public class TransformNodeModel extends NodeModel {
 
   private byte[] createTransformPlot(List<FCSFrame> filteredData,
       Entry<String, AbstractTransform> entry, AbstractTransform at) {
-    SubsetResponseChart chart = new SubsetResponseChart(entry.getKey(), at);
+    CategoryResponseChart chart = new CategoryResponseChart(entry.getKey(), at);
     Map<String, FCSDimension> dataModel = createChartData(entry.getKey(), filteredData);
     JFreeChart jfc = chart.createChart(dataModel);
+    jfc.setBackgroundPaint(Color.WHITE);
     BufferedImage objBufferedImage = jfc.createBufferedImage(400, 300);
     ByteArrayOutputStream bas = new ByteArrayOutputStream();
     try {
