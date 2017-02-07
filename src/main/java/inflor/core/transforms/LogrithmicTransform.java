@@ -98,11 +98,21 @@ public class LogrithmicTransform extends AbstractTransform {
   
   @Override
   public String toString(){
-    return "min: " + getMinTranformedValue() + ", max " + getMaxTransformedValue() + " @" + getID();
+    return getDetails() + " @" + getID();
   }
 
   public void optimize(double[] data) {
     min = Doubles.min(data);
     max = Doubles.max(data);
+  }
+
+  @Override
+  public TransformType getType() {
+    return TransformType.LOGARITHMIC;
+  }
+
+  @Override
+  public String getDetails() {
+    return "Min display: " + min + ", Max display: " + max;
   }
 }

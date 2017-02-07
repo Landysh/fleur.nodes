@@ -45,10 +45,6 @@ public class BoundDisplayTransform extends AbstractTransform {
     this(min, max, null);
   }
 
-  public BoundDisplayTransform() {
-    this(0,262144,null);
-  }
-
   @Override
   public double[] transform(double[] rawData) {
     double[] transformedData = new double[rawData.length];
@@ -102,12 +98,22 @@ public class BoundDisplayTransform extends AbstractTransform {
 
   @Override
   public String toString() {
-    return "BMin " + boundaryMin + ", BMax " + boundaryMax;
+    return getDetails() + "@" + getID();
   }
   
   public void optimize(double[] data) {
     this.boundaryMin = Doubles.min(data);
     this.boundaryMax = Doubles.max(data);
+  }
+
+  @Override
+  public TransformType getType() {
+    return TransformType.BOUNDARY;
+  }
+
+  @Override
+  public String getDetails() {
+    return "Min display: " + boundaryMin + ", Max display: " + boundaryMax;
   }
   
 }

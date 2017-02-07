@@ -32,12 +32,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.knime.base.node.mine.bfn.DegreeOfAffinity;
-
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.Subset;
 import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.fcs.ParameterTypes;
+import main.java.inflor.core.fcs.DimensionTypes;
 import main.java.inflor.core.singlets.PuleProperties;
 
 public class FCSUtilities {
@@ -45,6 +44,14 @@ public class FCSUtilities {
   private static final String REGEX_IS_COMPENSATED = "\\[.*\\]";
   private static final String DEFAULT_PREFFERED_NAME_KEYWORD = "$FIL";
   public static final String KEY_FILENAME = "File name when read.";
+public static final String KEY_MERGE_MAP = "INFLOR_MERGE_MAP";
+public static final int MERGE_DIMENSION_INDEX = -2;
+public static final String MERGE_DIMENSION_NAME = "Merged_Samples";
+public static final CharSequence DELIMITER = "||";
+public static final String DELIMITER_REGEX = "\\|\\|";
+public static final String PROP_KEY_PREVIEW_FRAME = "Inflor Preview Frame";
+public static final String FCSKEY_EVENT_COUNT = "$TOT";
+
 
   private FCSUtilities(){
     
@@ -156,10 +163,18 @@ public class FCSUtilities {
     return new FCSDimension(size, pIndex, pnn, pns, pneF1, pneF2, pnr);
   }
 
-  public static FCSFrame filterColumnStore(BitSet mask, FCSFrame in) {
-
-    FCSFrame out = new FCSFrame(in.getKeywords(), mask.cardinality());
-    for (FCSDimension inDim : in.getData()) {
+  public static FCSFrame filterFrame(BitSet mask, FCSFrame inFrame) {
+    
+    FCSFrame out = new FCSFrame(inFrame.getKeywords(), mask.cardinality());
+    
+    //Add subsets
+    inFrame
+      .getSubsets()
+      .stream()
+      .map(inSub -> inSub.filter(mask))
+      .forEach(out::addSubset);
+    //Add dimenions
+    for (FCSDimension inDim : inFrame.getData()) {
       FCSDimension outDim = new FCSDimension(mask.cardinality(), inDim.getIndex(),
           inDim.getShortName(), inDim.getStainName(), inDim.getPNEF1(), inDim.getPNEF2(),
           inDim.getRange());
@@ -207,10 +222,10 @@ public class FCSUtilities {
 
   private static FCSFrame downSample(FCSFrame dataFrame, Integer dataSize) {
     BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), dataSize);
-    return FCSUtilities.filterColumnStore(mask, dataFrame);
+    return FCSUtilities.filterFrame(mask, dataFrame);
   }
 
-  public static FCSDimension findPreferredDimensionType(FCSFrame fcsFrame, ParameterTypes dimensionType) {
+  public static FCSDimension findPreferredDimensionType(FCSFrame fcsFrame, DimensionTypes dimensionType) {
     ArrayList<FCSDimension> forwardScatterDims = new ArrayList<>();
     for (FCSDimension dimension: fcsFrame.getData()){
       boolean isForwardScatter = dimensionType.matches(dimension.getShortName());
@@ -277,9 +292,9 @@ public class FCSUtilities {
   
   public static boolean isFluorescent(String shortName){
     boolean isFluorescent = true;
-    if (ParameterTypes.TIME.matches(shortName)||
-        ParameterTypes.FORWARD_SCATTER.matches(shortName)||
-        ParameterTypes.SIDE_SCATTER.matches(shortName)){
+    if (DimensionTypes.TIME.matches(shortName)||
+        DimensionTypes.FORWARD_SCATTER.matches(shortName)||
+        DimensionTypes.SIDE_SCATTER.matches(shortName)){
       isFluorescent = false;
     }
     return isFluorescent;
@@ -319,5 +334,18 @@ public class FCSUtilities {
       }
     }
     return fcsFrame.getKeywordValue(KEY_FILENAME);
+  }
+
+  public static Subset findCompatibleSubset(FCSFrame df, String mReferenceSubset) {
+    Optional<Subset> opt = df
+        .getSubsets()
+        .stream()
+        .filter(s -> s.getLabel().equals(mReferenceSubset))
+        .findAny();
+    if (opt.isPresent()){
+      return opt.get();
+    }else{
+      return null;
+    }   
   }
 }

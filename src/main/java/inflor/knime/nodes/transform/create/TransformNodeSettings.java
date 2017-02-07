@@ -20,65 +20,46 @@
  */
 package main.java.inflor.knime.nodes.transform.create;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.util.BitSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.data.Subset;
+import main.java.inflor.core.plots.PlotUtils;
 import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.transforms.LogrithmicTransform;
 import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.core.utils.MatrixUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
 import main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeModel;
 
 public class TransformNodeSettings {
 
-  private static final String TRANSFORM_MAP_KEY = "Transfomations";
+//  private static final String TRANSFORM_MAP_KEY = "Transfomations";
+//  private TreeMap<String, AbstractTransform> mTransforms = new TreeMap<>();
+
+  
   private static final String SELECTED_COLUMN_KEY = "Selected Column";
+  public static final String DEFAULT_REFERENCE_SUBSET = "Ungated";
 
   private String mSelectedColumn;
-  private TreeMap<String, AbstractTransform> mTransforms = new TreeMap<>();
+  private String mReferenceSubset = DEFAULT_REFERENCE_SUBSET;
 
   private static final NodeLogger logger = NodeLogger.getLogger(SummaryStatisticsNodeModel.class);
+  private static final String KEY_REFERENCE_SUBSET = "ReferenceSubset";
   
   public void save(NodeSettingsWO settings) {
     settings.addString(SELECTED_COLUMN_KEY, mSelectedColumn);
-    try {
-      NodeUtilities.saveSerializable(settings, TRANSFORM_MAP_KEY, mTransforms);
-    } catch (IOException e) {
-      logger.error(NodeUtilities.getSaveSerializableErrorMessage(), e);
-    }
+    settings.addString(KEY_REFERENCE_SUBSET, mReferenceSubset);
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {
     mSelectedColumn = settings.getString(SELECTED_COLUMN_KEY);
-    Map<String, Serializable> serMap = NodeUtilities.loadMap(settings, TRANSFORM_MAP_KEY);
-    mTransforms = new TreeMap<>();
-    for (Entry<String, Serializable> e : serMap.entrySet()) {
-      if (e.getValue() instanceof AbstractTransform){
-        mTransforms.put(e.getKey(), (AbstractTransform) e.getValue());
-      }
-    }
-  }
-
-  public void addTransform(String key, AbstractTransform value) {
-    mTransforms.put(key, value);
-  }
-
-  public void removeTransform(String key) {
-    mTransforms.remove(key);
+    mReferenceSubset = settings.getString(KEY_REFERENCE_SUBSET);
   }
 
   public void setSelectedColumn(String selectedItem) {
@@ -89,48 +70,42 @@ public class TransformNodeSettings {
     return mSelectedColumn;
   }
 
-  public AbstractTransform getTransform(String name) {
-    return mTransforms.get(name);
-  }
+  public void validate(NodeSettingsRO settings) {/*noop*/}
 
-  public void setTransform(AbstractTransform newValue, String key) {
-    this.mTransforms.put(key, newValue);
-  }
-
-  public TreeMap<String, AbstractTransform> getAllTransorms() {
-    return this.mTransforms;
-  }
-
-  public void validate(NodeSettingsRO settings) {
-    // TODO Auto-generated method stub
-  }
-
-  public void reset() {
-    mTransforms.clear();
-  }
+  public void reset() {/*noop*/}
   
-  public void optimizeTransforms(List<FCSFrame> dataSet) {
-    for (Entry<String, AbstractTransform> entry : this.getAllTransorms().entrySet()) {
-      double[] data = mergeData(entry.getKey(), dataSet);
-      if (entry.getValue() instanceof LogicleTransform) {
-        LogicleTransform logicle = (LogicleTransform) entry.getValue();
-        logicle.optimizeW(data);
-      } else if (entry.getValue() instanceof LogrithmicTransform) {
-        LogrithmicTransform logTransform = (LogrithmicTransform) entry.getValue();
-        logTransform.optimize(data);
-      } else if (entry.getValue() instanceof BoundDisplayTransform) {
-        BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) entry.getValue();
-        boundaryTransform.optimize(data);
-      }
+  public void optimizeTransforms(List<FCSFrame> dataSet, List<String> dimensionNames) {
+    List<FCSFrame> filteredData;
+    if (!mReferenceSubset.equals(DEFAULT_REFERENCE_SUBSET)){
+      filteredData = dataSet
+          .parallelStream()
+          .map(
+              df ->{
+              Subset s = FCSUtilities.findCompatibleSubset(df, mReferenceSubset);
+              List<Subset> ancestry = s.findAncestors(df.getSubsets());
+              BitSet mask = s.evaluate(ancestry);
+              return FCSUtilities.filterFrame(mask, df);
+              })
+          .collect(Collectors.toList());
+    } else {
+      filteredData = dataSet;
+    }
+    TreeMap<String, AbstractTransform> transformMap = new TreeMap<>();
+
+    for (String name : dimensionNames) {
+        transformMap.put(name, PlotUtils.createDefaultTransform(name));
+    }
+    
+    if (filteredData!=null){
+
     }
   }
+
+  public void setReferenceSubset(String selectedItem) {
+    mReferenceSubset = selectedItem;
+  }
   
-  private double[] mergeData(String shortName, List<FCSFrame> dataSet2) {
-    double[] data = null;
-    for (FCSFrame frame : dataSet2) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
-      data = MatrixUtilities.appendVectors(data, dimension.getData());
-    }
-    return data;
+  public String getReferenceSubset() {
+    return mReferenceSubset;
   }
 }

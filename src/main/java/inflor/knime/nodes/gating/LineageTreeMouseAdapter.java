@@ -70,7 +70,12 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       
       //Calculate the path mask and apply to dataFrame to create a filtered frame.
       BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates);
-      FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
+      FCSFrame filteredFrame;
+      if (mask.cardinality()<dataFrame.getRowCount()){
+        filteredFrame = FCSUtilities.filterFrame(mask, dataFrame);
+      } else {
+        filteredFrame = dataFrame;
+      }
       if (!parentGates.isEmpty()){
         String ids = parentGates.get(parentGates.size()-1).getID();
         filteredFrame.setID(ids);

@@ -56,7 +56,7 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
 
     @Override
     public void serialize(FCSFrameFileStoreDataCell cell, DataCellDataOutput output) throws IOException {
-      final byte[] bytes = cell.getFCSFrameValue().save();
+      final byte[] bytes = cell.getFCSFrameValue().saveAsBytes();
       output.writeInt(bytes.length);
       output.write(bytes);
     }

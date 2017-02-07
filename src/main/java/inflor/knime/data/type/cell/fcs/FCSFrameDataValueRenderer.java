@@ -81,8 +81,8 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
       List<Subset> subsets = dataFrame.getSubsets();
       if (subsets!=null){
         for (Subset sub:  dataFrame.getSubsets()){
-          subsetSummary+= sub.getLabel();
-          subsetSummary+=",";
+          subsetSummary+= sub.getLabel() + "-" + sub.getMembers().cardinality();
+          subsetSummary+=" ";
         }
       }
       return subsetSummary.trim();

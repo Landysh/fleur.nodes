@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,8 +31,8 @@ public class CreateGatesNodeSettings {
   
   
   public CreateGatesNodeSettings() {
-    nodePool = new HashSet<Hierarchical>();
-    sampleSpecificPlans = new HashMap <String, List<String>>();
+    nodePool = new HashSet<>();
+    sampleSpecificPlans = new HashMap <>();
   }
 
   public void addNode(Hierarchical newNode, String sourceID) {
@@ -39,8 +40,8 @@ public class CreateGatesNodeSettings {
       .stream()
       .filter(node -> node.getID().equals(newNode.getID()))
       .collect(Collectors.toList()); 
-    if (existingNodes.size()>0){
-      existingNodes.forEach(node -> nodePool.remove(node));
+    if (!existingNodes.isEmpty()){
+      existingNodes.forEach(nodePool::remove);
     }
     nodePool.add(newNode);
     
@@ -74,24 +75,26 @@ public class CreateGatesNodeSettings {
     settings.addString(SELECTED_COLUMN_KEY, selectedColumn);
     NodeUtilities.saveSerializable(settings, NODE_BYTES_KEY, nodePool);
     NodeUtilities.saveSerializable(settings, SAMPLE_PLAN_KEY, sampleSpecificPlans);
-    settings.addStringArray(SAMPLE_PLAN_KEY, (sampleSpecificPlans.keySet().toArray(new String[sampleSpecificPlans.size()])));
-    for (String key: sampleSpecificPlans.keySet()){
-      List<String> plan = sampleSpecificPlans.get(key);
+    settings.addStringArray(SAMPLE_PLAN_KEY, sampleSpecificPlans
+        .keySet()
+        .toArray(new String[sampleSpecificPlans.size()]));
+    for (Entry<String, List<String>> entry: sampleSpecificPlans.entrySet()){
+      List<String> plan = entry.getValue();
       String[] planKeys = plan.toArray(new String[plan.size()]);
-      settings.addStringArray(key, planKeys);
+      settings.addStringArray(entry.getKey(), planKeys);
     }
   }
 
   public void load(NodeSettingsRO settings) throws InvalidSettingsException {
    selectedColumn = settings.getString(SELECTED_COLUMN_KEY);
    HashSet<Serializable> nodeSet = NodeUtilities.loadSet(settings, NODE_BYTES_KEY);
-   nodePool = new HashSet<Hierarchical>();
+   nodePool = new HashSet<>();
    nodeSet
      .stream()
      .filter(obj -> obj instanceof Hierarchical)
      .map(obj -> (Hierarchical) obj)
-     .forEach(domainObjectg -> nodePool.add(domainObjectg));
-    sampleSpecificPlans = new HashMap<String, List<String>>();
+     .forEach(nodePool::add);
+    sampleSpecificPlans = new HashMap<>();
     String[] planKeys = settings.getStringArray(SAMPLE_PLAN_KEY);
     for (String key: planKeys){
       List<String> nodeIDs = Arrays.asList(settings.getStringArray(key));
@@ -107,12 +110,10 @@ public class CreateGatesNodeSettings {
     return selectedColumn;
   }
 
-  public void validate(NodeSettingsRO settings) {
-    // TODO Auto-generated method stub
-  }
+  public void validate(NodeSettingsRO settings) {/*TODO*/}
 
   public List<Hierarchical> findNodes(String id) {
-    String key =null;
+    String key;
     if (sampleSpecificPlans.containsKey(id)){
       key = id;
     } else {
@@ -124,10 +125,10 @@ public class CreateGatesNodeSettings {
       foundGates = sampleSpecificPlans
           .get(key)
           .stream()
-          .map(nodeKey -> getNode(nodeKey))
+          .map(this::getNode)
           .collect(Collectors.toList()); 
     } else{
-      foundGates = new ArrayList<Hierarchical>();
+      foundGates = new ArrayList<>();
     }
     return foundGates;
   }

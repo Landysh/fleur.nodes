@@ -25,7 +25,6 @@ import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.singlets.SingletsModel;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeModel;
 
 /**
  * This is the model implementation of RemoveDoublets.
@@ -35,7 +34,7 @@ import main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeModel;
  */
 public class RemoveDoubletsNodeModel extends NodeModel {
 
-  private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSSetNodeModel.class);
+  private static final NodeLogger logger = NodeLogger.getLogger(RemoveDoubletsNodeModel.class);
 
   RemoveDoubletsSettingsModel m_settings = new RemoveDoubletsSettingsModel();
 
@@ -89,7 +88,7 @@ public class RemoveDoubletsNodeModel extends NodeModel {
       BitSet mask = model.scoreModel(ratio);
 
       // now create the output row
-      final FCSFrame outStore = FCSUtilities.filterColumnStore(mask, columnStore);
+      final FCSFrame outStore = FCSUtilities.filterFrame(mask, columnStore);
       final String fsName = i + "ColumnStore.fs";
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);

@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import main.java.inflor.core.gates.BitSetAccumulator;
 import main.java.inflor.core.gates.BitSetOperator;
+import main.java.inflor.core.gates.GateUtilities;
+import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
 public class Subset extends DomainObject {
@@ -14,12 +16,19 @@ public class Subset extends DomainObject {
   private BitSet members;
   private String parentID;
   private String label;
+  private Type subsetType;
+  private String overrideID;
+  private Double[] descriptors;
+  private String[] dimensions;
 
-  public Subset(String label, BitSet mask, String parentID, String priorUUID) {
+  public Subset(String label, BitSet mask, String parentID, String priorUUID, Type type, String[] dimensions, Double[] descriptors) {
     super(priorUUID);
     this.setMembers(mask);
     this.setParentID(parentID);
     this.setLabel(label);
+    subsetType = type;
+    this.dimensions = dimensions;
+    this.descriptors = descriptors;
   }
 
   public String getParentID() {
@@ -47,15 +56,17 @@ public class Subset extends DomainObject {
   }
 
   public List<Subset> findAncestors(List<Subset> subsets) {
-    List<Subset> ancestors = new ArrayList<Subset>();
+    List<Subset> ancestors = new ArrayList<>();
     boolean hasAncestors = true;
     while(hasAncestors){
       Optional<Subset> parent = subsets
         .stream()
-        .filter(ss -> ss.getID().equals(this.getID()))
+        .filter(ss -> ss.getID().equals(this.getParentID()))
         .findAny();
       if (parent.isPresent()){
-        ancestors.add(parent.get());
+        if (!GateUtilities.SUMMARY_FRAME_ID.equals(parent.get().getParentID()))
+          ancestors.add(parent.get());
+        subsets.remove(parent.get());
       } else {
         hasAncestors = false;
       }
@@ -68,7 +79,7 @@ public class Subset extends DomainObject {
     ancestors.add(this);
     Optional<BitSet> mask = ancestors
         .stream()
-        .map(subset -> subset.getMembers())
+        .map(Subset::getMembers)
         .reduce(new BitSetAccumulator(BitSetOperator.AND));
     if (mask.isPresent()){
       return mask.get();
@@ -80,5 +91,36 @@ public class Subset extends DomainObject {
   @Override
   public String toString(){
     return this.label;
+  }
+
+  public String getOverrideID() {
+    return overrideID;
+  }
+  
+  public void setOverrideID(String newValue) {
+    overrideID = newValue;
+  }
+
+  public Type getType() {
+    return subsetType;
+  }
+
+  public Double[] getDescriptors() {
+    return descriptors;
+  }
+  
+  public String[] getDimensions() {
+    return dimensions;
+  }
+  public Subset filter(BitSet mask) {
+    BitSet newMembers = new BitSet(mask.cardinality());
+    int j=0;
+    for (int i=0;i<members.size();i++){
+      if (members.get(i)){
+        newMembers.set(j);
+        j++;
+      }
+    }
+    return new Subset(label, newMembers, parentID, getID(), getType(), dimensions, descriptors);
   }
 }

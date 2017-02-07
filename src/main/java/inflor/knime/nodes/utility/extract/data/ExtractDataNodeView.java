@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extractsubset;
+package main.java.inflor.knime.nodes.utility.extract.data;
 
 import org.knime.core.node.NodeView;
 
@@ -9,14 +9,14 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class ExtractTrainingSetNodeView extends NodeView<ExtractTrainingSetNodeModel> {
+public class ExtractDataNodeView extends NodeView<ExtractDataNodeModel> {
 
   /**
    * Creates a new view.
    * 
-   * @param nodeModel The model (class: {@link ExtractTrainingSetNodeModel})
+   * @param nodeModel The model (class: {@link ExtractDataNodeModel})
    */
-  protected ExtractTrainingSetNodeView(final ExtractTrainingSetNodeModel nodeModel) {
+  protected ExtractDataNodeView(final ExtractDataNodeModel nodeModel) {
     super(nodeModel);
 
     // TODO instantiate the components of the view here.
@@ -31,7 +31,7 @@ public class ExtractTrainingSetNodeView extends NodeView<ExtractTrainingSetNodeM
 
     // TODO retrieve the new model from your nodemodel and
     // update the view.
-    ExtractTrainingSetNodeModel nodeModel = (ExtractTrainingSetNodeModel) getNodeModel();
+    ExtractDataNodeModel nodeModel = (ExtractDataNodeModel) getNodeModel();
     assert nodeModel != null;
 
     // be aware of a possibly not executed nodeModel! The data you retrieve

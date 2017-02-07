@@ -65,7 +65,7 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
       return table;
     //node is plot
     } else if (node.getUserObject() instanceof ChartSpec && mask!=null) {
-      FCSFrame filteredFrame = FCSUtilities.filterColumnStore(mask, dataFrame);
+      FCSFrame filteredFrame = FCSUtilities.filterFrame(mask, dataFrame);
       ChartSpec spec = (ChartSpec) node.getUserObject();
       AbstractFCChart plot = PlotUtils.createPlot(spec);
       JFreeChart chart = plot.createChart(filteredFrame);

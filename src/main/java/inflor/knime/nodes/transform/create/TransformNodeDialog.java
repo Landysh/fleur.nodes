@@ -21,41 +21,22 @@
 package main.java.inflor.knime.nodes.transform.create;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.knime.core.data.DataColumnSpec;
-import org.knime.core.data.DataRow;
+import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
-import org.knime.core.node.BufferedDataTable;
-import org.knime.core.node.DataAwareNodeDialogPane;
 import org.knime.core.node.InvalidSettingsException;
+import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-import org.knime.core.node.NotConfigurableException;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.plots.PlotUtils;
-import main.java.inflor.core.plots.SubsetResponseChart;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
 import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
@@ -65,7 +46,7 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
  * @author Aaron Hart
  */
 
-public class TransformNodeDialog extends DataAwareNodeDialogPane {
+public class TransformNodeDialog extends NodeDialogPane {
   
   private static final NodeLogger logger = NodeLogger.getLogger(TransformNodeDialog.class);
 
@@ -74,9 +55,7 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
   private TransformNodeSettings modelSettings;
   private JPanel analysisTab;
   private JComboBox<String> fcsColumnBox;
-  private ArrayList<FCSFrame> dataSet;
-  private JPanel transformPanel;
-  private JProgressBar progressBar;
+  private JComboBox<String> referenceSubsetBox;
 
   protected TransformNodeDialog() {
     super();
@@ -87,44 +66,6 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     analysisTab.setLayout(borderLayout);
     analysisTab.add(createOptionsPanel(), BorderLayout.PAGE_START);
     super.addTab("Transform Settings", analysisTab);
-  }
-
-  private void populateTransformPanel(JPanel panel) {
-    panel.removeAll();
-    panel.setLayout(new GridBagLayout());
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    for (String parameterName : modelSettings.getAllTransorms().navigableKeySet()) {
-      ChartPanel chart = createTransformChart(parameterName);
-      panel.add(chart, gbc);
-      gbc.gridy++;
-    }
-  }
-
-  private ChartPanel createTransformChart(String name) {
-    HashMap<String, FCSDimension> dimensions = findMatchingDimensions(name);
-    AbstractTransform currentTransform = modelSettings.getTransform(name);
-    if (currentTransform == null) {
-      currentTransform = new LogicleTransform();
-    }
-    SubsetResponseChart fcsChart = new SubsetResponseChart(name, currentTransform);
-    JFreeChart chart = fcsChart.createChart(dimensions);
-    ChartPanel panel = new ChartPanel(chart);
-    panel.setPreferredSize(new Dimension(400, 200));
-    return panel;
-  }
-
-  private HashMap<String, FCSDimension> findMatchingDimensions(String name) {
-    HashMap<String, FCSDimension> result = new HashMap<>();
-    for (FCSFrame dataFrame : dataSet) {
-      String key = dataFrame.getDisplayName();
-      FCSDimension value = FCSUtilities.findCompatibleDimension(dataFrame, name);
-      if (value!=null){
-        result.put(key, value);
-      }
-    }
-    return result;
   }
 
   private JPanel createOptionsPanel() {
@@ -141,14 +82,21 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
     fcsColumnBox.addActionListener( e -> 
         modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
     optionsPanel.add(fcsColumnBox);
-    progressBar = new JProgressBar();
-    optionsPanel.add(progressBar);
+    // Select Reference Subset
+    referenceSubsetBox = new JComboBox<>();
+    referenceSubsetBox.setSelectedItem(modelSettings.DEFAULT_REFERENCE_SUBSET);
+    referenceSubsetBox.addActionListener( e -> {
+      String subsetName = (String) referenceSubsetBox.getModel().getSelectedItem();
+        if (subsetName!=null){
+          modelSettings.setReferenceSubset(subsetName);
+        }
+      });
+    optionsPanel.add(referenceSubsetBox);
     return optionsPanel;
   }
 
   @Override
-  protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
-      throws NotConfigurableException {
+  protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) {
     final DataTableSpec spec = specs[0];
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
@@ -157,81 +105,19 @@ public class TransformNodeDialog extends DataAwareNodeDialogPane {
         fcsColumnBox.addItem(name);
       }
     }
-    DataColumnSpec selectedColumnSpec = spec.getColumnSpec((String) fcsColumnBox.getSelectedItem());
-    String shortNames = selectedColumnSpec.getProperties()
-        .getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-    String[] dimensionNames = shortNames.split(NodeUtilities.DELIMITER_REGEX);
-    for (String name : dimensionNames) {
-      if (modelSettings.getTransform(name) == null) {
-        modelSettings.addTransform(name, PlotUtils.createDefaultTransform(name));
-      }
+   
+    DataColumnProperties props = spec.getColumnSpec((String) fcsColumnBox.getSelectedItem()).getProperties();
+    
+    // Update reference subset box
+    referenceSubsetBox.removeAllItems();
+    referenceSubsetBox.addItem("Ungated");
+    if (props.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
+      String[] subsetNames = props.getProperty(NodeUtilities.SUBSET_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+      Arrays.asList(subsetNames).forEach(referenceSubsetBox::addItem);
     }
+    referenceSubsetBox.setSelectedItem(modelSettings.getReferenceSubset()); 
   }
-
-  @Override
-  protected void loadSettingsFrom(final NodeSettingsRO settings, final BufferedDataTable[] input)
-      throws NotConfigurableException {
-
-    final DataTableSpec[] specs = {input[0].getSpec()};
-
-    loadSettingsFrom(settings, specs);
-
-    // Update Sample List
-    final String targetColumn = modelSettings.getSelectedColumn();
-    final String[] names = input[0].getSpec().getColumnNames();
-    int fcsColumnIndex = -1;
-    for (int i = 0; i < names.length; i++) {
-      if (names[i].matches(targetColumn)) {
-        fcsColumnIndex = i;
-      }
-    }
-    if (fcsColumnIndex == -1) {
-      throw new NotConfigurableException("target column not in column list");
-    }
-
-    // read the sample names
-    final BufferedDataTable table = input[0];
-
-    // Hold on to a reference of the data so we can plot it later.
-    dataSet = new ArrayList<>();
-    for (final DataRow row : table) {
-      final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
-      dataSet.add(dataFrame);
-    }
-
-    transformPanel = new JPanel();
-    populateTransformPanel(transformPanel);
-    JScrollPane scrollPane = new JScrollPane(transformPanel);
-    scrollPane.setPreferredSize(new Dimension(400, 600));
-    analysisTab.add(scrollPane, BorderLayout.CENTER);
-    modelSettings.optimizeTransforms(dataSet);
-    updateTransformPanel();
-  }
-
-  protected void updateTransformPanel() {
-    progressBar.setVisible(true);
-    progressBar.setStringPainted(true);
-    progressBar.setString("Initializing");
-    progressBar.getModel().setValue(1);
-    UpdateTransformPanelWorker worker =
-        new UpdateTransformPanelWorker(progressBar, transformPanel, modelSettings, dataSet);
-    worker.execute();
-    try {
-      ArrayList<ChartPanel> chartPanels = worker.get();
-      transformPanel.removeAll();
-      transformPanel.setLayout(new GridBagLayout());
-      GridBagConstraints gbc = new GridBagConstraints();
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      for (ChartPanel chart: chartPanels) {
-        transformPanel.add(chart, gbc);
-        gbc.gridy++;
-      }
-    } catch (InterruptedException | ExecutionException e) {
-      logger.error("Update transform panel failed.", e);
-    }
-  }
-
+  
   @Override
   protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
     modelSettings.save(settings);

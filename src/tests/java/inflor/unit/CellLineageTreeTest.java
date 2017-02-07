@@ -7,19 +7,18 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.junit.Test;
+
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
 import main.java.inflor.core.gates.Hierarchical;
-import main.java.inflor.core.gates.RectangleGate;
+import main.java.inflor.core.gates.RangeGate;
 import main.java.inflor.core.ui.CellLineageTree;
 
 public class CellLineageTreeTest{
 
-  public static void main(String[] args) throws Exception {
-    CellLineageTreeTest.run();
-  }
-
-  private static void run() {
+  @Test
+  public void test1() throws Exception {
     System.out.println("Running test 1");
     String path = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
 
@@ -28,10 +27,10 @@ public class CellLineageTreeTest{
     String xName = "FSC-H";
     String yName = "FSC-W";
     
-    RectangleGate g1 = new RectangleGate("1", xName, 0, 1, yName, 0, 1, "1");
-    RectangleGate g2 = new RectangleGate("2", xName, 0, 1, yName, 0, 1, "2");
-    RectangleGate g3 = new RectangleGate("3", xName, 0, 1, yName, 0, 1, "3");
-    RectangleGate g4 = new RectangleGate("4", xName, 0, 1, yName, 0, 1, "4");
+    RangeGate g1 = new RangeGate("1", new String[]{xName, yName}, new double[]{0,0}, new double[]{1,1}, "1");
+    RangeGate g2 = new RangeGate("2", new String[]{xName, yName}, new double[]{0,0}, new double[]{1,1}, "2");
+    RangeGate g3 = new RangeGate("3", new String[]{xName, yName}, new double[]{0,0}, new double[]{1,1}, "3");
+    RangeGate g4 = new RangeGate("4", new String[]{xName, yName}, new double[]{0,0}, new double[]{1,1}, "4");
     g3.setParentID(g2.getID());
     g4.setParentID(g3.getID());
     List<Hierarchical> nodePool = new ArrayList<Hierarchical>();

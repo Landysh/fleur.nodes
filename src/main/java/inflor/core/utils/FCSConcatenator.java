@@ -31,54 +31,107 @@ import main.java.inflor.core.data.FCSFrame;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 
-  @Override
-  public FCSFrame apply(FCSFrame arg0, FCSFrame arg1) {
-    
-    Map<String, String> mergedHeader = mergeHeaders(arg0.getKeywords(), arg1.getKeywords());
-    FCSFrame mergedFrame = new FCSFrame(mergedHeader, arg0.getRowCount() + arg1.getRowCount());
-    TreeSet<FCSDimension> mergedData = mergeData(arg0, arg1);
-    mergedFrame.setData(mergedData);
-    mergedFrame.setDisplayName("Concatenated Frame");
-    
-    return mergedFrame;
-    
-  }
+	@Override
+	public FCSFrame apply(FCSFrame frame1, FCSFrame frame2) {
 
-  private TreeSet<FCSDimension> mergeData(FCSFrame arg0, FCSFrame arg1) {
-    TreeSet<FCSDimension> mergedData = new TreeSet<>();
-    
-    
-    for (FCSDimension dimension: arg0.getData()){
-      FCSDimension secondDimension = FCSUtilities.findCompatibleDimension(arg1, dimension.getShortName());
-      FCSDimension mergedDimension = new FCSDimension(dimension.getSize()+secondDimension.getSize(), 
-          dimension.getIndex(), 
-          dimension.getShortName(), 
-          dimension.getStainName(), 
-          dimension.getPNEF1(),
-          dimension.getPNEF2(), 
-          dimension.getRange()) ;
-      double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
-      mergedDimension.setData(mergedArray);
-      mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
-      mergedData.add(mergedDimension);
-    }
-    return mergedData;
-  }
+		if (!frame1.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+			initMergeMap(frame1);
 
-  private Map<String, String> mergeHeaders(Map<String, String> header1, 
-      Map<String, String> header2) {
-    
-    HashMap<String, String> mergedHeader = new HashMap<>();
-    for (Entry<String, String> entry:header1.entrySet()){
-      mergedHeader.put(entry.getKey(), entry.getValue());
-    }
-    for (Entry<String, String> entry:header2.entrySet()){
-      if (mergedHeader.containsKey(entry.getKey())){
-        mergedHeader.put(entry.getKey(), mergedHeader.get(entry.getKey()) +"||"+entry.getValue());
-      } else {
-        mergedHeader.put(entry.getKey(), entry.getValue());
-      }
-    }
-    return mergedHeader;
-  }
+		if (!frame2.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+			initMergeMap(frame2);
+
+		Map<String, String> mergedHeader = mergeHeaders(frame1.getKeywords(), frame2.getKeywords());
+		FCSFrame mergedFrame = new FCSFrame(mergedHeader, frame1.getRowCount() + frame2.getRowCount());
+		TreeSet<FCSDimension> mergedData = mergeData(frame1, frame2);
+		mergedFrame.setData(mergedData);
+		mergedFrame.setDisplayName("Concatenated Frame");
+
+		return mergedFrame;
+
+	}
+
+	private void initMergeMap(FCSFrame dataFrame) {
+		dataFrame.getKeywords().put(FCSUtilities.KEY_MERGE_MAP, dataFrame.getDisplayName());
+		FCSDimension mmDimension = new FCSDimension(dataFrame.getRowCount(), FCSUtilities.MERGE_DIMENSION_INDEX,
+				FCSUtilities.MERGE_DIMENSION_NAME, null, 0, 0, 1);
+		double[] zeros = new double[dataFrame.getRowCount()];
+		for (int i = 0; i < zeros.length; i++) {
+			zeros[i] = 0;
+		}
+		mmDimension.setData(zeros);
+		dataFrame.addDimension(mmDimension);
+	}
+
+	private TreeSet<FCSDimension> mergeData(FCSFrame frame1, FCSFrame frame2) {
+		TreeSet<FCSDimension> mergedData = new TreeSet<>();
+		for (FCSDimension dimension : frame1.getData()) {
+			FCSDimension mergedDimension;
+			if (dimension.getShortName().equals(FCSUtilities.MERGE_DIMENSION_NAME)) {
+				mergedDimension = mergeMapDimensions(frame1, frame2);
+			} else {
+				FCSDimension secondDimension = FCSUtilities.findCompatibleDimension(frame2, dimension.getShortName());
+				mergedDimension = new FCSDimension(dimension.getSize() + secondDimension.getSize(),
+						dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
+						dimension.getPNEF2(), dimension.getRange());
+				double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
+				mergedDimension.setData(mergedArray);
+				mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
+			}
+			mergedData.add(mergedDimension);
+		}
+		return mergedData;
+	}
+
+	private FCSDimension mergeMapDimensions(FCSFrame frame1, FCSFrame frame2) {
+
+		String map1 = frame1.getKeywords().get(FCSUtilities.KEY_MERGE_MAP);
+		String map2 = frame1.getKeywords().get(FCSUtilities.KEY_MERGE_MAP);
+		String newMap = String.join(FCSUtilities.DELIMITER, new String[] { map1, map2 });
+
+		double offset = map1.split(FCSUtilities.DELIMITER_REGEX).length;
+
+		FCSDimension mergedDimension = new FCSDimension(frame1.getRowCount() + frame2.getRowCount(),
+				FCSUtilities.MERGE_DIMENSION_INDEX, FCSUtilities.MERGE_DIMENSION_NAME, "", 0, 0,
+				newMap.split(FCSUtilities.DELIMITER_REGEX).length);
+
+		double[] mapDimesnion2 = frame2.getDimension(FCSUtilities.MERGE_DIMENSION_NAME).getData();
+
+		double[] offsetDimensionData = new double[mapDimesnion2.length];
+
+		for (int i = 0; i < mapDimesnion2.length; i++) {
+			offsetDimensionData[i] = mapDimesnion2[i] + offset;
+		}
+
+		double[] newData = MatrixUtilities
+				.appendVectors(frame1.getDimension(FCSUtilities.MERGE_DIMENSION_NAME).getData(), offsetDimensionData);
+		mergedDimension.setData(newData);
+		return mergedDimension;
+	}
+
+	private Map<String, String> mergeHeaders(Map<String, String> header1, Map<String, String> header2) {
+
+		HashMap<String, String> mergedHeader = new HashMap<>();
+
+		String map1 = header1.get(FCSUtilities.KEY_MERGE_MAP);
+		String map2 = header2.get(FCSUtilities.KEY_MERGE_MAP);
+		String mergedHeaderMapValue = updateMapHeader(map1, map2);
+
+		for (Entry<String, String> entry : header1.entrySet()) {
+			mergedHeader.put(entry.getKey(), entry.getValue());
+		}
+		for (Entry<String, String> entry : header2.entrySet()) {
+			if (mergedHeader.containsKey(entry.getKey())) {
+				mergedHeader.put(entry.getKey(), mergedHeader.get(entry.getKey()) + "||" + entry.getValue());
+			} else {
+				mergedHeader.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		mergedHeader.put(FCSUtilities.KEY_MERGE_MAP, mergedHeaderMapValue);
+		return mergedHeader;
+	}
+
+	private String updateMapHeader(String m1, String m2) {
+		return String.join(FCSUtilities.DELIMITER, new String[] { m1, m2 });
+	}
 }

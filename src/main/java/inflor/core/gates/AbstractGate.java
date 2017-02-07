@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 
 import main.java.inflor.core.data.DomainObject;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {
@@ -82,6 +83,9 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
   public abstract String getDomainAxisName();
   public abstract String getRangeAxisName();
   public abstract String getLabel();
+  public abstract Type getType();
+  public abstract String[] getDimensions();
+  public abstract Double[] getDescriptors();
   
   @Override
   public String getParentID(){
@@ -92,4 +96,8 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
   public void setParentID(String newValue){
     parentID = newValue;
   }
+
+
+
+
 }

@@ -21,5 +21,7 @@
 package main.java.inflor.core.plots;
 
 public enum PlotTypes {
-  DENSITY, HISTOGRAM
+  DENSITY,
+  HISTOGRAM, 
+  SCATTER
 }

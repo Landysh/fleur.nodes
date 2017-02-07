@@ -39,12 +39,12 @@ import main.java.inflor.core.data.Histogram1D;
 import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.utils.BitSetUtils;
 
-public class SubsetResponseChart {
+public class CategoryResponseChart {
 
   private AbstractTransform transform;
   private String axisName;
 
-  public SubsetResponseChart(String name, AbstractTransform transform) {
+  public CategoryResponseChart(String name, AbstractTransform transform) {
     this.transform = transform;
     this.axisName = name;
   }

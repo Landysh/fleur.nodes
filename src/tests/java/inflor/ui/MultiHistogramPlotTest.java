@@ -17,7 +17,7 @@ import org.jfree.ui.ApplicationFrame;
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.plots.SubsetResponseChart;
+import main.java.inflor.core.plots.CategoryResponseChart;
 import main.java.inflor.core.transforms.AbstractTransform;
 import main.java.inflor.core.transforms.LogicleTransform;
 import main.java.inflor.core.utils.FCSUtilities;
@@ -61,7 +61,7 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
 
 
     AbstractTransform transform = new LogicleTransform();
-    SubsetResponseChart plot = new SubsetResponseChart(name, transform);
+    CategoryResponseChart plot = new CategoryResponseChart(name, transform);
     JFreeChart chart = plot.createChart(dataset);
     panel = new ChartPanel(chart);
     JPanel editorPanel = new JPanel();
