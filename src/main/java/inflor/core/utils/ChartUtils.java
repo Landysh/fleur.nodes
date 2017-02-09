@@ -20,10 +20,17 @@
  */
 package main.java.inflor.core.utils;
 
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 
 import main.java.inflor.core.gates.AbstractGate;
@@ -118,5 +125,13 @@ public class ChartUtils {
       return true;
     }
     return false;
+  }
+
+  public static byte[] renderChartToPNG(JFreeChart jfc, int x, int y) throws IOException {
+    jfc.setBackgroundPaint(Color.WHITE);
+    BufferedImage objBufferedImage = jfc.createBufferedImage(x, y);
+    ByteArrayOutputStream bas = new ByteArrayOutputStream();
+    ImageIO.write(objBufferedImage, "png", bas);
+    return bas.toByteArray();
   }
 }

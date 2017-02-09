@@ -20,17 +20,21 @@
  */
 package main.java.inflor.core.gates;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.knime.core.NodeUtilities;
 
 public class GateUtilities {
   
   public static final String SUMMARY_FRAME_ID = "Summary";
   public static final String UNGATED_SUBSET_ID = "Ungated";
+  private static String currentID;
   
   private GateUtilities(){}
   
@@ -49,5 +53,46 @@ public class GateUtilities {
       allInclusiveSet.set(0, allInclusiveSet.size()-1);
       return allInclusiveSet;
     }
+  }
+
+  public static AbstractGate[] findAncestors(String terminalID, List<AbstractGate> gates) {
+    //TODO: Ask bernd why this can be a field but not a variable.
+    currentID = terminalID;
+    List<AbstractGate> workingList = gates.stream().collect(Collectors.toList());
+    ArrayList<AbstractGate> ancestors = new ArrayList<>();
+    while(currentID!=null){
+      Optional<AbstractGate> parentGate = 
+          workingList
+          .stream()
+          .filter(gate -> gate.getParentID().equals(currentID))
+          .findAny();
+      
+      if (parentGate.isPresent()){
+        currentID = parentGate.get().getID();
+        ancestors.add(parentGate.get());
+      } else {
+        currentID = null;
+      }
+    }
+    currentID = terminalID;
+    AbstractGate[] path = new AbstractGate[ancestors.size()];
+    for (int i=ancestors.size();i>=0;i--){
+      Optional<AbstractGate> gate = gates.stream().filter(g -> g.getID().equals(currentID)).findFirst();
+      if (gate.isPresent()){
+        path[i] = gate.get();
+        currentID = gate.get().getParentID();
+      }
+    }
+    return path;
+  }
+  
+  
+  public static String findGatingPath(String terminalID, List<AbstractGate> gates) {
+    AbstractGate[] ancestors = GateUtilities.findAncestors(terminalID, gates);
+    String[] pathElements = new String[ancestors.length];
+    for (int i=0;i<ancestors.length;i++){
+      pathElements[i] = ancestors[i].getLabel();
+    }
+    return String.join(NodeUtilities.DELIMITER, pathElements);
   }
 }
