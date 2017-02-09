@@ -26,7 +26,6 @@ import main.java.inflor.core.plots.AbstractFCChart;
 import main.java.inflor.core.plots.ChartSpec;
 import main.java.inflor.core.plots.ChartingDefaults;
 import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.plots.PlotTypes;
 import main.java.inflor.core.plots.PlotUtils;
 import main.java.inflor.core.utils.FCSUtilities;
 

@@ -228,7 +228,7 @@ public class TransformNodeModel extends NodeModel {
   }
 
   private byte[] createTransformPlot(List<FCSFrame> filteredData,
-      Entry<String, AbstractTransform> entry, AbstractTransform at) {
+    Entry<String, AbstractTransform> entry, AbstractTransform at) {
     CategoryResponseChart chart = new CategoryResponseChart(entry.getKey(), at);
     Map<String, FCSDimension> dataModel = createChartData(entry.getKey(), filteredData);
     JFreeChart jfc = chart.createChart(dataModel);
