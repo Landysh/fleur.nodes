@@ -241,9 +241,14 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return this.getDisplayName().compareTo(arg0);
   }
 
-  public FCSFrame deepCopy() throws InvalidProtocolBufferException {
+  public FCSFrame deepCopy() {
     byte[] bytes = this.saveAsBytes();
-    return FCSFrame.load(bytes);
+    try {
+      return FCSFrame.load(bytes);
+    } catch (InvalidProtocolBufferException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   public String getCompRef() {
@@ -313,19 +318,17 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return rowCount;
   }
 
-  public String[] getSubsetRow(int index) {
-    final String[] row = new String[getSubsets().size()];
-    int i = 0;
+  public Map<String, Integer> getSubsetRow(int index) {
+    Map<String, Integer> map = new HashMap<>();
     for (Subset s : subsets) {
       boolean value = s.getMembers().get(index);
       if (value) {
-        row[i] = s.getLabel() + "+";
+        map.put(s.getLabel(), 1);
       } else {
-        row[i] = s.getLabel() + "-";
+        map.put(s.getLabel(), 0);
       }
-      i++;
     }
-    return row;
+    return map;
   }
 
   public List<Subset> getSubsets() {
@@ -475,5 +478,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     } else {
       return null;
     }
+  }
+
+  public List<String> getSubsetNames() {
+    return subsets.stream().map(Subset::getLabel).collect(Collectors.toList());
   }
 }
