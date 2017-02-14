@@ -41,7 +41,7 @@ public class CreateGatesNodeSettings {
       .filter(node -> node.getID().equals(newNode.getID()))
       .collect(Collectors.toList()); 
     if (!existingNodes.isEmpty()){
-      existingNodes.forEach(nodePool::remove);
+      existingNodes.forEach(nodePool::remove);//TODO: one stream, later.
     }
     nodePool.add(newNode);
     
@@ -121,16 +121,16 @@ public class CreateGatesNodeSettings {
       key = GateUtilities.SUMMARY_FRAME_ID;
     }
     
-    List<Hierarchical> foundGates;
+    List<Hierarchical> foundNodes;
     if (sampleSpecificPlans.containsKey(key)){
-      foundGates = sampleSpecificPlans
+      foundNodes = sampleSpecificPlans
           .get(key)
           .stream()
           .map(this::getNode)
           .collect(Collectors.toList()); 
     } else{
-      foundGates = new ArrayList<>();
+      foundNodes = new ArrayList<>();
     }
-    return foundGates;
+    return foundNodes;
   }
 }
