@@ -153,7 +153,7 @@ public class FCSFileReader {
     fcsFrame.setData(data);
   }
   
-  public void initColumnStoreNoData() throws IOException {
+  public void initializeFrame() throws IOException {
     data = new TreeSet<>();
     for (int i = 0; i < fileDimensionList.length; i++) {
       Integer pIndex = FCSUtilities.findParameterNumnberByName(getHeader(), fileDimensionList[i]);
@@ -264,7 +264,7 @@ public class FCSFileReader {
     FCSFileReader reader;
     try {
       reader = new FCSFileReader(filePath);
-      reader.initColumnStoreNoData();
+      reader.initializeFrame();
       return reader.getFCSFrame();
     } catch (Exception e) {
       LOGGER.log(Level.FINE, "Unable to read file.", e);
