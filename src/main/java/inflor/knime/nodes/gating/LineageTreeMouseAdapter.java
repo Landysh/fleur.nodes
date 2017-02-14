@@ -50,7 +50,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    CellLineageTree tree = parent.lineageTree;
+    CellLineageTree tree = parent.getTree();
     if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
       //Extract some needed objects from the tree.
       TreePath treePath = tree.getAnchorSelectionPath();    
@@ -114,10 +114,10 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private void popDialog(ChartEditorDialog dialog) {
     dialog.setVisible(true);
     if (dialog.isOK()) {
-      FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) parent.lineageTree.getModel().getRoot()).getUserObject();
-      parent.mSettings.addNode(dialog.getChartSpec(), dataFrame.getID());
+      FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) parent.getTree().getModel().getRoot()).getUserObject();
+      parent.getSettings().addNode(dialog.getChartSpec(), dataFrame.getID());
       List<AbstractGate> gates = dialog.getGates();
-      gates.forEach(gate -> parent.mSettings.addNode(gate, dataFrame.getID()));
+      gates.forEach(gate -> parent.getSettings().addNode(gate, dataFrame.getID()));
       parent.updateLineageTree();
     }
     dialog.dispose();

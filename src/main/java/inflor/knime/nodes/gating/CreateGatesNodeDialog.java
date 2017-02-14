@@ -47,12 +47,12 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
  
   private final NodeLogger logger = getLogger();
 
-  CreateGatesNodeSettings mSettings;
+  private CreateGatesNodeSettings mSettings;
 
-  JPanel analyisTab;
-  CellLineageTree lineageTree;
-  JComboBox<String> fcsColumnBox;
-  JComboBox<FCSFrame> selectSampleBox;
+  private JPanel analyisTab;
+  private CellLineageTree lineageTree;
+  private JComboBox<String> fcsColumnBox;
+  private JComboBox<FCSFrame> selectSampleBox;
 
   private JScrollPane analysisArea;
 
@@ -214,5 +214,13 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     analyisTab.add(analysisArea, BorderLayout.CENTER);
     analyisTab.revalidate();
     analyisTab.repaint(50);
+  }
+
+  public CellLineageTree getTree() {
+    return lineageTree;
+  }
+
+  public CreateGatesNodeSettings getSettings() {
+    return mSettings;
   }
 }
