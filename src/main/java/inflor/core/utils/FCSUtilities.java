@@ -67,7 +67,7 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
     for (int i = 1; i <= parameterCount; i++) {
       final String parameterKey = "$P" + i + "N";
       final String value = keywords.get(parameterKey);
-      if (value.matches(name)) {
+      if (value.equals(name)) {
         parameterIndex = i;
         break;
       }
@@ -132,7 +132,7 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
       isValid = true;
     } else {
       isValid = false;
-    }
+    }    
     return isValid;
   }
 
