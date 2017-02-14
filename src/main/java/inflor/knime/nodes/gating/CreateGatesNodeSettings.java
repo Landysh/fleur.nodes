@@ -73,6 +73,7 @@ public class CreateGatesNodeSettings {
   
   public void save(NodeSettingsWO settings) throws IOException {
     settings.addString(SELECTED_COLUMN_KEY, selectedColumn);
+    //TODO Ask bernd about this.
     NodeUtilities.saveSerializable(settings, NODE_BYTES_KEY, nodePool);
     NodeUtilities.saveSerializable(settings, SAMPLE_PLAN_KEY, sampleSpecificPlans);
     settings.addStringArray(SAMPLE_PLAN_KEY, sampleSpecificPlans

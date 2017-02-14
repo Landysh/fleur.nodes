@@ -31,6 +31,7 @@
     <ports>
         <inPort index="0" name="FCS Data">A KNIME table containing at least one FCS Frame column</inPort>
         <outPort index="0" name="Data with Transformations">The input table but with the added display transformation functions</outPort>
+        <outPort index="1" name="Transformation Summary">A list of the optimized transforms for each dimension.</outPort>
     </ports>    
     <views>
         <view index="0" name="name of first view">Description of first view...</view>

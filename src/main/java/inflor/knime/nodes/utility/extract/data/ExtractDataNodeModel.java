@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
@@ -15,6 +17,7 @@ import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
+import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
@@ -80,6 +83,10 @@ public class ExtractDataNodeModel extends NodeModel {
 
 
 
+  private DataTableSpec outputSpec;
+
+
+
   /**
    * Constructor for the node model.
    */
@@ -96,7 +103,7 @@ public class ExtractDataNodeModel extends NodeModel {
 
     logger.info("ExtractTrainingSetNodeModel executing.");
 
-    DataTableSpec outputSpec = createSpec(inData[0].getSpec());
+    outputSpec = createSpec(inData[0].getSpec());
     BufferedDataContainer container = exec.createDataContainer(outputSpec);
     int frameIndex = inData[0].getSpec().findColumnIndex(mSelectedColumn.getStringValue());
     rowIndex = 0;
@@ -157,14 +164,21 @@ public class ExtractDataNodeModel extends NodeModel {
   private DataCell[] writeCellsWithSubsetColumns(FCSFrame dataFrame, int i) {
     DataCell[] cells;
     double[] dimensionValues = dataFrame.getRow(i, mTransform.getBooleanValue());
-    String[] subsetValues = dataFrame.getSubsetRow(i);
-    cells = new DataCell[dimensionValues.length + subsetValues.length + 1];
+    Map<String, Integer> subsetValues = dataFrame.getSubsetRow(i);
+    cells = new DataCell[dimensionValues.length + subsetValues.size() + 2];
     for (int j = 0; j < dimensionValues.length; j++) {
       cells[j] = new DoubleCell(dimensionValues[j]);
     }
-    for (int k = 0; k < subsetValues.length; k++) {
-      cells[dimensionValues.length + k] = new StringCell(subsetValues[k]);
+    for (Entry<String, Integer> e: subsetValues.entrySet()) {
+      int columnIndex = outputSpec.findColumnIndex(e.getKey());
+      cells[columnIndex] = new IntCell(e.getValue());
     }
+    cells[dimensionValues.length+subsetValues.size()] = new StringCell(String.join(",", subsetValues
+                                                                                            .entrySet()
+                                                                                            .stream()
+                                                                                            .filter(e -> e.getValue()==1)
+                                                                                            .map(Entry::getKey)
+                                                                                            .collect(Collectors.toList())));
     return cells;
   }
 
@@ -181,7 +195,7 @@ public class ExtractDataNodeModel extends NodeModel {
     if (properties.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)) {
       String rawSubsetNames = properties.getProperty(NodeUtilities.SUBSET_NAMES_KEY);
       String[] subsetNames = rawSubsetNames.split(NodeUtilities.DELIMITER_REGEX);
-      outColumnCount = subsetNames.length + dimensionNames.length + 1;
+      outColumnCount = subsetNames.length + dimensionNames.length + 2;
       colSpecs = new DataColumnSpec[outColumnCount];
       for (int i = 0; i < dimensionNames.length; i++) {
         DataColumnSpecCreator creator = new DataColumnSpecCreator(displayNames[i], DoubleCell.TYPE);
@@ -193,10 +207,12 @@ public class ExtractDataNodeModel extends NodeModel {
       }
 
       for (int i = 0; i < subsetNames.length; i++) {
-
         colSpecs[i + dimensionNames.length] =
-            new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
+            new DataColumnSpecCreator(subsetNames[i], IntCell.TYPE).createSpec();
       }
+      colSpecs[dimensionNames.length + subsetNames.length] =             
+          new DataColumnSpecCreator("SubsetName", StringCell.TYPE).createSpec();
+
     } else {
       outColumnCount = dimensionNames.length + 1;
       colSpecs = new DataColumnSpec[outColumnCount];
