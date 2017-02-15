@@ -56,11 +56,7 @@ public class ChartSpec extends DomainObject implements Hierarchical{
   }
 
   public String getDisplayName() {
-    if (this.displayName != null) {
-      return displayName;
-    } else {
-      return this.getID();
-    }
+    return domainAxisName + "x" + rangeAxisName +"|" + plotType.toString();
   }
 
   @Override
@@ -117,6 +113,6 @@ public class ChartSpec extends DomainObject implements Hierarchical{
   
   @Override
   public String toString(){
-   return this.getDisplayName() + " : " + this.getID();
+   return this.getDisplayName();
   }
 }

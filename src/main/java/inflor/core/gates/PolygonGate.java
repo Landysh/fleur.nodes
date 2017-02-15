@@ -22,6 +22,7 @@ package main.java.inflor.core.gates;
 
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 
 import org.w3c.dom.Element;
@@ -175,4 +176,10 @@ public class PolygonGate extends AbstractGate {
       descriptors[i] = flatVertices[i];
     return descriptors;
   }
+  
+  @Override
+  public String toString(){
+    return String.join(" ", new String[]{"Polygon Gate: ", getLabel(), getDomainAxisName(), getRangeAxisName()});
+  }
+  
 }

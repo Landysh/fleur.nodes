@@ -68,11 +68,15 @@ public class CreateGatesNodeModel extends NodeModel {
     return createSpecs(inSpecs[0]);
   }
 
-  private DataTableSpec[] createSpecs(DataTableSpec inSpec) {
-    //TODO: make more concise.
+  private DataTableSpec[] createSpecs(DataTableSpec inSpec) throws InvalidSettingsException {
+    if (CreateGatesNodeSettings.DEFAULT_SELECTED_COLUMN.equals(modelSettings.getSelectedColumn())){
+      throw new InvalidSettingsException("Please select a column containing FCS Frame data");
+    }
     DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
     DataColumnProperties properties = inSpec.getColumnSpec(modelSettings.getSelectedColumn()).getProperties();
-    List<String> subsetNames = modelSettings.findNodes(GateUtilities.SUMMARY_FRAME_ID)
+    List<String> subsetNames = modelSettings
+        .getNodes()
+        .values()
         .stream()
         .filter(node -> node instanceof AbstractGate)
         .map(node -> (AbstractGate) node)
@@ -114,7 +118,8 @@ public class CreateGatesNodeModel extends NodeModel {
       // now create the output row
       final FCSFrame outStore = inStore.deepCopy();
       List<AbstractGate> gates = modelSettings
-          .findNodes(outStore.getID())
+          .getNodes()
+          .values()
           .stream()
           .filter(node -> node instanceof AbstractGate)
           .map(node -> (AbstractGate) node)
@@ -192,7 +197,7 @@ public class CreateGatesNodeModel extends NodeModel {
     try {
       modelSettings.save(settings);
     } catch (IOException e) {
-      e.printStackTrace();
+      e.printStackTrace();//TODO
     }
   }
 

@@ -2,10 +2,14 @@ package main.java.inflor.knime.nodes.gating;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,7 +31,6 @@ import org.knime.core.node.NotConfigurableException;
 
 import main.java.inflor.core.data.DomainObject;
 import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.GateUtilities;
 import main.java.inflor.core.gates.Hierarchical;
 import main.java.inflor.core.ui.CellLineageTree;
 import main.java.inflor.core.utils.FCSUtilities;
@@ -76,8 +79,15 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
               (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
           if (!selectedNode.equals(selectedNode.getRoot()) &&
               selectedNode.getUserObject() instanceof DomainObject){
-            Hierarchical node = (Hierarchical) selectedNode.getUserObject();
-            mSettings.removeNode(node);
+            List<String> pathEntries = Arrays.asList(selectedNode.getPath())
+                .stream()
+                .sequential()
+                .map(tn -> (DefaultMutableTreeNode) tn )
+                .map(dmt -> dmt.getUserObject().toString())
+                .collect(Collectors.toList());
+            String key = String.join(File.pathSeparator, pathEntries);
+            mSettings.removeNode(key);
+            updateLineageTree();
           }
         }
       }
@@ -90,16 +100,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     super.addTab("Analysis", analyisTab);
   }
 
-  private JScrollPane createAnalysisArea() {
-    FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
-    List<Hierarchical> nodePool = mSettings.findNodes(dataFrame.getID());
-    lineageTree = new CellLineageTree(dataFrame, nodePool);
-    lineageTree.removeMouseListener(ltml);
-    ltml = new LineageTreeMouseAdapter(this);
-    lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
-    analysisArea = new JScrollPane(lineageTree);
-    return analysisArea;
-  }
 
   private JPanel createOptionsPanel() {
     final JPanel optionsPanel = new JPanel();
@@ -133,7 +133,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
       throws NotConfigurableException {
     final DataTableSpec spec = specs[0];
-
+    try {
+      mSettings.load(settings);
+    } catch (InvalidSettingsException e) {
+      throw new NotConfigurableException("Unable to load settings.", e);
+    }
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
@@ -165,7 +169,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       }
     }
     if (fcsColumnIndex == -1) {
-      throw new NotConfigurableException("target column not in column list");
+      throw new NotConfigurableException("Target column not found.");
     }
 
     // read the sample names
@@ -185,7 +189,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       parameterSet.addAll(newParameters);
     }
     FCSFrame concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
-    concatenatedFrame.setID(GateUtilities.SUMMARY_FRAME_ID);
     selectSampleBox.addItem(concatenatedFrame);
     dataSet.forEach(selectSampleBox::addItem);
     selectSampleBox.setSelectedIndex(0);
@@ -210,7 +213,14 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     if (analysisArea != null) {
       analyisTab.remove(analysisArea);
     }
-    analysisArea = createAnalysisArea();
+    
+    FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
+    Map<String, Hierarchical> nodePool = mSettings.getNodes();
+    lineageTree = new CellLineageTree(dataFrame, nodePool.values());
+    lineageTree.removeMouseListener(ltml);
+    ltml = new LineageTreeMouseAdapter(this);
+    lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));   
+    analysisArea = new JScrollPane(lineageTree);
     analyisTab.add(analysisArea, BorderLayout.CENTER);
     analyisTab.revalidate();
     analyisTab.repaint(50);
@@ -222,5 +232,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   public CreateGatesNodeSettings getSettings() {
     return mSettings;
+  }
+
+  public FCSFrame getCurrentData() {
+    return (FCSFrame) selectSampleBox.getSelectedItem();
   }
 }
