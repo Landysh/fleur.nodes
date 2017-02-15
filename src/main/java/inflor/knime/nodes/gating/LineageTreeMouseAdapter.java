@@ -22,6 +22,7 @@ package main.java.inflor.knime.nodes.gating;
 
 import java.awt.Window;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -50,7 +51,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    CellLineageTree tree = parent.lineageTree;
+    CellLineageTree tree = parent.getTree();
     if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
       //Extract some needed objects from the tree.
       TreePath treePath = tree.getAnchorSelectionPath();    
@@ -58,7 +59,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)elements[elements.length-1];
       Object selectedObject = selectedNode.getUserObject();
       //Pull out the dataFrame from the root node.
-      FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) tree.getModel().getRoot()).getUserObject();
+      FCSFrame dataFrame = parent.getCurrentData();
       //Extract gates from tree object path. 
       ArrayList<AbstractGate> parentGates = Arrays.asList(elements)
           .stream()
@@ -71,27 +72,32 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       //Calculate the path mask and apply to dataFrame to create a filtered frame.
       BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates);
       FCSFrame filteredFrame;
-      if (mask.cardinality()<dataFrame.getRowCount()){
-        filteredFrame = FCSUtilities.filterFrame(mask, dataFrame);
+      if (parentGates.isEmpty()){
+        filteredFrame = dataFrame.deepCopy();
+        filteredFrame.setID(GateUtilities.UNGATED_SUBSET_ID);
       } else {
-        filteredFrame = dataFrame;
-      }
-      if (!parentGates.isEmpty()){
-        String ids = parentGates.get(parentGates.size()-1).getID();
-        filteredFrame.setID(ids);
+        filteredFrame = FCSUtilities.filterFrame(mask, dataFrame);
+        String parentID = parentGates.get(parentGates.size()-1).getID();
+        filteredFrame.setID(parentID);
       }
       Window topFrame = SwingUtilities.getWindowAncestor(this.parent.getPanel());
       ArrayList<AbstractGate> siblingGates = findSiblingGates(selectedNode);
-            
-      if(selectedObject instanceof AbstractGate){
-        ChartEditorDialog dialog = new ChartEditorDialog(topFrame, filteredFrame, siblingGates);
-        popDialog(dialog);
-      } else if (selectedObject instanceof ChartSpec){
+      //Calculate the gating path leading to this dialog.
+      List<String> pathElements = Arrays.asList(elements)
+          .stream()
+          .sequential()
+          .map(o -> (DefaultMutableTreeNode) o)
+          .filter(dmt -> !(dmt.getUserObject() instanceof ChartSpec))
+          .map(dmt -> dmt.getUserObject().toString())
+          .collect(Collectors.toList());
+      String path = String.join(File.pathSeparator, pathElements);
+      //Open the dialog using the existing chart spec if it was clicked on.
+      if(selectedObject instanceof ChartSpec){
         ChartSpec spec = (ChartSpec) selectedObject;
-        ChartEditorDialog dialog = new ChartEditorDialog(topFrame, filteredFrame, siblingGates, spec);
+        ChartEditorDialog dialog = new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates, spec);
         popDialog(dialog);
-      } else if (selectedObject instanceof FCSFrame){
-        ChartEditorDialog dialog = new ChartEditorDialog(topFrame, dataFrame, siblingGates);
+      } else {
+        ChartEditorDialog dialog = new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates);
         popDialog(dialog);
       }
     }   
@@ -114,10 +120,11 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
   private void popDialog(ChartEditorDialog dialog) {
     dialog.setVisible(true);
     if (dialog.isOK()) {
-      FCSFrame dataFrame = (FCSFrame)((DefaultMutableTreeNode) parent.lineageTree.getModel().getRoot()).getUserObject();
-      parent.mSettings.addNode(dialog.getChartSpec(), dataFrame.getID());
+      ChartSpec newSpec = dialog.getChartSpec();
+      String specPath = String.join(File.pathSeparator, new String[]{dialog.getPath(), newSpec.toString()});
+      parent.getSettings().addNode(specPath, newSpec);
       List<AbstractGate> gates = dialog.getGates();
-      gates.forEach(gate -> parent.mSettings.addNode(gate, dataFrame.getID()));
+      gates.forEach(gate -> parent.getSettings().addNode(String.join(File.pathSeparator, new String[]{dialog.getPath(), gate.toString()} ), gate));
       parent.updateLineageTree();
     }
     dialog.dispose();

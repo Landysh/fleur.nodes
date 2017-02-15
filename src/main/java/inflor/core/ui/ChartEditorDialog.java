@@ -50,8 +50,9 @@ public class ChartEditorDialog extends JDialog {
   private FCSChartPanel chartPanel;
   private GateCreationToolBar gatingToolBar;
   private List<AbstractGate> gates;
+  private String path;
 
-  public ChartEditorDialog(Window topFrame, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
+  public ChartEditorDialog(Window topFrame, String path, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
     /**
      * Use this constructor to edit an existing chart.
      * 
@@ -61,6 +62,7 @@ public class ChartEditorDialog extends JDialog {
      */
     super(topFrame);
     setModal(true);
+    this.path = path;
     this.dataFrame = dataFrame;
     this.gates = applicableGates;
     // populate the dialog
@@ -70,8 +72,8 @@ public class ChartEditorDialog extends JDialog {
     setLocationRelativeTo(getParent());
   }
   
-  public ChartEditorDialog(Window topFrame, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
-    this(topFrame, selectedSample, applicableGates, null);
+  public ChartEditorDialog(Window topFrame,String path, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
+    this(topFrame, path, selectedSample, applicableGates, null);
   }
 
   private FCSDimension guessDomainDimension(FCSFrame fcsFrame) {
@@ -251,5 +253,13 @@ public class ChartEditorDialog extends JDialog {
 
   public boolean isOK() {
     return isOK;
+  }
+
+  public String getParentID() {
+    return dataFrame.getID();
+  }
+
+  public String getPath() {
+    return this.path;
   }
 }

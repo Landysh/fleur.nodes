@@ -116,8 +116,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
     headers.forEach(map -> map.entrySet().forEach(entry -> updateContent(content, entry)));
     
     // Collect all dimensions for experiment in one Hashset.
-    Optional<TreeSet<FCSDimension>> optionalDimensions = filePaths.stream()
-        .map(FCSFileReader::readNoData).map(FCSFrame::getData).reduce(this::merge);
+    Optional<TreeSet<FCSDimension>> optionalDimensions = filePaths
+        .stream()
+        .map(FCSFileReader::readNoData)
+        .map(FCSFrame::getData)
+        .reduce(this::merge);
+
 
     if (optionalDimensions.isPresent()) {
       // Add dimension names string

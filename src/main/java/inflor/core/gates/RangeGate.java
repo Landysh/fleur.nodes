@@ -20,8 +20,11 @@
  */
 package main.java.inflor.core.gates;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
@@ -89,11 +92,11 @@ public class RangeGate extends AbstractGate {
     return result;
   }
 
-  public String[] getDimensionNames() {
-    return (String[]) dimensions
-                        .stream()
-                        .map(RangeDimension::getName)
-                        .toArray();
+  public List<String> getDimensionNames() {
+    return dimensions
+        .stream()
+        .map(RangeDimension::getName)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -117,7 +120,7 @@ public class RangeGate extends AbstractGate {
     if (this.label == null) {
       return this.getID();
     } else {
-      return label + this.getID();
+      return label + String.join(File.pathSeparator, getDimensionNames());
     }
   }
 

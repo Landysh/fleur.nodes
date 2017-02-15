@@ -32,12 +32,15 @@ import main.java.inflor.core.data.FCSFrame;
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 
 	@Override
-	public FCSFrame apply(FCSFrame frame1, FCSFrame frame2) {
+	public FCSFrame apply(FCSFrame f1, FCSFrame f2) {
+	    
+	  FCSFrame frame1 = f1.deepCopy();//TODO: Highly suspect this is not needed.  Review.
+      FCSFrame frame2 = f2.deepCopy();
 
-		if (!frame1.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+    if (!frame1.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
 			initMergeMap(frame1);
 
-		if (!frame2.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+    if (!frame2.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
 			initMergeMap(frame2);
 
 		Map<String, String> mergedHeader = mergeHeaders(frame1.getKeywords(), frame2.getKeywords());

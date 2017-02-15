@@ -64,7 +64,7 @@ public class Subset extends DomainObject {
         .filter(ss -> ss.getID().equals(this.getParentID()))
         .findAny();
       if (parent.isPresent()){
-        if (!GateUtilities.SUMMARY_FRAME_ID.equals(parent.get().getParentID()))
+        if (!GateUtilities.UNGATED_SUBSET_ID.equals(parent.get().getParentID()))
           ancestors.add(parent.get());
         subsets.remove(parent.get());
       } else {

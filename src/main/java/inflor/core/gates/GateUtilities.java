@@ -32,7 +32,7 @@ import main.java.inflor.knime.core.NodeUtilities;
 
 public class GateUtilities {
   
-  public static final String SUMMARY_FRAME_ID = "Summary";
+  //public static final String SUMMARY_FRAME_ID = "Summary";
   public static final String UNGATED_SUBSET_ID = "Ungated";
   private static String currentID;
   
