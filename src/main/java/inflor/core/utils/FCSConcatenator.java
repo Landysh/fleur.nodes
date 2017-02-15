@@ -23,13 +23,18 @@ package main.java.inflor.core.utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
+import java.util.logging.Logger;
 
 import main.java.inflor.core.data.FCSDimension;
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.logging.LogFactory;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
+  
+    private Logger logger = LogFactory.createLogger(this.getClass().toString());
 
 	@Override
 	public FCSFrame apply(FCSFrame f1, FCSFrame f2) {
@@ -71,19 +76,30 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 			FCSDimension mergedDimension;
 			if (dimension.getShortName().equals(FCSUtilities.MERGE_DIMENSION_NAME)) {
 				mergedDimension = mergeMapDimensions(frame1, frame2);
+	            mergedData.add(mergedDimension);
 			} else {
-				FCSDimension secondDimension = FCSUtilities.findCompatibleDimension(frame2, dimension.getShortName());
-				mergedDimension = new FCSDimension(dimension.getSize() + secondDimension.getSize(),
-						dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
-						dimension.getPNEF2(), dimension.getRange());
-				double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
-				mergedDimension.setData(mergedArray);
-				mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
+				Optional<FCSDimension> secondDimension = FCSUtilities.findCompatibleDimension(frame2, dimension.getShortName());
+				if (secondDimension.isPresent()){
+				  mergedDimension = mergeDimensions(dimension, secondDimension.get());
+		          mergedData.add(mergedDimension);
+				} else {
+				  logger.info("Dimension not found: " + dimension.getDisplayName());
+				}
 			}
-			mergedData.add(mergedDimension);
 		}
 		return mergedData;
 	}
+
+  private FCSDimension mergeDimensions(FCSDimension dimension, FCSDimension secondDimension) {
+    FCSDimension mergedDimension;
+    mergedDimension = new FCSDimension(dimension.getSize() + secondDimension.getSize(),
+    		dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
+    		dimension.getPNEF2(), dimension.getRange());
+    double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
+    mergedDimension.setData(mergedArray);
+    mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
+    return mergedDimension;
+  }
 
 	private FCSDimension mergeMapDimensions(FCSFrame frame1, FCSFrame frame2) {
 

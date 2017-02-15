@@ -185,7 +185,7 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
     return out;
   }
 
-  public static FCSDimension findCompatibleDimension(FCSFrame dataSource, String shortName) {
+  public static Optional<FCSDimension> findCompatibleDimension(FCSFrame dataSource, String shortName) {
     /**
      * Returns the key for the first compatible FCSDimension in the selected map. (ie. where the
      * result of the toString() method is the same). Will return null if no compatible entry is
@@ -197,7 +197,7 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
         returnDim = dim;
       }
     }
-    return returnDim;
+    return Optional.ofNullable(returnDim);
   }
 
   public static FCSFrame createSummaryFrame(List<FCSFrame> fcsList, Integer maxEventsPerFrame) {
@@ -316,14 +316,11 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
             .collect(Collectors.toList());
   }
 
-  public static FCSFrame createConcatenatedFrame(List<FCSFrame> dataSet) {
-      
-      Optional<FCSFrame> optReturn = dataSet
-      .stream()
-      .parallel()
-      .reduce(new FCSConcatenator());
-      
-      return optReturn.isPresent() ? optReturn.get() : null;
+  public static Optional<FCSFrame> createConcatenatedFrame(List<FCSFrame> dataSet) {      
+      return dataSet
+          .stream()
+          .parallel()
+          .reduce(new FCSConcatenator());
   }
 
   public static String chooseDisplayName(FCSFrame fcsFrame) {

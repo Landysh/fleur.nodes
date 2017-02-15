@@ -24,6 +24,7 @@ import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Optional;
 
 import org.w3c.dom.Element;
 
@@ -69,10 +70,10 @@ public class PolygonGate extends AbstractGate {
 
   @Override
   public BitSet evaluate(FCSFrame data) {
-    FCSDimension d1 = FCSUtilities.findCompatibleDimension(data, domainName);
-    FCSDimension d2 = FCSUtilities.findCompatibleDimension(data, rangeName);
-    double[] d1Data = d1.getPreferredTransform().transform(d1.getData());
-    double[] d2Data = d2.getPreferredTransform().transform(d2.getData());
+    Optional<FCSDimension> d1 = FCSUtilities.findCompatibleDimension(data, domainName);
+    Optional<FCSDimension> d2 = FCSUtilities.findCompatibleDimension(data, rangeName);
+    double[] d1Data = d1.get().getPreferredTransform().transform(d1.get().getData());
+    double[] d2Data = d2.get().getPreferredTransform().transform(d2.get().getData());
     Path2D poly = new Path2D.Double();
     BitSet mask = new BitSet(data.getRowCount());
     for (int i = 0; i < domainPoints.size(); i++) {

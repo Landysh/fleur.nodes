@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -188,8 +189,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       List<String> newParameters =dataFrame.getDimensionNames();
       parameterSet.addAll(newParameters);
     }
-    FCSFrame concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
-    selectSampleBox.addItem(concatenatedFrame);
+    Optional<FCSFrame> concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
+    concatenatedFrame.ifPresent(selectSampleBox::addItem);
     dataSet.forEach(selectSampleBox::addItem);
     selectSampleBox.setSelectedIndex(0);
     updateLineageTree();

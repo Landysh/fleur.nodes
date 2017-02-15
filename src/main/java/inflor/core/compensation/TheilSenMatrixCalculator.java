@@ -176,9 +176,9 @@ public class TheilSenMatrixCalculator {
     FCSFrame brightestFrame = null;
     Double maxMedian = Double.MIN_VALUE;
     for (FCSFrame frame: dataList){
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
-      if (dimension!=null){
-        Double value = new Median().evaluate(dimension.getData());
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
+      if (dimension.isPresent()){
+        Double value = new Median().evaluate(dimension.get().getData());
         if (value > maxMedian){
           maxMedian = value;
           brightestFrame = frame;

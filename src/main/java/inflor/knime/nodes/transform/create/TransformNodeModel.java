@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -253,8 +254,8 @@ public class TransformNodeModel extends NodeModel {
   private double[] mergeData(String shortName, List<FCSFrame> dataSet2) {
     double[] data = null;
     for (FCSFrame frame : dataSet2) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
-      data = MatrixUtilities.appendVectors(data, dimension.getData());
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
+      data = MatrixUtilities.appendVectors(data, dimension.get().getData());
     }
     return data;
   }
