@@ -14,6 +14,7 @@ import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.MissingCell;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
@@ -146,6 +147,13 @@ public class ExtractDataNodeModel extends NodeModel {
     }
     cells[cells.length - 1] = new StringCell(dataFrame.getDisplayName());
     final RowKey rowKey = new RowKey("Row " + rowIndex);
+    
+    for (int j=0;j<cells.length;j++){
+      if (cells[j] == null){
+        cells[j] = new MissingCell(":("); 
+      }
+    }
+    
     final DataRow tableRow = new DefaultRow(rowKey, cells);
     container.addRowToTable(tableRow);
     rowIndex++;
