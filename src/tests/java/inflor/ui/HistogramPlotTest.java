@@ -39,7 +39,7 @@ public class HistogramPlotTest extends ApplicationFrame {
     spec.setPlotType(PlotTypes.HISTOGRAM);
     spec.setDomainAxisName("PE-Texas-Red-A");
     LogicleTransform transform = new LogicleTransform();
-    double[] data = FCSUtilities.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").getData();
+    double[] data = FCSUtilities.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").get().getData();
     transform.optimizeW(data);
     spec.setRangeAxisName("Count");
 

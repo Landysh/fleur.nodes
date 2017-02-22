@@ -50,6 +50,7 @@ import main.java.inflor.core.utils.FCSConcatenator;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
 import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of ReadFCSSet.
@@ -203,8 +204,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     return new DataTableSpec(colSpecs);
   }
 
-  // dont listen to sonar, used in createColumnPropertiesContent
-  private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+  static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
     // http://stackoverflow.com/questions/23699371/java-8-distinct-by-property
     Map<Object, Boolean> seen = new ConcurrentHashMap<>();
     return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
@@ -237,17 +237,17 @@ public class ReadFCSSetNodeModel extends NodeModel {
     return new BufferedDataTable[] {out};
   }
 
-  private synchronized void addRow(FCSFrame dataFrame, BufferedDataContainer container,
+  private synchronized void addRow(FCSFrame df, BufferedDataContainer container,
       ExecutionContext exec) {
 	
 	//create the row
     final RowKey key = new RowKey("Row " + currentFileIndex);
-    final String fsName = currentFileIndex + "ColumnStore.fs";
-    FileStore fileStore;
     try {
-      fileStore = fileStoreFactory.createFileStore(fsName);
+      FileStore fs = fileStoreFactory.createFileStore(df.toString() + "." + df.getID());
+      int sizeSaved = NodeUtilities.writeFrameToFilestore(df, fs);
+      FCSFrameMetaData metaData = new FCSFrameMetaData(df, sizeSaved);
       final FCSFrameFileStoreDataCell fileCell =
-          new FCSFrameFileStoreDataCell(fileStore, dataFrame);
+          new FCSFrameFileStoreDataCell(fs, metaData);
       final DataCell[] cells = new DataCell[] {fileCell};
 
       final DataRow row = new DefaultRow(key, cells);

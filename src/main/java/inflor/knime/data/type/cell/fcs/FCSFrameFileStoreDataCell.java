@@ -20,19 +20,20 @@
  */
 package main.java.inflor.knime.data.type.cell.fcs;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.knime.core.data.DataCell;
 import org.knime.core.data.DataCellDataInput;
 import org.knime.core.data.DataCellDataOutput;
 import org.knime.core.data.DataCellSerializer;
 import org.knime.core.data.DataType;
-import org.knime.core.data.DataValue;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 import org.knime.core.node.NodeLogger;
 
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.utils.FCSUtilities;
+import main.java.inflor.knime.core.NodeUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 
@@ -44,10 +45,18 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
     @Override
     public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
-        byte[] bytes = new byte[input.readInt()];
-        input.readFully(bytes);
-        FCSFrame cStore = FCSFrame.load(bytes);
-        return new FCSFrameFileStoreDataCell(cStore);
+        
+        String id = input.readUTF();
+        String displayName = input.readUTF();
+        String[] dimensionKeys = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
+        String[] dimensionLabels = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
+        String description = input.readUTF();
+        int messageSize = input.readInt();
+        int rowCount = input.readInt();
+
+        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, description, messageSize, rowCount);
+                    
+        return new FCSFrameFileStoreDataCell(newMetadata);
       } catch (Exception e) {
         logger.error("Unable to deserialize cell", e);
         throw new IOException("Error during deserialization");
@@ -56,9 +65,21 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
 
     @Override
     public void serialize(FCSFrameFileStoreDataCell cell, DataCellDataOutput output) throws IOException {
-      final byte[] bytes = cell.getFCSFrameValue().saveAsBytes();
-      output.writeInt(bytes.length);
-      output.write(bytes);
+      
+      FCSFrameMetaData md = cell.getFCSFrameMetadata();
+      String id = md.getID();
+      String displayName = md.getDisplayName();
+      String dimesnionKeys = String.join(FCSUtilities.DELIMITER, md.getDimensionNames());
+      String dimensionLabels = String.join(NodeUtilities.DELIMITER, md.getDimensionLabels());
+      String description = md.getMultilineDescription();
+      output.writeUTF(id);
+      output.writeUTF(displayName);
+      output.writeUTF(dimesnionKeys);
+      output.writeUTF(dimensionLabels);
+      output.writeUTF(description);
+      output.writeInt(md.getSize());
+      output.writeInt(md.getRowCount());
+
     }
   }
 
@@ -67,49 +88,45 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
   /**
    * A cell type matching the functionality of the ColumnStorePortObject.
    */
-  private final FCSFrame mData;
+  private final FCSFrameMetaData metaData;
 
-  FCSFrameFileStoreDataCell(FCSFrame dataFrame) {
+  FCSFrameFileStoreDataCell(FCSFrameMetaData metaData) {
     
     // Use with deserializer.
     super();
-    mData = dataFrame;
+    this.metaData = metaData;
   }
 
-  public FCSFrameFileStoreDataCell(FileStore fs, FCSFrame dataFrame) {
+  public FCSFrameFileStoreDataCell(FileStore fs, FCSFrameMetaData metaData) {
     super(fs);
-    mData = dataFrame;
+    this.metaData = metaData;
+  }
+
+  public FCSFrameFileStoreDataCell(FileStore fileStore, FCSFrame dataFrame, int messageSize) {
+    this(fileStore, new FCSFrameMetaData(dataFrame, messageSize));
   }
 
   @Override
   public String toString() {
-    return mData.toString();
+    return metaData.toString();
   }
 
   @Override
-  public FCSFrame getFCSFrameValue() {
-    return mData;
+  public FCSFrameMetaData getFCSFrameMetadata() {
+    return metaData;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  protected boolean equalsDataCell(final DataCell dataCell) {
-    FCSFrameFileStoreDataCell fcsCell = (FCSFrameFileStoreDataCell)dataCell;
-    return mData.getID().equals(fcsCell.getFCSFrameValue().getID());
+  public FileStore getFileStore() {
+    return super.getFileStore();
   }
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected boolean equalContent(final DataValue otherValue) {
-      try {
-          return FCSFrameDataValue.equalContent(this, (FCSFrameDataValue)otherValue);
-      } catch (IOException ex) {
-          NodeLogger.getLogger(getClass()).error("IO problem: " + ex.getMessage(), ex);
-          return false;
-      }
+
+  public FCSFrame getFCSFrameValue() throws IOException {
+      int size = metaData.getSize();//currently 2gb max.
+      byte[] bytes = new byte[size];
+      FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
+      fis.read(bytes);
+      fis.close();
+      return FCSFrame.load(bytes);
   }
 }

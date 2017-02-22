@@ -116,7 +116,7 @@ public class CreateGatesNodeModel extends NodeModel {
       final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
 
       // now create the output row
-      final FCSFrame outStore = inStore.deepCopy();
+      final FCSFrame df = inStore.deepCopy();
       List<AbstractGate> gates = modelSettings
           .getNodes()
           .values()
@@ -126,12 +126,14 @@ public class CreateGatesNodeModel extends NodeModel {
           .collect(Collectors.toList());
       gates
         .stream()
-        .map(gate -> createSubset(gate, outStore))
-        .forEach(outStore::addSubset);
+        .map(gate -> createSubset(gate, df))
+        .forEach(df::addSubset);
       
-      final String fsName = i + "ColumnStore.fs";
-      final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
+      final String fsName = NodeUtilities.getFileStoreName(df);
+      final FileStore fs = fileStoreFactory.createFileStore(fsName);
+      int bytesWritten = NodeUtilities.writeFrameToFilestore(df, fs);
+      
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, df, bytesWritten);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

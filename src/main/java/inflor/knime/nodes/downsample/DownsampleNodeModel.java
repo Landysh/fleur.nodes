@@ -22,6 +22,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
+import main.java.inflor.knime.core.NodeUtilities;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
 import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
 
@@ -69,23 +71,26 @@ public class DownsampleNodeModel extends NodeModel {
       throws Exception {
     final FCSFramePortObject inPort = (FCSFramePortObject) inData[0];
     final FCSFramePortSpec inSpec = (FCSFramePortSpec) inPort.getSpec();
-    final FCSFrame inColumnStore = inPort.getColumnStore();
+    final FCSFrame inColumnStore = inPort.getColumnStore(exec);
     final int inSize = inColumnStore.getRowCount();
     final int downSize = mSize.getIntValue();
     final int finalSize = downSize >= inSize ? downSize : inSize;
-    FCSFrame outStore = new FCSFrame(inColumnStore.getKeywords(), finalSize);
+    FCSFrame outFrame = new FCSFrame(inColumnStore.getKeywords(), finalSize);
     if (downSize >= inSize) {
-      outStore.setData(inColumnStore.getData());
+      outFrame.setData(inColumnStore.getData());
     } else {
       final BitSet mask = BitSetUtils.getShuffledMask(inSize, downSize);
-      outStore = FCSUtilities.filterFrame(mask, inColumnStore);
+      outFrame = FCSUtilities.filterFrame(mask, inColumnStore);
     }
 
     final FCSFramePortSpec outSpec = getSpec(inSpec);
     final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-    final FileStore filestore = fileStoreFactory.createFileStore("column.store");
+    String fsName = NodeUtilities.getFileStoreName(outFrame);
+    final FileStore filestore = fileStoreFactory.createFileStore(fsName);
+    int size = NodeUtilities.writeFrameToFilestore(outFrame, filestore);
+    FCSFrameMetaData metaData = new FCSFrameMetaData(outFrame, size);
     final FCSFramePortObject outPort =
-        FCSFramePortObject.createPortObject(outSpec, outStore, filestore);
+        FCSFramePortObject.createPortObject(outSpec, metaData, filestore);
 
     return new FCSFramePortObject[] {outPort};
   }
