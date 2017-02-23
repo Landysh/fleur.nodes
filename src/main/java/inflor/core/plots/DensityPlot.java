@@ -21,6 +21,7 @@
 package main.java.inflor.core.plots;
 
 import java.util.BitSet;
+import java.util.Optional;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -54,27 +55,27 @@ public class DensityPlot extends AbstractFCChart {
 
   @Override
   public JFreeChart createChart(FCSFrame data) {
-    FCSDimension domainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
+    Optional<FCSDimension> domainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
     AbstractTransform domainTransform;
-    if (domainDimension.getPreferredTransform() != null) {
-      domainTransform = domainDimension.getPreferredTransform();
+    if (domainDimension.isPresent()) {
+      domainTransform = domainDimension.get().getPreferredTransform();
     } else {
-      domainTransform = PlotUtils.createDefaultTransform(domainDimension.getShortName());
+      domainTransform = PlotUtils.createDefaultTransform(domainDimension.get().getShortName());
     }
-    double[] domainData = domainTransform.transform(domainDimension.getData());
+    double[] domainData = domainTransform.transform(domainDimension.get().getData());
     double domainMin = domainTransform.getMinTranformedValue();
     double domainMax = domainTransform.getMaxTransformedValue();
 
     AbstractTransform rangeTransform;
-    FCSDimension rangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
+    Optional<FCSDimension> rangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
     
-    if (rangeDimension.getPreferredTransform() != null) {
-      rangeTransform = rangeDimension.getPreferredTransform();
+    if (rangeDimension.isPresent()) {
+      rangeTransform = rangeDimension.get().getPreferredTransform();
     } else {
-      rangeTransform = PlotUtils.createDefaultTransform(rangeDimension.getShortName());
+      rangeTransform = PlotUtils.createDefaultTransform(rangeDimension.get().getShortName());
     }
     
-    double[] rangeData = rangeTransform.transform(rangeDimension.getData());
+    double[] rangeData = rangeTransform.transform(rangeDimension.get().getData());
     double rangeMin = rangeTransform.getMinTranformedValue();
     double rangeMax = rangeTransform.getMaxTransformedValue();
     histogram = new Histogram2D(domainData, domainMin, domainMax, rangeData, rangeMin, rangeMax);
@@ -93,8 +94,8 @@ public class DensityPlot extends AbstractFCChart {
     plot = new XYPlot();
     // Create the plot
     plot.setDataset(plotData);
-    plot.setDomainAxis(PlotUtils.createAxis(domainDimension.getDisplayName(), domainTransform));
-    plot.setRangeAxis(PlotUtils.createAxis(rangeDimension.getDisplayName(), rangeTransform));
+    plot.setDomainAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), domainTransform));
+    plot.setRangeAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), rangeTransform));
     plot.setRenderer(renderer);
     // Add to panel.
     JFreeChart chart = new JFreeChart(plot);

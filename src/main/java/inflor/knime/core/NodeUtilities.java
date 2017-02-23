@@ -22,6 +22,7 @@ package main.java.inflor.knime.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,10 +32,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.knime.core.data.filestore.FileStore;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
@@ -162,5 +165,20 @@ public class NodeUtilities {
     } catch (Exception e) {
       throw new InvalidSettingsException(e);
     }
+  }
+
+  public static int writeFrameToFilestore(FCSFrame df, FileStore fs) throws IOException {
+    FileOutputStream fos = new FileOutputStream(fs.getFile());
+    return df.save(fos);
+  }
+
+  public static String getFileStoreName(FCSFrame df) {
+    String fsName = UUID.randomUUID().toString();
+    try {
+      fsName = df.getDisplayName() + " " + df.getID();
+    } catch (NullPointerException npe){
+      LOGGER.log(Level.FINE, "Unable to determine a good filename, falling back to: " + fsName, npe);
+    }  
+    return fsName + ".proto";
   }
 }

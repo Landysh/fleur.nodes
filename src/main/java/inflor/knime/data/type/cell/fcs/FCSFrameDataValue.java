@@ -36,8 +36,6 @@ import main.java.inflor.knime.core.Icons;
 public interface FCSFrameDataValue extends DataValue {
   UtilityFactory UTILITY = new FCSFrameUtilityFactory();
   
-  FCSFrame getFCSFrameValue();
-
   final class FCSFrameUtilityFactory extends ExtensibleUtilityFactory {
 
     private static final Icon ICON = new ImageIcon(Icons.FCSFRAME_ICON_PATH);
@@ -69,8 +67,8 @@ public interface FCSFrameDataValue extends DataValue {
         protected int compareDataValues(final DataValue v1, final DataValue v2) {
           FCSFrameDataValue df1 = (FCSFrameDataValue) v1;
           FCSFrameDataValue df2 = (FCSFrameDataValue) v2;
-          String s1 = df1.getFCSFrameValue().getDisplayName();
-          String s2 = df2.getFCSFrameValue().getDisplayName();
+          String s1 = df1.getFCSFrameMetadata().getDisplayName();
+          String s2 = df2.getFCSFrameMetadata().getDisplayName();
           return s1.compareTo(s2);
         }
       };
@@ -80,8 +78,10 @@ public interface FCSFrameDataValue extends DataValue {
 
   static boolean equalContent(final FCSFrameDataValue df1, final FCSFrameDataValue df2)
       throws IOException {
-    return df1.getFCSFrameValue().getID().equals(df2.getFCSFrameValue().getID());
+    return df1.getFCSFrameMetadata().getID().equals(df2.getFCSFrameMetadata().getID());
   }
+
+  FCSFrameMetaData getFCSFrameMetadata();
 
 
 }

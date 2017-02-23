@@ -18,8 +18,8 @@ public enum StatType {
     MEDIAN {
       @Override
       public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
-        FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
-        double[] data = referenceDim.getData();
+        Optional<FCSDimension> referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
+        double[] data = referenceDim.get().getData();
         Median median = new Median();
         return median.evaluate(data);
       }
@@ -31,8 +31,8 @@ public enum StatType {
     }, MEAN {
       @Override
       public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
-        FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
-        double[] data = referenceDim.getData();
+        Optional<FCSDimension> referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
+        double[] data = referenceDim.get().getData();
         Mean mean = new Mean();
         return mean.evaluate(data);
       }
@@ -45,8 +45,8 @@ public enum StatType {
     }, STDEV {
       @Override
       public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
-        FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
-        double[] data = referenceDim.getData();
+        Optional<FCSDimension> referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
+        double[] data = referenceDim.get().getData();
         StandardDeviation stdev = new StandardDeviation();
         return stdev.evaluate(data);
       }
@@ -58,8 +58,8 @@ public enum StatType {
     }, CV {
       @Override
       public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
-        FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
-        double[] data = referenceDim.getData();
+        Optional<FCSDimension> referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
+        double[] data = referenceDim.get().getData();
         StandardDeviation stdev = new StandardDeviation();
         Mean mean = new Mean();
         return stdev.evaluate(data)/mean.evaluate(data);
@@ -72,8 +72,8 @@ public enum StatType {
     }, PERCENTILE {
       @Override
       public Double evaluate(FCSFrame dataFrame, String refDimension, String[] args) {
-        FCSDimension referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
-        double[] data = referenceDim.getData();
+        Optional<FCSDimension> referenceDim = FCSUtilities.findCompatibleDimension(dataFrame, refDimension);
+        double[] data = referenceDim.get().getData();
         Double targetPercentile = Double.parseDouble(args[0]);
         Double percentileMin = (double) 0;
         Double percentileMax = (double) 100;

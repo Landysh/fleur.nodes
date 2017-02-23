@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
@@ -66,10 +67,10 @@ public class RangeGate extends AbstractGate {
       String yName = dimensions.get(1).getName();
       double yMin = dimensions.get(1).min;
       double yMax = dimensions.get(1).max;
-      FCSDimension xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
-      double[] xData = xDimension.getPreferredTransform().transform(xDimension.getData());
-      FCSDimension yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
-      double[] yData = yDimension.getPreferredTransform().transform(yDimension.getData());
+      Optional<FCSDimension> xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
+      double[] xData = xDimension.get().getPreferredTransform().transform(xDimension.get().getData());
+      Optional<FCSDimension> yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
+      double[] yData = yDimension.get().getPreferredTransform().transform(yDimension.get().getData());
       BitSet bits = new BitSet(fcsFrame.getRowCount());
       for (int i = 0; i < xData.length; i++) {
         if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {
@@ -85,7 +86,7 @@ public class RangeGate extends AbstractGate {
 
     for (RangeDimension dim : dimensions) {
       String name = dim.getName();
-      double[] data = FCSUtilities.findCompatibleDimension(fcsFrame, name).getData();
+      double[] data = FCSUtilities.findCompatibleDimension(fcsFrame, name).get().getData();
       BitSet dimesnionBits = dim.evaluate(data);
       result.and(dimesnionBits);
     }
@@ -141,8 +142,8 @@ public class RangeGate extends AbstractGate {
     String yName = dimensions.get(1).getName();
     double yMin = dimensions.get(1).min;
     double yMax = dimensions.get(1).max;
-    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).getData();
-    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).getData();
+    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).get().getData();
+    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).get().getData();
     BitSet bits = new BitSet(data.getRowCount());
     for (int i = 0; i < xData.length; i++) {
       if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {

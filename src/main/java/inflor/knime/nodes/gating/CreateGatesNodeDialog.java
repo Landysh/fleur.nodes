@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -183,13 +184,18 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     ArrayList<FCSFrame> dataSet = new ArrayList<>();
     
     for (DataRow row : table) {
-      FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
-      dataSet.add(dataFrame);
-      List<String> newParameters =dataFrame.getDimensionNames();
-      parameterSet.addAll(newParameters);
+      FCSFrame dataFrame;
+      try {
+        dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
+        dataSet.add(dataFrame);
+        List<String> newParameters =dataFrame.getDimensionNames();
+        parameterSet.addAll(newParameters);
+      } catch (IOException e) {
+        logger.warn("Unable to read row: " + row.getKey(), e);
+      }
     }
-    FCSFrame concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
-    selectSampleBox.addItem(concatenatedFrame);
+    Optional<FCSFrame> concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
+    concatenatedFrame.ifPresent(selectSampleBox::addItem);
     dataSet.forEach(selectSampleBox::addItem);
     selectSampleBox.setSelectedIndex(0);
     updateLineageTree();

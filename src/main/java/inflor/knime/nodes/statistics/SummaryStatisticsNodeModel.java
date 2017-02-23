@@ -13,8 +13,6 @@ import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataTableSpecCreator;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
-import org.knime.core.data.filestore.FileStore;
-import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
@@ -26,7 +24,6 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
@@ -77,8 +74,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
     logger.info("Executing: Create Gates");
-    final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-
+    
     // Create the output spec and data container.
     DataTableSpec outSpec = createSpec(inData[0].getSpec());
     BufferedDataContainer container = exec.createDataContainer(outSpec);
@@ -90,14 +86,8 @@ public class SummaryStatisticsNodeModel extends NodeModel {
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       DataCell[] outCells = new DataCell[inRow.getNumCells() + statDefinitions.size()];
-      FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
-
-      // now create the output row
-      FCSFrame outStore = inStore.deepCopy();
-      
-      String fsName = i + "ColumnStore.fs";
-      FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
+      FCSFrameFileStoreDataCell inFSDC = (FCSFrameFileStoreDataCell) inRow.getCell(index);
+      FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(inFSDC.getFileStore(), inFSDC.getFCSFrameMetadata());
       inRow.getNumCells();
       for (int j = 0; j < inRow.getNumCells(); j++) {
         if (j == index) {
@@ -109,7 +99,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
       
       //calculate the statistics.
       for (StatSpec stat : statDefinitions){
-        Double value = stat.evaluate(outStore);
+        Double value = stat.evaluate(inFSDC.getFCSFrameValue());
         int statIndex = outSpec.findColumnIndex(stat.toString());
         outCells[statIndex] = new DoubleCell(value);
       }

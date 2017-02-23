@@ -144,7 +144,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   
   @Override
   public String toString() {
-    return getDetails()+ "@" + getID();
+    return getDetails();
   }
 
 

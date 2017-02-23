@@ -20,6 +20,8 @@
  */
 package main.java.inflor.core.plots;
 
+import java.util.Optional;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -55,11 +57,11 @@ public class HistogramPlot extends AbstractFCChart {
   @Override
   public JFreeChart createChart(FCSFrame dataFrame) {
 
-    FCSDimension domainDimension =
+    Optional<FCSDimension> domainDimension =
         FCSUtilities.findCompatibleDimension(dataFrame, spec.getDomainAxisName());
 
-    AbstractTransform transform = domainDimension.getPreferredTransform();
-    double[] transformedData = transform.transform(domainDimension.getData());
+    AbstractTransform transform = domainDimension.get().getPreferredTransform();
+    double[] transformedData = transform.transform(domainDimension.get().getData());
 
     Histogram1D hist = new Histogram1D(transformedData, transform.getMinTranformedValue(),
         transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
@@ -67,7 +69,7 @@ public class HistogramPlot extends AbstractFCChart {
     DefaultXYDataset dataset = new DefaultXYDataset();
     dataset.addSeries(dataFrame.getDisplayName(), hist.getData());
 
-    ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.getDisplayName(), transform);
+    ValueAxis domainAxis = PlotUtils.createAxis(domainDimension.get().getDisplayName(), transform);
     ValueAxis rangeAxis = new NumberAxis(spec.getRangeAxisName());
     FillType fillType = FillType.TO_ZERO;
     XYItemRenderer renderer = new XYSplineRenderer(1, fillType);

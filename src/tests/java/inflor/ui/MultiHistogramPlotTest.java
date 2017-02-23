@@ -55,7 +55,7 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
     String name = "<Pacific Blue-A>";
     for (FCSFrame fcsFile : fcsList) {
       String key = fcsFile.toString();
-      FCSDimension value = FCSUtilities.findCompatibleDimension(fcsFile, name);
+      FCSDimension value = FCSUtilities.findCompatibleDimension(fcsFile, name).get();
       dataset.put(key, value);
     }
 

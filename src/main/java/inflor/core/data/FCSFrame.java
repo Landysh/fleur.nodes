@@ -311,7 +311,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public String getKeywordValue(String keyword) {
-    return keywords.get(keyword).trim();
+    if (keywords.containsKey(keyword)){
+      return keywords.get(keyword).trim();
+    } else {
+      return null;
+    }
   }
 
   public int getRowCount() {
@@ -441,10 +445,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     messageBuilder.addSubset(subset);
   }
 
-  public void save(FileOutputStream out) throws IOException {
+  public int save(FileOutputStream out) throws IOException {
     final byte[] message = this.saveAsBytes();
     out.write(message);
     out.flush();
+    return message.length;
   }
 
   public void setCompRef(String id) {

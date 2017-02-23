@@ -21,6 +21,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.fcs.FCSFileReader;
+import main.java.inflor.knime.core.NodeUtilities;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
 import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
 
@@ -91,16 +93,19 @@ public class ReadFCSFrameNodeModel extends NodeModel {
     logger.info("Starting Execution");
     FCSFileReader FCSReader;
     try {
-      final FileStore filestore = fileStoreFactory.createFileStore("column.store");
       FCSReader = new FCSFileReader(m_FileLocation.getStringValue());
       exec.setProgress(0.1, "header read.");
       exec.checkCanceled();
       FCSReader.readData();
       exec.setProgress(0.9, "data read.");
-      final FCSFrame columnStore = FCSReader.getFCSFrame();
-      final FCSFramePortSpec spec = createPortSpec(columnStore);
+      final FCSFrame df = FCSReader.getFCSFrame();
+      String fsName = NodeUtilities.getFileStoreName(df);
+      final FileStore filestore = fileStoreFactory.createFileStore(fsName);
+      int size = NodeUtilities.writeFrameToFilestore(df, filestore);
+      final FCSFramePortSpec spec = createPortSpec(df); 
+      FCSFrameMetaData metaData = new FCSFrameMetaData(df, size);
       final FCSFramePortObject port =
-          FCSFramePortObject.createPortObject(spec, columnStore, filestore);
+          FCSFramePortObject.createPortObject(spec, metaData, filestore);
       return new PortObject[] {port};
     } catch (final Exception e) {
       e.printStackTrace();

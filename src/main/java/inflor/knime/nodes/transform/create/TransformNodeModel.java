@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -160,7 +161,7 @@ public class TransformNodeModel extends NodeModel {
     subtaskIndex = 0;
     transformMap
       .entrySet()
-      .stream()
+      .parallelStream()
       .forEach(entry -> optimizeTransform(filteredData, entry, summaryContainer, optimizeExec, transformMap.size()));
     summaryContainer.close();
     
@@ -173,10 +174,11 @@ public class TransformNodeModel extends NodeModel {
       final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue().deepCopy();
       writeExec.setProgress(subtaskIndex/(double)inData[0].size(), dataFrame.getDisplayName());
       // now create the output row
-      final FCSFrame outStore = applyTransforms(dataFrame, transformMap);
-      final String fsName = subtaskIndex + "ColumnStore.fs";
-      final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
+      final FCSFrame df = applyTransforms(dataFrame, transformMap);
+      final String fsName = NodeUtilities.getFileStoreName(df);
+      FileStore fs = fileStoreFactory.createFileStore(fsName);
+      int size = NodeUtilities.writeFrameToFilestore(df, fs);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, df, size);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == columnIndex) {
@@ -220,7 +222,9 @@ public class TransformNodeModel extends NodeModel {
       DataCell imageCell =  PNGImageCellFactory.create(imageBytes);
       DataCell[] cells = new DataCell[]{new StringCell(at.getType().toString()), new StringCell(at.getDetails()), imageCell};
       DataRow row = new DefaultRow(entry.getKey(), cells);
-      transformSummaryContainer.addRowToTable(row);
+      synchronized (transformSummaryContainer) {
+        transformSummaryContainer.addRowToTable(row);
+      }
     } catch (IOException e) {
       logger.error("Unable to create imgage cell.", e);
     } 
@@ -253,8 +257,8 @@ public class TransformNodeModel extends NodeModel {
   private double[] mergeData(String shortName, List<FCSFrame> dataSet2) {
     double[] data = null;
     for (FCSFrame frame : dataSet2) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
-      data = MatrixUtilities.appendVectors(data, dimension.getData());
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(frame, shortName);
+      data = MatrixUtilities.appendVectors(data, dimension.get().getData());
     }
     return data;
   }

@@ -98,7 +98,7 @@ public class LogrithmicTransform extends AbstractTransform {
   
   @Override
   public String toString(){
-    return getDetails() + " @" + getID();
+    return getDetails();
   }
 
   public void optimize(double[] data) {
