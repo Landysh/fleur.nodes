@@ -2,10 +2,20 @@ package main.java.inflor.knime.nodes.downsample;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
 
+import org.knime.core.data.DataCell;
+import org.knime.core.data.DataRow;
+import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.MissingCell;
+import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
+import org.knime.core.node.BufferedDataContainer;
+import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
@@ -13,95 +23,149 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
-import org.knime.core.node.port.PortObject;
-import org.knime.core.node.port.PortObjectSpec;
-import org.knime.core.node.port.PortType;
-import org.knime.core.node.port.PortTypeRegistry;
 
 import main.java.inflor.core.data.FCSFrame;
+import main.java.inflor.core.downsample.DownSample;
+import main.java.inflor.core.downsample.DownSampleMethods;
 import main.java.inflor.core.utils.BitSetUtils;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
-import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
-import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
+import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Downsample.
  * 
  *
- * @author Landysh Incorportated
+ * @author Aaron Hart
  */
 public class DownsampleNodeModel extends NodeModel {
 
-  // Downsample size
-  static final String KEY_SIZE = "size";
-  static final int DEFAULT_SIZE = 5000;
-
-  private final SettingsModelInteger mSize = new SettingsModelInteger(KEY_SIZE, DEFAULT_SIZE);
+  DownsampleNodeSettings mSettings = new DownsampleNodeSettings();
+  private int taskCount = -1;
+  private int currentTask;
+  private int targetColumnIndex = -1;
 
   /**
    * Constructor for the node model.
    */
   protected DownsampleNodeModel() {
-    super(new PortType[] {PortTypeRegistry.getInstance().getPortType(FCSFramePortObject.class)},
-        new PortType[] {PortTypeRegistry.getInstance().getPortType(FCSFramePortObject.class)});
-
+    super(1,1);
   }
+
 
   /**
    * {@inheritDoc}
    */
   @Override
-  protected PortObjectSpec[] configure(final PortObjectSpec[] inSpecs)
+  protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
-    final FCSFramePortSpec portSpec = (FCSFramePortSpec) inSpecs[0];
-
-    final FCSFramePortSpec outSpec =
-        new FCSFramePortSpec(portSpec.getKeywords(), portSpec.getColumnNames(), portSpec.getRowCount());
-    return new FCSFramePortSpec[] {outSpec};
+    if (mSettings.getSelectedColumn()==null){
+      Arrays.asList(inSpecs[0].getColumnNames())
+      .stream()
+      .map(inSpecs[0]::getColumnSpec)
+      .filter(spec -> spec.getType().equals(FCSFrameFileStoreDataCell.TYPE))
+      .findFirst()
+      .ifPresent(column -> mSettings.setSelectedColumn(column.getName()));    
+    }
+    return createSpecs(inSpecs[0]);
   }
+  
+  private DataTableSpec[] createSpecs(DataTableSpec dataTableSpec) {
+    return new DataTableSpec[] {dataTableSpec};
+  }
+
 
   /**
    * {@inheritDoc}
    */
   @Override
-  protected PortObject[] execute(final PortObject[] inData, final ExecutionContext exec)
-      throws Exception {
-    final FCSFramePortObject inPort = (FCSFramePortObject) inData[0];
-    final FCSFramePortSpec inSpec = (FCSFramePortSpec) inPort.getSpec();
-    final FCSFrame inColumnStore = inPort.getColumnStore(exec);
-    final int inSize = inColumnStore.getRowCount();
-    final int downSize = mSize.getIntValue();
-    final int finalSize = downSize >= inSize ? downSize : inSize;
-    FCSFrame outFrame = new FCSFrame(inColumnStore.getKeywords(), finalSize);
-    if (downSize >= inSize) {
-      outFrame.setData(inColumnStore.getData());
-    } else {
-      final BitSet mask = BitSetUtils.getShuffledMask(inSize, downSize);
-      outFrame = FCSUtilities.filterFrame(mask, inColumnStore);
+  protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
+      final ExecutionContext exec) throws Exception {
+    
+    DataTableSpec[] outSpecs = createSpecs(inData[0].getDataTableSpec());
+    
+    ArrayList<DataRow> data = new ArrayList<>();
+    targetColumnIndex = inData[0].getSpec().findColumnIndex(mSettings.getSelectedColumn());
+    inData[0].forEach(data::add);
+
+    currentTask = 0;
+    taskCount = data.size();
+    BufferedDataContainer container = exec.createDataContainer(outSpecs[0]);
+    
+    data
+      .parallelStream()
+      .map(row -> createRow(row, exec))
+      .forEach(row -> writeRow(row, container, exec));
+    
+    container.close();
+    
+    return new BufferedDataTable[]{container.getTable()};
+    
+  }
+
+  private DataRow createRow(DataRow inRow, ExecutionContext exec){
+    final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(targetColumnIndex)).getFCSFrameValue().deepCopy();
+    final FCSFrame outFrame = downSample(dataFrame);
+    final String fsName = NodeUtilities.getFileStoreName(outFrame);
+    final DataCell[] outCells = new DataCell[inRow.getNumCells()];
+    synchronized (exec) {
+      FileStoreFactory factory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
+      FileStore fs;
+      FCSFrameFileStoreDataCell fileCell;
+      int size = -1;
+      try {
+        fs = factory.createFileStore(fsName);
+        size = NodeUtilities.writeFrameToFilestore(outFrame, fs);
+        fileCell = new FCSFrameFileStoreDataCell(fs, outFrame, size);
+      } catch (IOException e) {
+        getLogger().error("Unable to create file store");
+        fs = null;
+        fileCell = null;
+      }
+
+      for (int j = 0; j < outCells.length; j++) {
+        if (j == targetColumnIndex&&size >=0) {
+          outCells[j] = fileCell;
+        } else  if (j == targetColumnIndex && (size ==-1||fs==null)){
+          outCells[j] = new MissingCell("Unable to write filestore.");
+        } else {
+          outCells[j] = inRow.getCell(j);
+        }
+      }
     }
-
-    final FCSFramePortSpec outSpec = getSpec(inSpec);
-    final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-    String fsName = NodeUtilities.getFileStoreName(outFrame);
-    final FileStore filestore = fileStoreFactory.createFileStore(fsName);
-    int size = NodeUtilities.writeFrameToFilestore(outFrame, filestore);
-    FCSFrameMetaData metaData = new FCSFrameMetaData(outFrame, size);
-    final FCSFramePortObject outPort =
-        FCSFramePortObject.createPortObject(outSpec, metaData, filestore);
-
-    return new FCSFramePortObject[] {outPort};
+    return new DefaultRow(inRow.getKey(), outCells);
+  }
+  
+  private FCSFrame downSample(FCSFrame dataFrame) {
+    BitSet mask = null;
+    List<String> dimensionNames = Arrays.asList(mSettings.getDimensionNames());
+    if (mSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)){
+      mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mSettings.getCeiling());
+    }else if (mSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)){
+      mask = DownSample.densityDependent(dataFrame, dimensionNames); 
+    }
+    if (mask!=null){
+      return FCSUtilities.filterFrame(mask, dataFrame);
+    } else {
+      getLogger().error("Downsampling failed due to invalid sample method.");
+      return dataFrame;
+    }
   }
 
-  private FCSFramePortSpec getSpec(FCSFramePortSpec inSpec) {        
-    return new FCSFramePortSpec(
-        inSpec.getKeywords(), 
-        inSpec.getColumnNames(), 
-        inSpec.getRowCount());
-  }
 
+  private synchronized void writeRow(DataRow row, BufferedDataContainer container, ExecutionContext exec) {
+    String message = "Writing: " + ((FCSFrameFileStoreDataCell) row.getCell(targetColumnIndex)).getFCSFrameMetadata().getDisplayName(); 
+    exec.setProgress(currentTask/(double)taskCount, message);
+    try {
+      exec.checkCanceled();
+    } catch (CanceledExecutionException e) {
+      e.printStackTrace();
+    }
+    container.addRowToTable(row);
+    currentTask++;   
+  }
+  
+  
   /**
    * {@inheritDoc}
    */
@@ -115,8 +179,7 @@ public class DownsampleNodeModel extends NodeModel {
   @Override
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
-
-    mSize.loadSettingsFrom(settings);
+    mSettings.load(settings);
   }
 
   /**
@@ -137,9 +200,7 @@ public class DownsampleNodeModel extends NodeModel {
    */
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
-
-    mSize.saveSettingsTo(settings);
-
+    mSettings.save(settings);
   }
 
   /**
@@ -147,11 +208,6 @@ public class DownsampleNodeModel extends NodeModel {
    */
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-    if (mSize.getIntValue() >= 1) {
-      mSize.validateSettings(settings);
-    } else {
-      throw new InvalidSettingsException("Downsample size must be greater than 1");
-    }
   }
 
 }

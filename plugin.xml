@@ -21,7 +21,7 @@
 <node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
 <node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
 <node category-path="/inflor/transform" deprecated="false" factory-class="main.java.inflor.knime.nodes.transform.create.TransformNodeFactory"/>
-<node category-path="/inflor/util" deprecated="true" factory-class="main.java.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
 <node category-path="/inflor/util" deprecated="true" factory-class="main.java.inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="true" factory-class="main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>

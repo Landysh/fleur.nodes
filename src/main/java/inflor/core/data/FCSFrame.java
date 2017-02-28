@@ -45,6 +45,7 @@ import main.java.inflor.core.transforms.LogicleTransform;
 import main.java.inflor.core.transforms.LogrithmicTransform;
 import main.java.inflor.core.transforms.TransformType;
 import main.java.inflor.core.utils.FCSUtilities;
+import main.java.inflor.core.utils.MatrixUtilities;
 
 
 // don't use the default serializer, there is a protobuf spec.
@@ -70,11 +71,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     this(null, keywords, rowCount);
   }
 
-  public FCSFrame(String priorUUID, Map<String, String> keywords, int rowCount) {
+  public FCSFrame(String priorUUID, Map<String, String> header, int rows) {
     super(priorUUID);
-    this.keywords = keywords;
+    keywords = header;
     columnData = new TreeSet<>();
-    this.rowCount = rowCount;
+    rowCount = rows;
     displayName = FCSUtilities.chooseDisplayName(this);
   }
 
@@ -110,7 +111,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       dimen[j] = priorUUID;
       final FCSDimension currentDimension = new FCSDimension(priorUUID, fcsFrame.getRowCount(),
           dim.getIndex(), dim.getPnn(), dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr());
-      for (int i = 0; i < currentDimension.getSize(); i++) {
+      for (int i = 0; i < currentDimension.size(); i++) {
         currentDimension.getData()[i] = dim.getData(i);
       }
       AbstractTransform preferredTransform = readTransform(dim);
@@ -198,7 +199,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public void addDimension(FCSDimension newDim) {
-    if (rowCount == newDim.getSize()) {
+    if (rowCount == newDim.size()) {
       columnData.add(newDim);
     } else {
       throw new IllegalStateException(
@@ -487,5 +488,16 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public List<String> getSubsetNames() {
     return subsets.stream().map(Subset::getLabel).collect(Collectors.toList());
+  }
+
+  public double[][] getMatrix(List<String> dimensionNames, boolean transforms) {
+    double[][] mtx = new double[dimensionNames.size()][rowCount];
+    int i=0;
+    for (String name:dimensionNames){
+      FCSDimension dim = getDimension(name);
+      mtx[i] = dim.getPreferredTransform().transform(dim.getData());
+      i++;
+    }
+    return MatrixUtilities.transpose(mtx);
   }
 }
