@@ -185,14 +185,10 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     
     for (DataRow row : table) {
       FCSFrame dataFrame;
-      try {
-        dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
-        dataSet.add(dataFrame);
-        List<String> newParameters =dataFrame.getDimensionNames();
-        parameterSet.addAll(newParameters);
-      } catch (IOException e) {
-        logger.warn("Unable to read row: " + row.getKey(), e);
-      }
+      dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
+      dataSet.add(dataFrame);
+      List<String> newParameters =dataFrame.getDimensionNames();
+      parameterSet.addAll(newParameters);
     }
     Optional<FCSFrame> concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
     concatenatedFrame.ifPresent(selectSampleBox::addItem);

@@ -56,6 +56,7 @@ public class NodeUtilities {
   public static final String SHORT_NAME_KEY = "$PNN";
 
   private static final Logger LOGGER = Logger.getLogger(NodeUtilities.class.getName());
+  public static final String PREVIEW_FRAME_KEY = "Inflor Preview Frame";
 
   
   @SuppressWarnings("unchecked")
@@ -167,9 +168,14 @@ public class NodeUtilities {
     }
   }
 
-  public static int writeFrameToFilestore(FCSFrame df, FileStore fs) throws IOException {
-    FileOutputStream fos = new FileOutputStream(fs.getFile());
-    return df.save(fos);
+  public static int writeFrameToFilestore(FCSFrame df, FileStore fs) {
+    try {
+      FileOutputStream fos = new FileOutputStream(fs.getFile());
+      return df.save(fos);
+    } catch (IOException e) {
+      Logger.getGlobal().log(Level.SEVERE, "Failed to write filestore for: " + df.getDisplayName(), e);
+      return -1;
+    }
   }
 
   public static String getFileStoreName(FCSFrame df) {

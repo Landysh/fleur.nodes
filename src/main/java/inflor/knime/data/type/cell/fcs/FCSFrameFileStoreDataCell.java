@@ -31,6 +31,8 @@ import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 import org.knime.core.node.NodeLogger;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import main.java.inflor.core.data.FCSFrame;
 import main.java.inflor.core.utils.FCSUtilities;
 import main.java.inflor.knime.core.NodeUtilities;
@@ -121,12 +123,18 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
     return super.getFileStore();
   }
 
-  public FCSFrame getFCSFrameValue() throws IOException {
-      int size = metaData.getSize();//currently 2gb max.
-      byte[] bytes = new byte[size];
-      FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
-      fis.read(bytes);
-      fis.close();
-      return FCSFrame.load(bytes);
+  public FCSFrame getFCSFrameValue() {
+
+      try {
+        int size = metaData.getSize();//currently 2gb max.
+        byte[] bytes = new byte[size];
+        FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
+        fis.read(bytes);
+        fis.close();
+        return FCSFrame.load(bytes);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
   }
 }
