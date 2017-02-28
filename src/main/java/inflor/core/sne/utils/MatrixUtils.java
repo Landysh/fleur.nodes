@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.utils;
+package inflor.core.sne.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

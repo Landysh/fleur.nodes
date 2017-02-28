@@ -2,7 +2,7 @@
  * @(#)$RCSfile$ $Revision$ $Date$ $Author$
  *
  */
-package main.java.inflor.knime.nodes.fcs.read;
+package inflor.knime.nodes.fcs.read;
 
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;

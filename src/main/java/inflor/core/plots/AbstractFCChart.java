@@ -18,13 +18,13 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.FCSFrame;
 
 public abstract class AbstractFCChart {
 

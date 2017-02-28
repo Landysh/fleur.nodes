@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
 import java.util.BitSet;
 import java.util.function.BinaryOperator;

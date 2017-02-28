@@ -1,21 +1,21 @@
-package main.java.inflor.core.sne.tsne;
+package inflor.core.sne.tsne;
 
-import static main.java.inflor.core.sne.utils.EjmlOps.addRowVector;
-import static main.java.inflor.core.sne.utils.EjmlOps.assignAllLessThan;
-import static main.java.inflor.core.sne.utils.EjmlOps.assignAtIndex;
-import static main.java.inflor.core.sne.utils.EjmlOps.biggerThan;
-import static main.java.inflor.core.sne.utils.EjmlOps.colMean;
-import static main.java.inflor.core.sne.utils.EjmlOps.maximize;
-import static main.java.inflor.core.sne.utils.EjmlOps.replaceNaN;
-import static main.java.inflor.core.sne.utils.EjmlOps.setData;
-import static main.java.inflor.core.sne.utils.EjmlOps.setDiag;
-import static main.java.inflor.core.sne.utils.EjmlOps.tile;
-import static main.java.inflor.core.sne.utils.MatrixOps.abs;
-import static main.java.inflor.core.sne.utils.MatrixOps.equal;
-import static main.java.inflor.core.sne.utils.MatrixOps.fillMatrix;
-import static main.java.inflor.core.sne.utils.MatrixOps.negate;
-import static main.java.inflor.core.sne.utils.MatrixOps.range;
-import static main.java.inflor.core.sne.utils.MatrixOps.rnorm;
+import static inflor.core.sne.utils.EjmlOps.addRowVector;
+import static inflor.core.sne.utils.EjmlOps.assignAllLessThan;
+import static inflor.core.sne.utils.EjmlOps.assignAtIndex;
+import static inflor.core.sne.utils.EjmlOps.biggerThan;
+import static inflor.core.sne.utils.EjmlOps.colMean;
+import static inflor.core.sne.utils.EjmlOps.maximize;
+import static inflor.core.sne.utils.EjmlOps.replaceNaN;
+import static inflor.core.sne.utils.EjmlOps.setData;
+import static inflor.core.sne.utils.EjmlOps.setDiag;
+import static inflor.core.sne.utils.EjmlOps.tile;
+import static inflor.core.sne.utils.MatrixOps.abs;
+import static inflor.core.sne.utils.MatrixOps.equal;
+import static inflor.core.sne.utils.MatrixOps.fillMatrix;
+import static inflor.core.sne.utils.MatrixOps.negate;
+import static inflor.core.sne.utils.MatrixOps.range;
+import static inflor.core.sne.utils.MatrixOps.rnorm;
 import static org.ejml.ops.CommonOps.add;
 import static org.ejml.ops.CommonOps.addEquals;
 import static org.ejml.ops.CommonOps.divide;
@@ -34,7 +34,7 @@ import static org.ejml.ops.CommonOps.transpose;
 
 import org.ejml.data.DenseMatrix64F;
 
-import main.java.inflor.core.sne.utils.MatrixOps;
+import inflor.core.sne.utils.MatrixOps;
 /**
  *
  * Author: Leif Jonsson (leif.jonsson@gmail.com)

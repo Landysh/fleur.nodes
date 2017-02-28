@@ -1,9 +1,9 @@
-package main.java.inflor.knime.nodes.statistics;
+package inflor.knime.nodes.statistics;
 
 import java.io.Serializable;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
 
 @SuppressWarnings("serial")
 public class StatSpec extends DomainObject implements Serializable{

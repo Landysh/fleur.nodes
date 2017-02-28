@@ -18,7 +18,7 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,9 +33,9 @@ import org.knime.core.node.NodeLogger;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 

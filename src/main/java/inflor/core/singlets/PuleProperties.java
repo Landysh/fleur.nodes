@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.singlets;
+package inflor.core.singlets;
 
 public enum PuleProperties {
   AREA(new String[] {".+-a", ".+area.+", ".+-a>",  ".+-a]"}), 

@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.utils;
+package inflor.core.sne.utils;
 
 import static org.ejml.ops.CommonOps.divide;
 import static org.ejml.ops.CommonOps.sumCols;

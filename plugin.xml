@@ -14,22 +14,22 @@
    -->2
    
 <extension point="org.knime.workbench.repository.nodes">
-<node category-path="/inflor/read" deprecated="false" factory-class="main.java.inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="main.java.inflor.knime.nodes.fcs.read.ReadFCSFrameNodeFactory"/>
-<node category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
-<node after="main.java.inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
-<node category-path="/inflor/transform" deprecated="false" factory-class="main.java.inflor.knime.nodes.transform.create.TransformNodeFactory"/>
-<node category-path="/inflor/util" deprecated="false" factory-class="main.java.inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
-<node category-path="/inflor/util" deprecated="true" factory-class="main.java.inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="true" factory-class="main.java.inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.utility.extract.data.ExtractDataNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="main.java.inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">
+<node category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
+<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
+<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="inflor.knime.nodes.fcs.read.ReadFCSFrameNodeFactory"/>
+<node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
+<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
+<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
+<node category-path="/inflor/transform" deprecated="false" factory-class="inflor.knime.nodes.transform.create.TransformNodeFactory"/>
+<node category-path="/inflor/util" deprecated="false" factory-class="inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/inflor/util" deprecated="true" factory-class="inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
+<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
+<node category-path="/inflor/analyze" deprecated="true" factory-class="inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
+<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.utility.extract.data.ExtractDataNodeFactory"/>
+<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">
 </node>
-<node category-path="/inflor/comp" deprecated="false" factory-class="main.java.inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
-<node category-path="/inflor/util" factory-class="main.java.inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory" id="main.java.inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
+<node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
+<node category-path="/inflor/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory" id="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
@@ -47,19 +47,19 @@
 </extension>
 
 <extension point="org.knime.core.PortType">
-      <portType color="#9B30FF" hidden="false" name="Inflor.FCSFramePort" objectClass="main.java.inflor.knime.ports.fcs.FCSFramePortObject" objectSerializer="main.java.inflor.knime.ports.fcs.FCSFramePortObject$Serializer" specClass="main.java.inflor.knime.ports.fcs.FCSFramePortSpec" specSerializer="main.java.inflor.knime.ports.fcs.FCSFramePortSpec$Serializer"/>
-      <portType color="#F300FF" hidden="false" name="Inflor.compMatrix" objectClass="main.java.inflor.knime.ports.compensation.CompMatrixPortObject" objectSerializer="main.java.inflor.knime.ports.compensation.CompMatrixPortObject$Serializer" specClass="main.java.inflor.knime.ports.compensation.CompMatrixPortSpec" specSerializer="main.java.inflor.knime.ports.compensation.CompMatrixPortSpec$Serializer">
+      <portType color="#9B30FF" hidden="false" name="Inflor.FCSFramePort" objectClass="inflor.knime.ports.fcs.FCSFramePortObject" objectSerializer="inflor.knime.ports.fcs.FCSFramePortObject$Serializer" specClass="inflor.knime.ports.fcs.FCSFramePortSpec" specSerializer="inflor.knime.ports.fcs.FCSFramePortSpec$Serializer"/>
+      <portType color="#F300FF" hidden="false" name="Inflor.compMatrix" objectClass="inflor.knime.ports.compensation.CompMatrixPortObject" objectSerializer="inflor.knime.ports.compensation.CompMatrixPortObject$Serializer" specClass="inflor.knime.ports.compensation.CompMatrixPortSpec" specSerializer="inflor.knime.ports.compensation.CompMatrixPortSpec$Serializer">
       </portType>
 </extension>
 <extension point="org.knime.core.DataType">
-   <DataType cellClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" factoryClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameCellFactory">
-      <serializer cellClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" serializerClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell$Serializer">
+   <DataType cellClass="inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" factoryClass="inflor.knime.data.type.cell.fcs.FCSFrameCellFactory">
+      <serializer cellClass="inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell" serializerClass="inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell$Serializer">
       </serializer>
    </DataType>
 </extension>
 <extension point="org.knime.core.DataValueRenderer">
-   <dataValue valueClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameDataValue">
-      <renderer rendererFactoryClass="main.java.inflor.knime.data.type.cell.fcs.FCSFrameCellRenererFactory" suggestAsDefault="true">
+   <dataValue valueClass="inflor.knime.data.type.cell.fcs.FCSFrameDataValue">
+      <renderer rendererFactoryClass="inflor.knime.data.type.cell.fcs.FCSFrameCellRenererFactory" suggestAsDefault="true">
       </renderer>
    </dataValue>
 </extension>

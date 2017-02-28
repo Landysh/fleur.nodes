@@ -1,4 +1,4 @@
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -9,10 +9,10 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.utils.FCSUtilities;
 
 public class ScatterPlot extends AbstractFCChart {
 

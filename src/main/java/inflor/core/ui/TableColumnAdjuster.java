@@ -1,4 +1,4 @@
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.gating;
+package inflor.knime.nodes.gating;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,9 +12,9 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.gates.Hierarchical;
-import main.java.inflor.knime.core.NodeUtilities;
+import inflor.core.data.DomainObject;
+import inflor.core.gates.Hierarchical;
+import inflor.knime.core.NodeUtilities;
 
 public class CreateGatesNodeSettings {
   

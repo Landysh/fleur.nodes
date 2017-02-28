@@ -1,12 +1,12 @@
-package tests.java.inflor.integration;
+package inflor.integration;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.gates.RangeGate;
-import main.java.inflor.core.logging.LogFactory;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.gates.RangeGate;
+import inflor.core.logging.LogFactory;
 
 public class RangeGateCalculation {
   static final int FILE_COUNT = 1;

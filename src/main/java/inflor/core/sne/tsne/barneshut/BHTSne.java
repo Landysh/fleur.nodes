@@ -24,7 +24,7 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -36,8 +36,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 
-import main.java.inflor.core.sne.tsne.*;
-import main.java.inflor.core.sne.utils.*;
+import inflor.core.sne.tsne.*;
+import inflor.core.sne.utils.*;
 
 public class BHTSne implements BarnesHutTSne {
 
@@ -45,7 +45,8 @@ public class BHTSne implements BarnesHutTSne {
   private ExecutionContext exec;
 
   @Override
-  public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity) throws CanceledExecutionException {
+  public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity)
+      throws CanceledExecutionException {
     return tsne(X, no_dims, initial_dims, perplexity, 20000, true);
   }
 
@@ -223,13 +224,13 @@ public class BHTSne implements BarnesHutTSne {
           (end - start) / 1000.0, (double) row_P[N] / ((double) N * (double) N));
     start = System.currentTimeMillis();
     for (int iter = 0; iter < max_iter; iter++) {
-      
-      if (exec!=null&&iter%20==0){
+
+      if (exec != null && iter % 20 == 0) {
         exec.setMessage("Executing: " + iter);
-        exec.setProgress(iter/max_iter);
+        exec.setProgress(iter / max_iter);
         exec.checkCanceled();
       }
-      
+
       if (exact)
         computeExactGradient(P, Y, N, no_dims, dY);
       // Compute (approximate) gradient
@@ -931,9 +932,9 @@ public class BHTSne implements BarnesHutTSne {
       }
     }
   }
-  
-  public void setExecutionContext(ExecutionContext exec){
+
+  public void setExecutionContext(ExecutionContext exec) {
     this.exec = exec;
-    }
-  
+  }
+
 }

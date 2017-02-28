@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -43,12 +43,12 @@ import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.ui.SelectionButtonListener;
-import main.java.inflor.core.gates.ui.XYGateAnnotation;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.core.utils.ChartUtils;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.AbstractGate;
+import inflor.core.gates.ui.SelectionButtonListener;
+import inflor.core.gates.ui.XYGateAnnotation;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.ChartUtils;
 
 @SuppressWarnings("serial")
 public class FCSChartPanel extends ChartPanel {

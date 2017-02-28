@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,10 +29,10 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.core.gates.Hierarchical;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.GateUtilities;
+import inflor.core.gates.Hierarchical;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {

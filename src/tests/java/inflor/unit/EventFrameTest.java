@@ -1,4 +1,4 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.FCSFrame;
 
 public class EventFrameTest {
 
@@ -19,7 +19,7 @@ public class EventFrameTest {
     String trueUUID = "42";
     final HashMap<String, String> header = new HashMap<String, String>();
     header.put(trueKey, trueValue);
-    
+
     // Test
     final FCSFrame cs = new FCSFrame(trueUUID, header, trueRowCount);
     final String testValue = cs.getKeywords().get(trueKey);

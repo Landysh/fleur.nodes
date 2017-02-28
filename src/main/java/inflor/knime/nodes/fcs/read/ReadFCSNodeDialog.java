@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read;
+package inflor.knime.nodes.fcs.read;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;

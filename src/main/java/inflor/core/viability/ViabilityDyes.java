@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.viability;
+package inflor.core.viability;
 
 public enum ViabilityDyes {
   PI(new String[] {".+prop.+", ".+PI.+"}), 

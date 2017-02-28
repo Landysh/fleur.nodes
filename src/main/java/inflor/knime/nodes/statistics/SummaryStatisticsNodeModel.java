@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.statistics;
+package inflor.knime.nodes.statistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of SummaryStatistics. Extract basic summary statistics from a
@@ -58,8 +58,9 @@ public class SummaryStatisticsNodeModel extends NodeModel {
   private DataTableSpec createSpec(DataTableSpec inSpec) {
     DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
     List<DataColumnSpec> cspecs = new ArrayList<>();
-    for (StatSpec spec: modelSettings.getStatSpecs()){
-      DataColumnSpec cspec = new DataColumnSpecCreator(spec.toString(), DoubleCell.TYPE).createSpec();
+    for (StatSpec spec : modelSettings.getStatSpecs()) {
+      DataColumnSpec cspec =
+          new DataColumnSpecCreator(spec.toString(), DoubleCell.TYPE).createSpec();
       cspecs.add(cspec);
     }
     DataColumnSpec[] columns = cspecs.toArray(new DataColumnSpec[cspecs.size()]);
@@ -74,20 +75,21 @@ public class SummaryStatisticsNodeModel extends NodeModel {
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
     logger.info("Executing: Create Gates");
-    
+
     // Create the output spec and data container.
     DataTableSpec outSpec = createSpec(inData[0].getSpec());
     BufferedDataContainer container = exec.createDataContainer(outSpec);
     String columnName = modelSettings.getSelectedColumn();
     List<StatSpec> statDefinitions = modelSettings.getStatSpecs();
     int index = outSpec.findColumnIndex(columnName);
-    
+
 
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       DataCell[] outCells = new DataCell[inRow.getNumCells() + statDefinitions.size()];
       FCSFrameFileStoreDataCell inFSDC = (FCSFrameFileStoreDataCell) inRow.getCell(index);
-      FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(inFSDC.getFileStore(), inFSDC.getFCSFrameMetadata());
+      FCSFrameFileStoreDataCell fileCell =
+          new FCSFrameFileStoreDataCell(inFSDC.getFileStore(), inFSDC.getFCSFrameMetadata());
       inRow.getNumCells();
       for (int j = 0; j < inRow.getNumCells(); j++) {
         if (j == index) {
@@ -96,9 +98,9 @@ public class SummaryStatisticsNodeModel extends NodeModel {
           outCells[j] = inRow.getCell(j);
         }
       }
-      
-      //calculate the statistics.
-      for (StatSpec stat : statDefinitions){
+
+      // calculate the statistics.
+      for (StatSpec stat : statDefinitions) {
         Double value = stat.evaluate(inFSDC.getFCSFrameValue());
         int statIndex = outSpec.findColumnIndex(stat.toString());
         outCells[statIndex] = new DoubleCell(value);
@@ -108,7 +110,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
       i++;
     }
     container.close();
-    return new BufferedDataTable[] {container.getTable()};    
+    return new BufferedDataTable[] {container.getTable()};
   }
 
   /**
@@ -116,7 +118,7 @@ public class SummaryStatisticsNodeModel extends NodeModel {
    */
   @Override
   protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {/*noop*/}
+      throws IOException, CanceledExecutionException {/* noop */}
 
   /**
    * {@inheritDoc}
@@ -131,14 +133,14 @@ public class SummaryStatisticsNodeModel extends NodeModel {
    * {@inheritDoc}
    */
   @Override
-  protected void reset() {/*noop*/}
+  protected void reset() {/* noop */}
 
   /**
    * {@inheritDoc}
    */
   @Override
   protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {/*noop*/}
+      throws IOException, CanceledExecutionException {/* noop */}
 
   /**
    * {@inheritDoc}

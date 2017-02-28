@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.tsne;
+package inflor.core.sne.tsne;
 
 import org.knime.core.node.CanceledExecutionException;
 

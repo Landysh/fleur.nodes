@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.convert;
+package inflor.knime.nodes.compensation.convert;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 

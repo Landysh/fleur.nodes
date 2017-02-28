@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -33,7 +33,7 @@ import org.jfree.data.Range;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.TextAnchor;
 
-import main.java.inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.LogicleTransform;
 
 @SuppressWarnings("serial")
 public class LogicleNumberAxis extends NumberAxis {

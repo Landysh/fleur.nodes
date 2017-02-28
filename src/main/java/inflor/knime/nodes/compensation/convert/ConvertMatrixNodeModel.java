@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.convert;
+package inflor.knime.nodes.compensation.convert;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,8 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import main.java.inflor.knime.ports.compensation.CompMatrixPortObject;
-import main.java.inflor.knime.ports.compensation.CompMatrixPortSpec;
+import inflor.knime.ports.compensation.CompMatrixPortObject;
+import inflor.knime.ports.compensation.CompMatrixPortSpec;
 
 /**
  * This is the model implementation of ConvertMatrix.

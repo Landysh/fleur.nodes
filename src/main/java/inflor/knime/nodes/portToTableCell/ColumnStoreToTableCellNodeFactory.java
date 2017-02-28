@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.portToTableCell;
+package inflor.knime.nodes.portToTableCell;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

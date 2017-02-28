@@ -1,8 +1,8 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.BoundDisplayTransform;
+import inflor.core.transforms.LogicleTransform;
 
 // Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")

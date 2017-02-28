@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.proto.FCSFrameProto;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.proto.FCSFrameProto;
+import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {
 

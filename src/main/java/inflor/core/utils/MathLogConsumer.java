@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.utils;
+package inflor.core.utils;
 
 import java.util.function.DoubleConsumer;
 

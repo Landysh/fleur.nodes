@@ -1,4 +1,4 @@
-package tests.java.inflor.ui;
+package inflor.ui;
 
 
 import javax.swing.JPanel;
@@ -7,16 +7,16 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import main.java.inflor.core.compensation.SpilloverCompensator;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.gates.ui.GateCreationToolBar;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.plots.HistogramPlot;
-import main.java.inflor.core.plots.PlotTypes;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.compensation.SpilloverCompensator;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.gates.ui.GateCreationToolBar;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.plots.HistogramPlot;
+import inflor.core.plots.PlotTypes;
+import inflor.core.transforms.LogicleTransform;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class HistogramPlotTest extends ApplicationFrame {

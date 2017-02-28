@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.gating;
+package inflor.knime.nodes.gating;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -30,12 +30,12 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.Hierarchical;
-import main.java.inflor.core.ui.CellLineageTree;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.Hierarchical;
+import inflor.core.ui.CellLineageTree;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.

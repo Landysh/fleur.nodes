@@ -1,4 +1,4 @@
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -17,17 +17,17 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.DimensionTypes;
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.ui.GateCreationToolBar;
-import main.java.inflor.core.plots.AbstractFCChart;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.ChartingDefaults;
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.plots.PlotUtils;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.DimensionTypes;
+import inflor.core.gates.AbstractGate;
+import inflor.core.gates.ui.GateCreationToolBar;
+import inflor.core.plots.AbstractFCChart;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.ChartingDefaults;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.plots.PlotUtils;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class ChartEditorDialog extends JDialog {

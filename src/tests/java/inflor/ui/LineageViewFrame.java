@@ -1,4 +1,4 @@
-package tests.java.inflor.ui;
+package inflor.ui;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -10,13 +10,13 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.gates.Hierarchical;
-import main.java.inflor.core.gates.RangeGate;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.PlotTypes;
-import main.java.inflor.core.ui.CellLineageTree;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.gates.Hierarchical;
+import inflor.core.gates.RangeGate;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.PlotTypes;
+import inflor.core.ui.CellLineageTree;
 
 @SuppressWarnings("serial")
 public class LineageViewFrame extends ApplicationFrame {

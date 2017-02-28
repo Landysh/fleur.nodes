@@ -1,4 +1,4 @@
-package tests.java.inflor.ui;
+package inflor.ui;
 
 import java.util.BitSet;
 
@@ -8,15 +8,15 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.downsample.DownSample;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.gates.ui.GateCreationToolBar;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.DensityPlot;
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.plots.PlotTypes;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.core.downsample.DownSample;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.gates.ui.GateCreationToolBar;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.DensityPlot;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.plots.PlotTypes;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class ContourPlotFrame extends ApplicationFrame {

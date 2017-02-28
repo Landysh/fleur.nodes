@@ -18,16 +18,16 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
 import java.util.BitSet;
 import java.util.HashMap;
 
 import org.w3c.dom.Element;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {

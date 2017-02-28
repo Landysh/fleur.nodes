@@ -1,5 +1,5 @@
-package main.java.inflor.core.downsample;
+package inflor.core.downsample;
 
 public enum DownSampleMethods {
-    RANDOM, DENSITY_DEPENDENT
+  RANDOM, DENSITY_DEPENDENT
 }

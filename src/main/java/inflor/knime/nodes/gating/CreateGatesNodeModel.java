@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.gating;
+package inflor.knime.nodes.gating;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +29,12 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Subset;
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.Subset;
+import inflor.core.gates.AbstractGate;
+import inflor.core.gates.GateUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of CreateGates.

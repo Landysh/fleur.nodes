@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -27,8 +27,8 @@ import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.knime.core.NodeUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.knime.core.NodeUtilities;
 
 public class GateUtilities {
   

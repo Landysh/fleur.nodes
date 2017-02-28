@@ -1,4 +1,4 @@
-package main.java.inflor.knime.ports.fcs;
+package inflor.knime.ports.fcs;
 
 import java.io.IOException;
 import java.util.HashMap;

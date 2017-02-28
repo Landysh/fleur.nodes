@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

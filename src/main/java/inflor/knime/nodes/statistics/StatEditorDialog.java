@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.statistics;
+package inflor.knime.nodes.statistics;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import main.java.inflor.core.gates.GateUtilities;
+import inflor.core.gates.GateUtilities;
 
 @SuppressWarnings("serial")
 public class StatEditorDialog extends JDialog {

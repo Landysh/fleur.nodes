@@ -1,24 +1,21 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on February 27, 2017 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.downsample;
+package inflor.knime.nodes.downsample;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -48,9 +45,9 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.downsample.DownSampleMethods;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.downsample.DownSampleMethods;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.
@@ -59,7 +56,7 @@ import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
  */
 
 public class DownsampleNodeDialog extends NodeDialogPane {
-  
+
   private static final NodeLogger logger = NodeLogger.getLogger(DownsampleNodeDialog.class);
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
@@ -87,11 +84,11 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     updateDetailsPanel();
     optionsTabPanel.setPreferredSize(new Dimension(400, 600));
     super.addTab(KEY_OPTIONS_TAB, optionsTabPanel);
-    
+
   }
 
   private void updateDetailsPanel() {
-    if (detailsPanel!=null){
+    if (detailsPanel != null) {
       optionsTabPanel.remove(detailsPanel);
     }
     JPanel newPanel = (JPanel) downsampleDetailsPanel();
@@ -107,8 +104,8 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     JComboBox<DownSampleMethods> methodBox = new JComboBox<>();
     Arrays.asList(DownSampleMethods.values()).forEach(methodBox::addItem);
     methodBox.setSelectedItem(modelSettings.getSampleMethod());
-    methodBox.addActionListener( e -> {
-      
+    methodBox.addActionListener(e -> {
+
       DownSampleMethods newMethod = (DownSampleMethods) methodBox.getSelectedItem();
       modelSettings.setSelectedDownsampleMethod(newMethod);
       updateDetailsPanel();
@@ -122,45 +119,48 @@ public class DownsampleNodeDialog extends NodeDialogPane {
   private JPanel createDetailSettingsPanel() {
     JPanel dsp = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
-    gbc.gridx=0;
-    gbc.gridy=0;
-    if (modelSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)){      
-      SpinnerModel ceilSpinnerModel = new SpinnerNumberModel((Number) modelSettings.getCeiling(), 1, Integer.MAX_VALUE, 1);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    if (modelSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)) {
+      SpinnerModel ceilSpinnerModel =
+          new SpinnerNumberModel((Number) modelSettings.getCeiling(), 1, Integer.MAX_VALUE, 1);
       JSpinner ceilingSpinner = new JSpinner(ceilSpinnerModel);
       ceilingSpinner.addChangeListener(e -> {
         modelSettings.setRandomSeed((Integer) ceilingSpinner.getModel().getValue());
       });
-      
+
       dsp.add(ceilingSpinner, gbc);
       gbc.gridy++;
       JCheckBox useRandomSeed = new JCheckBox("Use random seed.", modelSettings.isRandomSeed());
       useRandomSeed.addChangeListener(e -> {
         modelSettings.setUseRandomSeed(useRandomSeed.isSelected());
         updateDetailsPanel();
-      dsp.add(useRandomSeed, gbc);
+        dsp.add(useRandomSeed, gbc);
       });
-      if (!modelSettings.isRandomSeed()){
-        SpinnerModel spinnerModel = new SpinnerNumberModel(modelSettings.getRandomSeed(), Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+      if (!modelSettings.isRandomSeed()) {
+        SpinnerModel spinnerModel = new SpinnerNumberModel(modelSettings.getRandomSeed(),
+            Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
         JSpinner seedSpinner = new JSpinner(spinnerModel);
         seedSpinner.addChangeListener(e -> {
           modelSettings.setRandomSeed((Integer) seedSpinner.getModel().getValue());
         });
         gbc.gridy++;
-        dsp.add(seedSpinner,gbc);
+        dsp.add(seedSpinner, gbc);
       }
-      } else if (modelSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)
-          &&shortNames!=null && displayNames!=null){
-          JList<String> selectedDimensionsList = new JList<>(displayNames);//TODO Nicer if this were directly on dimensions.
-          selectedDimensionsList.getSelectionModel().addListSelectionListener( e-> {
-            int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
-            String[] selectedShortNames = new String[selectedIndicies.length]; 
-            for (int i=0;i<selectedIndicies.length;i++){
-              selectedShortNames[i] = shortNames[i];
-            }
-            modelSettings.setDimensionNames(selectedShortNames);
-          });
+    } else if (modelSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)
+        && shortNames != null && displayNames != null) {
+      JList<String> selectedDimensionsList = new JList<>(displayNames);// TODO Nicer if this were
+                                                                       // directly on dimensions.
+      selectedDimensionsList.getSelectionModel().addListSelectionListener(e -> {
+        int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
+        String[] selectedShortNames = new String[selectedIndicies.length];
+        for (int i = 0; i < selectedIndicies.length; i++) {
+          selectedShortNames[i] = shortNames[i];
+        }
+        modelSettings.setDimensionNames(selectedShortNames);
+      });
 
-          dsp.add(selectedDimensionsList, gbc);
+      dsp.add(selectedDimensionsList, gbc);
     }
     return dsp;
   }
@@ -175,8 +175,8 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     columnSelectionPanel.add(Box.createHorizontalGlue());
     // Select Input data
     fcsColumnBox = new JComboBox<>();
-    fcsColumnBox.addActionListener( e -> 
-        modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
+    fcsColumnBox.addActionListener(
+        e -> modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
     columnSelectionPanel.add(fcsColumnBox);
     return columnSelectionPanel;
   }
@@ -191,16 +191,18 @@ public class DownsampleNodeDialog extends NodeDialogPane {
         fcsColumnBox.addItem(name);
       }
     }
-    
-    
-   
-    DataColumnProperties props = spec.getColumnSpec((String) fcsColumnBox.getSelectedItem()).getProperties();
-    
-    displayNames = props.getProperty(NodeUtilities.DISPLAY_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+
+
+
+    DataColumnProperties props =
+        spec.getColumnSpec((String) fcsColumnBox.getSelectedItem()).getProperties();
+
+    displayNames =
+        props.getProperty(NodeUtilities.DISPLAY_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
     String s2 = props.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-    shortNames = s2.split(NodeUtilities.DELIMITER_REGEX);  
+    shortNames = s2.split(NodeUtilities.DELIMITER_REGEX);
   }
-  
+
   @Override
   protected void saveSettingsTo(NodeSettingsWO settings) throws InvalidSettingsException {
     modelSettings.save(settings);

@@ -1,4 +1,4 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,9 +7,9 @@ import java.util.BitSet;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.PolygonGate;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.PolygonGate;
 
 public class PolygonGateTest {
 

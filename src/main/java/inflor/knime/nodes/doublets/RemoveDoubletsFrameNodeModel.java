@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +19,13 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
-import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
-import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
+import inflor.core.data.FCSFrame;
+import inflor.core.singlets.SingletsModel;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.knime.ports.fcs.FCSFramePortObject;
+import inflor.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * This is the model implementation of FindSingletsFrame.
@@ -95,16 +95,14 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
     final FileStore filestore = fileStoreFactory.createFileStore(fsName);
     int size = NodeUtilities.writeFrameToFilestore(outFrame, filestore);
     FCSFrameMetaData metaData = new FCSFrameMetaData(outFrame, size);
-    
+
     final FCSFramePortObject outPort =
         FCSFramePortObject.createPortObject(outSpec, metaData, filestore);
     return new PortObject[] {outPort};
   }
 
-  private FCSFramePortSpec getSpec(FCSFramePortSpec inSpec) {       
-    return new FCSFramePortSpec(
-        inSpec.getKeywords(), 
-        inSpec.getColumnNames(), 
+  private FCSFramePortSpec getSpec(FCSFramePortSpec inSpec) {
+    return new FCSFramePortSpec(inSpec.getKeywords(), inSpec.getColumnNames(),
         inSpec.getRowCount());
   }
 

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.downsample;
+package inflor.knime.nodes.downsample;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +24,13 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.downsample.DownSample;
-import main.java.inflor.core.downsample.DownSampleMethods;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSFrame;
+import inflor.core.downsample.DownSample;
+import inflor.core.downsample.DownSampleMethods;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Downsample.

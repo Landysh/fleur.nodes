@@ -1,4 +1,4 @@
-package main.java.inflor.core.downsample;
+package inflor.core.downsample;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -9,9 +9,9 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSUtilities;
 
 public class DownSample {
 

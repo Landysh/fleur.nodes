@@ -1,4 +1,4 @@
-package main.java.inflor.core.compensation;
+package inflor.core.compensation;
 
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Median;

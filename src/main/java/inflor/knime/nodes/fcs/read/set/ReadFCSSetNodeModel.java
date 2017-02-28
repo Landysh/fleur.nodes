@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read.set;
+package inflor.knime.nodes.fcs.read.set;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,15 +42,15 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import com.google.common.primitives.Doubles;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.core.utils.FCSConcatenator;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSConcatenator;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of ReadFCSSet.

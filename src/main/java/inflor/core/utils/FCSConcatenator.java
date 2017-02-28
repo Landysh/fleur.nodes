@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.utils;
+package inflor.core.utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +28,9 @@ import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.logging.LogFactory;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.logging.LogFactory;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
   

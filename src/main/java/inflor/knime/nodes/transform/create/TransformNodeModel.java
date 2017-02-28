@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.transform.create;
+package inflor.knime.nodes.transform.create;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -60,18 +60,18 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.plots.PlotUtils;
-import main.java.inflor.core.plots.CategoryResponseChart;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.transforms.LogrithmicTransform;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.core.utils.MatrixUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.plots.PlotUtils;
+import inflor.core.plots.CategoryResponseChart;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.BoundDisplayTransform;
+import inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.LogrithmicTransform;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.MatrixUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of Transform.

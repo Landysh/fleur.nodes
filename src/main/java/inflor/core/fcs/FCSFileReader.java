@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.fcs;
+package inflor.core.fcs;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +35,10 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.core.utils.MatrixUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 

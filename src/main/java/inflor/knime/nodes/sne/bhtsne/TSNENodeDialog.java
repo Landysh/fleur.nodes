@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.sne.bhtsne;
+package inflor.knime.nodes.sne.bhtsne;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponent;

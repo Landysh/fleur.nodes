@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,18 +34,18 @@ import java.util.stream.Collectors;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import main.java.inflor.core.proto.FCSFrameProto.Message;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Dimension;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Keyword;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Transform;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Transform.Builder;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.transforms.LogrithmicTransform;
-import main.java.inflor.core.transforms.TransformType;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.core.utils.MatrixUtilities;
+import inflor.core.proto.FCSFrameProto.Message;
+import inflor.core.proto.FCSFrameProto.Message.Dimension;
+import inflor.core.proto.FCSFrameProto.Message.Keyword;
+import inflor.core.proto.FCSFrameProto.Message.Transform;
+import inflor.core.proto.FCSFrameProto.Message.Transform.Builder;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.BoundDisplayTransform;
+import inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.LogrithmicTransform;
+import inflor.core.transforms.TransformType;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.MatrixUtilities;
 
 
 // don't use the default serializer, there is a protobuf spec.

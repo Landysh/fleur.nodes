@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read;
+package inflor.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +19,12 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
-import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
-import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.knime.ports.fcs.FCSFramePortObject;
+import inflor.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * This is the node model implementation for FCSReader. It is designed to use the Inflor

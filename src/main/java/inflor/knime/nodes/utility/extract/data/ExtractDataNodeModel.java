@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extract.data;
+package inflor.knime.nodes.utility.extract.data;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +34,10 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.BitSetUtils;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 
 /**

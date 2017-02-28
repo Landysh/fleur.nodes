@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.sne.bhtsne;
+package inflor.knime.nodes.sne.bhtsne;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelColumnFilter2;
 import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
-import main.java.inflor.core.sne.tsne.barneshut.BHTSne2;
-import main.java.inflor.core.sne.utils.MatrixOps;
+import inflor.core.sne.tsne.barneshut.BHTSne2;
+import inflor.core.sne.utils.MatrixOps;
 
 /**
  * This is the model implementation of the TSNE node for the KNIME Analytics Platform. Calculates a

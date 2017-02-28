@@ -1,4 +1,4 @@
-package tests.java.inflor.ui;
+package inflor.ui;
 
 
 import java.io.File;
@@ -14,20 +14,20 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.plots.CategoryResponseChart;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.plots.CategoryResponseChart;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.LogicleTransform;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class MultiHistogramPlotTest extends ApplicationFrame {
 
   private ChartPanel panel;
   MouseInputListener activeListener;
-  //private GateCreationToolBar toolbar;
+  // private GateCreationToolBar toolbar;
 
   public MultiHistogramPlotTest(String title) throws Exception {
     super(title);

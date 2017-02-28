@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extract.data;
+package inflor.knime.nodes.utility.extract.data;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponent;
@@ -9,7 +9,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
+import inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "ExtractTrainingSet" Node. Extracts data from an FCS frame column

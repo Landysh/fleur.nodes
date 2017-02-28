@@ -1,8 +1,8 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.util.BitSet;
 
-import main.java.inflor.core.utils.BitSetUtils;
+import inflor.core.utils.BitSetUtils;
 
 public class Histogram1D {
 

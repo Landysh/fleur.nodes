@@ -1,4 +1,4 @@
-package tests.java.inflor.integration;
+package inflor.integration;
 
 public enum CompensationTestDatasets {
   OMIP_16 ("src/tests/resources/OMIP016/compensation"),

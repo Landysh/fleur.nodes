@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.tsne;
+package inflor.core.sne.tsne;
 /*
  * Copyright (c) 2009-2014, Peter Abeles. All Rights Reserved.
  *

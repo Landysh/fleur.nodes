@@ -1,4 +1,4 @@
-package main.java.inflor.core.compensation;
+package inflor.core.compensation;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -18,14 +18,14 @@ import org.knime.core.node.ExecutionContext;
 
 import com.google.common.primitives.Doubles;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.ParticleType;
-import main.java.inflor.core.fcs.DimensionTypes;
-import main.java.inflor.core.gates.RangeGate;
-import main.java.inflor.core.logging.LogFactory;
-import main.java.inflor.core.utils.BitSetUtils;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.ParticleType;
+import inflor.core.fcs.DimensionTypes;
+import inflor.core.gates.RangeGate;
+import inflor.core.logging.LogFactory;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSUtilities;
 
 public class TheilSenMatrixCalculator {
   
@@ -354,7 +354,7 @@ public class TheilSenMatrixCalculator {
     return particleTypeMap;
   }
 
-  public main.java.inflor.core.data.ParticleType getParticleType(String key) {
+  public inflor.core.data.ParticleType getParticleType(String key) {
     return particleTypeMap.get(key);
   }
 }

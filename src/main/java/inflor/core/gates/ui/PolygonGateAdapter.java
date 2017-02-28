@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -29,10 +29,10 @@ import javax.swing.event.MouseInputAdapter;
 
 import org.jfree.chart.annotations.XYLineAnnotation;
 
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.ui.GateNameEditor;
-import main.java.inflor.core.ui.LookAndFeel;
-import main.java.inflor.core.utils.ChartUtils;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.ui.GateNameEditor;
+import inflor.core.ui.LookAndFeel;
+import inflor.core.utils.ChartUtils;
 
 public class PolygonGateAdapter extends MouseInputAdapter {
   private FCSChartPanel panel;

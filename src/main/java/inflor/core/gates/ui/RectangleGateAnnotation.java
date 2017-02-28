@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
 import org.jfree.chart.annotations.XYBoxAnnotation;
 import org.jfree.data.Range;
 
-import main.java.inflor.core.ui.LookAndFeel;
+import inflor.core.ui.LookAndFeel;
 
 @SuppressWarnings("serial")
 public class RectangleGateAnnotation extends XYBoxAnnotation implements XYGateAnnotation {
