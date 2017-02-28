@@ -92,7 +92,7 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 
   private FCSDimension mergeDimensions(FCSDimension dimension, FCSDimension secondDimension) {
     FCSDimension mergedDimension;
-    mergedDimension = new FCSDimension(dimension.getSize() + secondDimension.getSize(),
+    mergedDimension = new FCSDimension(dimension.size() + secondDimension.size(),
     		dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
     		dimension.getPNEF2(), dimension.getRange());
     double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());

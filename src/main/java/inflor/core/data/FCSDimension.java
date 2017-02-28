@@ -100,7 +100,7 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
     return this.shortName;
   }
 
-  public int getSize() {
+  public int size() {
     return this.data.length;
   }
 

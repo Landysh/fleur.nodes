@@ -55,8 +55,8 @@ public class CategoryResponseChart {
 
     int numEvents = Integer.MAX_VALUE;
     for (FCSDimension d : dataModel.values()) {
-      if (d.getSize() < numEvents) {
-        numEvents = d.getSize();
+      if (d.size() < numEvents) {
+        numEvents = d.size();
       }
     }
     double zMin = Double.MAX_VALUE;
