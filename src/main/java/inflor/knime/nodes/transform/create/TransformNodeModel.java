@@ -300,6 +300,14 @@ public class TransformNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
+    if (modelSettings.getSelectedColumn()==null){
+      Arrays.asList(inSpecs[0].getColumnNames())
+      .stream()
+      .map(inSpecs[0]::getColumnSpec)
+      .filter(spec -> spec.getType().equals(FCSFrameFileStoreDataCell.TYPE))
+      .findFirst()
+      .ifPresent(column -> modelSettings.setSelectedColumn(column.getName()));    
+    }
     return createSpecs(inSpecs[0]);
   }
 
