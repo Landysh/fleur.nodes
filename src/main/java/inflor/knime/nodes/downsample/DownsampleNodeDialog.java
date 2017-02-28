@@ -151,7 +151,6 @@ public class DownsampleNodeDialog extends NodeDialogPane {
       } else if (modelSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)
           &&shortNames!=null && displayNames!=null){
           JList<String> selectedDimensionsList = new JList<>(displayNames);//TODO Nicer if this were directly on dimensions.
-          ListSelectionListener l = new DownsampleDimensionListListener(modelSettings, selectedDimensionsList, shortNames);
           selectedDimensionsList.getSelectionModel().addListSelectionListener( e-> {
             int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
             String[] selectedShortNames = new String[selectedIndicies.length]; 
