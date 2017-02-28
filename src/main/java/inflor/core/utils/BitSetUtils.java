@@ -49,12 +49,18 @@ public class BitSetUtils {
     final Random rand = new Random(-1);
     final BitSet mask = new BitSet(inSize);
     // The knuthy part
-    for (int i = 0; i < downSize; i++) {
-      final int pos = i + rand.nextInt(inSize - i);
-      final int temp = indices[pos];
-      indices[pos] = indices[i];
-      indices[i] = temp;
-      mask.set(i);
+    if (inSize>downSize){
+      for (int i = 0; i < downSize; i++) {
+        final int pos = i + rand.nextInt(inSize - i);
+        final int temp = indices[pos];
+        indices[pos] = indices[i];
+        indices[i] = temp;
+        mask.set(i);
+      }
+    } else {
+      for (int j=0;j<mask.size();j++){
+        mask.set(j);
+      }
     }
     return mask;
   }
