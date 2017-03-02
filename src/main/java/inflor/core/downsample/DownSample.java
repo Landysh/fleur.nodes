@@ -1,6 +1,5 @@
 package inflor.core.downsample;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
@@ -17,19 +16,19 @@ public class DownSample {
 
   private DownSample(){}
   
-  public static BitSet densityDependent(FCSFrame inFrame, List<String> dimensionNames){
-    
+  public static BitSet densityDependent(FCSFrame inFrame, List<String> dimensionNames, int targetSize){
+    	  
     //Calculate median minimum distance.
-    BitSet mask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), 2000);
-    FCSFrame dsFrame = FCSUtilities.filterFrame(mask, inFrame);
+    BitSet shuffleMask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), 2000);
+    FCSFrame dsFrame = FCSUtilities.filterFrame(shuffleMask, inFrame);
     double[][] mtx = dsFrame.getMatrix(dimensionNames, true);
     double minimumMedianDistance = calculateMinMedDistance(mtx);
     //Calculate the number of local neighbors for each cell.
-    double[] subsetLD = calculateLocalDensity(dsFrame, mtx, minimumMedianDistance, dimensionNames);
-    Arrays.sort(subsetLD);
+    //double[] subsetLD = calculateLocalDensity(dsFrame, mtx, minimumMedianDistance, dimensionNames);
+    //Arrays.sort(subsetLD);
     double[] localDensity = calculateLocalDensity(inFrame, mtx, minimumMedianDistance, dimensionNames);
     //Finally calculate od, and td, and fill the mask.
-    return generateBitSet(inFrame, localDensity);
+    return generateBitSet(inFrame, localDensity, targetSize);
   }
 
   private static double calculateMinMedDistance(double[][] mtx) {
@@ -51,7 +50,6 @@ public class DownSample {
   private static double[] calculateLocalDensity(FCSFrame inFrame, double[][] mtx,
       double minimumMedianDistance, List<String> dimensionNames) {
     //Calculate the number of local neighbors for each cell.
-    EuclideanDistance euclid = new EuclideanDistance();
     double dThresh = minimumMedianDistance * 5; //alpha
     double[] localDensity = new double[inFrame.getRowCount()];
     double[][] allData = inFrame.getMatrix(dimensionNames, true);
@@ -59,7 +57,6 @@ public class DownSample {
       for (int l=0;l<mtx.length;l++){
         double[] row1 = allData[k];
         double[] row2 = mtx[l];
-        //double cellDistance = euclid.compute(row1, row2);
         double cellDistance = manhattan(row1, row2);
         if (cellDistance < dThresh){
           double nDensity = localDensity[k]+1;
@@ -80,12 +77,19 @@ public class DownSample {
     return distance;
   }
 
-  private static BitSet generateBitSet(FCSFrame inFrame, double[] localDensity) {
+  private static BitSet generateBitSet(FCSFrame inFrame, double[] localDensity, int targetSize) {
     Percentile p = new Percentile();
     p.setData(localDensity);
     double od = p.evaluate(1);
     double td = p.evaluate(3);
-    
+    double defaultProbablity;
+    //TODO: Bullshit I made up to limit rows in common subset, I can't algebra :(
+    if (targetSize < inFrame.getRowCount()*0.98){
+        defaultProbablity = targetSize/inFrame.getRowCount()*0.98;
+    } else {
+    	defaultProbablity = 1;
+    }
+
     Random rnJesus = new Random();
     BitSet outMask = new BitSet(inFrame.getRowCount());
     for (int index=0;index<localDensity.length;index++){
@@ -94,7 +98,7 @@ public class DownSample {
       } else if (od < localDensity[index] && localDensity[index] <= td){
         outMask.set(index);
       } else {
-        double probablity = td/localDensity[index];
+		double probablity = td/localDensity[index]*defaultProbablity;
         if (probablity > rnJesus.nextDouble()){
           outMask.set(index);
         }
