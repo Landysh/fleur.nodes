@@ -155,7 +155,7 @@ public class ExtractDataNodeModel extends NodeModel {
     }
     
     final DataRow tableRow = new DefaultRow(rowKey, cells);
-    container.addRowToTable(tableRow);
+    container.addRowToTable(tableRow);//TODO: baag
     rowIndex++;
   }
 
