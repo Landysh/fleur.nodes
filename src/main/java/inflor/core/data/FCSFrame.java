@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import inflor.core.gates.GateUtilities;
 import inflor.core.proto.FCSFrameProto.Message;
 import inflor.core.proto.FCSFrameProto.Message.Dimension;
 import inflor.core.proto.FCSFrameProto.Message.Keyword;
@@ -470,17 +471,19 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return getDisplayName();
   }
 
-  public FCSFrame getFilteredFrame(String referenceSubset) {
+  public BitSet getFilteredFrame(String referenceSubset, boolean includeAnscestry) {
     Optional<Subset> targetSubset = subsets
       .stream()
       .filter(sub->sub.getLabel().equals(referenceSubset))
       .findAny();
     
-    if (targetSubset.isPresent()){
+    if (targetSubset.isPresent()&&includeAnscestry){
       Subset currentSubset = targetSubset.get();
       List<Subset> ancestors = currentSubset.findAncestors(getSubsets());
       BitSet mask = currentSubset.evaluate(ancestors);
-      return FCSUtilities.filterFrame(mask, this);
+      return mask;
+    } else if (targetSubset.isPresent()&&!includeAnscestry){
+      return targetSubset.get().getMembers(); 
     } else {
       return null;
     }
