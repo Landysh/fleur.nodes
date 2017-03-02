@@ -198,7 +198,7 @@ public class TransformNodeModel extends NodeModel {
   private FCSFrame filterDataFrame(ExecutionContext filterExec, FCSFrame df, String subsetName, int size) {
     filterExec.setProgress((double) subtaskIndex/size, df.getDisplayName());
     subtaskIndex++;
-    return df.getFilteredFrame(subsetName);
+    return FCSUtilities.filterFrame(df.getFilteredFrame(subsetName, true), df);
   }
 
   private void optimizeTransform(List<FCSFrame> filteredData, Entry<String, AbstractTransform> entry, 
