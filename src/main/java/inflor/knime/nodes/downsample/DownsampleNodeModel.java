@@ -27,6 +27,7 @@ import org.knime.core.node.NodeSettingsWO;
 import inflor.core.data.FCSFrame;
 import inflor.core.downsample.DownSample;
 import inflor.core.downsample.DownSampleMethods;
+import inflor.core.fcs.FCSFileReader;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;
@@ -137,15 +138,23 @@ public class DownsampleNodeModel extends NodeModel {
   }
   
   private FCSFrame downSample(FCSFrame dataFrame) {
-    BitSet mask = null;
+    String referenceSubsetName = mSettings.getReferenceSubset();
+    FCSFrame refFrame;
+    if (referenceSubsetName.equals(DownsampleNodeSettings.DEFAULT_REFERENCE_SUBSET)){
+    	refFrame = dataFrame;
+    } else {
+    	BitSet referenceMask = dataFrame.getFilteredFrame(mSettings.getReferenceSubset(), true);
+    	refFrame = FCSUtilities.filterFrame(referenceMask, dataFrame);
+    }
+	BitSet mask = null;
     List<String> dimensionNames = Arrays.asList(mSettings.getDimensionNames());
     if (mSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)){
-      mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), mSettings.getCeiling());
+      mask = BitSetUtils.getShuffledMask(refFrame.getRowCount(), mSettings.getCeiling());
     }else if (mSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)){
-      mask = DownSample.densityDependent(dataFrame, dimensionNames); 
+      mask = DownSample.densityDependent(refFrame, dimensionNames, mSettings.getCeiling()); 
     }
     if (mask!=null){
-      return FCSUtilities.filterFrame(mask, dataFrame);
+      return FCSUtilities.filterFrame(mask, refFrame);
     } else {
       getLogger().error("Downsampling failed due to invalid sample method.");
       return dataFrame;

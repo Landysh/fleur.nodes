@@ -34,8 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionListener;
 
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
@@ -66,14 +64,13 @@ public class DownsampleNodeDialog extends NodeDialogPane {
   private DownsampleNodeSettings modelSettings;
   private JPanel optionsTabPanel;
   private JComboBox<String> fcsColumnBox;
+  private JComboBox<String> subsetSelectionBox;
 
   private String[] displayNames;
   private String[] shortNames;
+  private String[] subsetNames;
 
   private JPanel detailsPanel;
-
-  private JPanel optionsPanel;
-
 
   protected DownsampleNodeDialog() {
     super();
@@ -178,6 +175,9 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     fcsColumnBox.addActionListener(
         e -> modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
     columnSelectionPanel.add(fcsColumnBox);
+    subsetSelectionBox = new JComboBox<>();   	
+    subsetSelectionBox.addActionListener(e -> modelSettings.setReferenceSubset((String) subsetSelectionBox.getSelectedItem()));
+    columnSelectionPanel.add(subsetSelectionBox);
     return columnSelectionPanel;
   }
 
@@ -191,6 +191,12 @@ public class DownsampleNodeDialog extends NodeDialogPane {
         fcsColumnBox.addItem(name);
       }
     }
+    subsetSelectionBox.removeAllItems();
+    subsetSelectionBox.addItem(DownsampleNodeSettings.DEFAULT_REFERENCE_SUBSET);
+    if (subsetNames!=null){
+    	Arrays.asList(subsetNames).forEach(subsetSelectionBox::addItem);
+    }
+    subsetSelectionBox.setSelectedItem(modelSettings.getReferenceSubset());
 
 
 
@@ -201,6 +207,11 @@ public class DownsampleNodeDialog extends NodeDialogPane {
         props.getProperty(NodeUtilities.DISPLAY_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
     String s2 = props.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
     shortNames = s2.split(NodeUtilities.DELIMITER_REGEX);
+    if (props.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
+    	subsetNames = props.getProperty(NodeUtilities.SUBSET_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+    }
+    optionsTabPanel.revalidate();
+    optionsTabPanel.repaint(50l);
   }
 
   @Override
