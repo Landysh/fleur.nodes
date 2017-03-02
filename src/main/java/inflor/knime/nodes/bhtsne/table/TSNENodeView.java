@@ -1,4 +1,4 @@
-package inflor.knime.nodes.sne.bhtsne;
+package inflor.knime.nodes.bhtsne.table;
 
 import org.knime.core.node.NodeView;
 

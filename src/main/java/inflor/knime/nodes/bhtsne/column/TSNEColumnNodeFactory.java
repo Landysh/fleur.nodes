@@ -1,4 +1,4 @@
-package inflor.knime.nodes.sne.bhtsne;
+package inflor.knime.nodes.bhtsne.column;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
@@ -10,31 +10,31 @@ import org.knime.core.node.NodeView;
  *
  * @author Aaron Hart
  */
-public class TSNENodeFactory extends NodeFactory<TSNENodeModel> {
+public class TSNEColumnNodeFactory extends NodeFactory<TSNEColumnNodeModel> {
 
   /**
    * {@inheritDoc}
    */
   @Override
   public NodeDialogPane createNodeDialogPane() {
-    return new TSNENodeDialog();
+    return new TSNEColumnNodeDialog();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public TSNENodeModel createNodeModel() {
-    return new TSNENodeModel();
+  public TSNEColumnNodeModel createNodeModel() {
+    return new TSNEColumnNodeModel();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public NodeView<TSNENodeModel> createNodeView(final int viewIndex,
-      final TSNENodeModel nodeModel) {
-    return new TSNENodeView(nodeModel);
+  public NodeView<TSNEColumnNodeModel> createNodeView(final int viewIndex,
+      final TSNEColumnNodeModel nodeModel) {
+    return new TSNEColumnNodeView(nodeModel);
   }
 
   /**

@@ -1,4 +1,4 @@
-package inflor.knime.nodes.sne.bhtsne;
+package inflor.knime.nodes.bhtsne.column;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import inflor.core.sne.utils.MatrixOps;
  *
  * @author Aaron Hart
  */
-public class TSNENodeModel extends NodeModel {
+public class TSNEColumnNodeModel extends NodeModel {
 
   // Column filter
   static final String KEY_SLECTED_COLUMNS = "Columns";
@@ -71,7 +71,7 @@ public class TSNENodeModel extends NodeModel {
   /**
    * Constructor for the node model.
    */
-  protected TSNENodeModel() {
+  protected TSNEColumnNodeModel() {
 
     super(1, 1);
   }
