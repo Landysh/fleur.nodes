@@ -26,7 +26,7 @@
 <node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="true" factory-class="inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.utility.extract.data.ExtractDataNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.sne.bhtsne.TSNENodeFactory">
+<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.bhtsne.table.TSNENodeFactory">
 </node>
 <node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
 <node category-path="/inflor/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory" id="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
