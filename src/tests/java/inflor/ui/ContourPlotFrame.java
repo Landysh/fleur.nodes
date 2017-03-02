@@ -30,7 +30,7 @@ public class ContourPlotFrame extends ApplicationFrame {
     // Setup data
     String path = "C:\\Users\\Aaron\\Documents\\GitHub\\Inflor\\Inflor\\src\\tests\\resources\\fcs\\logicle-example.fcs";
     FCSFrame fullFrame = FCSFileReader.read(path);
-    BitSet ddds = DownSample.densityDependent(fullFrame, fullFrame.getDimensionNames());
+    BitSet ddds = DownSample.densityDependent(fullFrame, fullFrame.getDimensionNames(), 2000);
     FCSFrame dddsFrame = FCSUtilities.filterFrame(ddds, fullFrame);
     
     ChartSpec spec = new ChartSpec();
