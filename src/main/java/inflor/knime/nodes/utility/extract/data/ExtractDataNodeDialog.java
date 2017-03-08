@@ -4,10 +4,8 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponent;
 import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;
 import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
-import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
-import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 import inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
 
@@ -24,12 +22,9 @@ import inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
  */
 public class ExtractDataNodeDialog extends DefaultNodeSettingsPane {
 
-  private static final String LABEL_EVENTS_PER_FILE = "Events per file";
   private static final String LABEL_SELECTED_COLUMN = "Selected column";
   private static final int FCS_INPUT_INDEX = 0;
   private static final String LABEL_TRANSFORM_DATA = "Transform data?";
-  private static final String LABEL_DOWNSAMPLE_DATA = "Random subset?";
-  private static final String DOWNSAMPLE_GROUP = "Downsample Options Group";
 
   /**
    * New pane for configuring ExtractTrainingSet node dialog. This is just a suggestion to
@@ -54,25 +49,6 @@ public class ExtractDataNodeDialog extends DefaultNodeSettingsPane {
         LABEL_TRANSFORM_DATA);
     addDialogComponent(transformBoolComp);
 
-
-    createNewGroup(DOWNSAMPLE_GROUP);
-
-    // Boolean for whether or not to downsample the data.
-    DialogComponent downsampleBoolComp = new DialogComponentBoolean(
-        new SettingsModelBoolean(ExtractDataNodeModel.KEY_DOWNSAMPLE_DATA,
-            ExtractDataNodeModel.DEFAULT_DOWNSAMPLE),
-        LABEL_DOWNSAMPLE_DATA);
-    addDialogComponent(downsampleBoolComp);
-
-    
-    // event count per file
-    addDialogComponent(new DialogComponentNumber(
-        new SettingsModelIntegerBounded(ExtractDataNodeModel.KEY_PERFILE_EVENT_COUNT,
-            ExtractDataNodeModel.DEFAULT_COUNT, ExtractDataNodeModel.MIN_COUNT,
-            ExtractDataNodeModel.MAX_COUNT),
-        LABEL_EVENTS_PER_FILE, /* step */ 1000, /* componentwidth */ 10));
-
-    closeCurrentGroup();
   }
 }
 

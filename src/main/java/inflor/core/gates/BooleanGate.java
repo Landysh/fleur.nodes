@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 import inflor.core.data.DomainObject;
 import inflor.core.data.FCSFrame;
 import inflor.core.proto.FCSFrameProto.Message;
+import inflor.core.transforms.TransformSet;
 
 public class BooleanGate extends DomainObject {
 
@@ -43,11 +44,11 @@ public class BooleanGate extends DomainObject {
     this.label = label;
   }
 
-  public BitSet evaluate(FCSFrame data) {
+  public BitSet evaluate(FCSFrame data, TransformSet transforms) {
     validate();
     final BitSetAccumulator acc = new BitSetAccumulator(operator);
     final BitSet result =
-        references.values().parallelStream().map(g -> g.evaluate(data)).reduce(acc).get();
+        references.values().parallelStream().map(g -> g.evaluate(data, transforms)).reduce(acc).get();
     return result;
   }
 

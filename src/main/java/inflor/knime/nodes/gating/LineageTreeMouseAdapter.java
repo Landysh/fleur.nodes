@@ -35,6 +35,7 @@ import inflor.core.data.FCSFrame;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.GateUtilities;
 import inflor.core.plots.ChartSpec;
+import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 import inflor.core.ui.ChartEditorDialog;
 import inflor.core.utils.FCSUtilities;
@@ -66,7 +67,7 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
           .collect(Collectors.toCollection(ArrayList::new));
 
       // Calculate the path mask and apply to dataFrame to create a filtered frame.
-      BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates);
+      BitSet mask = GateUtilities.applyGatingPath(dataFrame, parentGates, new TransformSet());
       FCSFrame filteredFrame;
       if (parentGates.isEmpty()) {
         filteredFrame = dataFrame.deepCopy();
@@ -88,11 +89,11 @@ public class LineageTreeMouseAdapter extends MouseInputAdapter {
       if (selectedObject instanceof ChartSpec) {
         ChartSpec spec = (ChartSpec) selectedObject;
         ChartEditorDialog dialog =
-            new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates, spec);
+            new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates, parent.getTransforms(), spec);
         popDialog(dialog);
       } else {
         ChartEditorDialog dialog =
-            new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates);
+            new ChartEditorDialog(topFrame, path, filteredFrame, siblingGates, parent.getTransforms());
         popDialog(dialog);
       }
     }

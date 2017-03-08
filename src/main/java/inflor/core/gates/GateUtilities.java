@@ -28,6 +28,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
 import inflor.knime.core.NodeUtilities;
 
 public class GateUtilities {
@@ -38,13 +39,13 @@ public class GateUtilities {
   
   private GateUtilities(){}
   
-  public static BitSet applyGatingPath(FCSFrame dataFrame, List<AbstractGate> gates){
+  public static BitSet applyGatingPath(FCSFrame dataFrame, List<AbstractGate> gates, TransformSet transforms){
     BinaryOperator<BitSet> accumulator = new BitSetAccumulator(BitSetOperator.AND);
     BitSet mask = new BitSet(dataFrame.getRowCount());
     mask.set(0, mask.size()-1);
     Optional<BitSet> maybeMask = gates
       .parallelStream()
-      .map(gate -> gate.evaluate(dataFrame))
+      .map(gate -> gate.evaluate(dataFrame, transforms))
       .reduce(accumulator);
     if (maybeMask.isPresent()){
       return maybeMask.get();

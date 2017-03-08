@@ -152,7 +152,7 @@ public class DownsampleNodeDialog extends NodeDialogPane {
         int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
         String[] selectedShortNames = new String[selectedIndicies.length];
         for (int i = 0; i < selectedIndicies.length; i++) {
-          selectedShortNames[i] = shortNames[i];
+          selectedShortNames[i] = shortNames[selectedIndicies[i]];
         }
         modelSettings.setDimensionNames(selectedShortNames);
       });

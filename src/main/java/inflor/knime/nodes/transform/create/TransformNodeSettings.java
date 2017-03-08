@@ -29,9 +29,9 @@ import org.knime.core.node.NodeSettingsWO;
 
 import inflor.core.data.FCSFrame;
 import inflor.core.data.Subset;
-import inflor.core.plots.PlotUtils;
 import inflor.core.transforms.AbstractTransform;
 import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 import inflor.knime.nodes.statistics.SummaryStatisticsNodeModel;
 
 public class TransformNodeSettings {

@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import inflor.core.data.DomainObject;
 import inflor.core.data.FCSFrame;
 import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {
@@ -57,7 +58,7 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
    * @param eventCount - the number of events in each column
    * @return A boolean array of rowCount.length where true corresponds to being in the gate
    */
-  public abstract BitSet evaluate(FCSFrame data);
+  public abstract BitSet evaluate(FCSFrame data, TransformSet transforms);
 
   public String getInfo(String name) {
     return customInfo.get(name);
@@ -96,8 +97,4 @@ public abstract class AbstractGate extends DomainObject implements Hierarchical 
   public void setParentID(String newValue){
     parentID = newValue;
   }
-
-
-
-
 }

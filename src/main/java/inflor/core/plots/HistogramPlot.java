@@ -36,7 +36,9 @@ import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
 import inflor.core.data.Histogram1D;
 import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 
 public class HistogramPlot extends AbstractFCChart {
 
@@ -55,12 +57,12 @@ public class HistogramPlot extends AbstractFCChart {
   }
 
   @Override
-  public JFreeChart createChart(FCSFrame dataFrame) {
+  public JFreeChart createChart(FCSFrame dataFrame, TransformSet transforms) {
 
     Optional<FCSDimension> domainDimension =
         FCSUtilities.findCompatibleDimension(dataFrame, spec.getDomainAxisName());
 
-    AbstractTransform transform = domainDimension.get().getPreferredTransform();
+    AbstractTransform transform = transforms.get(domainDimension.get().getShortName());
     double[] transformedData = transform.transform(domainDimension.get().getData());
 
     Histogram1D hist = new Histogram1D(transformedData, transform.getMinTranformedValue(),

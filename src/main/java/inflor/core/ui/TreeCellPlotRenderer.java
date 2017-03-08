@@ -21,21 +21,24 @@ import inflor.core.gates.GateUtilities;
 import inflor.core.plots.AbstractFCChart;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.FCSChartPanel;
-import inflor.core.plots.PlotUtils;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.ChartUtils;
 import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 
 @SuppressWarnings("serial")
 public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
 
   String[] columnNames = new String[] {"Name", "Count", "Frequency of Parent"};
   FCSFrame referenceData;
+  TransformSet transforms;
 
 
-  public TreeCellPlotRenderer(FCSFrame dataFrame) {
+  public TreeCellPlotRenderer(FCSFrame dataFrame, TransformSet transforms) {
     super();
     referenceData = dataFrame;
+    this.transforms = transforms;
   }
 
   @Override
@@ -46,7 +49,7 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
 
     List<AbstractGate> gates = extractGates(node.getUserObjectPath());
     if (referenceData != null) {
-      BitSet mask = GateUtilities.applyGatingPath(referenceData, gates);
+      BitSet mask = GateUtilities.applyGatingPath(referenceData, gates, transforms);
       // node is root
       if (node.isRoot()) {
         String[][] tableRow = new String[][] {
@@ -67,9 +70,9 @@ public class TreeCellPlotRenderer extends DefaultTreeCellRenderer {
         FCSFrame filteredFrame = FCSUtilities.filterFrame(mask, referenceData);
         ChartSpec spec = (ChartSpec) node.getUserObject();
         AbstractFCChart plot = PlotUtils.createPlot(spec);
-        JFreeChart chart = plot.createChart(filteredFrame);
+        JFreeChart chart = plot.createChart(filteredFrame, transforms);
         formatChart(selected, expanded, leaf, chart);
-        FCSChartPanel panel = new FCSChartPanel(chart, spec, filteredFrame);
+        FCSChartPanel panel = new FCSChartPanel(chart, spec, filteredFrame, transforms);
         List<AbstractGate> siblingGates = findSiblingGates(node);
         siblingGates.stream().filter(gate -> ChartUtils.gateIsCompatibleWithChart(gate, spec))
             .map(ChartUtils::createAnnotation).forEach(panel::createGateAnnotation);

@@ -33,6 +33,7 @@ import inflor.core.data.DomainObject;
 import inflor.core.data.FCSFrame;
 import inflor.core.gates.GateUtilities;
 import inflor.core.gates.Hierarchical;
+import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {
@@ -44,12 +45,14 @@ public class CellLineageTree extends JTree {
   private DefaultMutableTreeNode root;
   private FCSFrame rootFrame;
   private DefaultMutableTreeNode currentNode;//TODO: scope issue on stream.  maybe a dirty hack.
+  private TransformSet transforms;
 
   
-  public CellLineageTree(FCSFrame rootFrame, Collection<Hierarchical> collection) {
-    TreeCellPlotRenderer renderer = new TreeCellPlotRenderer(rootFrame);
+  public CellLineageTree(FCSFrame rootFrame, Collection<Hierarchical> collection, TransformSet transforms) {
+    TreeCellPlotRenderer renderer = new TreeCellPlotRenderer(rootFrame, transforms);
     this.setCellRenderer(renderer);
     this.rootFrame = rootFrame;
+    this.transforms = transforms;
     this.root = new DefaultMutableTreeNode(GateUtilities.UNGATED_SUBSET_ID);
     this.setModel(buildTree(root, collection));
     for (int i = 0; i < this.getRowCount(); i++) {
@@ -61,7 +64,7 @@ public class CellLineageTree extends JTree {
   public void updateUI() {
     setCellRenderer(null);
     super.updateUI();
-    this.setCellRenderer(new TreeCellPlotRenderer(rootFrame));
+    this.setCellRenderer(new TreeCellPlotRenderer(rootFrame, transforms));
     setRowHeight(0);
     setRootVisible(true);
     setShowsRootHandles(true);

@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.plots;
+package inflor.core.utils;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -28,6 +28,15 @@ import org.jfree.data.Range;
 
 import inflor.core.fcs.DimensionTypes;
 import inflor.core.logging.LogFactory;
+import inflor.core.plots.AbstractFCChart;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.ColorSchemes;
+import inflor.core.plots.DensityPlot;
+import inflor.core.plots.HistogramPlot;
+import inflor.core.plots.LogicleNumberAxis;
+import inflor.core.plots.PaintModel;
+import inflor.core.plots.PlotTypes;
+import inflor.core.plots.ScatterPlot;
 import inflor.core.transforms.AbstractTransform;
 import inflor.core.transforms.BoundDisplayTransform;
 import inflor.core.transforms.LogicleTransform;
@@ -104,7 +113,8 @@ public class PlotUtils {
     if (DimensionTypes.DNA.matches(parameterName)
         || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
         || DimensionTypes.SIDE_SCATTER.matches(parameterName)
-        || DimensionTypes.TIME.matches(parameterName)) {
+        || DimensionTypes.TIME.matches(parameterName)
+        || FCSUtilities.MERGE_DIMENSION_NAME.equals(parameterName)){
       return new BoundDisplayTransform(0, 262144);
     } else {
       return new LogicleTransform();

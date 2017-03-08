@@ -8,6 +8,7 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.MissingCell;
@@ -28,6 +29,7 @@ import inflor.core.data.FCSFrame;
 import inflor.core.downsample.DownSample;
 import inflor.core.downsample.DownSampleMethods;
 import inflor.core.fcs.FCSFileReader;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;
@@ -45,6 +47,7 @@ public class DownsampleNodeModel extends NodeModel {
   private int taskCount = -1;
   private int currentTask;
   private int targetColumnIndex = -1;
+private TransformSet transformSet;
 
   /**
    * Constructor for the node model.
@@ -84,6 +87,16 @@ public class DownsampleNodeModel extends NodeModel {
       final ExecutionContext exec) throws Exception {
     
     DataTableSpec[] outSpecs = createSpecs(inData[0].getDataTableSpec());
+    
+    
+    
+    String columnName = mSettings.getSelectedColumn();
+	DataColumnProperties props = outSpecs[0].getColumnSpec(columnName).getProperties();
+    if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)){
+        transformSet = TransformSet.loadFromProtoString(props.getProperty(NodeUtilities.KEY_TRANSFORM_MAP));
+    } else {
+    	throw new CanceledExecutionException("Unable to parse transform map");
+    }
     
     ArrayList<DataRow> data = new ArrayList<>();
     targetColumnIndex = inData[0].getSpec().findColumnIndex(mSettings.getSelectedColumn());
@@ -151,7 +164,7 @@ public class DownsampleNodeModel extends NodeModel {
     if (mSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)){
       mask = BitSetUtils.getShuffledMask(refFrame.getRowCount(), mSettings.getCeiling());
     }else if (mSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)){
-      mask = DownSample.densityDependent(refFrame, dimensionNames, mSettings.getCeiling()); 
+      mask = DownSample.densityDependent(refFrame, dimensionNames, mSettings.getCeiling(), transformSet); 
     }
     if (mask!=null){
       return FCSUtilities.filterFrame(mask, refFrame);

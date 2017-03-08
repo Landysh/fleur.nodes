@@ -6,6 +6,7 @@ import java.util.List;
 import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
 import inflor.core.data.Subset;
+import inflor.core.transforms.TransformSet;
 
 public class FCSFrameMetaData implements Serializable{
   
@@ -21,9 +22,11 @@ public class FCSFrameMetaData implements Serializable{
 
   private final String   multiLineString;
   private Integer rowCount;
+private TransformSet transformMap;
 
   public FCSFrameMetaData (FCSFrame dataFrame, int messageSize) {
-      String description = createMultilineDescription(dataFrame);
+      this.transformMap = new TransformSet();
+	  String description = createMultilineDescription(dataFrame);
       multiLineString = description;
       id = dataFrame.getID();
       displayName = dataFrame.getDisplayName();
@@ -33,7 +36,7 @@ public class FCSFrameMetaData implements Serializable{
       this.rowCount = dataFrame.getRowCount();
   }
   
-  public FCSFrameMetaData (String id, String displayName, String[] dimensionKeys, String[] dimensionDisplayNames, String description, int messageSize, Integer rowCount2) {
+  public FCSFrameMetaData (String id, String displayName, String[] dimensionKeys, String[] dimensionDisplayNames, String description, int messageSize, Integer rowCount2, TransformSet transforms) {
     this.multiLineString = description;
     this.id = id;
     this.displayName = displayName;
@@ -41,6 +44,7 @@ public class FCSFrameMetaData implements Serializable{
     this.dimensionLabels = dimensionDisplayNames;
     this.messageSize = messageSize;
     this.rowCount = rowCount2;
+    this.transformMap = transforms;
 }
 
   private String[] findDimensionDisplayNames(FCSFrame dataFrame, String[] dimKeys) {
@@ -85,7 +89,7 @@ public class FCSFrameMetaData implements Serializable{
     for (FCSDimension dim : arr){
       sBuilder.append(dim.getDisplayName());
       sBuilder.append("    ");
-      sBuilder.append(dim.getPreferredTransform().toString());
+      sBuilder.append(transformMap.get(dim.getShortName()).toString());
       sBuilder.append("\n");
     }
     return sBuilder.toString();
@@ -147,7 +151,11 @@ public class FCSFrameMetaData implements Serializable{
     return rowCount;
   }
 
+  public void setTransforms(TransformSet transforms) {
+		transformMap = transforms;
+  }
+  
+  public TransformSet getTransformSet(){
+	  return transformMap;
+  }
 }
-
-
-

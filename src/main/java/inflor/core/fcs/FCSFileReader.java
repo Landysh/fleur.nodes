@@ -26,6 +26,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import com.google.common.hash.Hashing;
 
 import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
+import inflor.core.logging.LogFactory;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.MatrixUtilities;
 
@@ -199,15 +201,22 @@ public class FCSFileReader {
     final StringTokenizer s = new StringTokenizer(rawKeywords, delimiter);
     final HashMap<String, String> header = new HashMap<>();
     Boolean ok = true;
-    while (s.hasMoreTokens() && ok) {
-      final String key = s.nextToken().trim();
-      if (key.trim().isEmpty()) {
-        ok = false;
-      } else {
-        final String value = s.nextToken().trim();
-        header.put(key, value);
+      while (s.hasMoreTokens() && ok) {
+        final String key = s.nextToken().trim();
+        if (key.trim().isEmpty()) {
+          ok = false;
+        } else {
+          try {
+          final String value = s.nextToken().trim();
+          header.put(key, value);
+          } catch (NoSuchElementException e) {
+            String message = "Keyword value for: " + key + " does not exist.  Header appears to be malformed, proceed with some caution.";
+            LogFactory.createLogger(this.getClass().getName()).log(Level.FINE, message, e);
+          } 
+        }
       }
-    }
+
+
     
     HashFunction md = Hashing.sha256();
     HashCode code = md.hashBytes(keywordBytes);

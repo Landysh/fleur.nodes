@@ -33,6 +33,7 @@ import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
 import inflor.core.proto.FCSFrameProto;
 import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {
@@ -58,7 +59,7 @@ public class RangeGate extends AbstractGate {
   }
 
   @Override
-  public BitSet evaluate(FCSFrame fcsFrame) {
+  public BitSet evaluate(FCSFrame fcsFrame, TransformSet transforms) {
     // TODO performance optimization?
     if (dimensions.size() == 2) {
       String xName = dimensions.get(0).getName();
@@ -68,9 +69,9 @@ public class RangeGate extends AbstractGate {
       double yMin = dimensions.get(1).min;
       double yMax = dimensions.get(1).max;
       Optional<FCSDimension> xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
-      double[] xData = xDimension.get().getPreferredTransform().transform(xDimension.get().getData());
+      double[] xData = transforms.get(xDimension.get().getShortName()).transform(xDimension.get().getData());
       Optional<FCSDimension> yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
-      double[] yData = yDimension.get().getPreferredTransform().transform(yDimension.get().getData());
+      double[] yData =  transforms.get(yDimension.get().getShortName()).transform(yDimension.get().getData());
       BitSet bits = new BitSet(fcsFrame.getRowCount());
       for (int i = 0; i < xData.length; i++) {
         if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {

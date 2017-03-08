@@ -7,6 +7,7 @@ import inflor.core.data.FCSFrame;
 import inflor.core.fcs.FCSFileReader;
 import inflor.core.gates.RangeGate;
 import inflor.core.logging.LogFactory;
+import inflor.core.transforms.TransformSet;
 
 public class RangeGateCalculation {
   static final int FILE_COUNT = 1;
@@ -23,7 +24,7 @@ public class RangeGateCalculation {
     FCSFrame data = FCSFileReader.read(bigPath);
     long start = System.currentTimeMillis();
     for (int i = 0; i < FILE_COUNT; i++) {
-      rangeGate.evaluate(data);
+      rangeGate.evaluate(data, new TransformSet());
     }
     long end = System.currentTimeMillis();
     logger.fine("Millis: " + (end - start));

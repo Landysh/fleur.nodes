@@ -17,10 +17,6 @@
  */
 package inflor.core.plots;
 
-import java.util.BitSet;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -32,58 +28,58 @@ import org.jfree.ui.RectangleAnchor;
 import com.google.common.primitives.Doubles;
 
 import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
 import inflor.core.data.Histogram1D;
 import inflor.core.transforms.AbstractTransform;
-import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
+import inflor.knime.core.NodeUtilities;
 
 public class CategoryResponseChart {
 
   private AbstractTransform transform;
   private String axisName;
 
-  public CategoryResponseChart(String name, AbstractTransform transform) {
-    this.transform = transform;
-    this.axisName = name;
+  public CategoryResponseChart(String domainName, AbstractTransform domainTransform) {
+    this.transform = domainTransform;
+    this.axisName = domainName;
   }
 
-  public JFreeChart createChart(Map<String, FCSDimension> dataModel) {
+  public JFreeChart createChart(FCSFrame dataFrame) {
 
     CategoryXYZDataSet categoryData = new CategoryXYZDataSet();
-
-    int numEvents = Integer.MAX_VALUE;
-    for (FCSDimension d : dataModel.values()) {
-      if (d.size() < numEvents) {
-        numEvents = d.size();
-      }
-    }
     double zMin = Double.MAX_VALUE;
     double zMax = 1;
-    int i = 0;
-    for (Entry<String, FCSDimension> e : dataModel.entrySet()) {
-      double[] data = e.getValue().getData();
-      if (data.length > numEvents) {
-        BitSet mask = BitSetUtils.getShuffledMask(data.length, numEvents);
-        data = BitSetUtils.filter(data, mask);
-      }
-      double[] tData = transform.transform(data);
+    if (dataFrame.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP)){
+        String[] mergeMap = dataFrame.getKeywordValue(FCSUtilities.KEY_MERGE_MAP).split(NodeUtilities.DELIMITER_REGEX);
+        FCSDimension dim = dataFrame.getDimension(axisName);
+        double[] transformedData = transform.transform(dim.getData());
+        int perFileSize = dim.getData().length/mergeMap.length;
+        for (int i=0;i<mergeMap.length;i++){
+        	
+            double[] unMergedData = new double[perFileSize];
+            for (int j=0;j<unMergedData.length;j++){
+            	unMergedData[j] = transformedData[i*unMergedData.length + j];
+            }
 
-      Histogram1D hist = new Histogram1D(tData, transform.getMinTranformedValue(),
-          transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
-      double[] x = hist.getNonZeroX();
-      double[] y = new double[x.length];
-      for (int j = 0; j < y.length; j++) {
-        y[j] = i;
-      }
-      double[] z = hist.getNonZeroY();
-      double currentZMin = Doubles.min(z);
-      double currentZMax = Doubles.max(z);
-      if (currentZMin < zMin) {
-        zMin = currentZMin;
-      } else if (currentZMax > zMax) {
-        zMax = currentZMax;
-      }
-      categoryData.addCategoricalSeries(e.getKey(), x, z);
-      i++;
+            Histogram1D hist = new Histogram1D(unMergedData, transform.getMinTranformedValue(),
+                transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+            double[] x = hist.getNonZeroX();
+            double[] y = new double[x.length];
+            for (int j = 0; j < y.length; j++) {
+              y[j] = i;
+            }
+            double[] z = hist.getNonZeroY();      
+            double currentZMin = Doubles.min(z);
+            double currentZMax = Doubles.max(z);
+            if (currentZMin < zMin) {
+              zMin = currentZMin;
+            } else if (currentZMax > zMax) {
+              zMax = currentZMax;
+            }
+        	
+        	categoryData.addCategoricalSeries(mergeMap[i], x, z);
+        }
     }
 
     ValueAxis domainAxis = PlotUtils.createAxis(axisName, transform);

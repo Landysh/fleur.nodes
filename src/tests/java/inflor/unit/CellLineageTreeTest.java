@@ -13,6 +13,7 @@ import inflor.core.data.FCSFrame;
 import inflor.core.fcs.FCSFileReader;
 import inflor.core.gates.Hierarchical;
 import inflor.core.gates.RangeGate;
+import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 
 public class CellLineageTreeTest{
@@ -39,7 +40,7 @@ public class CellLineageTreeTest{
     nodePool.add(g3);
     nodePool.add(g4);
     
-    CellLineageTree tree = new CellLineageTree(dataFrame, nodePool);
+    CellLineageTree tree = new CellLineageTree(dataFrame, nodePool, new TransformSet());
     DefaultTreeModel model =  (DefaultTreeModel) tree.getModel();
     DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
     @SuppressWarnings("unchecked")

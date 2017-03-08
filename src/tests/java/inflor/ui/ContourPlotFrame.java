@@ -16,6 +16,7 @@ import inflor.core.plots.ChartSpec;
 import inflor.core.plots.DensityPlot;
 import inflor.core.plots.FCSChartPanel;
 import inflor.core.plots.PlotTypes;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -30,7 +31,8 @@ public class ContourPlotFrame extends ApplicationFrame {
     // Setup data
     String path = "C:\\Users\\Aaron\\Documents\\GitHub\\Inflor\\Inflor\\src\\tests\\resources\\fcs\\logicle-example.fcs";
     FCSFrame fullFrame = FCSFileReader.read(path);
-    BitSet ddds = DownSample.densityDependent(fullFrame, fullFrame.getDimensionNames(), 2000);
+    TransformSet transforms = new TransformSet();
+	BitSet ddds = DownSample.densityDependent(fullFrame, fullFrame.getDimensionNames(), 2000, transforms);
     FCSFrame dddsFrame = FCSUtilities.filterFrame(ddds, fullFrame);
     
     ChartSpec spec = new ChartSpec();
@@ -39,8 +41,8 @@ public class ContourPlotFrame extends ApplicationFrame {
     spec.setRangeAxisName("SSC-A");
 
     DensityPlot plot = new DensityPlot(spec);
-    JFreeChart chart = plot.createChart(dddsFrame);
-    panel = new FCSChartPanel(chart, spec, dddsFrame);
+    JFreeChart chart = plot.createChart(dddsFrame, new TransformSet());
+    panel = new FCSChartPanel(chart, spec, dddsFrame, new TransformSet());
     toolbar = new GateCreationToolBar(panel);
     panel.setSelectionListener(toolbar.getSelectionListener());
     JPanel editorPanel = new JPanel();

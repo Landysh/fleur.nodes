@@ -20,6 +20,7 @@ import inflor.core.fcs.FCSFileReader;
 import inflor.core.plots.CategoryResponseChart;
 import inflor.core.transforms.AbstractTransform;
 import inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -59,10 +60,10 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
       dataset.put(key, value);
     }
 
-
     AbstractTransform transform = new LogicleTransform();
     CategoryResponseChart plot = new CategoryResponseChart(name, transform);
-    JFreeChart chart = plot.createChart(dataset);
+    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(fcsList, 1000);
+    JFreeChart chart = plot.createChart(summaryFrame);
     panel = new ChartPanel(chart);
     JPanel editorPanel = new JPanel();
     editorPanel.add(panel);

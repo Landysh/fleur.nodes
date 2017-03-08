@@ -16,6 +16,7 @@ import inflor.core.plots.FCSChartPanel;
 import inflor.core.plots.HistogramPlot;
 import inflor.core.plots.PlotTypes;
 import inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -44,8 +45,8 @@ public class HistogramPlotTest extends ApplicationFrame {
     spec.setRangeAxisName("Count");
 
     HistogramPlot plot = new HistogramPlot(spec);
-    JFreeChart chart = plot.createChart(dataFrame);
-    panel = new FCSChartPanel(chart, spec, dataFrame);
+    JFreeChart chart = plot.createChart(dataFrame, new TransformSet());
+    panel = new FCSChartPanel(chart, spec, dataFrame, new TransformSet());
     toolbar = new GateCreationToolBar(panel);
     panel.setSelectionListener(toolbar.getSelectionListener());
     JPanel editorPanel = new JPanel();

@@ -24,6 +24,7 @@ import inflor.core.data.ParticleType;
 import inflor.core.fcs.DimensionTypes;
 import inflor.core.gates.RangeGate;
 import inflor.core.logging.LogFactory;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 
@@ -270,14 +271,14 @@ public class TheilSenMatrixCalculator {
     //Filter values within advertised dynamic range
     double max = primaryDimension.getRange();//TODO verify -> fencepost
     RangeGate g = new RangeGate(null, new String[] {shortName}, new double[]{Doubles.min(x)}, new double[]{max});
-    BitSet dynamicMask = g.evaluate(fcsFrame);
+    BitSet dynamicMask = g.evaluate(fcsFrame, new TransformSet());
     double[] dynamicX = FCSUtilities.filterColumn(dynamicMask, x);
     //Find bitmask for top n% of dynamic events in control sample. 
     Percentile p = new Percentile();
     p.setData(dynamicX);
     double p90 = p.evaluate(SCATTER_MIN);
     double p100 = p.evaluate(SCATTER_MAX);
-    BitSet brightMask = (new RangeGate(null, new String[]{shortName}, new double[]{p90}, new double[]{p100})).evaluate(fcsFrame);
+    BitSet brightMask = (new RangeGate(null, new String[]{shortName}, new double[]{p90}, new double[]{p100})).evaluate(fcsFrame, new TransformSet());
     FCSFrame filteredFrame = FCSUtilities.filterFrame(brightMask, fcsFrame);
     //estimate scatter gate
     FCSDimension fscDim = FCSUtilities.findPreferredDimensionType(filteredFrame, DimensionTypes.FORWARD_SCATTER);
@@ -293,7 +294,7 @@ public class TheilSenMatrixCalculator {
         new String[]{fscDim.getShortName(), sscDim.getShortName()}, 
         new double[]{fscMin, sscMin}, 
         new double[]{fscMax, sscMax}))
-      .evaluate(fcsFrame);
+      .evaluate(fcsFrame, new TransformSet());
     
     //combine the inRange mask and the scatter mask to create final mask.
     BitSet finalMask = (BitSet) scatterMask.clone();

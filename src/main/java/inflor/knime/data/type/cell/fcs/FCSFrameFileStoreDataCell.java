@@ -34,16 +34,19 @@ import org.knime.core.node.NodeLogger;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 
+		
   // the logger instance
   private static final NodeLogger logger = NodeLogger.getLogger(FCSFrameFileStoreDataCell.class);
   
   public static final class Serializer implements DataCellSerializer<FCSFrameFileStoreDataCell> {
 
+	private static String KEY_TRANSFORM_MAP = "Transform Map";
     @Override
     public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
@@ -55,8 +58,11 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
         String description = input.readUTF();
         int messageSize = input.readInt();
         int rowCount = input.readInt();
-
-        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, description, messageSize, rowCount);
+        int tByteSize = input.readInt();
+        byte[] tBytes = new byte[tByteSize];
+        input.readFully(tBytes);
+        TransformSet transforms = TransformSet.load(tBytes);
+        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, description, messageSize, rowCount, transforms);
                     
         return new FCSFrameFileStoreDataCell(newMetadata);
       } catch (Exception e) {
@@ -81,7 +87,9 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
       output.writeUTF(description);
       output.writeInt(md.getSize());
       output.writeInt(md.getRowCount());
-
+      byte[] tBytes = md.getTransformSet().save();
+      output.writeInt(tBytes.length); 
+      output.write(tBytes);
     }
   }
 
@@ -110,7 +118,7 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
 
   @Override
   public String toString() {
-    return metaData.toString();
+    return metaData.getDisplayName();
   }
 
   @Override
@@ -124,7 +132,6 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
   }
 
   public FCSFrame getFCSFrameValue() {
-
       try {
         int size = metaData.getSize();//currently 2gb max.
         byte[] bytes = new byte[size];

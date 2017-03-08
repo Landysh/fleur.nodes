@@ -38,6 +38,9 @@ import inflor.core.data.Subset;
 import inflor.core.fcs.FCSFileReader;
 import inflor.core.fcs.DimensionTypes;
 import inflor.core.singlets.PuleProperties;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.TransformSet;
+import inflor.knime.core.NodeUtilities;
 
 public class FCSUtilities {
     
@@ -51,6 +54,8 @@ public static final CharSequence DELIMITER = "||";
 public static final String DELIMITER_REGEX = "\\|\\|";
 public static final String PROP_KEY_PREVIEW_FRAME = "Inflor Preview Frame";
 public static final String FCSKEY_EVENT_COUNT = "$TOT";
+public static final Integer DEFAULT_MAX_SUMMARY_FRAME_VALUES = 1000000;
+public static final String KEY_DISPLAY_NAME = "Inflor Display Name";
 
 
   private FCSUtilities(){
@@ -178,7 +183,6 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
       FCSDimension outDim = new FCSDimension(mask.cardinality(), inDim.getIndex(),
           inDim.getShortName(), inDim.getStainName(), inDim.getPNEF1(), inDim.getPNEF2(),
           inDim.getRange());
-      outDim.setPreferredTransform(inDim.getPreferredTransform());
       outDim.setData(BitSetUtils.filter(inDim.getData(), mask));
       out.addDimension(outDim);
     }
@@ -215,14 +219,23 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
     .map(dataFrame -> FCSUtilities.downSample(dataFrame, finalSize))
     .reduce(new FCSConcatenator());
     
+    if (optReturn.isPresent()){
+      FCSFrame df = optReturn.get();
+      df.setDisplayName(NodeUtilities.PREVIEW_FRAME_KEY);
+    } else {
+      return null;
+    }
     
-    return optReturn.isPresent() ? optReturn.get() : null;
-    
+    return optReturn.isPresent() ? optReturn.get() : null; 
   }
 
   private static FCSFrame downSample(FCSFrame dataFrame, Integer dataSize) {
-    BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), dataSize);
-    return FCSUtilities.filterFrame(mask, dataFrame);
+    if (dataFrame.getRowCount()<= dataSize){
+      return dataFrame.deepCopy();
+    } else {
+      BitSet mask = BitSetUtils.getShuffledMask(dataFrame.getRowCount(), dataSize);
+      return FCSUtilities.filterFrame(mask, dataFrame);
+    }
   }
 
   public static FCSDimension findPreferredDimensionType(FCSFrame fcsFrame, DimensionTypes dimensionType) {
@@ -316,21 +329,17 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
             .collect(Collectors.toList());
   }
 
-  public static Optional<FCSFrame> createConcatenatedFrame(List<FCSFrame> dataSet) {      
-      return dataSet
-          .stream()
-          .parallel()
-          .reduce(new FCSConcatenator());
-  }
-
   public static String chooseDisplayName(FCSFrame fcsFrame) {
-    if (fcsFrame.getKeywords().containsKey(DEFAULT_PREFFERED_NAME_KEYWORD)){
-      String defaultKeywordValue = fcsFrame.getKeywords().get(DEFAULT_PREFFERED_NAME_KEYWORD);
-      if (defaultKeywordValue!=null&&!"".equals(defaultKeywordValue)){
-        return defaultKeywordValue;
-      }
+    Map<String, String> keywords = fcsFrame.getKeywords();
+    String name;
+    if (keywords.containsKey(FCSUtilities.KEY_DISPLAY_NAME)) {
+      name = keywords.get(FCSUtilities.KEY_DISPLAY_NAME);
+    } else if(keywords.containsKey(FCSUtilities.DEFAULT_PREFFERED_NAME_KEYWORD)){
+      name = keywords.get(FCSUtilities.DEFAULT_PREFFERED_NAME_KEYWORD);
+    } else { 
+      name = fcsFrame.getID();
     }
-    return fcsFrame.getKeywordValue(KEY_FILENAME);
+    return name;
   }
 
   public static Subset findCompatibleSubset(FCSFrame df, String mReferenceSubset) {
@@ -345,4 +354,12 @@ public static final String FCSKEY_EVENT_COUNT = "$TOT";
       return null;
     }   
   }
+
+public static void transformMatrix(List<String> dimensionNames, TransformSet transforms, double[][] mtx) {
+		for (int i=0;i<dimensionNames.size();i++){
+	    	AbstractTransform at = transforms.get(dimensionNames.get(i));
+	    	mtx[i] = at.transform(mtx[i]);
+	    }
+	
+}
 }

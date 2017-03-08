@@ -12,7 +12,9 @@ import org.jfree.data.xy.DefaultXYDataset;
 import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
 import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 
 public class ScatterPlot extends AbstractFCChart {
 
@@ -25,50 +27,45 @@ public class ScatterPlot extends AbstractFCChart {
   }
 
   @Override
-  public JFreeChart createChart(FCSFrame data) {
-    Optional<FCSDimension> domainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
-    AbstractTransform domainTransform;
-    if (domainDimension.get().getPreferredTransform() != null) {
-      domainTransform = domainDimension.get().getPreferredTransform();
-    } else {
-      domainTransform = PlotUtils.createDefaultTransform(domainDimension.get().getShortName());
-    }
-    double[] domainData = domainTransform.transform(domainDimension.get().getData());
-
-
-    AbstractTransform rangeTransform;
-    Optional<FCSDimension> rangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
+  public JFreeChart createChart(FCSFrame data, TransformSet transforms) {
+	//Have a look for spec dimensions in the data frame: 
+	Optional<FCSDimension> opDomainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
+    Optional<FCSDimension> opRangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
     
-    if (rangeDimension.get().getPreferredTransform() != null) {
-      rangeTransform = rangeDimension.get().getPreferredTransform();
+    ///if they are found, do what you were meant to do. 
+    if (opDomainDimension.isPresent()&&opRangeDimension.isPresent()){
+    	//get the transformed data.
+    	AbstractTransform domainTransform = transforms.get(opDomainDimension.get().getShortName());
+        double[] domainData = domainTransform.transform(opDomainDimension.get().getData());
+        AbstractTransform rangeTransform = transforms.get(opDomainDimension.get().getShortName());
+        double[] rangeData = rangeTransform.transform(opRangeDimension.get().getData());
+        
+        //create the data series.
+        DefaultXYDataset plotData = new DefaultXYDataset();
+        double[][] seriesArray = new double[2][domainData.length];
+        for (int i=0;i<domainData.length;i++){
+          seriesArray[0][i] = domainData[i];
+          seriesArray[1][i] = rangeData[i];
+        }
+        plotData.addSeries("l1", seriesArray);
+        XYPlot plot = new XYPlot();
+        // Create the plot
+        plot.setDataset(plotData);
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.GRAY);
+        Rectangle rect = new Rectangle(1, 1);
+        renderer.setSeriesShape(0, rect);
+        renderer.setSeriesLinesVisible(0, false);
+        plot.setRenderer(renderer);
+        plot.setDomainAxis(PlotUtils.createAxis(opDomainDimension.get().getDisplayName(), domainTransform));
+        plot.setRangeAxis(PlotUtils.createAxis(opRangeDimension.get().getDisplayName(), rangeTransform));
+        // Add to the panel
+        JFreeChart chart = new JFreeChart(plot);
+        chart.removeLegend();
+        return chart;
+    //Otherwise return null :(
     } else {
-      rangeTransform = PlotUtils.createDefaultTransform(rangeDimension.get().getShortName());
+    	return null;
     }
-    
-    double[] rangeData = rangeTransform.transform(rangeDimension.get().getData());
-
-    DefaultXYDataset plotData = new DefaultXYDataset();
-    double[][] seriesArray = new double[2][domainData.length];
-    for (int i=0;i<domainData.length;i++){
-      seriesArray[0][i] = domainData[i];
-      seriesArray[1][i] = rangeData[i];
-    }
-    plotData.addSeries("l1", seriesArray);
-    XYPlot plot = new XYPlot();
-    // Create the plot
-    plot.setDataset(plotData);
-    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-    renderer.setSeriesPaint(0, Color.GRAY);
-    Rectangle rect = new Rectangle(1, 1);
-    renderer.setSeriesShape(0, rect);
-    renderer.setSeriesLinesVisible(0, false);
-    plot.setRenderer(renderer);
-    plot.setDomainAxis(PlotUtils.createAxis(domainDimension.get().getDisplayName(), domainTransform));
-    plot.setRangeAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), rangeTransform));
-    // Add to panel.
-    JFreeChart chart = new JFreeChart(plot);
-    chart.removeLegend();
-    return chart;
   }
-
 }

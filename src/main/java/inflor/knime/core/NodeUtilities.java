@@ -37,7 +37,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
+import org.knime.core.data.DataTableSpecCreator;
 import org.knime.core.data.filestore.FileStore;
+import org.knime.core.node.BufferedDataTable;
+import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
@@ -57,6 +62,8 @@ public class NodeUtilities {
 
   private static final Logger LOGGER = Logger.getLogger(NodeUtilities.class.getName());
   public static final String PREVIEW_FRAME_KEY = "Inflor Preview Frame";
+  public static final String KEY_TRANSFORM_MAP = "Inflor Transform Map";
+ 
 
   
   @SuppressWarnings("unchecked")
@@ -186,5 +193,18 @@ public class NodeUtilities {
       LOGGER.log(Level.FINE, "Unable to determine a good filename, falling back to: " + fsName, npe);
     }  
     return fsName + ".proto";
+  }
+
+public static BufferedDataTable addPropertyToColumn(ExecutionContext exec, BufferedDataTable inTable, String columnName,  String key, String value) {
+		DataColumnSpec oldSpec = inTable.getDataTableSpec().getColumnSpec(columnName);
+		DataColumnSpecCreator colCreator = new DataColumnSpecCreator(oldSpec);
+		HashMap<String, String > newMap = new HashMap<>();
+		newMap.put(key, value);
+		colCreator.setProperties(oldSpec.getProperties().cloneAndOverwrite(newMap));
+		DataTableSpecCreator creator = new DataTableSpecCreator(inTable.getDataTableSpec());
+		int index = inTable.getSpec().findColumnIndex(columnName);
+		creator.replaceColumn(index, colCreator.createSpec());
+		BufferedDataTable outTable = exec.createSpecReplacerTable(inTable, creator.createSpec());
+		return outTable;
   }
 }

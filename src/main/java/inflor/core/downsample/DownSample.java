@@ -9,24 +9,26 @@ import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.MatrixUtilities;
 
 public class DownSample {
 
   private DownSample(){}
   
-  public static BitSet densityDependent(FCSFrame inFrame, List<String> dimensionNames, int targetSize){
+  public static BitSet densityDependent(FCSFrame inFrame, List<String> dimensionNames, int targetSize, TransformSet transforms){
     	  
     //Calculate median minimum distance.
     BitSet shuffleMask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), 2000);
     FCSFrame dsFrame = FCSUtilities.filterFrame(shuffleMask, inFrame);
-    double[][] mtx = dsFrame.getMatrix(dimensionNames, true);
+    double[][] mtx = dsFrame.getMatrix(dimensionNames);
+    FCSUtilities.transformMatrix(dimensionNames, transforms, mtx);
+    mtx = MatrixUtilities.transpose(mtx);
     double minimumMedianDistance = calculateMinMedDistance(mtx);
     //Calculate the number of local neighbors for each cell.
-    //double[] subsetLD = calculateLocalDensity(dsFrame, mtx, minimumMedianDistance, dimensionNames);
-    //Arrays.sort(subsetLD);
-    double[] localDensity = calculateLocalDensity(inFrame, mtx, minimumMedianDistance, dimensionNames);
+    double[] localDensity = calculateLocalDensity(inFrame, mtx, minimumMedianDistance, dimensionNames, transforms);
     //Finally calculate od, and td, and fill the mask.
     return generateBitSet(inFrame, localDensity, targetSize);
   }
@@ -48,11 +50,13 @@ public class DownSample {
   }
 
   private static double[] calculateLocalDensity(FCSFrame inFrame, double[][] mtx,
-      double minimumMedianDistance, List<String> dimensionNames) {
+      double minimumMedianDistance, List<String> dimensionNames, TransformSet transforms) {
     //Calculate the number of local neighbors for each cell.
     double dThresh = minimumMedianDistance * 5; //alpha
     double[] localDensity = new double[inFrame.getRowCount()];
-    double[][] allData = inFrame.getMatrix(dimensionNames, true);
+    double[][] allData = inFrame.getMatrix(dimensionNames);//TODO: transform.
+    FCSUtilities.transformMatrix(dimensionNames, transforms, allData);
+    allData = MatrixUtilities.transpose(allData);
     for (int k=0;k<localDensity.length;k++){
       for (int l=0;l<mtx.length;l++){
         double[] row1 = allData[k];

@@ -47,6 +47,7 @@ import inflor.core.data.FCSFrame;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.ui.SelectionButtonListener;
 import inflor.core.gates.ui.XYGateAnnotation;
+import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.ChartUtils;
 
@@ -68,10 +69,13 @@ public class FCSChartPanel extends ChartPanel {
   private JButton selectionButton;
   private ChartSpec spec;
 
-  public FCSChartPanel(JFreeChart chart, ChartSpec spec, FCSFrame data) {
+private TransformSet transformSet;
+
+  public FCSChartPanel(JFreeChart chart, ChartSpec spec, FCSFrame data, TransformSet transforms) {
     super(chart);
     this.data = data;
     this.spec = spec;
+    this.transformSet = transforms;
 
     getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"),
         DELETE_ANNOTATIONS_KEY);
@@ -96,7 +100,7 @@ public class FCSChartPanel extends ChartPanel {
 
   public void createGateAnnotation(XYGateAnnotation annotation) {
     AbstractGate gate = ChartUtils.createGate(annotation);
-    BitSet mask = gate.evaluate(data);
+    BitSet mask = gate.evaluate(data, transformSet);
     String result = BitSetUtils.frequencyOfParent(mask, 2);
     double[] position = estimateGateLabelPosition(annotation);
     XYTextAnnotation label =

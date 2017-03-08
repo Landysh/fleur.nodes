@@ -22,6 +22,7 @@ package inflor.knime.nodes.transform.create;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -56,6 +57,7 @@ public class TransformNodeDialog extends NodeDialogPane {
   private JPanel analysisTab;
   private JComboBox<String> fcsColumnBox;
   private JComboBox<String> referenceSubsetBox;
+  private boolean refBoxIsActive;
 
   protected TransformNodeDialog() {
     super();
@@ -84,14 +86,14 @@ public class TransformNodeDialog extends NodeDialogPane {
     optionsPanel.add(fcsColumnBox);
     // Select Reference Subset
     referenceSubsetBox = new JComboBox<>();
-    referenceSubsetBox.setSelectedItem(modelSettings.DEFAULT_REFERENCE_SUBSET);
-    referenceSubsetBox.addActionListener( e -> {
-      String subsetName = (String) referenceSubsetBox.getModel().getSelectedItem();
-        if (subsetName!=null){
-          modelSettings.setReferenceSubset(subsetName);
+    referenceSubsetBox.addItemListener(e -> {
+        if (e.getStateChange() == ItemEvent.SELECTED&&refBoxIsActive){
+        	String subsetName = (String) referenceSubsetBox.getModel().getSelectedItem();
+        	modelSettings.setReferenceSubset(subsetName);
         }
       });
     optionsPanel.add(referenceSubsetBox);
+    
     return optionsPanel;
   }
 
@@ -109,12 +111,14 @@ public class TransformNodeDialog extends NodeDialogPane {
     DataColumnProperties props = spec.getColumnSpec((String) fcsColumnBox.getSelectedItem()).getProperties();
     
     // Update reference subset box
+    refBoxIsActive = false;
     referenceSubsetBox.removeAllItems();
-    referenceSubsetBox.addItem("Ungated");
+    referenceSubsetBox.addItem(TransformNodeSettings.DEFAULT_REFERENCE_SUBSET);
     if (props.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
       String[] subsetNames = props.getProperty(NodeUtilities.SUBSET_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
       Arrays.asList(subsetNames).forEach(referenceSubsetBox::addItem);
     }
+    refBoxIsActive = true;
     referenceSubsetBox.setSelectedItem(modelSettings.getReferenceSubset()); 
   }
   
