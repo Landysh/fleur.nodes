@@ -70,9 +70,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
   private HashMap<String, TransformSet> transformSet;
 
-  private TransformSet transformMap;
-
-  private FCSFrame summaryFrame;
+  private TransformSet transformMap = new TransformSet();
 
   protected CreateGatesNodeDialog() {
     super();
@@ -167,18 +165,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       } catch (InvalidProtocolBufferException e) {
         throw new NotConfigurableException("Unable to parse summary frame.");
       }
+    } else {
+      transformMap = new TransformSet();
     }
-
-    // load summaryFrame
-    if (props.containsProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME)) {
-      try {
-        summaryFrame =
-            FCSFrame.loadFromProtoString(props.getProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME));
-      } catch (InvalidProtocolBufferException e) {
-        throw new NotConfigurableException("Unable to parse summary frame.");
-      }
-    }
-
   }
 
   @Override
@@ -274,7 +263,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     if (analysisArea != null) {
       analyisTab.remove(analysisArea);
     }
-   FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) selectSampleBox.getSelectedItem();
+    FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) selectSampleBox.getSelectedItem();
     FCSFrame dataFrame = cell.getFCSFrameValue();
     Map<String, Hierarchical> nodePool = mSettings.getNodes();
     lineageTree = new CellLineageTree(dataFrame, nodePool.values(), transformMap);
