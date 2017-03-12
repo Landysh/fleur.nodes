@@ -2,14 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: io.landysh.inflor;singleton:=true
-Bundle-Version: 0.1.2
+Bundle-Version: 0.3.0
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.knime.workbench.core,
  org.knime.base,
  org.knime.workbench.repository,
  org.knime.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.google.common.collect
 Bundle-ClassPath: lib/guava-19.0.jar,
  lib/hamcrest-core-1.3.jar,
  lib/jcommon-1.0.23.jar,
@@ -18,7 +17,6 @@ Bundle-ClassPath: lib/guava-19.0.jar,
  lib/jgraphx.jar,
  lib/junit-4.11.jar,
  lib/Logicle.jar,
- lib/protobuf-java-2.6.1.jar,
  fcsreader.jar,
  lib/EJML-core-0.29.jar,
  lib/EJML-dense64-0.29.jar,
@@ -28,6 +26,9 @@ Bundle-ClassPath: lib/guava-19.0.jar,
  lib/arpack_combined_all-0.1.jar,
  lib/commons-math3-3.6.1.jar,
  lib/jblas-1.2.4.jar,
- lib/core-1.1.2.jar
-Bundle-Activator: main.java.inflor.knime.nodes.fcs.read.ReadFCSNodePlugin
+ lib/core-1.1.2.jar,
+ lib/protobuf-java-3.2.0.jar,
+ lib/protobuf-java-util-3.2.0.jar,
+ lib/gson-2.8.0.jar
+Bundle-Activator: inflor.knime.nodes.fcs.read.ReadFCSNodePlugin
 Bundle-ActivationPolicy: lazy

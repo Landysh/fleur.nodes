@@ -18,9 +18,10 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,9 +29,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.Hierarchical;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.GateUtilities;
+import inflor.core.gates.Hierarchical;
+import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {
@@ -41,52 +44,62 @@ public class CellLineageTree extends JTree {
 
   private DefaultMutableTreeNode root;
   private FCSFrame rootFrame;
-  private DefaultMutableTreeNode currentNode;//scope issue on stream.  maybe a dirty hack.
+  private DefaultMutableTreeNode currentNode;//TODO: scope issue on stream.  maybe a dirty hack.
+  private TransformSet transforms;
 
   
-  public CellLineageTree(FCSFrame rootFrame, List<Hierarchical> nodePool) {
-    this.setCellRenderer(new TreeCellPlotRenderer());
+  public CellLineageTree(FCSFrame rootFrame, Collection<Hierarchical> collection, TransformSet transforms) {
+    TreeCellPlotRenderer renderer = new TreeCellPlotRenderer(rootFrame, transforms);
+    this.setCellRenderer(renderer);
     this.rootFrame = rootFrame;
-    this.root = new DefaultMutableTreeNode(rootFrame);
-    this.setModel(buildTree(root, nodePool));
+    this.transforms = transforms;
+    this.root = new DefaultMutableTreeNode(GateUtilities.UNGATED_SUBSET_ID);
+    this.setModel(buildTree(root, collection));
     for (int i = 0; i < this.getRowCount(); i++) {
       this.expandRow(i);
     }
-    
   }
 
   @Override
   public void updateUI() {
     setCellRenderer(null);
     super.updateUI();
-    this.setCellRenderer(new TreeCellPlotRenderer());
+    this.setCellRenderer(new TreeCellPlotRenderer(rootFrame, transforms));
     setRowHeight(0);
     setRootVisible(true);
     setShowsRootHandles(true);
   }
   
-  private DefaultTreeModel buildTree(DefaultMutableTreeNode root, List<Hierarchical> inNodePool){
-    List<Hierarchical> nodePool = inNodePool.stream().collect(Collectors.toList());
+  private DefaultTreeModel buildTree(DefaultMutableTreeNode root, Collection<Hierarchical> collection){
+    List<Hierarchical> nodePool = collection.stream().collect(Collectors.toList());
     DefaultTreeModel tree = new DefaultTreeModel(root);
     currentNode = root;
 
     List<DefaultMutableTreeNode> nodesToCheck = new ArrayList<>();
     nodesToCheck.add(root);
     while (!nodesToCheck.isEmpty()){
-      String parentID = ((DomainObject) currentNode.getUserObject()).getID();
       List<DefaultMutableTreeNode> dmtNodes = new ArrayList<>(); 
-      for (Hierarchical node: nodePool){
-        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(node);
-        if (node.getParentID()!=null && node.getParentID().equals(parentID)){
-          dmtNodes.add(childNode);
-          nodesToCheck.add(childNode);
-        } else if(node.getParentID()==null){
-          node.setParentID(rootFrame.getID());
-          dmtNodes.add(childNode);  
-          nodesToCheck.add(childNode);
+      Object uo = currentNode.getUserObject();
+      if (uo instanceof String && uo.equals(GateUtilities.UNGATED_SUBSET_ID)){
+        for (Hierarchical node: nodePool){
+          //Catch the case where parent is ungated.
+          if (node.getParentID().equals(uo)){
+            DefaultMutableTreeNode dmtNode = new DefaultMutableTreeNode(node);
+            dmtNodes.add(dmtNode);
+            nodesToCheck.add(dmtNode);
+          } 
+        }
+      } else {
+        String parentID = ((DomainObject) uo).getID();
+        for (Hierarchical node: nodePool){
+          DefaultMutableTreeNode dmtNode = new DefaultMutableTreeNode(node);
+          if (node.getParentID().equals(parentID)){
+            dmtNodes.add(dmtNode);
+            nodesToCheck.add(dmtNode);
+          }
         }
       }
-      dmtNodes.forEach(child -> tree.insertNodeInto(child, currentNode, currentNode.getChildCount()));
+      dmtNodes.stream().filter(dmt ->!dmt.equals(root)).forEach(child -> tree.insertNodeInto(child, currentNode, currentNode.getChildCount()));
       nodesToCheck.remove(currentNode);
       if (!nodesToCheck.isEmpty()){
         currentNode = nodesToCheck.get(0);

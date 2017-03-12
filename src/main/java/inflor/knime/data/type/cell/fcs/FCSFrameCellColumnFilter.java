@@ -1,4 +1,4 @@
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.node.util.ColumnFilter;

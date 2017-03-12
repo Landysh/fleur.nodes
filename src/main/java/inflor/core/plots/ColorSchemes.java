@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 public enum ColorSchemes {
   COLOR, GRAYSCALE

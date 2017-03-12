@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +21,12 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSFrame;
+import inflor.core.singlets.SingletsModel;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of RemoveDoublets.
@@ -89,9 +91,11 @@ public class RemoveDoubletsNodeModel extends NodeModel {
 
       // now create the output row
       final FCSFrame outStore = FCSUtilities.filterFrame(mask, columnStore);
-      final String fsName = i + "ColumnStore.fs";
+      final String fsName = NodeUtilities.getFileStoreName(outStore);
       final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
+      int size = NodeUtilities.writeFrameToFilestore(outStore, fileStore);
+      FCSFrameMetaData metaData = new FCSFrameMetaData(outStore, size);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, metaData);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {

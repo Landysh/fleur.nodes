@@ -1,4 +1,4 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 public enum ParticleType {
 	CELLS, BEADS

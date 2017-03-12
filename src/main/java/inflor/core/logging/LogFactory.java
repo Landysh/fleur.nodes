@@ -1,4 +1,4 @@
-package main.java.inflor.core.logging;
+package inflor.core.logging;
 
 import java.util.logging.Logger;
 

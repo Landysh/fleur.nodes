@@ -1,4 +1,4 @@
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import java.io.IOException;
 
@@ -8,10 +8,6 @@ import org.knime.core.data.DataCellSerializer;
 import org.knime.core.data.DataType;
 import org.knime.core.data.filestore.FileStore;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import main.java.inflor.core.data.FCSFrame;
-
 public class FCSFrameContent {
 
   public static final class CellSerializer implements DataCellSerializer<FCSFrameFileStoreDataCell> {
@@ -19,12 +15,7 @@ public class FCSFrameContent {
     @Override
     public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
-        final byte[] bytes = new byte[input.readInt()];
-        input.readFully(bytes);
-        FCSFrame cStore;
-        cStore = FCSFrame.load(bytes);
-        final FCSFrameFileStoreDataCell newCell = new FCSFrameFileStoreDataCell(cStore);
-        return newCell;
+        return (FCSFrameFileStoreDataCell) input.readDataCell();
       } catch (final Exception e) {
         e.printStackTrace();
         throw new IOException("Error during deserialization");
@@ -33,29 +24,23 @@ public class FCSFrameContent {
 
     @Override
     public void serialize(FCSFrameFileStoreDataCell cell, DataCellDataOutput output) throws IOException {
-      final byte[] bytes = cell.getFCSFrameValue().saveAsBytes();
-      output.writeInt(bytes.length);
-      output.write(bytes);
+      output.writeDataCell(cell);
     }
   }
 
   public static final DataType TYPE = DataType.getType(FCSFrameFileStoreDataCell.class);
 
-  private FCSFrame m_data = null;
+  private FCSFrameMetaData metaData;
 
-  public FCSFrameContent(byte[] buffer) throws InvalidProtocolBufferException {
-    m_data = FCSFrame.load(buffer);
+  public FCSFrameContent(FileStore fileStore, FCSFrameMetaData metaData) {
+    this.metaData = metaData;
   }
 
-  public FCSFrameContent(FCSFrame dataFrame) {
-    m_data = dataFrame;
+  public FCSFrameMetaData getColumnStore() {
+    return metaData;
   }
 
-  public FCSFrame getColumnStore() {
-    return m_data;
-  }
-
-  public FCSFrameFileStoreDataCell toColumnStoreCell(FileStore fs) {
-    return new FCSFrameFileStoreDataCell(fs, m_data);
+  public FCSFrameFileStoreDataCell toColumnStoreCell(FileStore fs, int size) {
+    return new FCSFrameFileStoreDataCell(fs, metaData);
   }
 }

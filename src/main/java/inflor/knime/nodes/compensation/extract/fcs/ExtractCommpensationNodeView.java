@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.extract.fcs;
+package inflor.knime.nodes.compensation.extract.fcs;
 
 import org.knime.core.node.NodeView;
 

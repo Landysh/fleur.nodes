@@ -1,14 +1,14 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Optional;
 
-import main.java.inflor.core.gates.BitSetAccumulator;
-import main.java.inflor.core.gates.BitSetOperator;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.gates.BitSetAccumulator;
+import inflor.core.gates.BitSetOperator;
+import inflor.core.gates.GateUtilities;
+import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
 public class Subset extends DomainObject {
@@ -64,7 +64,7 @@ public class Subset extends DomainObject {
         .filter(ss -> ss.getID().equals(this.getParentID()))
         .findAny();
       if (parent.isPresent()){
-        if (!GateUtilities.SUMMARY_FRAME_ID.equals(parent.get().getParentID()))
+        if (!GateUtilities.UNGATED_SUBSET_ID.equals(parent.get().getParentID()))
           ancestors.add(parent.get());
         subsets.remove(parent.get());
       } else {

@@ -1,11 +1,15 @@
-package main.java.inflor.knime.nodes.gating;
+package inflor.knime.nodes.gating;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -15,8 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.filestore.FileStore;
+import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.DataAwareNodeDialogPane;
 import org.knime.core.node.InvalidSettingsException;
@@ -25,13 +32,16 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.core.gates.Hierarchical;
-import main.java.inflor.core.ui.CellLineageTree;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.Hierarchical;
+import inflor.core.transforms.TransformSet;
+import inflor.core.ui.CellLineageTree;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "CreateGates" Node.
@@ -44,24 +54,28 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   private static final String MSG_UNABLE_TO_SAVE_NODE_SETTINGS = "Unable to save node settings.";
 
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
- 
+
   private final NodeLogger logger = getLogger();
 
-  CreateGatesNodeSettings mSettings;
+  private CreateGatesNodeSettings mSettings;
 
-  JPanel analyisTab;
-  CellLineageTree lineageTree;
-  JComboBox<String> fcsColumnBox;
-  JComboBox<FCSFrame> selectSampleBox;
+  private JPanel analyisTab;
+  private CellLineageTree lineageTree;
+  private JComboBox<String> fcsColumnBox;
+  private JComboBox<FCSFrameFileStoreDataCell> selectSampleBox;
 
   private JScrollPane analysisArea;
 
   private LineageTreeMouseAdapter ltml;
 
+  private HashMap<String, TransformSet> transformSet;
+
+  private TransformSet transformMap = new TransformSet();
+
   protected CreateGatesNodeDialog() {
     super();
     mSettings = new CreateGatesNodeSettings();
-
+    transformSet = new HashMap<>();
     // Main analysis Tab
     analyisTab = new JPanel();
     BorderLayout borderLayout = new BorderLayout();
@@ -70,18 +84,21 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
     final JButton deleteChartButton = new JButton("Delete");
     deleteChartButton.addActionListener(e -> {
-        
+
       if (lineageTree.getSelectionCount() == 1) {
-          DefaultMutableTreeNode selectedNode =
-              (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
-          if (!selectedNode.equals(selectedNode.getRoot()) &&
-              selectedNode.getUserObject() instanceof DomainObject){
-            Hierarchical node = (Hierarchical) selectedNode.getUserObject();
-            mSettings.removeNode(node);
-          }
+        DefaultMutableTreeNode selectedNode =
+            (DefaultMutableTreeNode) lineageTree.getSelectionPath().getLastPathComponent();
+        if (!selectedNode.equals(selectedNode.getRoot())
+            && selectedNode.getUserObject() instanceof DomainObject) {
+          List<String> pathEntries = Arrays.asList(selectedNode.getPath()).stream().sequential()
+              .map(tn -> (DefaultMutableTreeNode) tn).map(dmt -> dmt.getUserObject().toString())
+              .collect(Collectors.toList());
+          String key = String.join(File.pathSeparator, pathEntries);
+          mSettings.removeNode(key);
+          updateLineageTree();
         }
       }
-    );
+    });
 
     JPanel plotButtons = new JPanel(new FlowLayout());
 
@@ -90,16 +107,6 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     super.addTab("Analysis", analyisTab);
   }
 
-  private JScrollPane createAnalysisArea() {
-    FCSFrame dataFrame = (FCSFrame) selectSampleBox.getSelectedItem();
-    List<Hierarchical> nodePool = mSettings.findNodes(dataFrame.getID());
-    lineageTree = new CellLineageTree(dataFrame, nodePool);
-    lineageTree.removeMouseListener(ltml);
-    ltml = new LineageTreeMouseAdapter(this);
-    lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
-    analysisArea = new JScrollPane(lineageTree);
-    return analysisArea;
-  }
 
   private JPanel createOptionsPanel() {
     final JPanel optionsPanel = new JPanel();
@@ -116,9 +123,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     fcsColumnBox = new JComboBox<>(new String[] {NO_COLUMNS_AVAILABLE_WARNING});
     fcsColumnBox.setSelectedIndex(0);
     fcsColumnBox.addActionListener(e -> {
-        String columnName = (String) fcsColumnBox.getModel().getSelectedItem();
-        mSettings.setSelectedColumn(columnName);
-      });
+      String columnName = (String) fcsColumnBox.getModel().getSelectedItem();
+      mSettings.setSelectedColumn(columnName);
+    });
     optionsPanel.add(fcsColumnBox);
 
     // Select file
@@ -133,7 +140,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
       throws NotConfigurableException {
     final DataTableSpec spec = specs[0];
-
+    try {
+      mSettings.load(settings);
+    } catch (InvalidSettingsException e) {
+      throw new NotConfigurableException("Unable to load settings.", e);
+    }
     // Update selected column Combo box
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
@@ -143,6 +154,19 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     }
     if (fcsColumnBox.getModel().getSize() == 0) {
       fcsColumnBox.addItem(NO_COLUMNS_AVAILABLE_WARNING);
+    }
+    // load transform map
+    String columnName = mSettings.getSelectedColumn();
+    DataColumnProperties props = specs[0].getColumnSpec(columnName).getProperties();
+    if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)) {
+      try {
+        transformMap =
+            TransformSet.loadFromProtoString(props.getProperty(NodeUtilities.KEY_TRANSFORM_MAP));
+      } catch (InvalidProtocolBufferException e) {
+        throw new NotConfigurableException("Unable to parse summary frame.");
+      }
+    } else {
+      transformMap = new TransformSet();
     }
   }
 
@@ -165,7 +189,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       }
     }
     if (fcsColumnIndex == -1) {
-      throw new NotConfigurableException("target column not in column list");
+      throw new NotConfigurableException("Target column not found.");
     }
 
     // read the sample names
@@ -174,19 +198,48 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
     // Hold on to a reference of the data so we can plot it later.
 
-    final HashSet<String> parameterSet = new HashSet<>();
-    
-    ArrayList<FCSFrame> dataSet = new ArrayList<>();
-    
+    ArrayList<FCSFrameFileStoreDataCell> dataSet = new ArrayList<>();
+
     for (DataRow row : table) {
-      FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex)).getFCSFrameValue();
-      dataSet.add(dataFrame);
-      List<String> newParameters =dataFrame.getDimensionNames();
-      parameterSet.addAll(newParameters);
+      FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) row.getCell(fcsColumnIndex);
+      dataSet.add(cell);
+      transformSet.put(cell.getFCSFrameMetadata().getID(),
+          cell.getFCSFrameMetadata().getTransformSet());
     }
-    FCSFrame concatenatedFrame = FCSUtilities.createConcatenatedFrame(dataSet);
-    concatenatedFrame.setID(GateUtilities.SUMMARY_FRAME_ID);
-    selectSampleBox.addItem(concatenatedFrame);
+    FCSFrame previewFrame = null;
+    if (input[0].getSpec().getColumnSpec(targetColumn).getProperties()
+        .containsProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME)) {
+      String previewString = input[0].getSpec().getColumnSpec(targetColumn).getProperties()
+          .getProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME);
+      try {
+        previewFrame = FCSFrame.loadFromProtoString(previewString);
+      } catch (InvalidProtocolBufferException e) {
+        throw new NotConfigurableException("failed to load preview frame");
+      }
+    } else {
+      List<FCSFrame> frameList = dataSet.parallelStream().map(cell -> cell.getFCSFrameValue())
+          .collect(Collectors.toList());
+      FCSFrame concatenatedFrame = FCSUtilities.createSummaryFrame(frameList, 2000);
+      if (concatenatedFrame != null) {
+        previewFrame = concatenatedFrame;
+      }
+    }
+    if (previewFrame != null) {
+
+      String fsName = NodeUtilities.getFileStoreName(previewFrame);
+      FileStoreFactory fsf = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+      FileStore fs;
+      try {
+        fs = fsf.createFileStore(fsName);
+        int size = NodeUtilities.writeFrameToFilestore(previewFrame, fs);
+        FCSFrameFileStoreDataCell summaryCell =
+            new FCSFrameFileStoreDataCell(fs, previewFrame, size);// TODO suspicious
+        selectSampleBox.addItem(summaryCell);
+      } catch (IOException e) {
+        logger.info("Unable to create summary cell.");
+      }
+
+    }
     dataSet.forEach(selectSampleBox::addItem);
     selectSampleBox.setSelectedIndex(0);
     updateLineageTree();
@@ -210,9 +263,34 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     if (analysisArea != null) {
       analyisTab.remove(analysisArea);
     }
-    analysisArea = createAnalysisArea();
+    FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) selectSampleBox.getSelectedItem();
+    FCSFrame dataFrame = cell.getFCSFrameValue();
+    Map<String, Hierarchical> nodePool = mSettings.getNodes();
+    lineageTree = new CellLineageTree(dataFrame, nodePool.values(), transformMap);
+    lineageTree.removeMouseListener(ltml);
+    ltml = new LineageTreeMouseAdapter(this);
+    lineageTree.addMouseListener(new LineageTreeMouseAdapter(this));
+    analysisArea = new JScrollPane(lineageTree);
     analyisTab.add(analysisArea, BorderLayout.CENTER);
     analyisTab.revalidate();
     analyisTab.repaint(50);
+  }
+
+  public CellLineageTree getTree() {
+    return lineageTree;
+  }
+
+  public CreateGatesNodeSettings getSettings() {
+    return mSettings;
+  }
+
+  public FCSFrame getCurrentData() {
+    FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) selectSampleBox.getSelectedItem();
+    return cell.getFCSFrameValue();
+  }
+
+
+  public TransformSet getTransforms() {
+    return transformMap;
   }
 }

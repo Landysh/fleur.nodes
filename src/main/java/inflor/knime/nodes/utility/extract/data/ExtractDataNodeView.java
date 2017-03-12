@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.utility.extract.data;
+package inflor.knime.nodes.utility.extract.data;
 
 import org.knime.core.node.NodeView;
 

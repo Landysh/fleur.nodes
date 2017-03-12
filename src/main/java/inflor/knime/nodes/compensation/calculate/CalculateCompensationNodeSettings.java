@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.calculate;
+package inflor.knime.nodes.compensation.calculate;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,10 +12,10 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.compensation.TheilSenMatrixCalculator;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.ParticleType;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.compensation.TheilSenMatrixCalculator;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.ParticleType;
+import inflor.core.utils.FCSUtilities;
 
 public class CalculateCompensationNodeSettings {
   

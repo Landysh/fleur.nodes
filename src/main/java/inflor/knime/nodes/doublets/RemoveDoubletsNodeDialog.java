@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -12,10 +12,10 @@ import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentColumnNameSelection;
 import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 
-import main.java.inflor.core.singlets.PuleProperties;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
+import inflor.core.singlets.PuleProperties;
+import inflor.core.singlets.SingletsModel;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameCellColumnFilter;
 
 /**
  * <code>NodeDialog</code> for the "RemoveDoublets" Node.

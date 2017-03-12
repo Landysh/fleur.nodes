@@ -18,10 +18,11 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.core;
+package inflor.knime.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,15 +32,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
+import org.knime.core.data.DataTableSpecCreator;
+import org.knime.core.data.filestore.FileStore;
+import org.knime.core.node.BufferedDataTable;
+import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.FCSFrame;
 
 public class NodeUtilities {
   
@@ -53,6 +61,9 @@ public class NodeUtilities {
   public static final String SHORT_NAME_KEY = "$PNN";
 
   private static final Logger LOGGER = Logger.getLogger(NodeUtilities.class.getName());
+  public static final String PREVIEW_FRAME_KEY = "Inflor Preview Frame";
+  public static final String KEY_TRANSFORM_MAP = "Inflor Transform Map";
+ 
 
   
   @SuppressWarnings("unchecked")
@@ -162,5 +173,38 @@ public class NodeUtilities {
     } catch (Exception e) {
       throw new InvalidSettingsException(e);
     }
+  }
+
+  public static int writeFrameToFilestore(FCSFrame df, FileStore fs) {
+    try {
+      FileOutputStream fos = new FileOutputStream(fs.getFile());
+      return df.save(fos);
+    } catch (IOException e) {
+      Logger.getGlobal().log(Level.SEVERE, "Failed to write filestore for: " + df.getDisplayName(), e);
+      return -1;
+    }
+  }
+
+  public static String getFileStoreName(FCSFrame df) {
+    String fsName = UUID.randomUUID().toString();
+    try {
+      fsName = df.getDisplayName() + " " + df.getID();
+    } catch (NullPointerException npe){
+      LOGGER.log(Level.FINE, "Unable to determine a good filename, falling back to: " + fsName, npe);
+    }  
+    return fsName + ".proto";
+  }
+
+public static BufferedDataTable addPropertyToColumn(ExecutionContext exec, BufferedDataTable inTable, String columnName,  String key, String value) {
+		DataColumnSpec oldSpec = inTable.getDataTableSpec().getColumnSpec(columnName);
+		DataColumnSpecCreator colCreator = new DataColumnSpecCreator(oldSpec);
+		HashMap<String, String > newMap = new HashMap<>();
+		newMap.put(key, value);
+		colCreator.setProperties(oldSpec.getProperties().cloneAndOverwrite(newMap));
+		DataTableSpecCreator creator = new DataTableSpecCreator(inTable.getDataTableSpec());
+		int index = inTable.getSpec().findColumnIndex(columnName);
+		creator.replaceColumn(index, colCreator.createSpec());
+		BufferedDataTable outTable = exec.createSpecReplacerTable(inTable, creator.createSpec());
+		return outTable;
   }
 }

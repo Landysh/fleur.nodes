@@ -1,24 +1,21 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.utils;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -29,18 +26,27 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.data.Range;
 
-import main.java.inflor.core.fcs.DimensionTypes;
-import main.java.inflor.core.logging.LogFactory;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.transforms.LogrithmicTransform;
-import main.java.inflor.core.transforms.TransformType;
+import inflor.core.fcs.DimensionTypes;
+import inflor.core.logging.LogFactory;
+import inflor.core.plots.AbstractFCChart;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.ColorSchemes;
+import inflor.core.plots.DensityPlot;
+import inflor.core.plots.HistogramPlot;
+import inflor.core.plots.LogicleNumberAxis;
+import inflor.core.plots.PaintModel;
+import inflor.core.plots.PlotTypes;
+import inflor.core.plots.ScatterPlot;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.BoundDisplayTransform;
+import inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.LogrithmicTransform;
+import inflor.core.transforms.TransformType;
 
 public class PlotUtils {
-  
-  private PlotUtils(){}
-  
+
+  private PlotUtils() {}
+
   public static ValueAxis createAxis(String name, AbstractTransform transform) {
     if (transform instanceof BoundDisplayTransform) {
       NumberAxis axis = new NumberAxis(name);
@@ -80,20 +86,19 @@ public class PlotUtils {
 
     AbstractTransform newTransform = null;
 
-    if (selectedType == TransformType.LINEAR
-        ||selectedType == TransformType.BOUNDARY) {
+    if (selectedType == TransformType.LINEAR || selectedType == TransformType.BOUNDARY) {
       newTransform = new BoundDisplayTransform(Double.MAX_VALUE, Double.MAX_VALUE);
     } else if (selectedType == TransformType.LOGARITHMIC) {
       newTransform = new LogrithmicTransform(1, 1000000);
     } else if (selectedType == TransformType.LOGICLE) {
       newTransform = new LogicleTransform();
     } else {
-      //noop
+      // noop
     }
     return newTransform;
   }
 
-  public static LookupPaintScale createPaintScale(double zMax,ColorSchemes colorScheme) {
+  public static LookupPaintScale createPaintScale(double zMax, ColorSchemes colorScheme) {
     PaintModel pm = new PaintModel(colorScheme, zMax);
     Paint[] paints = pm.getPaints();
     double[] levels = pm.getLevels();
@@ -105,9 +110,12 @@ public class PlotUtils {
   }
 
   public static AbstractTransform createDefaultTransform(String parameterName) {
-    if (DimensionTypes.DNA.matches(parameterName) || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
-        || DimensionTypes.SIDE_SCATTER.matches(parameterName)|| DimensionTypes.TIME.matches(parameterName)) {
-      return new BoundDisplayTransform(0,262144);
+    if (DimensionTypes.DNA.matches(parameterName)
+        || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
+        || DimensionTypes.SIDE_SCATTER.matches(parameterName)
+        || DimensionTypes.TIME.matches(parameterName)
+        || FCSUtilities.MERGE_DIMENSION_NAME.equals(parameterName)){
+      return new BoundDisplayTransform(0, 262144);
     } else {
       return new LogicleTransform();
     }

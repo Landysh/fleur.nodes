@@ -18,23 +18,15 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.data.type.cell.fcs;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+package inflor.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataCell;
-import org.knime.core.data.DataCellFactory.FromInputStream;
 import org.knime.core.data.DataRow;
-import org.knime.core.data.DataType;
 import org.knime.core.data.container.AbstractCellFactory;
-import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.ExecutionContext;
-import org.knime.core.util.FileUtil;
 
-public class FCSFrameCellFactory extends AbstractCellFactory implements FromInputStream {
+public class FCSFrameCellFactory extends AbstractCellFactory {
 
   private final FileStoreFactory mfileStoreFactory;
 
@@ -47,24 +39,13 @@ public class FCSFrameCellFactory extends AbstractCellFactory implements FromInpu
   }
 
   @Override
-  public DataCell createCell(InputStream input) throws IOException {
-    final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    FileUtil.copy(input, output);
-    output.close();
-    final byte[] buffer = output.toByteArray();
-    // Create the file store.
-    final FileStore fs = mfileStoreFactory.createFileStore("column.store");
-    return new FCSFrameContent(buffer).toColumnStoreCell(fs);
-  }
-
-  @Override
-  public DataType getDataType() {
-    return FCSFrameFileStoreDataCell.TYPE;
-  }
-
-  @Override
   public DataCell[] getCells(DataRow row) {
     // TODO Auto-generated method stub
     return null;
   }
+
+//  @Override
+//  public DataType getDataType() {
+//    return FCSFrameFileStoreDataCell.TYPE;
+//  }
 }

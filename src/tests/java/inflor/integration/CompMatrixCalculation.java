@@ -1,4 +1,4 @@
-package tests.java.inflor.integration;
+package inflor.integration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import main.java.inflor.core.compensation.TheilSenMatrixCalculator;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
+import inflor.core.compensation.TheilSenMatrixCalculator;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
 
   public class CompMatrixCalculation {
     ArrayList<FCSFrame> dataSet = new ArrayList<>();

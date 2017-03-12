@@ -1,4 +1,4 @@
-package main.java.inflor.core.compensation;
+package inflor.core.compensation;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,9 +7,10 @@ import java.util.BitSet;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.PolygonGate;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.PolygonGate;
+import inflor.core.transforms.TransformSet;
 
 public class PolygonGateTest {
 
@@ -37,7 +38,7 @@ public class PolygonGateTest {
     // Test
     final PolygonGate testGate = new PolygonGate("", d1Name, d1Values, d2Name, d2Values);
     testGate.validate();
-    final BitSet result = testGate.evaluate(testData);
+    final BitSet result = testGate.evaluate(testData, new TransformSet());
     // Assert
     assertEquals("Evaluated", result.get(0), true);
     System.out.println("EventFrameTest::testEvaluate completed (succefully or otherwise)");

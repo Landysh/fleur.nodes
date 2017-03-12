@@ -18,13 +18,14 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
 
 public abstract class AbstractFCChart {
 
@@ -53,5 +54,5 @@ public abstract class AbstractFCChart {
     return this.spec;
   }
 
-  public abstract JFreeChart createChart(FCSFrame dataFrame);
+  public abstract JFreeChart createChart(FCSFrame dataFrame, TransformSet transforms);
 }

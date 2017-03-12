@@ -18,26 +18,38 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.utils;
+package inflor.core.utils;
 
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
+import java.util.logging.Logger;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.Subset;
+import inflor.core.logging.LogFactory;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
+  
+    private Logger logger = LogFactory.createLogger(this.getClass().toString());
 
 	@Override
-	public FCSFrame apply(FCSFrame frame1, FCSFrame frame2) {
+	public FCSFrame apply(FCSFrame f1, FCSFrame f2) {
+	    
+	  FCSFrame frame1 = f1.deepCopy();
+      FCSFrame frame2 = f2.deepCopy();
 
-		if (!frame1.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+    if (!frame1.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
 			initMergeMap(frame1);
 
-		if (!frame2.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
+    if (!frame2.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP))
 			initMergeMap(frame2);
 
 		Map<String, String> mergedHeader = mergeHeaders(frame1.getKeywords(), frame2.getKeywords());
@@ -45,9 +57,36 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 		TreeSet<FCSDimension> mergedData = mergeData(frame1, frame2);
 		mergedFrame.setData(mergedData);
 		mergedFrame.setDisplayName("Concatenated Frame");
+		ArrayList<Subset> mergedSubsets = mergeSubsets(frame1, frame2);
+		mergedFrame.setSubsets(mergedSubsets);
 
 		return mergedFrame;
 
+	}
+
+	private ArrayList<Subset> mergeSubsets(FCSFrame frame1, FCSFrame frame2) {
+		List<Subset> s1 = frame1.getSubsets();
+		List<Subset> s2 = frame2.getSubsets();
+		if (s1!=null && s1.size()==s2.size()){
+			ArrayList<Subset> s3 = new ArrayList<>();
+			for (int i=0;i<s1.size();i++){
+				Subset a = s1.get(i);
+				Subset b = s2.get(i);
+				BitSet newMask = new BitSet(a.getMembers().size() + b.getMembers().size());
+				for (int j=0;j<newMask.size();j++){
+					if (j < a.getMembers().size()&&a.getMembers().get(j)){
+						newMask.set(j);
+					} else if (j >= a.getMembers().size()&&b.getMembers().get(j-a.getMembers().size())){
+						newMask.set(j);//TODO Test.
+					}
+				}
+				Subset c = new Subset(a.getLabel(), newMask, a.getParentID(), a.getID(), a.getType(), a.getDimensions(), a.getDescriptors());
+				s3.add(c);
+			}
+			return s3;
+		} else {
+			return null;
+		}
 	}
 
 	private void initMergeMap(FCSFrame dataFrame) {
@@ -68,24 +107,34 @@ public class FCSConcatenator implements BinaryOperator<FCSFrame> {
 			FCSDimension mergedDimension;
 			if (dimension.getShortName().equals(FCSUtilities.MERGE_DIMENSION_NAME)) {
 				mergedDimension = mergeMapDimensions(frame1, frame2);
+	            mergedData.add(mergedDimension);
 			} else {
-				FCSDimension secondDimension = FCSUtilities.findCompatibleDimension(frame2, dimension.getShortName());
-				mergedDimension = new FCSDimension(dimension.getSize() + secondDimension.getSize(),
-						dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
-						dimension.getPNEF2(), dimension.getRange());
-				double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
-				mergedDimension.setData(mergedArray);
-				mergedDimension.setPreferredTransform(dimension.getPreferredTransform());
+				Optional<FCSDimension> secondDimension = FCSUtilities.findCompatibleDimension(frame2, dimension.getShortName());
+				if (secondDimension.isPresent()){
+				  mergedDimension = mergeDimensions(dimension, secondDimension.get());
+		          mergedData.add(mergedDimension);
+				} else {
+				  logger.info("Dimension not found: " + dimension.getDisplayName());
+				}
 			}
-			mergedData.add(mergedDimension);
 		}
 		return mergedData;
 	}
 
+  private FCSDimension mergeDimensions(FCSDimension dimension, FCSDimension secondDimension) {
+    FCSDimension mergedDimension;
+    mergedDimension = new FCSDimension(dimension.size() + secondDimension.size(),
+    		dimension.getIndex(), dimension.getShortName(), dimension.getStainName(), dimension.getPNEF1(),
+    		dimension.getPNEF2(), dimension.getRange());
+    double[] mergedArray = MatrixUtilities.appendVectors(dimension.getData(), secondDimension.getData());
+    mergedDimension.setData(mergedArray);
+    return mergedDimension;
+  }
+
 	private FCSDimension mergeMapDimensions(FCSFrame frame1, FCSFrame frame2) {
 
 		String map1 = frame1.getKeywords().get(FCSUtilities.KEY_MERGE_MAP);
-		String map2 = frame1.getKeywords().get(FCSUtilities.KEY_MERGE_MAP);
+		String map2 = frame2.getKeywords().get(FCSUtilities.KEY_MERGE_MAP);
 		String newMap = String.join(FCSUtilities.DELIMITER, new String[] { map1, map2 });
 
 		double offset = map1.split(FCSUtilities.DELIMITER_REGEX).length;

@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.geom.Point2D;
 

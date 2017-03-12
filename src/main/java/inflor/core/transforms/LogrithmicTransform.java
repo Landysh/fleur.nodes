@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.transforms;
+package inflor.core.transforms;
 
 import com.google.common.primitives.Doubles;
 
@@ -98,7 +98,7 @@ public class LogrithmicTransform extends AbstractTransform {
   
   @Override
   public String toString(){
-    return getDetails() + " @" + getID();
+    return getDetails();
   }
 
   public void optimize(double[] data) {

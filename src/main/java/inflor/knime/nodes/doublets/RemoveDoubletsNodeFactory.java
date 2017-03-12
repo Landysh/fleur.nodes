@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

@@ -1,26 +1,26 @@
-package main.java.inflor.core.sne.tsne;
+package inflor.core.sne.tsne;
 
-import static main.java.inflor.core.sne.utils.MatrixOps.addColumnVector;
-import static main.java.inflor.core.sne.utils.MatrixOps.addRowVector;
-import static main.java.inflor.core.sne.utils.MatrixOps.assignValuesToRow;
-import static main.java.inflor.core.sne.utils.MatrixOps.concatenate;
-import static main.java.inflor.core.sne.utils.MatrixOps.equal;
-import static main.java.inflor.core.sne.utils.MatrixOps.fillMatrix;
-import static main.java.inflor.core.sne.utils.MatrixOps.getValuesFromRow;
-import static main.java.inflor.core.sne.utils.MatrixOps.mean;
-import static main.java.inflor.core.sne.utils.MatrixOps.negate;
-import static main.java.inflor.core.sne.utils.MatrixOps.range;
-import static main.java.inflor.core.sne.utils.MatrixOps.scalarInverse;
-import static main.java.inflor.core.sne.utils.MatrixOps.scalarMult;
-import static main.java.inflor.core.sne.utils.MatrixOps.sqrt;
-import static main.java.inflor.core.sne.utils.MatrixOps.square;
-import static main.java.inflor.core.sne.utils.MatrixOps.sum;
-import static main.java.inflor.core.sne.utils.MatrixOps.times;
+import static inflor.core.sne.utils.MatrixOps.addColumnVector;
+import static inflor.core.sne.utils.MatrixOps.addRowVector;
+import static inflor.core.sne.utils.MatrixOps.assignValuesToRow;
+import static inflor.core.sne.utils.MatrixOps.concatenate;
+import static inflor.core.sne.utils.MatrixOps.equal;
+import static inflor.core.sne.utils.MatrixOps.fillMatrix;
+import static inflor.core.sne.utils.MatrixOps.getValuesFromRow;
+import static inflor.core.sne.utils.MatrixOps.mean;
+import static inflor.core.sne.utils.MatrixOps.negate;
+import static inflor.core.sne.utils.MatrixOps.range;
+import static inflor.core.sne.utils.MatrixOps.scalarInverse;
+import static inflor.core.sne.utils.MatrixOps.scalarMult;
+import static inflor.core.sne.utils.MatrixOps.sqrt;
+import static inflor.core.sne.utils.MatrixOps.square;
+import static inflor.core.sne.utils.MatrixOps.sum;
+import static inflor.core.sne.utils.MatrixOps.times;
 
 import org.jblas.DoubleMatrix;
 
-import main.java.inflor.core.sne.utils.BlasOps;
-import main.java.inflor.core.sne.utils.MatrixOps;
+import inflor.core.sne.utils.BlasOps;
+import inflor.core.sne.utils.MatrixOps;
 
 /**
  *

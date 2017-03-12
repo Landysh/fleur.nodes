@@ -18,18 +18,23 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.proto.FCSFrameProto;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.proto.FCSFrameProto;
+import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.FCSUtilities;
 
 public class RangeGate extends AbstractGate {
 
@@ -54,7 +59,7 @@ public class RangeGate extends AbstractGate {
   }
 
   @Override
-  public BitSet evaluate(FCSFrame fcsFrame) {
+  public BitSet evaluate(FCSFrame fcsFrame, TransformSet transforms) {
     // TODO performance optimization?
     if (dimensions.size() == 2) {
       String xName = dimensions.get(0).getName();
@@ -63,10 +68,10 @@ public class RangeGate extends AbstractGate {
       String yName = dimensions.get(1).getName();
       double yMin = dimensions.get(1).min;
       double yMax = dimensions.get(1).max;
-      FCSDimension xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
-      double[] xData = xDimension.getPreferredTransform().transform(xDimension.getData());
-      FCSDimension yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
-      double[] yData = yDimension.getPreferredTransform().transform(yDimension.getData());
+      Optional<FCSDimension> xDimension = FCSUtilities.findCompatibleDimension(fcsFrame, xName);
+      double[] xData = transforms.get(xDimension.get().getShortName()).transform(xDimension.get().getData());
+      Optional<FCSDimension> yDimension = FCSUtilities.findCompatibleDimension(fcsFrame, yName);
+      double[] yData =  transforms.get(yDimension.get().getShortName()).transform(yDimension.get().getData());
       BitSet bits = new BitSet(fcsFrame.getRowCount());
       for (int i = 0; i < xData.length; i++) {
         if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {
@@ -82,18 +87,18 @@ public class RangeGate extends AbstractGate {
 
     for (RangeDimension dim : dimensions) {
       String name = dim.getName();
-      double[] data = FCSUtilities.findCompatibleDimension(fcsFrame, name).getData();
+      double[] data = FCSUtilities.findCompatibleDimension(fcsFrame, name).get().getData();
       BitSet dimesnionBits = dim.evaluate(data);
       result.and(dimesnionBits);
     }
     return result;
   }
 
-  public String[] getDimensionNames() {
-    return (String[]) dimensions
-                        .stream()
-                        .map(RangeDimension::getName)
-                        .toArray();
+  public List<String> getDimensionNames() {
+    return dimensions
+        .stream()
+        .map(RangeDimension::getName)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -117,7 +122,7 @@ public class RangeGate extends AbstractGate {
     if (this.label == null) {
       return this.getID();
     } else {
-      return label + this.getID();
+      return label + String.join(File.pathSeparator, getDimensionNames());
     }
   }
 
@@ -138,8 +143,8 @@ public class RangeGate extends AbstractGate {
     String yName = dimensions.get(1).getName();
     double yMin = dimensions.get(1).min;
     double yMax = dimensions.get(1).max;
-    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).getData();
-    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).getData();
+    double[] xData = FCSUtilities.findCompatibleDimension(data, xName).get().getData();
+    double[] yData = FCSUtilities.findCompatibleDimension(data, yName).get().getData();
     BitSet bits = new BitSet(data.getRowCount());
     for (int i = 0; i < xData.length; i++) {
       if (xMin < xData[i] && xData[i] < xMax && yMin < yData[i] && yData[i] < yMax) {

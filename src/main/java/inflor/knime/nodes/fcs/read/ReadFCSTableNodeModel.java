@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read;
+package inflor.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +27,9 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.utils.FCSUtilities;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor

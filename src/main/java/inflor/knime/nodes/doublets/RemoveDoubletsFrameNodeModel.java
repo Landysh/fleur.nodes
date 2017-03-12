@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,11 +19,13 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
-import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
+import inflor.core.data.FCSFrame;
+import inflor.core.singlets.SingletsModel;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.knime.ports.fcs.FCSFramePortObject;
+import inflor.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * This is the model implementation of FindSingletsFrame.
@@ -75,30 +77,32 @@ public class RemoveDoubletsFrameNodeModel extends NodeModel {
     // get the data
     final FCSFramePortObject inPort = (FCSFramePortObject) inData[0];
     final FCSFramePortSpec inSpec = (FCSFramePortSpec) inPort.getSpec();
-    final FCSFrame inColumnStore = inPort.getColumnStore();
+    final FCSFrame inFrame = inPort.getColumnStore(exec);
 
     // Do the modeling
     final SingletsModel model = new SingletsModel(inSpec.getColumnNames());
-    final double[] area = inColumnStore.getDimension(mAreaColumn.getStringValue()).getData();
-    final double[] height = inColumnStore.getDimension(mHeightColumn.getStringValue()).getData();
+    final double[] area = inFrame.getDimension(mAreaColumn.getStringValue()).getData();
+    final double[] height = inFrame.getDimension(mHeightColumn.getStringValue()).getData();
     final double[] ratio = model.buildModel(area, height);
     final BitSet mask = model.scoreModel(ratio);
 
     // Create the output
-    final FCSFrame outStore = FCSUtilities.filterFrame(mask, inColumnStore);
+    final FCSFrame outFrame = FCSUtilities.filterFrame(mask, inFrame);
     final FCSFramePortSpec outSpec =
-        new FCSFramePortSpec(inSpec.getKeywords(), inSpec.getColumnNames(), outStore.getRowCount());
+        new FCSFramePortSpec(inSpec.getKeywords(), inSpec.getColumnNames(), outFrame.getRowCount());
     final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-    final FileStore filestore = fileStoreFactory.createFileStore("column.store");
+    String fsName = NodeUtilities.getFileStoreName(outFrame);
+    final FileStore filestore = fileStoreFactory.createFileStore(fsName);
+    int size = NodeUtilities.writeFrameToFilestore(outFrame, filestore);
+    FCSFrameMetaData metaData = new FCSFrameMetaData(outFrame, size);
+
     final FCSFramePortObject outPort =
-        FCSFramePortObject.createPortObject(outSpec, outStore, filestore);
+        FCSFramePortObject.createPortObject(outSpec, metaData, filestore);
     return new PortObject[] {outPort};
   }
 
-  private FCSFramePortSpec getSpec(FCSFramePortSpec inSpec) {       
-    return new FCSFramePortSpec(
-        inSpec.getKeywords(), 
-        inSpec.getColumnNames(), 
+  private FCSFramePortSpec getSpec(FCSFramePortSpec inSpec) {
+    return new FCSFramePortSpec(inSpec.getKeywords(), inSpec.getColumnNames(),
         inSpec.getRowCount());
   }
 

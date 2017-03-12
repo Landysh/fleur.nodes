@@ -1,10 +1,10 @@
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.inflor.core.sne.tsne.barneshut.VpTree.Node;
+import inflor.core.sne.tsne.barneshut.VpTree.Node;
 
 @SuppressWarnings("rawtypes")
 public class TreePrinter {

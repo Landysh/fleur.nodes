@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.portToTableCell;
+package inflor.knime.nodes.portToTableCell;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +24,11 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import main.java.inflor.knime.ports.fcs.FCSFramePortObject;
+import inflor.core.data.FCSFrame;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.knime.ports.fcs.FCSFramePortObject;
 
 /**
  * This is the model implementation of ColumnStoreToTableCell. Converts a
@@ -49,8 +52,8 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
       throws InvalidSettingsException {
     final DataColumnSpecCreator colSpec =
         new DataColumnSpecCreator("Listmode Data", FCSFrameFileStoreDataCell.TYPE);
-//    colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
-//        DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
+    // colSpec.setProperties(new DataColumnProperties(Collections.singletonMap(
+    // DataValueRenderer.PROPERTY_PREFERRED_RENDERER, CellLineageRenderer.DESCRIPTION)));
     final org.knime.core.data.DataTableSpec spec = new DataTableSpec(colSpec.createSpec());
     return new DataTableSpec[] {spec};
   }
@@ -70,25 +73,30 @@ public class ColumnStoreToTableCellNodeModel extends NodeModel {
     final BufferedDataContainer container = exec.createDataContainer(spec);
 
     // Create the file store
-    final FileStoreFactory fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
-    FileStore fs;
-    try {
-      fs = fileStoreFactory.createFileStore("column.store");
-    } catch (final IOException e) {
-      e.printStackTrace();
-      throw new CanceledExecutionException("Unable to create FileStore, cancelling execution.");
-    }
-
+    final FileStoreFactory fsFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // get the data and write it to the container
-    final FCSFramePortObject port = ((FCSFramePortObject) inData[0]);
-    final DataCell[] dataCells = new DataCell[] {port.toTableCell(fs)};
-    final DataRow dataRow = new DefaultRow("Row 0", dataCells);
-    container.addRowToTable(dataRow);
+    final FCSFramePortObject port = (FCSFramePortObject) inData[0];
+    DataCell[] dataCells;
+    try {
+      FCSFrame df = port.getColumnStore(exec);
+      String fsName = NodeUtilities.getFileStoreName(df);
+      FileStore fs = fsFactory.createFileStore(fsName);
+      int size = NodeUtilities.writeFrameToFilestore(df, fs);
+      FCSFrameMetaData metaData = new FCSFrameMetaData(df, size);
+      FCSFrameFileStoreDataCell cell = new FCSFrameFileStoreDataCell(fs, metaData);
+      dataCells = new DataCell[] {cell};
+      final DataRow dataRow = new DefaultRow("Row 0", dataCells);
+      container.addRowToTable(dataRow);
 
-    // cleanup and create the table
-    container.close();
-    final BufferedDataTable table = container.getTable();
-    return new BufferedDataTable[] {table};
+      // cleanup and create the table
+      container.close();
+      final BufferedDataTable table = container.getTable();
+      return new BufferedDataTable[] {table};
+    } catch (IOException e) {
+      String message = "Unable to read data from port object.";
+      getLogger().error(message, e);
+      throw new CanceledExecutionException(message);
+    }
   }
 
   /**

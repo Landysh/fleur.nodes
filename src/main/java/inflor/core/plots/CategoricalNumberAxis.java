@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;

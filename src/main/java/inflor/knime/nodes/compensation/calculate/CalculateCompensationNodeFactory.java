@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.calculate;
+package inflor.knime.nodes.compensation.calculate;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

@@ -18,22 +18,12 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.data.type.cell.fcs;
-
-import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+package inflor.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.AbstractDataValueRendererFactory;
 import org.knime.core.data.renderer.DataValueRenderer;
 import org.knime.core.data.renderer.MultiLineStringValueRenderer;
-
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Subset;
-import main.java.inflor.knime.core.Icons;
 
 @SuppressWarnings("serial")
 public final class FCSFrameDataValueRenderer extends MultiLineStringValueRenderer {
@@ -55,9 +45,6 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
         }
     }
 
-    private static final ImageIcon ICON = new ImageIcon(Icons.FCSFRAME_ICON_PATH) ;
-
-
     public FCSFrameDataValueRenderer(String description) {
         super(description);
     }
@@ -66,54 +53,11 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
     @Override
     protected void setValue(final Object value) {
         if (value instanceof FCSFrameDataValue) {
-          FCSFrame dataFrame = ((FCSFrameDataValue) value).getFCSFrameValue();
-          String s = createFileSummary(dataFrame); 
-          s+= createDimensionSummary(dataFrame);    
-          s+= createSubsetSummary(dataFrame);
-          super.setValue(s);
+          FCSFrameMetaData metaData = ((FCSFrameDataValue) value).getFCSFrameMetadata();
+          super.setValue(metaData.getMultilineDescription());
         } else {
             super.setValue("?");
         }
-    }
-
-    private String createSubsetSummary(FCSFrame dataFrame) {
-      String subsetSummary = "\n";
-      List<Subset> subsets = dataFrame.getSubsets();
-      if (subsets!=null){
-        for (Subset sub:  dataFrame.getSubsets()){
-          subsetSummary+= sub.getLabel() + "-" + sub.getMembers().cardinality();
-          subsetSummary+=" ";
-        }
-      }
-      return subsetSummary.trim();
-    }
-
-    private String createDimensionSummary(FCSFrame dataFrame) {
-      String dimensionSummary = "\n";
-      FCSDimension[] arr = dataFrame.getData().toArray(new FCSDimension[dataFrame.getDimensionCount()]);
-      for (FCSDimension dim : arr){
-        dimensionSummary += dim.getDisplayName();
-        dimensionSummary +="    ";
-        dimensionSummary +=dim.getPreferredTransform().toString();
-        dimensionSummary +="\n";
-      }
-      return dimensionSummary;
-    }
-
-    private String createFileSummary(FCSFrame dataFrame) {
-      String fileSummary = "";
-      fileSummary+=dataFrame.getDisplayName();
-      fileSummary+="\n";
-      fileSummary+= Integer.toString(dataFrame.getRowCount());
-      fileSummary+="\n";
-      fileSummary+= dataFrame.getKeywordValue("$CYT");
-      fileSummary+="\n";
-      fileSummary+= dataFrame.getKeywordValue("$DATE");
-      fileSummary+="\n";
-      fileSummary+= dataFrame.getKeywordValue("$BTIM");
-      fileSummary+=" - ";
-      fileSummary+= dataFrame.getKeywordValue("$ETIM");
-      return fileSummary;
     }
 
     /**
@@ -143,10 +87,4 @@ public final class FCSFrameDataValueRenderer extends MultiLineStringValueRendere
         }
         return true;
     }
-    
-    @Override
-    public Icon getIcon(){
-      return ICON;
-    }
-    
 }

@@ -18,22 +18,23 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.compensation;
+package inflor.core.compensation;
 
 import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class SpilloverCompensator extends DomainObject {
@@ -132,11 +133,11 @@ public class SpilloverCompensator extends DomainObject {
     double[][] x = new double[compParameters.length][newFrame.getRowCount()];
 
     for (int i = 0; i < compParameters.length; i++) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
-      if (dimension == null) {
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
+      if (!dimension.isPresent()) {
         throw new IllegalArgumentException("DataFrame does not contain matching parameters: " + compParameters[i]);
       }
-      x[i] = dimension.getData();
+      x[i] = dimension.get().getData();
     }
     DenseMatrix64F xt = new DenseMatrix64F(x);
     CommonOps.transpose(xt);
@@ -152,16 +153,16 @@ public class SpilloverCompensator extends DomainObject {
       }
     }
     for (int i = 0; i < compParameters.length; i++) {
-      FCSDimension dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
-      dimension.setData(x[i]);
-      dimension.setShortName("[" + dimension.getShortName() + "]");
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
+      dimension.get().setData(x[i]);
+      dimension.get().setShortName("[" + dimension.get().getShortName() + "]");
     }
     newFrame.setCompRef(this.getID());
     
     if (retainUncomped){
       for (int i = 0; i < compParameters.length; i++) {
-        FCSDimension dimension = FCSUtilities.findCompatibleDimension(dataFrame, compParameters[i]);
-        newFrame.addDimension(dimension);
+        Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(dataFrame, compParameters[i]);
+        newFrame.addDimension(dimension.get());
       }
     }
     

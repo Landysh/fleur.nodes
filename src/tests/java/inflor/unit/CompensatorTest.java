@@ -1,4 +1,4 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import main.java.inflor.core.compensation.SpilloverCompensator;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
+import inflor.core.compensation.SpilloverCompensator;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
 
 public class CompensatorTest {
 

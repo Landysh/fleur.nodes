@@ -1,7 +1,8 @@
-package main.java.inflor.knime.nodes.gating;
+package inflor.knime.nodes.gating;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +30,14 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Subset;
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.Subset;
+import inflor.core.gates.AbstractGate;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.BitSetUtils;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * This is the model implementation of CreateGates.
@@ -49,14 +52,14 @@ public class CreateGatesNodeModel extends NodeModel {
 
   CreateGatesNodeSettings modelSettings;
 
+private TransformSet transformSet;
+
   /**
    * Constructor for the node model.
    */
   protected CreateGatesNodeModel() {
     super(1, 1);
-
     modelSettings = new CreateGatesNodeSettings();
-
   }
 
   /**
@@ -68,11 +71,15 @@ public class CreateGatesNodeModel extends NodeModel {
     return createSpecs(inSpecs[0]);
   }
 
-  private DataTableSpec[] createSpecs(DataTableSpec inSpec) {
-    //TODO: make more concise.
+  private DataTableSpec[] createSpecs(DataTableSpec inSpec) throws InvalidSettingsException {
+    if (CreateGatesNodeSettings.DEFAULT_SELECTED_COLUMN.equals(modelSettings.getSelectedColumn())){
+      throw new InvalidSettingsException("Please select a column containing FCS Frame data");
+    }
     DataTableSpecCreator creator = new DataTableSpecCreator(inSpec);
     DataColumnProperties properties = inSpec.getColumnSpec(modelSettings.getSelectedColumn()).getProperties();
-    List<String> subsetNames = modelSettings.findNodes(GateUtilities.SUMMARY_FRAME_ID)
+    List<String> subsetNames = modelSettings
+        .getNodes()
+        .values()
         .stream()
         .filter(node -> node instanceof AbstractGate)
         .map(node -> (AbstractGate) node)
@@ -105,28 +112,42 @@ public class CreateGatesNodeModel extends NodeModel {
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
     final String columnName = modelSettings.getSelectedColumn();
     final int index = outSpec.findColumnIndex(columnName);
-
+    
+    DataColumnProperties props = outSpec.getColumnSpec(columnName).getProperties();
+    
+    if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)){
+        transformSet = TransformSet.loadFromProtoString(props.getProperty(NodeUtilities.KEY_TRANSFORM_MAP));
+    } else {
+    	transformSet = new TransformSet();
+    }
+        
+    List<FCSFrame> dataSet = new ArrayList<>();
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
+      FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(index);
+      final FCSFrame df = cell.getFCSFrameValue();
 
-      // now create the output row
-      final FCSFrame outStore = inStore.deepCopy();
       List<AbstractGate> gates = modelSettings
-          .findNodes(outStore.getID())
+          .getNodes()
+          .values()
           .stream()
           .filter(node -> node instanceof AbstractGate)
           .map(node -> (AbstractGate) node)
           .collect(Collectors.toList());
       gates
         .stream()
-        .map(gate -> createSubset(gate, outStore))
-        .forEach(outStore::addSubset);
+        .map(gate -> createSubset(gate, df))
+        .forEach(df::addSubset);
       
-      final String fsName = i + "ColumnStore.fs";
-      final FileStore fileStore = fileStoreFactory.createFileStore(fsName);
-      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fileStore, outStore);
+      final String fsName = NodeUtilities.getFileStoreName(df);
+      final FileStore fs = fileStoreFactory.createFileStore(fsName);
+      int bytesWritten = NodeUtilities.writeFrameToFilestore(df, fs);
+      int summaryFrameSize = (int) (FCSUtilities.DEFAULT_MAX_SUMMARY_FRAME_VALUES/inData[0].size()/df.getDimensionCount());
+      BitSet mask = BitSetUtils.getShuffledMask(df.getRowCount(), summaryFrameSize);
+      FCSFrame fdf = FCSUtilities.filterFrame(mask, df);
+      dataSet.add(fdf);
+      final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, df, bytesWritten);
 
       for (int j = 0; j < outCells.length; j++) {
         if (j == index) {
@@ -137,14 +158,23 @@ public class CreateGatesNodeModel extends NodeModel {
       }
       final DataRow outRow = new DefaultRow("Row " + i, outCells);
       container.addRowToTable(outRow);
+      exec.setProgress((double)i/inData[0].size());
+      exec.checkCanceled();
+      exec.setMessage("Reading " + df.getDisplayName());
       i++;
     }
     container.close();
-    return new BufferedDataTable[] {container.getTable()};
+    exec.setMessage("Creating summary frame.");
+    BufferedDataTable table = container.getTable();
+    String key = FCSUtilities.PROP_KEY_PREVIEW_FRAME;
+    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, Integer.MAX_VALUE);
+    String value = summaryFrame.saveAsString(); 
+    BufferedDataTable finalTable = NodeUtilities.addPropertyToColumn(exec, table, columnName, key, value);
+    return new BufferedDataTable[] {finalTable};
   }
 
   private Subset createSubset(AbstractGate gate, FCSFrame outStore) {
-    BitSet mask = gate.evaluate(outStore);
+    BitSet mask = gate.evaluate(outStore, transformSet);
     return new Subset(gate.getLabel(), 
         mask, gate.getParentID(), 
         gate.getID(), 
@@ -188,11 +218,10 @@ public class CreateGatesNodeModel extends NodeModel {
    */
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
-
     try {
       modelSettings.save(settings);
     } catch (IOException e) {
-      e.printStackTrace();
+      e.printStackTrace();//TODO
     }
   }
 
@@ -202,6 +231,5 @@ public class CreateGatesNodeModel extends NodeModel {
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
     modelSettings.validate(settings);
-
   }
 }

@@ -1,4 +1,4 @@
-package main.java.inflor.core.exceptions;
+package inflor.core.exceptions;
 
 @SuppressWarnings("serial")
 public class ResultNotCalculatedException extends RuntimeException {

@@ -1,8 +1,8 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import org.junit.Test;
 
-import main.java.inflor.core.singlets.SingletsModel;
+import inflor.core.singlets.SingletsModel;
 
 public class SingletsModelTest {
   // Define Constants

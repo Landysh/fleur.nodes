@@ -1,8 +1,8 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.Histogram2D;
+import inflor.core.data.Histogram2D;
 
 import static org.junit.Assert.assertEquals;
 
