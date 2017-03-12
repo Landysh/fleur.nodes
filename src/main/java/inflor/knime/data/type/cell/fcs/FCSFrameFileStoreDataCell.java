@@ -31,12 +31,9 @@ import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 import org.knime.core.node.NodeLogger;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import inflor.core.data.FCSFrame;
 import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
-import inflor.knime.core.NodeUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 
@@ -46,7 +43,6 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
   
   public static final class Serializer implements DataCellSerializer<FCSFrameFileStoreDataCell> {
 
-	private static String KEY_TRANSFORM_MAP = "Transform Map";
     @Override
     public FCSFrameFileStoreDataCell deserialize(DataCellDataInput input) throws IOException {
       try {
@@ -55,14 +51,15 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
         String displayName = input.readUTF();
         String[] dimensionKeys = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         String[] dimensionLabels = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
-        String description = input.readUTF();
+        String[] subsetNames = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         int messageSize = input.readInt();
         int rowCount = input.readInt();
         int tByteSize = input.readInt();
         byte[] tBytes = new byte[tByteSize];
         input.readFully(tBytes);
         TransformSet transforms = TransformSet.load(tBytes);
-        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, description, messageSize, rowCount, transforms);
+
+        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, subsetNames, messageSize, rowCount, transforms);
                     
         return new FCSFrameFileStoreDataCell(newMetadata);
       } catch (Exception e) {
@@ -78,15 +75,15 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
       String id = md.getID();
       String displayName = md.getDisplayName();
       String dimesnionKeys = String.join(FCSUtilities.DELIMITER, md.getDimensionNames());
-      String dimensionLabels = String.join(NodeUtilities.DELIMITER, md.getDimensionLabels());
-      String description = md.getMultilineDescription();
+      String dimensionLabels = String.join(FCSUtilities.DELIMITER, md.getDimensionLabels());
+      String subsetNames = String.join(FCSUtilities.DELIMITER, md.getSubsetNames());
       output.writeUTF(id);
       output.writeUTF(displayName);
       output.writeUTF(dimesnionKeys);
       output.writeUTF(dimensionLabels);
-      output.writeUTF(description);
-      output.writeInt(md.getSize());
+      output.writeUTF(subsetNames);
       output.writeInt(md.getRowCount());
+      output.writeInt(md.getSize());
       byte[] tBytes = md.getTransformSet().save();
       output.writeInt(tBytes.length); 
       output.write(tBytes);
