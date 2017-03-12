@@ -118,17 +118,16 @@ private TransformSet transformSet;
     if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)){
         transformSet = TransformSet.loadFromProtoString(props.getProperty(NodeUtilities.KEY_TRANSFORM_MAP));
     } else {
-    	throw new CanceledExecutionException("Unable to parse transform map");
+    	transformSet = new TransformSet();
     }
         
     List<FCSFrame> dataSet = new ArrayList<>();
     int i = 0;
     for (final DataRow inRow : inData[0]) {
       final DataCell[] outCells = new DataCell[inRow.getNumCells()];
-      final FCSFrame inStore = ((FCSFrameFileStoreDataCell) inRow.getCell(index)).getFCSFrameValue();
+      FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(index);
+      final FCSFrame df = cell.getFCSFrameValue();
 
-      // now create the output row
-      final FCSFrame df = inStore;
       List<AbstractGate> gates = modelSettings
           .getNodes()
           .values()
@@ -146,7 +145,8 @@ private TransformSet transformSet;
       int bytesWritten = NodeUtilities.writeFrameToFilestore(df, fs);
       int summaryFrameSize = (int) (FCSUtilities.DEFAULT_MAX_SUMMARY_FRAME_VALUES/inData[0].size()/df.getDimensionCount());
       BitSet mask = BitSetUtils.getShuffledMask(df.getRowCount(), summaryFrameSize);
-      dataSet.add(FCSUtilities.filterFrame(mask, df));
+      FCSFrame fdf = FCSUtilities.filterFrame(mask, df);
+      dataSet.add(fdf);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, df, bytesWritten);
 
       for (int j = 0; j < outCells.length; j++) {
