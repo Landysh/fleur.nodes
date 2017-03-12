@@ -78,10 +78,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   private static BitSet extractMaskFromSubsetMessage(Message.Subset subsetMessage) {
     BitSet mask = new BitSet(subsetMessage.getMaskCount());
+    int[] sparse = new int[mask.size()];
     for (int j = 0; j < mask.size(); j++) {
-      if (subsetMessage.getMask(j)) {
-        mask.set(j);
-      }
+        sparse[j] = subsetMessage.getMask(j);
     }
     return mask;
   }
@@ -367,8 +366,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       sBuilder.addAllDoubleValue(Arrays.asList(descriptors));
 
     BitSet mask = currentSubset.getMembers();
-    for (int i = 0; i < mask.size(); i++)
-      sBuilder.addMask(mask.get(i));
+    for (int i = 0; i < mask.size(); i++){
+      if (mask.get(i)){
+        sBuilder.addMask(i);
+      }
+    }
     Message.Subset subset = sBuilder.build();
     messageBuilder.addSubset(subset);
   }

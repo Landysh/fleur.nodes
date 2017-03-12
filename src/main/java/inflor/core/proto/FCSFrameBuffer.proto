@@ -38,7 +38,7 @@ message Message {
     optional string overrideID		   = 2;
     optional string parentID           = 3;
     required string name               = 4;
-    repeated bool   mask               = 5;
+    repeated int32  mask               = 5;
     required Type	subsetType		   = 6;
     repeated string dimensions         = 7;
     repeated double doubleValue		   = 8;
