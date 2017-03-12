@@ -69,7 +69,6 @@ public class ReadFCSSetNodeModel extends NodeModel {
   // Default Preview Frame Settings.
   // The maximum size of the preview frame (in measurements eg. 100kevents *
   // 10 dimensions)
-  static final Integer DEFAULT_MAX_GLOBAL_PREVIEW_SIZE = 500000;
 
   private FileStoreFactory fileStoreFactory;
 
@@ -139,7 +138,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   }
 
   private FCSFrame downSample(FCSFrame inFrame) {
-    int downSize = DEFAULT_MAX_GLOBAL_PREVIEW_SIZE / fileCount / inFrame.getDimensionCount();
+    int downSize = FCSUtilities.DEFAULT_MAX_SUMMARY_FRAME_VALUES / fileCount / inFrame.getDimensionCount();
     if (downSize < inFrame.getRowCount()) {
       BitSet mask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), downSize);
       return FCSUtilities.filterFrame(mask, inFrame);
