@@ -129,21 +129,27 @@ public class ExtractDataNodeModel extends NodeModel {
   private void writeFrame(FCSFrame df, BufferedDataContainer container, ExecutionContext exec) {
     double[][] data = df.getMatrix(df.getDimensionNames());
     if (mTransform.getBooleanValue()){
-      FCSUtilities.transformMatrix(df.getSubsetNames(), transformSet, data);
+    	List<String> names = df.getDimensionNames();
+      FCSUtilities.transformMatrix(names, transformSet, data);
     }
     double[][] rowData = MatrixUtilities.transpose(data);
     List<Subset> subsets = df.getSubsets();
     for (int i=0;i<rowData.length;i++){
       RowKey rowKey = new RowKey(df.toString() + i);//TODO maybe not unique. 
-      DataCell[] dataCells = new DataCell[df.getDimensionCount()+subsets.size()+1];
+      DataCell[] dataCells = new DataCell[df.getDimensionCount()+subsets.size()+2];
       for (int j=0;j<df.getDimensionCount();j++){
         dataCells[j] = new DoubleCell(rowData[i][j]);
       }
       
+      String subsetLabel = "Ungated";
       for (int k=0;k<subsets.size();k++){
-        dataCells[rowData.length + k] = subsets.get(k).getMembers().get(i) ? new StringCell(subsets.get(k).getLabel()): new StringCell("");
+        if (subsets.get(k).getMembers().get(i)){
+          subsetLabel = subsetLabel + File.separatorChar + subsets.get(k).getLabel();
+        }
+        dataCells[df.getDimensionCount() + k] = subsets.get(k).getMembers().get(i) ? new StringCell(subsets.get(k).getLabel()): new StringCell("");
       }
       
+      dataCells[dataCells.length-2] = new StringCell(subsetLabel);
       dataCells[dataCells.length-1] = new StringCell(df.getDisplayName()); 
       DataRow row = new DefaultRow(rowKey, dataCells);
       
@@ -181,7 +187,7 @@ public class ExtractDataNodeModel extends NodeModel {
 
       for (int i = 0; i < subsetNames.length; i++) {
         colSpecs[i + dimensionNames.length] =
-            new DataColumnSpecCreator(subsetNames[i], IntCell.TYPE).createSpec();
+            new DataColumnSpecCreator(subsetNames[i], StringCell.TYPE).createSpec();
       }
       colSpecs[dimensionNames.length + subsetNames.length] =
           new DataColumnSpecCreator("SubsetName", StringCell.TYPE).createSpec();
