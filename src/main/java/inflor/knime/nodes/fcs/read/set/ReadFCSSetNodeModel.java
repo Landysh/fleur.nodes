@@ -104,7 +104,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
      * keyword values.
      */
     final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
-    List<Map<String, String>> headers = filePaths.stream().map(FCSFileReader::readHeaderOnly)
+    List<Map<String, String>> headers = filePaths.parallelStream().map(FCSFileReader::readHeaderOnly)
         .filter(map -> !map.isEmpty()).collect(Collectors.toList());
 
     final HashMap<String, String> content = new HashMap<>();
