@@ -19,6 +19,17 @@ public class FCSFrameMetaData implements Serializable {
   private String[] subsetNames;
   private TransformSet transformMap;
   private final int messageSize;
+  
+  private FCSFrameMetaData(FCSFrameMetaData meta){
+	  this.id = meta.id;
+	  this.displayName = meta.displayName;
+	  this.rowCount = meta.rowCount;
+	  this.dimensionKeys = meta.dimensionKeys.clone();
+	  this.dimensionLabels = meta.dimensionLabels.clone();
+	  this.subsetNames = meta.subsetNames.clone();
+	  this.transformMap = meta.transformMap.deepCopy();
+	  this.messageSize = meta.messageSize;
+  }
 
 
   public FCSFrameMetaData(FCSFrame dataFrame, int messageSize) {
@@ -124,5 +135,9 @@ public class FCSFrameMetaData implements Serializable {
 
   public String[] getSubsetNames() {
     return subsetNames;
+  }
+  
+  public FCSFrameMetaData copy(){
+	  return new FCSFrameMetaData(this);
   }
 }

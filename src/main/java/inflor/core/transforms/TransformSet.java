@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import javax.management.RuntimeErrorException;
+
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
@@ -139,5 +141,13 @@ public class TransformSet {
 		Builder mb = TransformMap.newBuilder();
 		JsonFormat.parser().merge(previewString, mb);
 		return TransformSet.load(mb.build().toByteArray());
+	}
+
+	public TransformSet deepCopy() {
+		try {
+			return TransformSet.load(this.save());
+		} catch (InvalidProtocolBufferException e) {
+			throw new RuntimeException("Unable to copy object.", e);
+		}
 	}
 }

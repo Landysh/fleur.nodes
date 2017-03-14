@@ -52,8 +52,8 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
         String[] dimensionKeys = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         String[] dimensionLabels = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         String[] subsetNames = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
-        int messageSize = input.readInt();
         int rowCount = input.readInt();
+        int messageSize = input.readInt();
         int tByteSize = input.readInt();
         byte[] tBytes = new byte[tByteSize];
         input.readFully(tBytes);
