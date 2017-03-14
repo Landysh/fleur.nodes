@@ -63,6 +63,7 @@ import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.PlotUtils;
 import inflor.knime.core.NodeUtilities;
 import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of Transform.
@@ -175,13 +176,14 @@ public class TransformNodeModel extends NodeModel {
       writeExec.setProgress(subtaskIndex / (double) inData[0].size(),
           fileCell.getFCSFrameMetadata().getDisplayName());
       // now create the output row
-      fileCell
-        .getFCSFrameMetadata()
-        .setTransforms(transforms);
+      FCSFrameMetaData newMetaData = fileCell
+        .getFCSFrameMetadata().copy();
+      
+      newMetaData.setTransforms(transforms);
       
       for (int j = 0; j < outCells.length; j++) {
         if (j == columnIndex) {
-          outCells[j] = fileCell;
+          outCells[j] = new FCSFrameFileStoreDataCell(fileCell.getFileStore(), newMetaData);
         } else {
           outCells[j] = inRow.getCell(j);
         }
