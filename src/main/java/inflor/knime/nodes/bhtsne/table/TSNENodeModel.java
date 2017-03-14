@@ -68,6 +68,8 @@ public class TSNENodeModel extends NodeModel {
   private final SettingsModelDoubleBounded modelPerplexity = new SettingsModelDoubleBounded(
       KEY_PERPLEXITY, DEFAULT_PERPLEXITY, MIN_PERPLEXITY, MAX_PERPLEXITY);
 
+private ArrayList<SNEIterationBean> resultList;
+
   /**
    * Constructor for the node model.
    */
@@ -127,7 +129,7 @@ public class TSNENodeModel extends NodeModel {
     exec.setProgress(0.15);
     exec.setMessage("Main Loop: ");
     ExecutionContext iterExec = exec.createSubExecutionContext(1);
-    ArrayList<double[][]> resultList = new ArrayList<>();
+    resultList = new ArrayList<>();
     boolean keepGoing = true;
     while (keepGoing){
       double num = bht.getCurrentIteration();
@@ -140,12 +142,10 @@ public class TSNENodeModel extends NodeModel {
         keepGoing = false;
       } else {
         keepGoing = true;
-        resultList.add(yCurrent);
+        resultList.add(new SNEIterationBean((int) num, yCurrent));
       }
-    }
-    
-    
-    final double[][] yFinal = resultList.get(resultList.size()-1);
+    }   
+    final double[][] yFinal = resultList.get(resultList.size()-1).getData();
 
     final DataTableSpec newColSpec = createTableSpec(inData[0].getSpec());
     final DataTableSpec spec = new DataTableSpec(inData[0].getSpec(), newColSpec);
