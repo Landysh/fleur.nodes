@@ -118,8 +118,8 @@ public class Subset extends DomainObject {
     for (int i=0;i<members.size();i++){
       if (members.get(i)){
         newMembers.set(j);
-        j++;
       }
+      j++;
     }
     return new Subset(label, newMembers, parentID, getID(), getType(), dimensions, descriptors);
   }
