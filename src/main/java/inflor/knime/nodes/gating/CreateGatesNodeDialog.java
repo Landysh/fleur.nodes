@@ -31,6 +31,7 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
+import org.knime.core.node.port.PortObjectSpec;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -71,6 +72,8 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   private HashMap<String, TransformSet> transformSet;
 
   private TransformSet transformMap = new TransformSet();
+  
+  private FileStore tempFS;
 
   protected CreateGatesNodeDialog() {
     super();
@@ -137,9 +140,9 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
   }
 
   @Override
-  protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs)
+  protected void loadSettingsFrom(NodeSettingsRO settings, PortObjectSpec[] specs)
       throws NotConfigurableException {
-    final DataTableSpec spec = specs[0];
+    final DataTableSpec spec = (DataTableSpec) specs[0];
     try {
       mSettings.load(settings);
     } catch (InvalidSettingsException e) {
@@ -157,7 +160,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
     }
     // load transform map
     String columnName = mSettings.getSelectedColumn();
-    DataColumnProperties props = specs[0].getColumnSpec(columnName).getProperties();
+    DataColumnProperties props = spec.getColumnSpec(columnName).getProperties();
     if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)) {
       try {
         transformMap =
@@ -176,8 +179,7 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
     final DataTableSpec[] specs = {input[0].getSpec()};
 
-    loadSettingsFrom(settings, specs);
-
+    loadSettingsFrom(settings, (PortObjectSpec[])specs);
 
     // Update Sample List
     final String targetColumn = mSettings.getSelectedColumn();
@@ -228,9 +230,11 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
 
       String fsName = NodeUtilities.getFileStoreName(previewFrame);
       FileStoreFactory fsf = FileStoreFactory.createNotInWorkflowFileStoreFactory();
+      
       FileStore fs;
       try {
         fs = fsf.createFileStore(fsName);
+        tempFS = fs;
         int size = NodeUtilities.writeFrameToFilestore(previewFrame, fs);
         FCSFrameFileStoreDataCell summaryCell =
             new FCSFrameFileStoreDataCell(fs, previewFrame, size);// TODO suspicious
@@ -253,6 +257,18 @@ public class CreateGatesNodeDialog extends DataAwareNodeDialogPane {
       logger.error(MSG_UNABLE_TO_SAVE_NODE_SETTINGS, e);
       throw new InvalidSettingsException(MSG_UNABLE_TO_SAVE_NODE_SETTINGS);
     }
+  }
+  
+  @Override
+  public void onClose() {
+	super.onClose();
+	if (tempFS != null) {
+		File file = tempFS.getFile();
+		if (file != null) {
+			file.delete();
+		}
+		tempFS = null;
+	}
   }
 
   public FCSFrame getSelectedSample() {
