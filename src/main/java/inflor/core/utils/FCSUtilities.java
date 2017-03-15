@@ -169,9 +169,13 @@ public class FCSUtilities {
   public static FCSFrame filterFrame(BitSet mask, FCSFrame inFrame) {
 
     FCSFrame out = new FCSFrame(inFrame.getKeywords(), mask.cardinality());
-
+    
     // Add subsets
-    inFrame.getSubsets().stream().map(inSub -> inSub.filter(mask)).forEach(out::addSubset);
+    inFrame
+      .getSubsets()
+      .stream()
+      .map(inSub -> inSub.filter(mask))
+      .forEach(out::addSubset);
     // Add dimenions
     for (FCSDimension inDim : inFrame.getData()) {
       FCSDimension outDim =
