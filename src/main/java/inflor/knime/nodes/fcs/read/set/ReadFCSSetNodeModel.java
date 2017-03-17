@@ -17,7 +17,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.knime.core.data.DataCell;
-import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
@@ -169,13 +168,8 @@ public class ReadFCSSetNodeModel extends NodeModel {
   private DataTableSpec createSpec() {
     DataColumnSpecCreator creator =
         new DataColumnSpecCreator(FCS_FRAME_COLUMN_NAME, FCSFrameFileStoreDataCell.TYPE);
-    // Create properties
-    HashMap<String, String> content = createColumnPropertiesContent();
-    DataColumnProperties properties = new DataColumnProperties(content);
-    creator.setProperties(properties);
     // Create spec
-    DataColumnSpec dcs = creator.createSpec();
-    DataColumnSpec[] colSpecs = new DataColumnSpec[] {dcs};
+    DataColumnSpec[] colSpecs = new DataColumnSpec[] {creator.createSpec()};
     return new DataTableSpec(colSpecs);
   }
 
@@ -218,9 +212,14 @@ public class ReadFCSSetNodeModel extends NodeModel {
     String key = NodeUtilities.PREVIEW_FRAME_KEY;
     previewFrame.setDisplayName(NodeUtilities.PREVIEW_FRAME_KEY);
     String value = previewFrame.saveAsString();
+    
 
+    // Create properties
+    HashMap<String, String> content = createColumnPropertiesContent();
+    content.put(key, value);
+    
     BufferedDataTable finalTable =
-        NodeUtilities.addPropertyToColumn(exec, inTable, columnName, key, value);
+        NodeUtilities.addPropertyToColumn(exec, inTable, columnName, content);
     return new BufferedDataTable[] {finalTable};
   }
 

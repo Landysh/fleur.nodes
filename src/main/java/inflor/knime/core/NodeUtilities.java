@@ -195,12 +195,10 @@ public class NodeUtilities {
     return fsName + ".proto";
   }
 
-public static BufferedDataTable addPropertyToColumn(ExecutionContext exec, BufferedDataTable inTable, String columnName,  String key, String value) {
+public static BufferedDataTable addPropertyToColumn(ExecutionContext exec, BufferedDataTable inTable, String columnName,  Map<String, String> content) {
 		DataColumnSpec oldSpec = inTable.getDataTableSpec().getColumnSpec(columnName);
 		DataColumnSpecCreator colCreator = new DataColumnSpecCreator(oldSpec);
-		HashMap<String, String > newMap = new HashMap<>();
-		newMap.put(key, value);
-		colCreator.setProperties(oldSpec.getProperties().cloneAndOverwrite(newMap));
+		colCreator.setProperties(oldSpec.getProperties().cloneAndOverwrite(content));
 		DataTableSpecCreator creator = new DataTableSpecCreator(inTable.getDataTableSpec());
 		int index = inTable.getSpec().findColumnIndex(columnName);
 		creator.replaceColumn(index, colCreator.createSpec());

@@ -168,8 +168,12 @@ private TransformSet transformSet;
     BufferedDataTable table = container.getTable();
     String key = FCSUtilities.PROP_KEY_PREVIEW_FRAME;
     FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(dataSet, Integer.MAX_VALUE);
-    String value = summaryFrame.saveAsString(); 
-    BufferedDataTable finalTable = NodeUtilities.addPropertyToColumn(exec, table, columnName, key, value);
+    String value = summaryFrame.saveAsString();
+    
+    Map<String, String> newProps = new HashMap<>();
+    newProps.put(key, value);
+    
+    BufferedDataTable finalTable = NodeUtilities.addPropertyToColumn(exec, table, columnName,newProps);
     return new BufferedDataTable[] {finalTable};
   }
 
