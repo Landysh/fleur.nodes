@@ -123,7 +123,7 @@ public class DownsampleNodeDialog extends NodeDialogPane {
           new SpinnerNumberModel((Number) modelSettings.getCeiling(), 1, Integer.MAX_VALUE, 1);
       JSpinner ceilingSpinner = new JSpinner(ceilSpinnerModel);
       ceilingSpinner.addChangeListener(e -> {
-        modelSettings.setRandomSeed((Integer) ceilingSpinner.getModel().getValue());
+        modelSettings.setCeiling((Integer) ceilingSpinner.getModel().getValue());
       });
 
       dsp.add(ceilingSpinner, gbc);
