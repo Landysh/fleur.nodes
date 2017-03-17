@@ -2599,17 +2599,17 @@ public final class FCSFrameProto {
           getNameBytes();
 
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
-      java.util.List<java.lang.Integer> getMaskList();
+      java.util.List<java.lang.Long> getMaskList();
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
       int getMaskCount();
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
-      int getMask(int index);
+      long getMask(int index);
 
       /**
        * <code>required .Message.Subset.Type subsetType = 6;</code>
@@ -2730,21 +2730,21 @@ public final class FCSFrameProto {
               }
               case 40: {
                 if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                  mask_ = new java.util.ArrayList<java.lang.Integer>();
+                  mask_ = new java.util.ArrayList<java.lang.Long>();
                   mutable_bitField0_ |= 0x00000010;
                 }
-                mask_.add(input.readInt32());
+                mask_.add(input.readInt64());
                 break;
               }
               case 42: {
                 int length = input.readRawVarint32();
                 int limit = input.pushLimit(length);
                 if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
-                  mask_ = new java.util.ArrayList<java.lang.Integer>();
+                  mask_ = new java.util.ArrayList<java.lang.Long>();
                   mutable_bitField0_ |= 0x00000010;
                 }
                 while (input.getBytesUntilLimit() > 0) {
-                  mask_.add(input.readInt32());
+                  mask_.add(input.readInt64());
                 }
                 input.popLimit(limit);
                 break;
@@ -3099,24 +3099,24 @@ public final class FCSFrameProto {
       }
 
       public static final int MASK_FIELD_NUMBER = 5;
-      private java.util.List<java.lang.Integer> mask_;
+      private java.util.List<java.lang.Long> mask_;
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
-      public java.util.List<java.lang.Integer>
+      public java.util.List<java.lang.Long>
           getMaskList() {
         return mask_;
       }
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
       public int getMaskCount() {
         return mask_.size();
       }
       /**
-       * <code>repeated int32 mask = 5;</code>
+       * <code>repeated int64 mask = 5;</code>
        */
-      public int getMask(int index) {
+      public long getMask(int index) {
         return mask_.get(index);
       }
 
@@ -3234,7 +3234,7 @@ public final class FCSFrameProto {
           output.writeBytes(4, getNameBytes());
         }
         for (int i = 0; i < mask_.size(); i++) {
-          output.writeInt32(5, mask_.get(i));
+          output.writeInt64(5, mask_.get(i));
         }
         if (((bitField0_ & 0x00000010) == 0x00000010)) {
           output.writeEnum(6, subsetType_.getNumber());
@@ -3274,7 +3274,7 @@ public final class FCSFrameProto {
           int dataSize = 0;
           for (int i = 0; i < mask_.size(); i++) {
             dataSize += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(mask_.get(i));
+              .computeInt64SizeNoTag(mask_.get(i));
           }
           size += dataSize;
           size += 1 * getMaskList().size();
@@ -3906,56 +3906,56 @@ public final class FCSFrameProto {
           return this;
         }
 
-        private java.util.List<java.lang.Integer> mask_ = java.util.Collections.emptyList();
+        private java.util.List<java.lang.Long> mask_ = java.util.Collections.emptyList();
         private void ensureMaskIsMutable() {
           if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-            mask_ = new java.util.ArrayList<java.lang.Integer>(mask_);
+            mask_ = new java.util.ArrayList<java.lang.Long>(mask_);
             bitField0_ |= 0x00000010;
            }
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
-        public java.util.List<java.lang.Integer>
+        public java.util.List<java.lang.Long>
             getMaskList() {
           return java.util.Collections.unmodifiableList(mask_);
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
         public int getMaskCount() {
           return mask_.size();
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
-        public int getMask(int index) {
+        public long getMask(int index) {
           return mask_.get(index);
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
         public Builder setMask(
-            int index, int value) {
+            int index, long value) {
           ensureMaskIsMutable();
           mask_.set(index, value);
           onChanged();
           return this;
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
-        public Builder addMask(int value) {
+        public Builder addMask(long value) {
           ensureMaskIsMutable();
           mask_.add(value);
           onChanged();
           return this;
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
         public Builder addAllMask(
-            java.lang.Iterable<? extends java.lang.Integer> values) {
+            java.lang.Iterable<? extends java.lang.Long> values) {
           ensureMaskIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
               values, mask_);
@@ -3963,7 +3963,7 @@ public final class FCSFrameProto {
           return this;
         }
         /**
-         * <code>repeated int32 mask = 5;</code>
+         * <code>repeated int64 mask = 5;</code>
          */
         public Builder clearMask() {
           mask_ = java.util.Collections.emptyList();
@@ -5822,7 +5822,7 @@ public final class FCSFrameProto {
       "\004data\030\t \003(\001\022\034\n\024preferredTransformID\030\n \001(",
       "\t\032\326\001\n\006Subset\022\n\n\002id\030\001 \002(\t\022\022\n\noverrideID\030\002" +
       " \001(\t\022\020\n\010parentID\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\014\n\004" +
-      "mask\030\005 \003(\005\022(\n\nsubsetType\030\006 \002(\0162\024.Message" +
+      "mask\030\005 \003(\003\022(\n\nsubsetType\030\006 \002(\0162\024.Message" +
       ".Subset.Type\022\022\n\ndimensions\030\007 \003(\t\022\023\n\013doub" +
       "leValue\030\010 \003(\001\"+\n\004Type\022\013\n\007POLYGON\020\000\022\t\n\005RA" +
       "NGE\020\001\022\013\n\007BOOLEAN\020\002B\017B\rFCSFrameProto"

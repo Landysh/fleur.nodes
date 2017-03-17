@@ -77,14 +77,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   private static BitSet extractMaskFromSubsetMessage(Message.Subset subsetMessage) {
-    BitSet mask = new BitSet(subsetMessage.getMaskCount());
-    for (int j = 0; j < mask.size(); j++) {
-        boolean val = subsetMessage.getMask(j)==1? true:false;
-    	if (val==true){
-    		mask.set(j);
-    	}
+    long[] longs = new long[subsetMessage.getMaskCount()];
+    for (int j = 0; j < longs.length; j++) {
+      longs[j] = subsetMessage.getMask(j);
     }
-    return mask;
+    return BitSet.valueOf(longs);
   }
 
   public static FCSFrame load(byte[] bytes) throws InvalidProtocolBufferException {
@@ -367,10 +364,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     if (descriptors != null)
       sBuilder.addAllDoubleValue(Arrays.asList(descriptors));
 
-    BitSet mask = currentSubset.getMembers();
-    for (int i = 0; i < mask.size(); i++){
-        int val = mask.get(i) ? 1:0;
-    	sBuilder.addMask(val);
+    long[] longs = currentSubset.getMembers().toLongArray();
+    for (int i = 0; i < longs.length; i++){
+    	sBuilder.addMask(longs[i]);
     }
     Message.Subset subset = sBuilder.build();
     messageBuilder.addSubset(subset);
