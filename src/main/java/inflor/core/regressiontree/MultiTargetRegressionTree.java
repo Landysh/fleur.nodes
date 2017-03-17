@@ -13,7 +13,7 @@ public class MultiTargetRegressionTree {
   static final int DEFAULT_MINIMUM_SPLIT_SIZE = 20;
   static final int DEFAULT_MINIMUM_NODE_SIZE = 10;
 
-  RegressionTreeNode root=null;
+  RegressionTreeNode root = null;
   final Map<String, double[]> X;
   final Map<String, double[]> Y;
   boolean finished = false;
@@ -25,12 +25,12 @@ public class MultiTargetRegressionTree {
   }
 
   public boolean learn() {
-    RegressionTreeNode currentNode =null;
+    RegressionTreeNode currentNode = null;
     if (root == null) {
       Optional<Integer> size =
           X.entrySet().stream().map(e -> e.getValue().length).reduce((a, b) -> a > b ? a : b);
       BitSet mask = new BitSet(size.get());
-      mask.set(0, mask.size()-1);
+      mask.set(0, mask.size() - 1);
       root = new RegressionTreeNode(this, mask, null);
       currentNode = root;
     } else {
@@ -42,29 +42,29 @@ public class MultiTargetRegressionTree {
         finished = true;
       }
     }
-    if (currentNode!=null){
+    if (currentNode != null) {
       boolean splitable = currentNode.trySplit();
       if (splitable) {
         nodesToSplit.add(currentNode.getLeftNode());
         nodesToSplit.add(currentNode.getRightNode());
-      }      
+      }
     } else {
-     return true;//TODO? 
+      return true;// TODO?
     }
 
     finished = nodesToSplit.size() == 0 ? true : false;
     return finished;
   }
-  
-  SplitStatistics predict(double[] x){
+
+  SplitStatistics predict(double[] x) {
     return root.predict(x);
   }
 
-  public Map<String, double[]> getX() {
+  Map<String, double[]> getX() {
     return X;
   }
-  
-  public Map<String, double[]> getY() {
+
+  Map<String, double[]> getY() {
     return Y;
   }
 }
