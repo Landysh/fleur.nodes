@@ -1,4 +1,4 @@
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -17,17 +17,18 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.DimensionTypes;
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.ui.GateCreationToolBar;
-import main.java.inflor.core.plots.AbstractFCChart;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.ChartingDefaults;
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.plots.PlotUtils;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.DimensionTypes;
+import inflor.core.gates.AbstractGate;
+import inflor.core.gates.ui.GateCreationToolBar;
+import inflor.core.plots.AbstractFCChart;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.ChartingDefaults;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 
 @SuppressWarnings("serial")
 public class ChartEditorDialog extends JDialog {
@@ -51,8 +52,9 @@ public class ChartEditorDialog extends JDialog {
   private GateCreationToolBar gatingToolBar;
   private List<AbstractGate> gates;
   private String path;
+  private TransformSet transforms;
 
-  public ChartEditorDialog(Window topFrame, String path, FCSFrame dataFrame, List<AbstractGate> applicableGates, ChartSpec spec) {
+  public ChartEditorDialog(Window topFrame, String path, FCSFrame dataFrame, List<AbstractGate> applicableGates, TransformSet transforms, ChartSpec spec) {
     /**
      * Use this constructor to edit an existing chart.
      * 
@@ -64,6 +66,7 @@ public class ChartEditorDialog extends JDialog {
     setModal(true);
     this.path = path;
     this.dataFrame = dataFrame;
+    this.transforms = transforms;
     this.gates = applicableGates;
     // populate the dialog
     final JPanel content = createContentPanel(spec);
@@ -72,8 +75,8 @@ public class ChartEditorDialog extends JDialog {
     setLocationRelativeTo(getParent());
   }
   
-  public ChartEditorDialog(Window topFrame,String path, FCSFrame selectedSample, List<AbstractGate> applicableGates) {
-    this(topFrame, path, selectedSample, applicableGates, null);
+  public ChartEditorDialog(Window topFrame,String path, FCSFrame selectedSample, List<AbstractGate> applicableGates, TransformSet transforms) {
+    this(topFrame, path, selectedSample, applicableGates, transforms, null);
   }
 
   private FCSDimension guessDomainDimension(FCSFrame fcsFrame) {
@@ -188,8 +191,8 @@ public class ChartEditorDialog extends JDialog {
 
   private FCSChartPanel createPreviewPanel() {
     AbstractFCChart previewPlot = PlotUtils.createPlot(localSpec);
-    JFreeChart chart = previewPlot.createChart(dataFrame);
-    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
+    JFreeChart chart = previewPlot.createChart(dataFrame, transforms);
+    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame, transforms);
     gatingToolBar = new GateCreationToolBar(chartPanel);
     chartPanel.setSelectionListener(gatingToolBar.getSelectionListener());//TODO: bad design.
     chartPanel.createAnnotations(gates);
@@ -225,8 +228,8 @@ public class ChartEditorDialog extends JDialog {
       contentPanel.remove(gatingToolBar);
     }
     AbstractFCChart abstractChart = PlotUtils.createPlot(localSpec);  
-    JFreeChart chart = abstractChart.createChart(dataFrame);
-    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame);
+    JFreeChart chart = abstractChart.createChart(dataFrame, transforms);
+    chartPanel = new FCSChartPanel(chart, localSpec, dataFrame, transforms);
     chartPanel.setChart(chart);
     gatingToolBar = new GateCreationToolBar(chartPanel);
     addGatingToolBar();

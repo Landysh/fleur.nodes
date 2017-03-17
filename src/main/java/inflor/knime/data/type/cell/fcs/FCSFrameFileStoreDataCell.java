@@ -18,7 +18,7 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,12 +31,13 @@ import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 import org.knime.core.node.NodeLogger;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
+import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.FCSUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {
 
+		
   // the logger instance
   private static final NodeLogger logger = NodeLogger.getLogger(FCSFrameFileStoreDataCell.class);
   
@@ -50,11 +51,15 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
         String displayName = input.readUTF();
         String[] dimensionKeys = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         String[] dimensionLabels = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
-        String description = input.readUTF();
-        int messageSize = input.readInt();
+        String[] subsetNames = input.readUTF().split(FCSUtilities.DELIMITER_REGEX);
         int rowCount = input.readInt();
+        int messageSize = input.readInt();
+        int tByteSize = input.readInt();
+        byte[] tBytes = new byte[tByteSize];
+        input.readFully(tBytes);
+        TransformSet transforms = TransformSet.load(tBytes);
 
-        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, description, messageSize, rowCount);
+        FCSFrameMetaData newMetadata = new FCSFrameMetaData(id, displayName, dimensionKeys, dimensionLabels, subsetNames, messageSize, rowCount, transforms);
                     
         return new FCSFrameFileStoreDataCell(newMetadata);
       } catch (Exception e) {
@@ -70,16 +75,18 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
       String id = md.getID();
       String displayName = md.getDisplayName();
       String dimesnionKeys = String.join(FCSUtilities.DELIMITER, md.getDimensionNames());
-      String dimensionLabels = String.join(NodeUtilities.DELIMITER, md.getDimensionLabels());
-      String description = md.getMultilineDescription();
+      String dimensionLabels = String.join(FCSUtilities.DELIMITER, md.getDimensionLabels());
+      String subsetNames = String.join(FCSUtilities.DELIMITER, md.getSubsetNames());
       output.writeUTF(id);
       output.writeUTF(displayName);
       output.writeUTF(dimesnionKeys);
       output.writeUTF(dimensionLabels);
-      output.writeUTF(description);
-      output.writeInt(md.getSize());
+      output.writeUTF(subsetNames);
       output.writeInt(md.getRowCount());
-
+      output.writeInt(md.getSize());
+      byte[] tBytes = md.getTransformSet().save();
+      output.writeInt(tBytes.length); 
+      output.write(tBytes);
     }
   }
 
@@ -108,7 +115,7 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
 
   @Override
   public String toString() {
-    return metaData.toString();
+    return metaData.getDisplayName();
   }
 
   @Override
@@ -121,12 +128,17 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
     return super.getFileStore();
   }
 
-  public FCSFrame getFCSFrameValue() throws IOException {
-      int size = metaData.getSize();//currently 2gb max.
-      byte[] bytes = new byte[size];
-      FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
-      fis.read(bytes);
-      fis.close();
-      return FCSFrame.load(bytes);
+  public FCSFrame getFCSFrameValue() {
+      try {
+        int size = metaData.getSize();//currently 2gb max.
+        byte[] bytes = new byte[size];
+        FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
+        fis.read(bytes);
+        fis.close();
+        return FCSFrame.load(bytes);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
   }
 }

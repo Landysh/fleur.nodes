@@ -18,7 +18,7 @@
  *
  * Created on December 13, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.renderer.AbstractDataValueRendererFactory;

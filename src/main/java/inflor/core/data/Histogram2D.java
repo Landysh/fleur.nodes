@@ -1,8 +1,8 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.util.BitSet;
 
-import main.java.inflor.core.plots.ChartingDefaults;
+import inflor.core.plots.ChartingDefaults;
 
 public class Histogram2D {
 

@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import java.util.concurrent.atomic.AtomicReference;
 

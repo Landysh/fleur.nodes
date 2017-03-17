@@ -1,53 +1,68 @@
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import java.io.Serializable;
-import java.util.List;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Subset;
+import inflor.core.data.FCSFrame;
+import inflor.core.transforms.TransformSet;
 
-public class FCSFrameMetaData implements Serializable{
-  
+public class FCSFrameMetaData implements Serializable {
+
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
-  private final String   id;
-  private final String   displayName;
+  private final String id;
+  private final String displayName;
+  private Integer rowCount;
   private final String[] dimensionKeys;
   private final String[] dimensionLabels;
+  private String[] subsetNames;
+  private TransformSet transformMap;
   private final int messageSize;
-
-  private final String   multiLineString;
-  private Integer rowCount;
-
-  public FCSFrameMetaData (FCSFrame dataFrame, int messageSize) {
-      String description = createMultilineDescription(dataFrame);
-      multiLineString = description;
-      id = dataFrame.getID();
-      displayName = dataFrame.getDisplayName();
-      dimensionKeys = dataFrame.getDimensionNames().toArray(new String[dataFrame.getDimensionCount()]);
-      dimensionLabels = findDimensionDisplayNames(dataFrame, dimensionKeys);
-      this.messageSize = messageSize;
-      this.rowCount = dataFrame.getRowCount();
-  }
   
-  public FCSFrameMetaData (String id, String displayName, String[] dimensionKeys, String[] dimensionDisplayNames, String description, int messageSize, Integer rowCount2) {
-    this.multiLineString = description;
+  private FCSFrameMetaData(FCSFrameMetaData meta){
+	  this.id = meta.id;
+	  this.displayName = meta.displayName;
+	  this.rowCount = meta.rowCount;
+	  this.dimensionKeys = meta.dimensionKeys.clone();
+	  this.dimensionLabels = meta.dimensionLabels.clone();
+	  this.subsetNames = meta.subsetNames.clone();
+	  this.transformMap = meta.transformMap.deepCopy();
+	  this.messageSize = meta.messageSize;
+  }
+
+
+  public FCSFrameMetaData(FCSFrame dataFrame, int messageSize) {
+    this.transformMap = new TransformSet();
+
+    id = dataFrame.getID();
+    displayName = dataFrame.getDisplayName();
+    dimensionKeys =
+        dataFrame.getDimensionNames().toArray(new String[dataFrame.getDimensionCount()]);
+    dimensionLabels = findDimensionDisplayNames(dataFrame, dimensionKeys);
+    this.subsetNames = dataFrame.getSubsetNames().toArray(new String[dataFrame.getSubsetNames().size()]);
+    this.messageSize = messageSize;
+    this.rowCount = dataFrame.getRowCount();
+  }
+
+  public FCSFrameMetaData(String id, String displayName, String[] dimensionKeys,
+      String[] dimensionDisplayNames, String[] subsetNames, int messageSize, Integer rowCount2,
+      TransformSet transforms) {
     this.id = id;
     this.displayName = displayName;
     this.dimensionKeys = dimensionKeys;
     this.dimensionLabels = dimensionDisplayNames;
     this.messageSize = messageSize;
     this.rowCount = rowCount2;
-}
+    this.transformMap = transforms;
+    this.subsetNames = subsetNames;
+  }
 
   private String[] findDimensionDisplayNames(FCSFrame dataFrame, String[] dimKeys) {
     String[] displayNames = new String[dimKeys.length];
-    for (int i=0;i<dimKeys.length;i++){
+    for (int i = 0; i < dimKeys.length; i++) {
       String nName = dataFrame.getDimension(dimKeys[i]).getDisplayName();
-      if (nName!=null){
+      if (nName != null) {
         displayNames[i] = nName;
       } else {
         displayNames[i] = dimKeys[i];
@@ -56,73 +71,34 @@ public class FCSFrameMetaData implements Serializable{
     return displayNames;
   }
 
-  private String createMultilineDescription(FCSFrame dataFrame) {
-    StringBuilder sBuilder =  new StringBuilder();
-    sBuilder.append(createFileSummary(dataFrame)); 
-    sBuilder.append(createDimensionSummary(dataFrame));    
-    sBuilder.append(createSubsetSummary(dataFrame));
-    return sBuilder.toString();
+  private String createSubsetSummary() {
+    return String.join("\n", subsetNames);
   }
 
-
-  private String createSubsetSummary(FCSFrame dataFrame) {
+  private String createDimensionSummary() {
     StringBuilder sBuilder = new StringBuilder();
     sBuilder.append("\n");
-    List<Subset> subsets = dataFrame.getSubsets();
-    if (subsets!=null){
-      for (Subset sub:  dataFrame.getSubsets()){
-        sBuilder.append(sub.getLabel() + "-" + sub.getMembers().cardinality());
-        sBuilder.append(" ");
-      }
-    }
-    return sBuilder.toString().trim();
-  }
-
-  private String createDimensionSummary(FCSFrame dataFrame) {
-    StringBuilder sBuilder = new StringBuilder();
-    sBuilder.append("\n");
-    FCSDimension[] arr = dataFrame.getData().toArray(new FCSDimension[dataFrame.getDimensionCount()]);
-    for (FCSDimension dim : arr){
-      sBuilder.append(dim.getDisplayName());
+    for (int i = 0; i < dimensionKeys.length; i++) {
+      sBuilder.append(dimensionLabels[i]);
       sBuilder.append("    ");
-      sBuilder.append(dim.getPreferredTransform().toString());
+      sBuilder.append(transformMap.get(dimensionKeys[i]));
       sBuilder.append("\n");
     }
     return sBuilder.toString();
   }
 
-  private String createFileSummary(FCSFrame dataFrame) {
+  private String createFileSummary() {
     String fileSummary = "";
 
-    fileSummary+=dataFrame.getDisplayName();
-    fileSummary+="\n";
-    fileSummary+= Integer.toString(dataFrame.getRowCount());
-    fileSummary+="\n";
-    String cyt = dataFrame.getKeywordValue("$CYT");
-    if (cyt!=null){
-      fileSummary+= cyt;
-      fileSummary+="\n";
-    }
-    
-    String date = dataFrame.getKeywordValue("$DATE");
-    if (cyt!=null){
-      fileSummary+= date;
-      fileSummary+="\n";
-    }
-
-    String bTime = dataFrame.getKeywordValue("$BTIM");
-    String eTime = dataFrame.getKeywordValue("$ETIM");
-    if (bTime!=null&&eTime!=null){
-      fileSummary+= bTime;
-      fileSummary+=" - ";
-      fileSummary+= eTime;
-
-    }
+    fileSummary += displayName;
+    fileSummary += "\n";
+    fileSummary += Integer.toString(rowCount);
+    fileSummary += "\n";
     return fileSummary;
   }
 
   public String getMultilineDescription() {
-    return multiLineString;
+    return createFileSummary() + createDimensionSummary() + createSubsetSummary();
   }
 
   public String getID() {
@@ -132,9 +108,11 @@ public class FCSFrameMetaData implements Serializable{
   public String getDisplayName() {
     return displayName;
   }
+
   public String[] getDimensionNames() {
     return dimensionKeys;
   }
+
   public String[] getDimensionLabels() {
     return dimensionLabels;
   }
@@ -147,7 +125,19 @@ public class FCSFrameMetaData implements Serializable{
     return rowCount;
   }
 
+  public void setTransforms(TransformSet transforms) {
+    transformMap = transforms;
+  }
+
+  public TransformSet getTransformSet() {
+    return transformMap;
+  }
+
+  public String[] getSubsetNames() {
+    return subsetNames;
+  }
+  
+  public FCSFrameMetaData copy(){
+	  return new FCSFrameMetaData(this);
+  }
 }
-
-
-

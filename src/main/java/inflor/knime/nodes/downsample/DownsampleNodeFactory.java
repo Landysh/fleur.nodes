@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.downsample;
+package inflor.knime.nodes.downsample;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

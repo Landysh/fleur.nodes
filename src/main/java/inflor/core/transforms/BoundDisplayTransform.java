@@ -1,24 +1,21 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.transforms;
+package inflor.core.transforms;
 
 import com.google.common.primitives.Doubles;
 
@@ -39,8 +36,8 @@ public class BoundDisplayTransform extends AbstractTransform {
     super(priorUUID);
     this.boundaryMin = min;
     this.boundaryMax = max;
-    }
-  
+  }
+
   public BoundDisplayTransform(double min, double max) {
     this(min, max, null);
   }
@@ -100,7 +97,7 @@ public class BoundDisplayTransform extends AbstractTransform {
   public String toString() {
     return getDetails();
   }
-  
+
   public void optimize(double[] data) {
     this.boundaryMin = Doubles.min(data);
     this.boundaryMax = Doubles.max(data);
@@ -115,5 +112,5 @@ public class BoundDisplayTransform extends AbstractTransform {
   public String getDetails() {
     return "Min display: " + boundaryMin + ", Max display: " + boundaryMax;
   }
-  
+
 }

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.ports.fcs;
+package inflor.knime.ports.fcs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,11 +29,11 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameContent;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.core.data.FCSFrame;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameContent;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 public class FCSFramePortObject extends FileStorePortObject {
 

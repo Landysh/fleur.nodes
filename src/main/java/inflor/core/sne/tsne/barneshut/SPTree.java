@@ -1,9 +1,9 @@
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
 
-import main.java.inflor.core.sne.utils.*;
+import inflor.core.sne.utils.*;
 
 public class SPTree {
 

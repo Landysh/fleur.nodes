@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.util.ArrayList;
 
@@ -9,9 +9,9 @@ import org.knime.core.node.defaultnodesettings.DialogComponentStringSelection;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.core.node.port.PortObjectSpec;
 
-import main.java.inflor.core.singlets.PuleProperties;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.knime.ports.fcs.FCSFramePortSpec;
+import inflor.core.singlets.PuleProperties;
+import inflor.core.singlets.SingletsModel;
+import inflor.knime.ports.fcs.FCSFramePortSpec;
 
 /**
  * <code>NodeDialog</code> for the "FindSingletsFrame" Node.

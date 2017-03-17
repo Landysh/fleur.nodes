@@ -1,8 +1,4 @@
-package main.java.inflor.core.data;
-
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
+package inflor.core.data;
 
 // Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")
@@ -26,8 +22,6 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
 
   private double[] data;
 
-  private AbstractTransform preferredTransform;
-
   public FCSDimension(int size, int index, String pnn, String pns, double pneF1, double pneF2,
       double pnr) {
     this(null, size, index, pnn, pns, pneF1, pneF2, pnr);
@@ -43,12 +37,6 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
     ampTypef2 = pneF2;
     range = pnr;
     this.data = new double[size];
-    if (ampTypef1 >= -Double.MIN_NORMAL && ampTypef1 <= Double.MIN_NORMAL &&
-        ampTypef2 >= -Double.MIN_NORMAL && ampTypef2 <= Double.MIN_NORMAL) {
-      this.preferredTransform = new BoundDisplayTransform(ampTypef1, range);
-    } else {
-      this.preferredTransform = new LogicleTransform();
-    }
   }
 
   @Override
@@ -87,11 +75,7 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
   public double getPNEF2() {
     return this.ampTypef2;
   }
-
-  public AbstractTransform getPreferredTransform() {
-    return this.preferredTransform;
-  }
-
+  
   public double getRange() {
     return this.range;
   }
@@ -100,7 +84,7 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
     return this.shortName;
   }
 
-  public int getSize() {
+  public int size() {
     return this.data.length;
   }
 
@@ -118,10 +102,6 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
 
   public void setData(double[] newData) {
     this.data = newData;
-  }
-
-  public void setPreferredTransform(AbstractTransform newValue) {
-    this.preferredTransform = newValue;
   }
 
   public void setTranformReference(String tranformReference) {

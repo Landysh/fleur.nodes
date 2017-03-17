@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.statistics;
+package inflor.knime.nodes.statistics;
 
 import java.util.BitSet;
 import java.util.List;
@@ -9,10 +9,10 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Subset;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.Subset;
+import inflor.core.utils.FCSUtilities;
 
 public enum StatType {
     MEDIAN {

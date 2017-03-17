@@ -1,8 +1,8 @@
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import org.knime.core.node.CanceledExecutionException;
 
-import main.java.inflor.core.sne.tsne.*;
+import inflor.core.sne.tsne.*;
 
 public interface BarnesHutTSne extends TSne {
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,

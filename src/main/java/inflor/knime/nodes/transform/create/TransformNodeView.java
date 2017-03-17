@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.knime.nodes.transform.create;
+package inflor.knime.nodes.transform.create;
 
 import org.knime.core.node.NodeView;
 

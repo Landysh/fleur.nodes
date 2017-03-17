@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.compensation;
+package inflor.core.compensation;
 
 import static org.ejml.ops.CommonOps.invert;
 import static org.ejml.ops.CommonOps.mult;
@@ -31,10 +31,10 @@ import org.ejml.ops.CommonOps;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class SpilloverCompensator extends DomainObject {

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.sne.bhtsne;
+ package inflor.knime.nodes.treesne;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;
@@ -6,35 +6,35 @@ import org.knime.core.node.NodeView;
 
 /**
  * <code>NodeFactory</code> for the "TSNE" Node. Calculates a tSNE using library developed by Leif
- * Jonsson: nhttps://github.com/lejon/T-SNE-Java
+ * Jonsson: https://github.com/lejon/T-SNE-Java
  *
  * @author Aaron Hart
  */
-public class TSNENodeFactory extends NodeFactory<TSNENodeModel> {
+public class TreeSNENodeFactory extends NodeFactory<TreeSNENodeModel> {
 
   /**
    * {@inheritDoc}
    */
   @Override
   public NodeDialogPane createNodeDialogPane() {
-    return new TSNENodeDialog();
+    return new TreeSNENodeDialog();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public TSNENodeModel createNodeModel() {
-    return new TSNENodeModel();
+  public TreeSNENodeModel createNodeModel() {
+    return new TreeSNENodeModel();
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public NodeView<TSNENodeModel> createNodeView(final int viewIndex,
-      final TSNENodeModel nodeModel) {
-    return new TSNENodeView(nodeModel);
+  public NodeView<TreeSNENodeModel> createNodeView(final int viewIndex,
+      final TreeSNENodeModel nodeModel) {
+    return new TreeSNENodeView(nodeModel);
   }
 
   /**

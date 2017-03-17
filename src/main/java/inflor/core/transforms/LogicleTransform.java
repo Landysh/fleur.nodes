@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.transforms;
+package inflor.core.transforms;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,7 +31,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   private static final long serialVersionUID = 1L;
   
-  private static final double LOGICLE_W_PERCENTILE = 1;
+  private static final double LOGICLE_W_PERCENTILE = 5;
   private static final double DEFAULT_T = 262144;
   private static final double DEFAULT_W = 0.5;
   private static final double DEFAULT_M = 4.5;
@@ -83,12 +83,12 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
      * Based on the percentile method suggested by Parks/Moore.
      */
     double lowerBound = new Percentile().evaluate(data, LOGICLE_W_PERCENTILE);
-    double newWidth = (m - Math.log10(t / Math.abs(lowerBound))) / 2;
-    if (newWidth < 0) {
-      newWidth = this.w;// reasonable?
+    if (lowerBound < 0){
+    	this.w = (m - Math.log10(t / Math.abs(lowerBound))) / 2;
+    } else {
+        this.w = 0.2;//TODO: Reasonable?
     }
-    this.w = newWidth;
-    this.logicle = new FastLogicle(logicle.T, newWidth, logicle.M, logicle.A);
+    this.logicle = new FastLogicle(logicle.T, this.w, logicle.M, logicle.A);
   }
 
   @Override

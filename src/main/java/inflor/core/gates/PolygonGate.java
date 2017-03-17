@@ -18,21 +18,21 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates;
+package inflor.core.gates;
 
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Optional;
 
 import org.w3c.dom.Element;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.proto.FCSFrameProto;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Subset.Type;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.proto.FCSFrameProto;
+import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.FCSUtilities;
 
 public class PolygonGate extends AbstractGate {
 
@@ -69,11 +69,11 @@ public class PolygonGate extends AbstractGate {
   }
 
   @Override
-  public BitSet evaluate(FCSFrame data) {
+  public BitSet evaluate(FCSFrame data, TransformSet transforms) {
     Optional<FCSDimension> d1 = FCSUtilities.findCompatibleDimension(data, domainName);
     Optional<FCSDimension> d2 = FCSUtilities.findCompatibleDimension(data, rangeName);
-    double[] d1Data = d1.get().getPreferredTransform().transform(d1.get().getData());
-    double[] d2Data = d2.get().getPreferredTransform().transform(d2.get().getData());
+    double[] d1Data = transforms.get(d1.get().getShortName()).transform(d1.get().getData());
+    double[] d2Data = transforms.get(d2.get().getShortName()).transform(d2.get().getData());
     Path2D poly = new Path2D.Double();
     BitSet mask = new BitSet(data.getRowCount());
     for (int i = 0; i < domainPoints.size(); i++) {

@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.utils;
+package inflor.core.utils;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -33,15 +33,15 @@ import javax.imageio.ImageIO;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 
-import main.java.inflor.core.gates.AbstractGate;
-import main.java.inflor.core.gates.PolygonGate;
-import main.java.inflor.core.gates.RangeGate;
-import main.java.inflor.core.gates.ui.PolygonGateAnnotation;
-import main.java.inflor.core.gates.ui.RectangleGateAnnotation;
-import main.java.inflor.core.gates.ui.XYGateAnnotation;
-import main.java.inflor.core.plots.ChartSpec;
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.ui.LookAndFeel;
+import inflor.core.gates.AbstractGate;
+import inflor.core.gates.PolygonGate;
+import inflor.core.gates.RangeGate;
+import inflor.core.gates.ui.PolygonGateAnnotation;
+import inflor.core.gates.ui.RectangleGateAnnotation;
+import inflor.core.gates.ui.XYGateAnnotation;
+import inflor.core.plots.ChartSpec;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.ui.LookAndFeel;
 
 public class ChartUtils {
 

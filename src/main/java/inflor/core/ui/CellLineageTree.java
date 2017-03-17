@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.ui;
+package inflor.core.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,10 +29,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import main.java.inflor.core.data.DomainObject;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.gates.GateUtilities;
-import main.java.inflor.core.gates.Hierarchical;
+import inflor.core.data.DomainObject;
+import inflor.core.data.FCSFrame;
+import inflor.core.gates.GateUtilities;
+import inflor.core.gates.Hierarchical;
+import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {
@@ -44,12 +45,14 @@ public class CellLineageTree extends JTree {
   private DefaultMutableTreeNode root;
   private FCSFrame rootFrame;
   private DefaultMutableTreeNode currentNode;//TODO: scope issue on stream.  maybe a dirty hack.
+  private TransformSet transforms;
 
   
-  public CellLineageTree(FCSFrame rootFrame, Collection<Hierarchical> collection) {
-    TreeCellPlotRenderer renderer = new TreeCellPlotRenderer(rootFrame);
+  public CellLineageTree(FCSFrame rootFrame, Collection<Hierarchical> collection, TransformSet transforms) {
+    TreeCellPlotRenderer renderer = new TreeCellPlotRenderer(rootFrame, transforms);
     this.setCellRenderer(renderer);
     this.rootFrame = rootFrame;
+    this.transforms = transforms;
     this.root = new DefaultMutableTreeNode(GateUtilities.UNGATED_SUBSET_ID);
     this.setModel(buildTree(root, collection));
     for (int i = 0; i < this.getRowCount(); i++) {
@@ -61,7 +64,7 @@ public class CellLineageTree extends JTree {
   public void updateUI() {
     setCellRenderer(null);
     super.updateUI();
-    this.setCellRenderer(new TreeCellPlotRenderer(rootFrame));
+    this.setCellRenderer(new TreeCellPlotRenderer(rootFrame, transforms));
     setRowHeight(0);
     setRootVisible(true);
     setShowsRootHandles(true);

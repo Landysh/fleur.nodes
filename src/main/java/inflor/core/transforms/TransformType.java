@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.transforms;
+package inflor.core.transforms;
 
 public enum TransformType {
   BOUNDARY, LINEAR, LOGARITHMIC, LOGICLE;

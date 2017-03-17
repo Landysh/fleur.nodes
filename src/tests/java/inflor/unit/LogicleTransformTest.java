@@ -1,12 +1,12 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
-import main.java.inflor.core.transforms.LogicleTransform;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
+import inflor.core.transforms.LogicleTransform;
 
 public class LogicleTransformTest {
   // Define Constants

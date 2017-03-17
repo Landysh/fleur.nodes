@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.apply;
+package inflor.knime.nodes.compensation.apply;
 //package io.landysh.inflor.main.knime.nodes.experimental.comp.apply;
 //
 //import org.knime.core.node.InvalidSettingsException;

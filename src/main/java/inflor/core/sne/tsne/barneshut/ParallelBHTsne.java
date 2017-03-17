@@ -1,4 +1,4 @@
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -15,7 +15,7 @@ import java.util.concurrent.RecursiveAction;
 
 import org.knime.core.node.CanceledExecutionException;
 
-import main.java.inflor.core.sne.utils.*;
+import inflor.core.sne.utils.*;
 
 public class ParallelBHTsne extends BHTSne {
 

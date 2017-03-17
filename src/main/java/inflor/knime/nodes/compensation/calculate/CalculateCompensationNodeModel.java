@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.calculate;
+package inflor.knime.nodes.compensation.calculate;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +30,11 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.core.utils.MatrixUtilities;
-import main.java.inflor.knime.ports.compensation.CompMatrixPortObject;
-import main.java.inflor.knime.ports.compensation.CompMatrixPortSpec;
+import inflor.core.data.FCSFrame;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.MatrixUtilities;
+import inflor.knime.ports.compensation.CompMatrixPortObject;
+import inflor.knime.ports.compensation.CompMatrixPortSpec;
 
 
 /**

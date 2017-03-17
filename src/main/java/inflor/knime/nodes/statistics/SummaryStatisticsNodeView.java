@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.statistics;
+package inflor.knime.nodes.statistics;
 
 import org.knime.core.node.NodeView;
 

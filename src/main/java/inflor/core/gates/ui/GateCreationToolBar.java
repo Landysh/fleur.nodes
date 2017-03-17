@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -28,7 +28,7 @@ import java.util.EventListener;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import main.java.inflor.core.plots.FCSChartPanel;
+import inflor.core.plots.FCSChartPanel;
 
 @SuppressWarnings("serial")
 public class GateCreationToolBar extends JToolBar {

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read.set;
+package inflor.knime.nodes.fcs.read.set;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

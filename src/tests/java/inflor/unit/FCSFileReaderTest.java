@@ -1,11 +1,11 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
   // Define Constants
@@ -62,10 +62,11 @@ public class FCSFileReaderTest {
     // Setup
     int trueRowCount = 30000;
     double tolerance = 0.1;
-    final double[] trueFSCFirstFew =
-        {58998.59765625, 53811.0, 52696.796875, 65865.6015625, 24123.599609375, 63445.5, 61881.296875, 64310.3984375, 73426.5, 75041.1015625};
-    final double[] trueSSCFirstFew =
-        {2111.969970703125, 3435.199951171875, 2412.550048828125, 1323.22998046875, 1257.68994140625, 1195.5400390625, 1101.75, 1400.0699462890625, 1187.6300048828125, 1676.9200439453125};
+    final double[] trueFSCFirstFew = {58998.59765625, 53811.0, 52696.796875, 65865.6015625,
+        24123.599609375, 63445.5, 61881.296875, 64310.3984375, 73426.5, 75041.1015625};
+    final double[] trueSSCFirstFew = {2111.969970703125, 3435.199951171875, 2412.550048828125,
+        1323.22998046875, 1257.68994140625, 1195.5400390625, 1101.75, 1400.0699462890625,
+        1187.6300048828125, 1676.9200439453125};
     // Test
     final FCSFileReader reader = new FCSFileReader(logiclePath);
     reader.readData();
@@ -78,13 +79,13 @@ public class FCSFileReaderTest {
 
     int fewCount = 10;
     double[] testFSCFirstFew = new double[fewCount];
-    double[] testSSCFirstFew = new double[fewCount]; 
+    double[] testSSCFirstFew = new double[fewCount];
 
-    for (int i=0;i<fewCount;i++){
+    for (int i = 0; i < fewCount; i++) {
       testFSCFirstFew[i] = testFCS[i];
       testSSCFirstFew[i] = testSSC[i];
     }
-    
+
     // Assert
     assertEquals("Row count", trueRowCount, testRowCount);
     for (int i = 0; i < trueFSCFirstFew.length; i++) {

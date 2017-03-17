@@ -1,11 +1,11 @@
-package tests.java.inflor.integration;
+package inflor.integration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.fcs.FCSFileReader;
+import inflor.core.data.FCSFrame;
+import inflor.core.fcs.FCSFileReader;
 
 public class FileReading {
   static final int numFiles = 10;

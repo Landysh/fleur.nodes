@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.doublets;
+package inflor.knime.nodes.doublets;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +21,12 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.singlets.SingletsModel;
-import main.java.inflor.core.utils.FCSUtilities;
-import main.java.inflor.knime.core.NodeUtilities;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import main.java.inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import inflor.core.data.FCSFrame;
+import inflor.core.singlets.SingletsModel;
+import inflor.core.utils.FCSUtilities;
+import inflor.knime.core.NodeUtilities;
+import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of RemoveDoublets.

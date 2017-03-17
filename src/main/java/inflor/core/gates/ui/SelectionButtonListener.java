@@ -18,14 +18,14 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import main.java.inflor.core.plots.FCSChartPanel;
+import inflor.core.plots.FCSChartPanel;
 
 public class SelectionButtonListener implements ActionListener {
 

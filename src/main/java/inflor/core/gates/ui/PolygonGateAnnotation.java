@@ -1,24 +1,21 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,7 +26,7 @@ import java.util.Arrays;
 import org.jfree.chart.annotations.XYPolygonAnnotation;
 import org.jfree.data.Range;
 
-import main.java.inflor.core.ui.LookAndFeel;
+import inflor.core.ui.LookAndFeel;
 
 @SuppressWarnings("serial")
 public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGateAnnotation {
@@ -87,7 +84,7 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
 
   public double[] getDomainPoints() {
     double[] domainPoints = new double[polygonPoints.length / 2];
-    for (int i = 0; i < polygonPoints.length; i+=2) {
+    for (int i = 0; i < polygonPoints.length; i += 2) {
       domainPoints[i / 2] = polygonPoints[i];
     }
     return domainPoints;
@@ -95,7 +92,7 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
 
   public double[] getRangePoints() {
     double[] rangePoints = new double[polygonPoints.length / 2];
-    for (int i = 0; i < polygonPoints.length; i+=2) {
+    for (int i = 0; i < polygonPoints.length; i += 2) {
       rangePoints[i / 2] = polygonPoints[i + 1];
     }
     return rangePoints;
@@ -110,8 +107,7 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
     double yMin = v.getY() - yHandleSize;
     double yMax = v.getY() + yHandleSize;
     for (int i = 0; i < x.length; i++) {
-      if (xMin <= x[i]&&x[i] <= xMax&&
-          yMin <= y[i]&&y[i] <= yMax) {
+      if (xMin <= x[i] && x[i] <= xMax && yMin <= y[i] && y[i] <= yMax) {
         return true;
       }
     }
@@ -128,15 +124,14 @@ public class PolygonGateAnnotation extends XYPolygonAnnotation implements XYGate
     double yMin = v.getY() - yHandleSize;
     double yMax = v.getY() + yHandleSize;
     for (int i = 0; i < x.length; i++) {
-      if (xMin <= x[i] && x[i] <= xMax&&
-          yMin <= y[i] && y[i] <= yMax){
-          x[i] = x[i] + dx;
-          y[i] = y[i] + dy;
+      if (xMin <= x[i] && x[i] <= xMax && yMin <= y[i] && y[i] <= yMax) {
+        x[i] = x[i] + dx;
+        y[i] = y[i] + dy;
       }
     }
 
     double[] newPoints = new double[polygonPoints.length];
-    for (int i = 0; i < newPoints.length; i+=2) {
+    for (int i = 0; i < newPoints.length; i += 2) {
       newPoints[i] = x[i / 2];
       newPoints[i + 1] = y[i / 2];
     }

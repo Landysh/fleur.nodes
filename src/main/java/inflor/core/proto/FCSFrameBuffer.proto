@@ -23,7 +23,7 @@ message Message {
   	required double  	pnr     = 7;
   	optional string	 	compRef = 8;
   	repeated double  	data    = 9;
-  	optional Transform	preferredTransform = 10;
+  	optional string	preferredTransformID = 10;
   }
 	
   message Subset {
@@ -38,37 +38,9 @@ message Message {
     optional string overrideID		   = 2;
     optional string parentID           = 3;
     required string name               = 4;
-    repeated bool   mask               = 5;
+    repeated int64  mask               = 5;
     required Type	subsetType		   = 6;
     repeated string dimensions         = 7;
     repeated double doubleValue		   = 8;
-  }
-  
-    message Transform {
-    
-    enum Type {
-   	  LOGICLE   = 0;
-      LOG 		= 1;
-      LINEAR 	= 2;
-      BOUNDARY 	= 3;
-    }
-    
-    required string id         	= 1;
-    required Type 	transform  	= 2;
-    optional string parentID   	= 3;
-    
-    optional double logicleT   	= 4;
-    optional double logicleW   	= 5;
-    optional double logicleM	= 6;
-    optional double logicleA	= 7;
-    
-    optional double logMin		= 8;
-    optional double logMax 		= 9;
-    
-    optional double linMin		= 10;
-    optional double linMax		= 11;
-    
-    optional double boundMin 	= 12;
-    optional double boundMax 	= 13;
   }
 }

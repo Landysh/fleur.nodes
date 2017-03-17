@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.gates.ui;
+package inflor.core.gates.ui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,8 +26,8 @@ import java.awt.geom.Point2D;
 
 import javax.swing.SwingUtilities;
 
-import main.java.inflor.core.plots.FCSChartPanel;
-import main.java.inflor.core.utils.ChartUtils;
+import inflor.core.plots.FCSChartPanel;
+import inflor.core.utils.ChartUtils;
 
 public class GateSelectionAdapter extends MouseAdapter {
 

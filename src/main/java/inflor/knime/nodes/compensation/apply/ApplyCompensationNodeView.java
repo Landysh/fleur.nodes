@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.apply;
+package inflor.knime.nodes.compensation.apply;
 
 import org.knime.core.node.NodeView;
 

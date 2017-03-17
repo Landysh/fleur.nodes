@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.compensation.calculate;
+package inflor.knime.nodes.compensation.calculate;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -31,10 +31,10 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.ParticleType;
-import main.java.inflor.core.ui.ButtonColumn;
-import main.java.inflor.core.ui.TableColumnAdjuster;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.ParticleType;
+import inflor.core.ui.ButtonColumn;
+import inflor.core.ui.TableColumnAdjuster;
 
 /**
  * <code>NodeDialog</code> for the "CalculateCompensation" Node. This node attempts to construct a

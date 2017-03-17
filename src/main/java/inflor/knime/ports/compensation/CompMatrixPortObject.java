@@ -1,4 +1,4 @@
-package main.java.inflor.knime.ports.compensation;
+package inflor.knime.ports.compensation;
 
 import java.util.Arrays;
 

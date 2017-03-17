@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.util.BitSet;
 import java.util.Optional;
@@ -32,11 +32,13 @@ import org.jfree.ui.RectangleAnchor;
 
 import com.google.common.primitives.Doubles;
 
-import main.java.inflor.core.data.FCSDimension;
-import main.java.inflor.core.data.FCSFrame;
-import main.java.inflor.core.data.Histogram2D;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.utils.FCSUtilities;
+import inflor.core.data.FCSDimension;
+import inflor.core.data.FCSFrame;
+import inflor.core.data.Histogram2D;
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.TransformSet;
+import inflor.core.utils.FCSUtilities;
+import inflor.core.utils.PlotUtils;
 
 public class DensityPlot extends AbstractFCChart {
 
@@ -54,53 +56,45 @@ public class DensityPlot extends AbstractFCChart {
   }
 
   @Override
-  public JFreeChart createChart(FCSFrame data) {
+  public JFreeChart createChart(FCSFrame data, TransformSet transforms) {
     Optional<FCSDimension> domainDimension = FCSUtilities.findCompatibleDimension(data, spec.getDomainAxisName());
-    AbstractTransform domainTransform;
-    if (domainDimension.isPresent()) {
-      domainTransform = domainDimension.get().getPreferredTransform();
-    } else {
-      domainTransform = PlotUtils.createDefaultTransform(domainDimension.get().getShortName());
-    }
-    double[] domainData = domainTransform.transform(domainDimension.get().getData());
-    double domainMin = domainTransform.getMinTranformedValue();
-    double domainMax = domainTransform.getMaxTransformedValue();
-
-    AbstractTransform rangeTransform;
     Optional<FCSDimension> rangeDimension = FCSUtilities.findCompatibleDimension(data, spec.getRangeAxisName());
-    
-    if (rangeDimension.isPresent()) {
-      rangeTransform = rangeDimension.get().getPreferredTransform();
+    if (domainDimension.isPresent()&&rangeDimension.isPresent()){
+    	AbstractTransform domainTransform = transforms.get(domainDimension.get().getShortName());
+        double[] domainData = domainTransform.transform(domainDimension.get().getData());
+        double domainMin = domainTransform.getMinTranformedValue();
+        double domainMax = domainTransform.getMaxTransformedValue();
+
+        AbstractTransform rangeTransform = transforms.get(rangeDimension.get().getShortName());
+        double[] rangeData = rangeTransform.transform(rangeDimension.get().getData());
+        double rangeMin = rangeTransform.getMinTranformedValue();
+        double rangeMax = rangeTransform.getMaxTransformedValue();
+        histogram = new Histogram2D(domainData, domainMin, domainMax, rangeData, rangeMin, rangeMax);
+
+        DefaultXYZDataset plotData = new DefaultXYZDataset();
+
+
+        BitSet nonEmptyMask = histogram.getNonEmptyBins();
+        double[] x = FCSUtilities.filterColumn(nonEmptyMask, histogram.getXBins());
+        double[] y = FCSUtilities.filterColumn(nonEmptyMask, histogram.getYBins());
+        double[] z = FCSUtilities.filterColumn(nonEmptyMask, histogram.getZValues());
+        plotData.addSeries(data.toString(), new double[][] {x, y, z});
+
+        XYBlockRenderer renderer = updateRenderer(histogram);
+
+        plot = new XYPlot();
+        // Create the plot
+        plot.setDataset(plotData);
+        plot.setDomainAxis(PlotUtils.createAxis(domainDimension.get().getDisplayName(), domainTransform));
+        plot.setRangeAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), rangeTransform));
+        plot.setRenderer(renderer);
+        // Add to panel.
+        JFreeChart chart = new JFreeChart(plot);
+        chart.removeLegend();
+        return chart;
     } else {
-      rangeTransform = PlotUtils.createDefaultTransform(rangeDimension.get().getShortName());
+    	return null;
     }
-    
-    double[] rangeData = rangeTransform.transform(rangeDimension.get().getData());
-    double rangeMin = rangeTransform.getMinTranformedValue();
-    double rangeMax = rangeTransform.getMaxTransformedValue();
-    histogram = new Histogram2D(domainData, domainMin, domainMax, rangeData, rangeMin, rangeMax);
-
-    DefaultXYZDataset plotData = new DefaultXYZDataset();
-
-
-    BitSet nonEmptyMask = histogram.getNonEmptyBins();
-    double[] x = FCSUtilities.filterColumn(nonEmptyMask, histogram.getXBins());
-    double[] y = FCSUtilities.filterColumn(nonEmptyMask, histogram.getYBins());
-    double[] z = FCSUtilities.filterColumn(nonEmptyMask, histogram.getZValues());
-    plotData.addSeries(data.toString(), new double[][] {x, y, z});
-
-    XYBlockRenderer renderer = updateRenderer(histogram);
-
-    plot = new XYPlot();
-    // Create the plot
-    plot.setDataset(plotData);
-    plot.setDomainAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), domainTransform));
-    plot.setRangeAxis(PlotUtils.createAxis(rangeDimension.get().getDisplayName(), rangeTransform));
-    plot.setRenderer(renderer);
-    // Add to panel.
-    JFreeChart chart = new JFreeChart(plot);
-    chart.removeLegend();
-    return chart;
   }
 
   private XYBlockRenderer updateRenderer(Histogram2D histogram) {

@@ -1,4 +1,4 @@
-package main.java.inflor.knime.ports.compensation;
+package inflor.knime.ports.compensation;
 
 import java.awt.BorderLayout;
 import java.util.Arrays;

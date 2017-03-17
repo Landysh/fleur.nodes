@@ -1,4 +1,4 @@
-package main.java.inflor.knime.data.type.cell.fcs;
+package inflor.knime.data.type.cell.fcs;
 
 import java.io.IOException;
 

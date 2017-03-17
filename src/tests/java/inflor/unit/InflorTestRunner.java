@@ -1,4 +1,4 @@
-package tests.java.inflor.unit;
+package inflor.unit;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

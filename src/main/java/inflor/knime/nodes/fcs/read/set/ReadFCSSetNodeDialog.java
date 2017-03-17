@@ -1,4 +1,4 @@
-package main.java.inflor.knime.nodes.fcs.read.set;
+package inflor.knime.nodes.fcs.read.set;
 
 import javax.swing.JFileChooser;
 

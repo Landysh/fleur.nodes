@@ -16,15 +16,15 @@
  *  along with this program; if not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  */
-package main.java.inflor.knime.nodes.compensation.extract.fjmtx;
+package inflor.knime.nodes.compensation.extract.fjmtx;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.knime.core.node.NodeView;
 
-import main.java.inflor.core.compensation.SpilloverCompensator;
-import main.java.inflor.core.compensation.SpilloverRenderer;
+import inflor.core.compensation.SpilloverCompensator;
+import inflor.core.compensation.SpilloverRenderer;
 
 /**
  * <code>NodeView</code> for the "ExtractCompJO" Node.

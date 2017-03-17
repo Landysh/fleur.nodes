@@ -1,0 +1,38 @@
+option java_outer_classname = "TransformMapProto";
+
+
+message TransformMap {
+
+    enum TransformType {
+   	  LOGICLE   = 0;
+      LOG 		= 1;
+      LINEAR 	= 2;
+      BOUNDARY 	= 3;
+    }
+
+	message Transform {
+	  required string 			id         	= 1;
+      required TransformType 	type	  	= 2;
+    
+      optional double logicleT			   	= 3;
+      optional double logicleW   			= 4;
+      optional double logicleM				= 5;
+      optional double logicleA				= 6;
+    
+      optional double logMin				= 7;
+      optional double logMax		 		= 8;
+    
+      optional double linMin				= 9;
+      optional double linMax				= 10;
+    
+      optional double boundMin 				= 11;
+      optional double boundMax 				= 12;
+	}
+
+	message TransformEntry{
+	 required string key = 1;
+	 required Transform entry = 2;
+	}
+
+	repeated TransformEntry entry = 1;
+}

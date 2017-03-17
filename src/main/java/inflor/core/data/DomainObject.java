@@ -1,4 +1,4 @@
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -23,16 +23,16 @@ public abstract class DomainObject implements Serializable {
       uuid = priorUUID;
     }
   }
-  
+
   public boolean matchesID(String id) {
     return this.uuid.equals(id);
   }
-  
+
   public String getID() {
     return this.uuid;
   }
-  
-  public void setID(String newID){
+
+  public void setID(String newID) {
     this.uuid = newID;
   }
 }

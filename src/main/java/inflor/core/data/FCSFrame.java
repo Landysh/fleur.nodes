@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.data;
+package inflor.core.data;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,22 +30,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 
-import main.java.inflor.core.proto.FCSFrameProto.Message;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Dimension;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Keyword;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Transform;
-import main.java.inflor.core.proto.FCSFrameProto.Message.Transform.Builder;
-import main.java.inflor.core.transforms.AbstractTransform;
-import main.java.inflor.core.transforms.BoundDisplayTransform;
-import main.java.inflor.core.transforms.LogicleTransform;
-import main.java.inflor.core.transforms.LogrithmicTransform;
-import main.java.inflor.core.transforms.TransformType;
-import main.java.inflor.core.utils.FCSUtilities;
-
+import inflor.core.logging.LogFactory;
+import inflor.core.proto.FCSFrameProto.Message;
+import inflor.core.proto.FCSFrameProto.Message.Dimension;
+import inflor.core.proto.FCSFrameProto.Message.Keyword;
+import inflor.core.utils.FCSUtilities;
 
 // don't use the default serializer, there is a protobuf spec.
 @SuppressWarnings("serial")
@@ -55,7 +50,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   private TreeSet<FCSDimension> columnData;
   private Map<String, String> keywords;
-  private String displayName;
   private String compReference;
   private Integer rowCount = -1;
   private ArrayList<Subset> subsets = new ArrayList<>();
@@ -70,12 +64,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     this(null, keywords, rowCount);
   }
 
-  public FCSFrame(String priorUUID, Map<String, String> keywords, int rowCount) {
+  public FCSFrame(String priorUUID, Map<String, String> header, int rows) {
     super(priorUUID);
-    this.keywords = keywords;
+    keywords = header;
     columnData = new TreeSet<>();
-    this.rowCount = rowCount;
-    displayName = FCSUtilities.chooseDisplayName(this);
+    rowCount = rows;
   }
 
   // minimal constructor, use with .load()
@@ -84,13 +77,11 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   private static BitSet extractMaskFromSubsetMessage(Message.Subset subsetMessage) {
-    BitSet mask = new BitSet(subsetMessage.getMaskCount());
-    for (int j = 0; j < mask.size(); j++) {
-      if (subsetMessage.getMask(j)) {
-        mask.set(j);
-      }
+    long[] longs = new long[subsetMessage.getMaskCount()];
+    for (int j = 0; j < longs.length; j++) {
+      longs[j] = subsetMessage.getMask(j);
     }
-    return mask;
+    return BitSet.valueOf(longs);
   }
 
   public static FCSFrame load(byte[] bytes) throws InvalidProtocolBufferException {
@@ -110,11 +101,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       dimen[j] = priorUUID;
       final FCSDimension currentDimension = new FCSDimension(priorUUID, fcsFrame.getRowCount(),
           dim.getIndex(), dim.getPnn(), dim.getPns(), dim.getPneF1(), dim.getPneF2(), dim.getPnr());
-      for (int i = 0; i < currentDimension.getSize(); i++) {
+      for (int i = 0; i < currentDimension.size(); i++) {
         currentDimension.getData()[i] = dim.getData(i);
       }
-      AbstractTransform preferredTransform = readTransform(dim);
-      currentDimension.setPreferredTransform(preferredTransform);
       fcsFrame.addDimension(currentDimension);
     }
 
@@ -160,7 +149,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
         descriptors[j] = subsetMessage.getDoubleValue(j);
     }
 
-
     return new Subset(subsetMessage.getName(), mask, subsetMessage.getParentID(),
         subsetMessage.getId(), subsetMessage.getSubsetType(), dimensions, descriptors);
   }
@@ -175,30 +163,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     }
   }
 
-  private static AbstractTransform readTransform(Dimension dim) {
-    if (dim.hasPreferredTransform()) {
-      Transform tBuffer = dim.getPreferredTransform();
-      String transType = tBuffer.getTransform().name();
-      if (transType.equals(TransformType.LOGICLE.toString())) {
-        double t = tBuffer.getLogicleT();
-        double w = tBuffer.getLogicleW();
-        double m = tBuffer.getLogicleM();
-        double a = tBuffer.getLogicleA();
-        return new LogicleTransform(t, w, m, a);
-      } else if (transType.equals(TransformType.LOGARITHMIC.toString())) {
-        return new LogrithmicTransform(tBuffer.getLogMin(), tBuffer.getLogMax());
-
-      } else if (transType.equals(TransformType.BOUNDARY.toString())) {
-        return new BoundDisplayTransform(tBuffer.getBoundMin(), tBuffer.getBoundMax());
-      } else {
-        throw new IllegalArgumentException("Unsupported transform type.");
-      }
-    }
-    return null;
-  }
-
   public void addDimension(FCSDimension newDim) {
-    if (rowCount == newDim.getSize()) {
+    if (rowCount == newDim.size()) {
       columnData.add(newDim);
     } else {
       throw new IllegalStateException(
@@ -208,32 +174,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public void addSubset(Subset subset) {
     this.subsets.add(subset);
-  }
-
-  private Builder buildTransform(FCSDimension fcsdim) {
-    // Set the preferred transformation.
-    Message.Transform.Builder tBuilder = Message.Transform.newBuilder();
-    AbstractTransform transform = fcsdim.getPreferredTransform();
-    if (transform instanceof LogicleTransform) {
-      LogicleTransform logicle = (LogicleTransform) transform;
-      tBuilder.setTransform(Message.Transform.Type.LOGICLE);
-      tBuilder.setLogicleT(logicle.getT());
-      tBuilder.setLogicleW(logicle.getW());
-      tBuilder.setLogicleM(logicle.getM());
-      tBuilder.setLogicleA(logicle.getA());
-    } else if (transform instanceof LogrithmicTransform) {
-      LogrithmicTransform logTransform = (LogrithmicTransform) transform;
-      tBuilder.setTransform(Message.Transform.Type.LOG);
-      tBuilder.setLogMin(logTransform.getMinRawValue());
-      tBuilder.setLogMax(logTransform.getMaxRawValue());
-    } else if (transform instanceof BoundDisplayTransform) {
-      tBuilder.setTransform(Message.Transform.Type.BOUNDARY);
-      BoundDisplayTransform boundaryTransform = (BoundDisplayTransform) transform;
-      tBuilder.setBoundMin(boundaryTransform.getMinTranformedValue());
-      tBuilder.setBoundMax(boundaryTransform.getMaxTransformedValue());
-    }
-    tBuilder.setId(transform.getID());
-    return tBuilder;
   }
 
   @Override
@@ -268,32 +208,19 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public double[] getRow(int index, boolean transformData) {
+  public double[] getRow(int index) {
     final double[] row = new double[getDimensionCount()];
     int i = 0;
-    if (transformData) {
-      for (String shortName : getDimensionNames()) {
-        FCSDimension dim = getDimension(shortName);
-        double rawValue = dim.getData()[index];
-        row[i] = dim.getPreferredTransform().transform(rawValue);
-        i++;
-      }
-    } else {
-      for (String shortName : getDimensionNames()) {
-        FCSDimension dim = getDimension(shortName);
-        row[i] = dim.getData()[index];
-        i++;
-      }
+    for (String shortName : getDimensionNames()) {
+      FCSDimension dim = getDimension(shortName);
+      row[i] = dim.getData()[index];
+      i++;
     }
     return row;
   }
 
   public String getDisplayName() {
-    String name = getID();
-    if (this.displayName != null) {
-      name = this.displayName;
-    }
-    return name;
+    return FCSUtilities.chooseDisplayName(this);
   }
 
   public FCSDimension getDimension(String shortName) {
@@ -311,7 +238,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public String getKeywordValue(String keyword) {
-    if (keywords.containsKey(keyword)){
+    if (keywords.containsKey(keyword)) {
       return keywords.get(keyword).trim();
     } else {
       return null;
@@ -322,17 +249,13 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return rowCount;
   }
 
-  public Map<String, Integer> getSubsetRow(int index) {
-    Map<String, Integer> map = new HashMap<>();
-    for (Subset s : subsets) {
-      boolean value = s.getMembers().get(index);
-      if (value) {
-        map.put(s.getLabel(), 1);
-      } else {
-        map.put(s.getLabel(), 0);
-      }
+  public BitSet[] getSubsetMatrix() {
+    List<Subset> subsets = getSubsets();
+    BitSet[] subsetMatrix = new BitSet[subsets.size()];
+    for (int i=0;i<subsets.size();i++){
+      subsetMatrix[i] = subsets.get(i).getMembers();
     }
-    return map;
+    return subsetMatrix;
   }
 
   public List<Subset> getSubsets() {
@@ -362,10 +285,16 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     final Message buffer = createMessage();
     return buffer.toByteArray();
   }
-  
+
   public String saveAsString() {
     final Message buffer = createMessage();
-    return buffer.toString();
+    try {
+      return JsonFormat.printer().print(buffer);
+    } catch (InvalidProtocolBufferException e) {
+      LogFactory.createLogger(this.getClass().getName()).log(Level.FINE,
+          "Unable to serialize message to json.");
+      return null;
+    }
   }
 
   private Message createMessage() {
@@ -405,9 +334,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
       for (final double value : rawArray) {
         dimBuilder.addData(value);
       }
-      Builder tBuilder = buildTransform(dim);
-      dimBuilder.setPreferredTransform(tBuilder.build());
-
       final Message.Dimension fcsdim = dimBuilder.build();
       messageBuilder.addDimension(fcsdim);
     }
@@ -426,7 +352,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     sBuilder.setName(currentSubset.getLabel());
     sBuilder.setSubsetType(currentSubset.getType());
     String overrideID = currentSubset.getOverrideID();
-    if (overrideID!=null){
+    if (overrideID != null) {
       sBuilder.setOverrideID(currentSubset.getOverrideID());
     }
 
@@ -438,9 +364,10 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     if (descriptors != null)
       sBuilder.addAllDoubleValue(Arrays.asList(descriptors));
 
-    BitSet mask = currentSubset.getMembers();
-    for (int i = 0; i < mask.size(); i++)
-      sBuilder.addMask(mask.get(i));
+    long[] longs = currentSubset.getMembers().toLongArray();
+    for (int i = 0; i < longs.length; i++){
+    	sBuilder.addMask(longs[i]);
+    }
     Message.Subset subset = sBuilder.build();
     messageBuilder.addSubset(subset);
   }
@@ -461,7 +388,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public void setDisplayName(String newDisplayName) {
-    displayName = newDisplayName;
+    keywords.put(FCSUtilities.KEY_DISPLAY_NAME, newDisplayName);
   }
 
   @Override
@@ -469,17 +396,17 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return getDisplayName();
   }
 
-  public FCSFrame getFilteredFrame(String referenceSubset) {
-    Optional<Subset> targetSubset = subsets
-      .stream()
-      .filter(sub->sub.getLabel().equals(referenceSubset))
-      .findAny();
-    
-    if (targetSubset.isPresent()){
+  public BitSet getFilteredFrame(String referenceSubset, boolean includeAnscestry) {
+    Optional<Subset> targetSubset =
+        subsets.stream().filter(sub -> sub.getLabel().equals(referenceSubset)).findAny();
+
+    if (targetSubset.isPresent() && includeAnscestry) {
       Subset currentSubset = targetSubset.get();
       List<Subset> ancestors = currentSubset.findAncestors(getSubsets());
       BitSet mask = currentSubset.evaluate(ancestors);
-      return FCSUtilities.filterFrame(mask, this);
+      return mask;
+    } else if (targetSubset.isPresent() && !includeAnscestry) {
+      return targetSubset.get().getMembers();
     } else {
       return null;
     }
@@ -487,5 +414,27 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public List<String> getSubsetNames() {
     return subsets.stream().map(Subset::getLabel).collect(Collectors.toList());
+  }
+
+  public double[][] getMatrix(List<String> dimensionNames) {
+    double[][] mtx = new double[dimensionNames.size()][rowCount];
+    int i = 0;
+    for (String name : dimensionNames) {
+      FCSDimension dim = getDimension(name);
+      mtx[i] = dim.getData();
+      i++;
+    }
+    return mtx;
+  }
+
+  public static FCSFrame loadFromProtoString(String previewString)
+      throws InvalidProtocolBufferException {
+    inflor.core.proto.FCSFrameProto.Message.Builder mb = Message.newBuilder();
+    JsonFormat.parser().merge(previewString, mb);
+    return FCSFrame.load(mb.build().toByteArray());
+  }
+
+  public void setSubsets(ArrayList<Subset> mergedSubsets) {
+    this.subsets = mergedSubsets;
   }
 }

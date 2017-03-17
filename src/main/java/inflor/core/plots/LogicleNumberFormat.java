@@ -18,13 +18,13 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package main.java.inflor.core.plots;
+package inflor.core.plots;
 
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
-import main.java.inflor.core.transforms.LogicleTransform;
+import inflor.core.transforms.LogicleTransform;
 
 @SuppressWarnings("serial")
 public class LogicleNumberFormat extends NumberFormat {

@@ -24,7 +24,7 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-package main.java.inflor.core.sne.tsne.barneshut;
+package inflor.core.sne.tsne.barneshut;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -34,8 +34,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import main.java.inflor.core.sne.tsne.*;
-import main.java.inflor.core.sne.utils.*;
+import inflor.core.sne.tsne.*;
+import inflor.core.sne.utils.*;
 
 public class BHTSne2 implements InteractiveBHTSNE {
 

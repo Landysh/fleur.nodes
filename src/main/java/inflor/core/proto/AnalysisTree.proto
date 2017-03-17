@@ -1,0 +1,23 @@
+option java_outer_classname = "FCSFrameProto";
+
+message StatTree {
+  
+  required StatNode     rootNode   = 1;
+  
+  message  StatNode {
+  	required string 	id 		   	= 1;
+  	optional string 	label		= 2;
+	optional string 	parentID   	= 3;
+    repeated StatSet 	stats 		= 4;
+    
+    message StatSet {
+    	required type = 1;
+    	repeated StatValue = 2;
+    }
+    
+    message StatValue {
+    	required name = 1;
+    	required double value = 2;
+    }
+  }
+}
