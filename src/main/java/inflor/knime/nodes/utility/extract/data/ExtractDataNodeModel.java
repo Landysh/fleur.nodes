@@ -161,12 +161,15 @@ public class ExtractDataNodeModel extends NodeModel {
     }
   }
 
-  private DataTableSpec createSpec(DataTableSpec inSpec) {
+  private DataTableSpec createSpec(DataTableSpec inSpec) throws InvalidSettingsException {
     String columnName = mSelectedColumn.getColumnName();
     DataColumnProperties properties = inSpec.getColumnSpec(columnName).getProperties();
     String rawDimensionNames = properties.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
-    String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
     String rawDisplayNames = properties.getProperty(NodeUtilities.DISPLAY_NAMES_KEY);
+    if (rawDimensionNames==null||rawDisplayNames==null){
+      throw new InvalidSettingsException("No ouput dimensions available. Have you executed your file reader?");
+    }
+    String[] dimensionNames = rawDimensionNames.split(NodeUtilities.DELIMITER_REGEX);
     String[] displayNames = rawDisplayNames.split(NodeUtilities.DELIMITER_REGEX);
     DataColumnSpec[] colSpecs;
     int outColumnCount;
