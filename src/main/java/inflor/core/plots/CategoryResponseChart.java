@@ -50,36 +50,57 @@ public class CategoryResponseChart {
     CategoryXYZDataSet categoryData = new CategoryXYZDataSet();
     double zMin = Double.MAX_VALUE;
     double zMax = 1;
-    if (dataFrame.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP)){
-        String[] mergeMap = dataFrame.getKeywordValue(FCSUtilities.KEY_MERGE_MAP).split(NodeUtilities.DELIMITER_REGEX);
-        FCSDimension dim = dataFrame.getDimension(axisName);
-        double[] transformedData = transform.transform(dim.getData());
-        int perFileSize = dim.getData().length/mergeMap.length;
-        for (int i=0;i<mergeMap.length;i++){
-        	
-            double[] unMergedData = new double[perFileSize];
-            for (int j=0;j<unMergedData.length;j++){
-            	unMergedData[j] = transformedData[i*unMergedData.length + j];
-            }
+    if (dataFrame.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP)) {
+      String[] mergeMap = dataFrame.getKeywordValue(FCSUtilities.KEY_MERGE_MAP)
+          .split(NodeUtilities.DELIMITER_REGEX);
+      FCSDimension dim = dataFrame.getDimension(axisName);
+      double[] transformedData = transform.transform(dim.getData());
+      int perFileSize = dim.getData().length / mergeMap.length;
+      for (int i = 0; i < mergeMap.length; i++) {
 
-            Histogram1D hist = new Histogram1D(unMergedData, transform.getMinTranformedValue(),
-                transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
-            double[] x = hist.getNonZeroX();
-            double[] y = new double[x.length];
-            for (int j = 0; j < y.length; j++) {
-              y[j] = i;
-            }
-            double[] z = hist.getNonZeroY();      
-            double currentZMin = Doubles.min(z);
-            double currentZMax = Doubles.max(z);
-            if (currentZMin < zMin) {
-              zMin = currentZMin;
-            } else if (currentZMax > zMax) {
-              zMax = currentZMax;
-            }
-        	
-        	categoryData.addCategoricalSeries(mergeMap[i], x, z);
+        double[] unMergedData = new double[perFileSize];
+        for (int j = 0; j < unMergedData.length; j++) {
+          unMergedData[j] = transformedData[i * unMergedData.length + j];
         }
+
+        Histogram1D hist = new Histogram1D(unMergedData, transform.getMinTranformedValue(),
+            transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+        double[] x = hist.getNonZeroX();
+        double[] y = new double[x.length];
+        for (int j = 0; j < y.length; j++) {
+          y[j] = i;
+        }
+        double[] z = hist.getNonZeroY();
+        double currentZMin = Doubles.min(z);
+        double currentZMax = Doubles.max(z);
+        if (currentZMin < zMin) {
+          zMin = currentZMin;
+        } else if (currentZMax > zMax) {
+          zMax = currentZMax;
+        }
+
+        categoryData.addCategoricalSeries(mergeMap[i], x, z);
+      }
+    } else {
+      FCSDimension dim = dataFrame.getDimension(axisName);
+      double[] transformedData = transform.transform(dim.getData());
+      Histogram1D hist = new Histogram1D(transformedData, transform.getMinTranformedValue(),
+          transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+      double[] x = hist.getNonZeroX();
+      double[] y = new double[x.length];
+      for (int j = 0; j < y.length; j++) {
+        y[j] = 0;
+      }
+      double[] z = hist.getNonZeroY();
+      double currentZMin = Doubles.min(z);
+      double currentZMax = Doubles.max(z);
+      if (currentZMin < zMin) {
+        zMin = currentZMin;
+      } else if (currentZMax > zMax) {
+        zMax = currentZMax;
+      }
+
+      categoryData.addCategoricalSeries(dataFrame.getDisplayName(), x, z);
     }
 
     ValueAxis domainAxis = PlotUtils.createAxis(axisName, transform);
