@@ -8,27 +8,27 @@ import inflor.core.downsample.DownSampleMethods;
 
 public class DownsampleNodeSettings {
 
-  private static final String DEFAULT_SELECTED_COLUMN = "none";
+  static final String DEFAULT_SELECTED_COLUMN = "none";
   private static final String KEY_SELECTED_COLUMN = "Column Name";
   private String mSelectedColumn = DEFAULT_SELECTED_COLUMN;
 
-  private static final DownSampleMethods DEFAULT_SELECTED_METHOD = DownSampleMethods.RANDOM;
+  static final DownSampleMethods DEFAULT_SELECTED_METHOD = DownSampleMethods.RANDOM;
   private static final String KEY_SELECTED_METHOD = "Method";
   private DownSampleMethods mSelectedMethod = DEFAULT_SELECTED_METHOD;
 
-  private static final boolean DEFAULT_USE_RANDOM_SEED = true;
+  static final boolean DEFAULT_USE_RANDOM_SEED = true;
   private static final String KEY_USE_RANDOM_SEED = "Use random seed";
   private boolean mUseRandomSeed = DEFAULT_USE_RANDOM_SEED;
 
-  private static final Integer DEFAULT_RANDOM_SEED = 42;
+  static final Integer DEFAULT_RANDOM_SEED = 42;
   private static final String KEY_RANDOM_SEED = "Random seed";
   private Integer mRandomSeed = DEFAULT_RANDOM_SEED;
 
-  private static final Integer DEFAULT_CEILING = 2000;
+  static final Integer DEFAULT_CEILING = 2000;
   private static final String KEY_CEILING = "Ceiling (max events per frame)";
   private Integer mCeiling = DEFAULT_CEILING;
 
-  private static final String[] DEFAULT_DIMENSION_NAMES = new String[] {};
+  static final String[] DEFAULT_DIMENSION_NAMES = new String[] {};
   private static final String KEY_DIMENSION_NAMES = "Dimension Names";
   private String[] mDimensionNames = DEFAULT_DIMENSION_NAMES;
   public static final String DEFAULT_REFERENCE_SUBSET = "Ungated";
