@@ -7,7 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import javax.swing.text.html.parser.Entity;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Median;
 
 @SuppressWarnings("serial")
 public class RegressionTreeNode extends DefaultMutableTreeNode {
@@ -24,22 +29,19 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     final String dimensionName;
     final double dimensionValue;
     final BitSet mask;
-    Map<String, double[]> results;
+    Map<String, Double> results;
 
     public SplitStatistics(String name, double splitValue, BitSet rows,
-        Map<String, double[]> resultMap) {
+        Map<String, Double> resultMap) {
       dimensionName = name;
       dimensionValue = splitValue;
       mask = rows;
       results = resultMap;
     }
 
-    Double sumVariances() {
+    Optional<Double> sumVariances() {
       double variance = 0;
-      for (Entry<String, double[]> e : results.entrySet()) {
-        variance += e.getValue()[1];
-      }
-      return variance;
+      return results.entrySet().stream().map(Entry::getValue).reduce((a,b) -> a+b);
     }
 
     public BitSet getMask() {
@@ -78,7 +80,7 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
 
   private Map<String, SplitStatistics> lowerVariance(Map<String, SplitStatistics> a,
       Map<String, SplitStatistics> b) {
-    Double aVar =
+    Double aVar = 
         a.entrySet().stream().map(e -> e.getValue().sumVariances()).reduce((c, d) -> c + d).get();
     Double bVar =
         b.entrySet().stream().map(e -> e.getValue().sumVariances()).reduce((c, d) -> d + d).get();
@@ -104,8 +106,7 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     return bestResults;
   }
 
-  private Map<String, SplitStatistics> score(double splitValue, Entry<String, double[]> e,
-      Map<String, double[]> y2) {
+  private Map<String, SplitStatistics> score(double splitValue, Entry<String, double[]> e, Map<String, double[]> y2) {
     /**
      * Based on welford's method.
      */
@@ -113,60 +114,76 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     double[] x = e.getValue();
     BitSet left = new BitSet(x.length);
     BitSet right = new BitSet(x.length);
-    String[] keys = y2.keySet().toArray(new String[y2.size()]);
-    double[][] leftParameters = new double[keys.length][2];
-    double[][] rightParameters = new double[keys.length][2];
+    String[] yKeys = y2.keySet().toArray(new String[y2.size()]);
+    double[][] leftParameters = new double[yKeys.length][2];
+    double[][] rightParameters = new double[yKeys.length][2];
 
-    double[][] yVectors = new double[keys.length][x.length];
-    for (int i = 0; i < keys.length; i++) {
-      yVectors[i] = y2.get(keys[i]);
-      double m = 0;
-      double s = 0;
-      leftParameters[i] = new double[] {m, s};
-      rightParameters[i] = new double[] {m, s};
+    //Initialize results. 
+    Map<String, Mean> lMeans = new HashMap<>();
+    Map<String, StandardDeviation>  lDevs = new HashMap<>();
+    Map<String, Double> lScore = new HashMap<>();
+    Map<String, Mean> rMeans = new HashMap<>();
+    Map<String, StandardDeviation>  rDevs = new HashMap<>();
+    Map<String, Double> rScore = new HashMap<>();
+    for (int i = 0; i < yKeys.length; i++) {
+      lMeans.put(yKeys[i], new Mean());
+      lDevs.put(yKeys[i], new StandardDeviation());
+      rMeans.put(yKeys[i], new Mean());
+      rDevs.put(yKeys[i], new StandardDeviation());
+      lScore.put(yKeys[i], Double.MAX_VALUE);
+      rScore.put(yKeys[i], Double.MAX_VALUE);
     }
-
+    
     for (int i = 0; i < x.length; i++) {
+      
       if (x[i] < splitValue && parent.get(i)) {
         left.set(i);
-        for (int j = 0; j < keys.length; j++) {
-          double m = leftParameters[j][0];
-          double s = leftParameters[j][1];
-          double[] y = yVectors[j];
-          leftParameters[j] = upateParameters(m, s, y, left.cardinality(), i);
+        for (int j = 0; j < yKeys.length; j++) {          
+          double value = x[i];
+          Mean mean = lMeans.get(yKeys[i]);
+          double increment = calculateObjective(value, mean);
+          lScore.put(yKeys[i], lScore.get(yKeys[i])+increment);
         }
       } else if (parent.get(i)) {
         right.set(i);
-        for (int j = 0; j < keys.length; j++) {
-          double m = rightParameters[j][0];
-          double s = rightParameters[j][1];
-          double[] y = yVectors[j];
-          rightParameters[j] = upateParameters(m, s, y, right.cardinality(), i);
+        for (int j = 0; j < yKeys.length; j++) {
+          double value = x[i];
+          Mean mean = rMeans.get(yKeys[i]);
+          double increment = calculateObjective(value, mean);
+          rScore.put(yKeys[i], rScore.get(yKeys[i])+increment);
         }
+      } else {
+        //NOOP
       }
     }
 
     Map<String, double[]> leftResultMap = new HashMap<>();
     Map<String, double[]> rightResultMap = new HashMap<>();
 
-    for (int i = 0; i < keys.length; i++) {
+    for (int i = 0; i < yKeys.length; i++) {
 
       double leftMean = leftParameters[i][0];
       double leftVariance = estimateVariance(leftParameters[i][1], left.cardinality());
-      leftResultMap.put(keys[i], new double[] {leftMean, leftVariance});
+      leftResultMap.put(yKeys[i], new double[] {leftMean, leftVariance});
 
       double rightMean = rightParameters[i][0];
       double rightVariance = estimateVariance(rightParameters[i][1], right.cardinality());
-      rightResultMap.put(keys[i], new double[] {rightMean, rightVariance});
+      rightResultMap.put(yKeys[i], new double[] {rightMean, rightVariance});
     }
 
-    SplitStatistics leftResults = new SplitStatistics(e.getKey(), splitValue, left, leftResultMap);
-    SplitStatistics rightResults =
-        new SplitStatistics(e.getKey(), splitValue, right, rightResultMap);
+    SplitStatistics leftResults = new SplitStatistics(e.getKey(), splitValue, left, lScore);
+    SplitStatistics rightResults = new SplitStatistics(e.getKey(), splitValue, right, rScore);
     results.put(LEFT, leftResults);
     results.put(RIGHT, rightResults);
 
     return results;
+  }
+
+  private double calculateObjective(double value, Mean mean) {
+    mean.increment(value);
+    double meanVal = mean.evaluate();
+    double increment = Math.abs(meanVal-value);
+    return increment;
   }
 
   private double estimateVariance(double s, int n) {

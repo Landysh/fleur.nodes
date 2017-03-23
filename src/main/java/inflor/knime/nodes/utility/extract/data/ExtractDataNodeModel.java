@@ -16,7 +16,6 @@ import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
-import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
@@ -89,7 +88,6 @@ public class ExtractDataNodeModel extends NodeModel {
 
     // Read the transform map.
     final String columnName = mSelectedColumn.getColumnName();
-    DataTableSpec spec = inData[0].getSpec();
     DataColumnProperties props = inData[0].getSpec().getColumnSpec(columnName).getProperties();
     
     if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)) {
@@ -136,7 +134,13 @@ public class ExtractDataNodeModel extends NodeModel {
     List<Subset> subsets = df.getSubsets();
     for (int i=0;i<rowData.length;i++){
       RowKey rowKey = new RowKey(df.toString() + i);//TODO maybe not unique. 
-      DataCell[] dataCells = new DataCell[df.getDimensionCount()+subsets.size()+2];
+      DataCell[] dataCells;
+      if (subsets.isEmpty()){
+        dataCells = new DataCell[df.getDimensionCount()+subsets.size()+1];
+
+      } else {
+        dataCells = new DataCell[df.getDimensionCount()+subsets.size()+2];
+      }
       for (int j=0;j<df.getDimensionCount();j++){
         dataCells[j] = new DoubleCell(rowData[i][j]);
       }
@@ -148,8 +152,9 @@ public class ExtractDataNodeModel extends NodeModel {
         }
         dataCells[df.getDimensionCount() + k] = subsets.get(k).getMembers().get(i) ? new StringCell(subsets.get(k).getLabel()): new StringCell("");
       }
-      
-      dataCells[dataCells.length-2] = new StringCell(subsetLabel);
+      if(!subsets.isEmpty()){
+        dataCells[dataCells.length-2] = new StringCell(subsetLabel);
+      }
       dataCells[dataCells.length-1] = new StringCell(df.getDisplayName()); 
       DataRow row = new DefaultRow(rowKey, dataCells);
       

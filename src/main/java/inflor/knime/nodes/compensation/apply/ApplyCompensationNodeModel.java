@@ -26,7 +26,6 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
@@ -58,9 +57,7 @@ import inflor.knime.ports.compensation.CompMatrixPortSpec;
  * @author Aaron Hart
  */
 public class ApplyCompensationNodeModel extends NodeModel {
-    
-  private static final NodeLogger logger = NodeLogger.getLogger(ApplyCompensationNodeModel.class);
-  
+      
   public static final String KEY_SELECTED_COLUMN = "Selected Column";
   public static final String KEY_RETAIN_UNCOMPED = "Retain Uncomped Dimensions";
 

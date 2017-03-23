@@ -38,7 +38,6 @@ public class BitSetAccumulator implements BinaryOperator<BitSet> {
       outBitset.andNot(u);
     } else if (operator.equals(BitSetOperator.AND)) {
       outBitset.and(u);
-
     } else {
       outBitset.or(u);
     }

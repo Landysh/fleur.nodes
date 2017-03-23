@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import inflor.core.gates.BitSetAccumulator;
 import inflor.core.gates.BitSetOperator;
@@ -21,7 +22,8 @@ public class Subset extends DomainObject {
   private Double[] descriptors;
   private String[] dimensions;
 
-  public Subset(String label, BitSet mask, String parentID, String priorUUID, Type type, String[] dimensions, Double[] descriptors) {
+  public Subset(String label, BitSet mask, String parentID, String priorUUID, Type type,
+      String[] dimensions, Double[] descriptors) {
     super(priorUUID);
     this.setMembers(mask);
     this.setParentID(parentID);
@@ -56,32 +58,32 @@ public class Subset extends DomainObject {
   }
 
   public List<Subset> findAncestors(List<Subset> subsets) {
+    List<Subset> localSubset = subsets.stream().collect(Collectors.toList());
     List<Subset> ancestors = new ArrayList<>();
     boolean hasAncestors = true;
-    while(hasAncestors){
-      Optional<Subset> parent = subsets
-        .stream()
-        .filter(ss -> ss.getID().equals(this.getParentID()))
-        .findAny();
-      if (parent.isPresent()){
-        if (!GateUtilities.UNGATED_SUBSET_ID.equals(parent.get().getParentID()))
-          ancestors.add(parent.get());
-        subsets.remove(parent.get());
+    String currentID = this.parentID;
+    while (hasAncestors) {
+      final String scopedID = currentID;
+      Optional<Subset> parent =
+          localSubset.stream().filter(ss -> ss.getID().equals(scopedID)).findAny();
+      if (parent.isPresent()) {
+        currentID = parent.get().getParentID();
+        ancestors.add(parent.get());
+        localSubset.remove(parent.get());
       } else {
         hasAncestors = false;
       }
-      
     }
     return ancestors;
   }
 
   public BitSet evaluate(List<Subset> ancestors) {
     ancestors.add(this);
-    Optional<BitSet> mask = ancestors
-        .stream()
-        .map(Subset::getMembers)
-        .reduce(new BitSetAccumulator(BitSetOperator.AND));
-    if (mask.isPresent()){
+    BitSetAccumulator acc = new BitSetAccumulator(BitSetOperator.AND);
+    Optional<BitSet> mask = ancestors.stream().map(Subset::getMembers)
+        .reduce(acc);
+    if (mask.isPresent()) {
+      
       return mask.get();
     } else {
       return null;
@@ -89,14 +91,14 @@ public class Subset extends DomainObject {
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     return this.label;
   }
 
   public String getOverrideID() {
     return overrideID;
   }
-  
+
   public void setOverrideID(String newValue) {
     overrideID = newValue;
   }
@@ -108,19 +110,29 @@ public class Subset extends DomainObject {
   public Double[] getDescriptors() {
     return descriptors;
   }
-  
+
   public String[] getDimensions() {
     return dimensions;
   }
+
   public Subset filter(BitSet mask) {
+    /**
+     * returns a new member set of length mask.cardinality containing the subset values 
+     * for each bit set in the input mask.
+     */
     BitSet newMembers = new BitSet(mask.cardinality());
-    int j=0;
-    for (int i=0;i<members.size();i++){
-      if (members.get(i)){
-        newMembers.set(j);
+    int j = 0;
+    for (int i = 0; i < mask.size(); i++) {
+      if (mask.get(i)) {
+        boolean newval = members.get(i);
+        newMembers.set(j,newval);
+        j++;
       }
-      j++;
     }
     return new Subset(label, newMembers, parentID, getID(), getType(), dimensions, descriptors);
+  }
+
+  public Subset deepCopy() {
+    return new Subset(this.label, (BitSet) this.members.clone(), this.parentID, this.getID(), this.getType(), this.dimensions.clone(), this.descriptors.clone());
   }
 }
