@@ -1,6 +1,5 @@
 #Inflor
 --------------------------------------------
-Open Source Flow Cytometry Nodes for KNIME.
 ![A typical Inflor workflow](https://github.com/AaronNHart/Inflor/blob/master/wiki/demo-workflow.png)
 
 
