@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -34,12 +36,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ListSelectionListener;
 
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeDialogPane;
-import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
@@ -55,22 +57,37 @@ import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 public class DownsampleNodeDialog extends NodeDialogPane {
 
-  private static final NodeLogger logger = NodeLogger.getLogger(DownsampleNodeDialog.class);
-
-  private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
-
   private static final String KEY_OPTIONS_TAB = "Options";
 
   private DownsampleNodeSettings modelSettings;
   private JPanel optionsTabPanel;
   private JComboBox<String> fcsColumnBox;
+  private ActionListener fcsbal =
+      e -> modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem());
+
   private JComboBox<String> subsetSelectionBox;
+  private ActionListener ssbal = e -> updateSubsetBox(e);
 
   private String[] displayNames;
   private String[] shortNames;
   private String[] subsetNames;
 
   private JPanel detailsPanel;
+  private JComboBox<DownSampleMethods> methodBox;
+  private ActionListener methodBoxListener = e -> updateMethodBox();
+
+  JList<String> selectedDimensionsList;
+  private ListSelectionListener selectedDimsListener = e -> updateSelectedDimensions();
+
+  private JSpinner ceilingSpinner;
+
+
+  private void updateMethodBox() {
+    DownSampleMethods newMethod = (DownSampleMethods) methodBox.getSelectedItem();
+    modelSettings.setSelectedDownsampleMethod(newMethod);
+    updateDetailsPanel();
+  }
+
 
   protected DownsampleNodeDialog() {
     super();
@@ -98,15 +115,10 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     detailsPanel = new JPanel();
     BorderLayout borderLayout = new BorderLayout();
     detailsPanel.setLayout(borderLayout);
-    JComboBox<DownSampleMethods> methodBox = new JComboBox<>();
+    methodBox = new JComboBox<>();
     Arrays.asList(DownSampleMethods.values()).forEach(methodBox::addItem);
     methodBox.setSelectedItem(modelSettings.getSampleMethod());
-    methodBox.addActionListener(e -> {
-
-      DownSampleMethods newMethod = (DownSampleMethods) methodBox.getSelectedItem();
-      modelSettings.setSelectedDownsampleMethod(newMethod);
-      updateDetailsPanel();
-    });
+    methodBox.addActionListener(methodBoxListener);
     detailsPanel.add(methodBox, BorderLayout.NORTH);
     JPanel settingsPanel = createDetailSettingsPanel();
     detailsPanel.add(settingsPanel, BorderLayout.CENTER);
@@ -121,7 +133,7 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     if (modelSettings.getSampleMethod().equals(DownSampleMethods.RANDOM)) {
       SpinnerModel ceilSpinnerModel =
           new SpinnerNumberModel((Number) modelSettings.getCeiling(), 1, Integer.MAX_VALUE, 1);
-      JSpinner ceilingSpinner = new JSpinner(ceilSpinnerModel);
+      ceilingSpinner = new JSpinner(ceilSpinnerModel);
       ceilingSpinner.addChangeListener(e -> {
         modelSettings.setCeiling((Integer) ceilingSpinner.getModel().getValue());
       });
@@ -146,20 +158,23 @@ public class DownsampleNodeDialog extends NodeDialogPane {
       }
     } else if (modelSettings.getSampleMethod().equals(DownSampleMethods.DENSITY_DEPENDENT)
         && shortNames != null && displayNames != null) {
-      JList<String> selectedDimensionsList = new JList<>(displayNames);// TODO Nicer if this were
-                                                                       // directly on dimensions.
-      selectedDimensionsList.getSelectionModel().addListSelectionListener(e -> {
-        int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
-        String[] selectedShortNames = new String[selectedIndicies.length];
-        for (int i = 0; i < selectedIndicies.length; i++) {
-          selectedShortNames[i] = shortNames[selectedIndicies[i]];
-        }
-        modelSettings.setDimensionNames(selectedShortNames);
-      });
+      selectedDimensionsList = new JList<>(displayNames);// TODO Nicer if this were
+                                                         // directly on dimensions.
+      selectedDimensionsList.getSelectionModel().addListSelectionListener(selectedDimsListener);
 
       dsp.add(selectedDimensionsList, gbc);
     }
     return dsp;
+  }
+
+
+  private void updateSelectedDimensions() {
+    int[] selectedIndicies = selectedDimensionsList.getSelectedIndices();
+    String[] selectedShortNames = new String[selectedIndicies.length];
+    for (int i = 0; i < selectedIndicies.length; i++) {
+      selectedShortNames[i] = shortNames[selectedIndicies[i]];
+    }
+    modelSettings.setDimensionNames(selectedShortNames);
   }
 
   private JPanel columnSelectionPanel() {
@@ -172,43 +187,83 @@ public class DownsampleNodeDialog extends NodeDialogPane {
     columnSelectionPanel.add(Box.createHorizontalGlue());
     // Select Input data
     fcsColumnBox = new JComboBox<>();
-    fcsColumnBox.addActionListener(
-        e -> modelSettings.setSelectedColumn((String) fcsColumnBox.getModel().getSelectedItem()));
     columnSelectionPanel.add(fcsColumnBox);
-    subsetSelectionBox = new JComboBox<>();   	
-    subsetSelectionBox.addActionListener(e -> modelSettings.setReferenceSubset((String) subsetSelectionBox.getSelectedItem()));
+    subsetSelectionBox = new JComboBox<>();
     columnSelectionPanel.add(subsetSelectionBox);
     return columnSelectionPanel;
   }
 
+  private void updateSubsetBox(ActionEvent e) {
+    String selection = (String) subsetSelectionBox.getSelectedItem();
+    if (selection != null) {
+      modelSettings.setReferenceSubset(selection);
+    }
+  }
+
   @Override
   protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs) {
+    // load the model settings.
+    try {
+      modelSettings.load(settings);
+    } catch (InvalidSettingsException e) {
+      getLogger().error("Unable to load settings", e);
+    }
     final DataTableSpec spec = specs[0];
+
+
     // Update selected column Combo box
+    fcsColumnBox.removeActionListener(fcsbal);
     fcsColumnBox.removeAllItems();
     for (final String name : spec.getColumnNames()) {
       if (spec.getColumnSpec(name).getType() == FCSFrameFileStoreDataCell.TYPE) {
         fcsColumnBox.addItem(name);
       }
     }
-    subsetSelectionBox.removeAllItems();
-    subsetSelectionBox.addItem(DownsampleNodeSettings.DEFAULT_REFERENCE_SUBSET);
-    if (subsetNames!=null){
-    	Arrays.asList(subsetNames).forEach(subsetSelectionBox::addItem);
+    fcsColumnBox.addActionListener(fcsbal);
+    if (modelSettings.getSelectedColumn() != DownsampleNodeSettings.DEFAULT_SELECTED_COLUMN) {
+      fcsColumnBox.setSelectedItem(modelSettings.getSelectedColumn());
+    } else {
+      fcsColumnBox.setSelectedIndex(0);
     }
-    subsetSelectionBox.setSelectedItem(modelSettings.getReferenceSubset());
-
-
-
+    // Pull relevant info from the spec.
     DataColumnProperties props =
         spec.getColumnSpec((String) fcsColumnBox.getSelectedItem()).getProperties();
-
     displayNames =
         props.getProperty(NodeUtilities.DISPLAY_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
     String s2 = props.getProperty(NodeUtilities.DIMENSION_NAMES_KEY);
     shortNames = s2.split(NodeUtilities.DELIMITER_REGEX);
-    if (props.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)){
-    	subsetNames = props.getProperty(NodeUtilities.SUBSET_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+    if (props.containsProperty(NodeUtilities.SUBSET_NAMES_KEY)) {
+      subsetNames =
+          props.getProperty(NodeUtilities.SUBSET_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+    }
+
+    // Update selected column Combo box
+    subsetSelectionBox.removeActionListener(ssbal);
+    subsetSelectionBox.removeAllItems();
+    subsetSelectionBox.addItem(DownsampleNodeSettings.DEFAULT_REFERENCE_SUBSET);
+    if (subsetNames != null) {
+      Arrays.asList(subsetNames).forEach(subsetSelectionBox::addItem);
+    }
+    subsetSelectionBox.setSelectedItem(modelSettings.getReferenceSubset());
+    subsetSelectionBox.addActionListener(ssbal);
+
+    ceilingSpinner.getModel().setValue(modelSettings.getCeiling());
+
+    // Update downsample methods box;
+    methodBox.setSelectedItem(modelSettings.getSampleMethod());
+    if (methodBox.getSelectedItem().equals(DownSampleMethods.DENSITY_DEPENDENT)) {
+      String[] selectedDimensions = modelSettings.getDimensionNames();
+      int[] indices = new int[selectedDimensions.length];
+      for (int i = 0; i < indices.length; i++) {
+        for (int j = 0; j < shortNames.length; j++) {
+          String s1 = selectedDimensions[i];
+          String s3 = shortNames[j];
+          if (s1.equals(s3)) {
+            indices[i] = j;
+          }
+        }
+      }
+      selectedDimensionsList.setSelectedIndices(indices);
     }
     optionsTabPanel.revalidate();
     optionsTabPanel.repaint(50l);

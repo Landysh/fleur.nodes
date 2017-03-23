@@ -28,7 +28,6 @@ import org.knime.core.node.NodeSettingsWO;
 import inflor.core.data.FCSFrame;
 import inflor.core.downsample.DownSample;
 import inflor.core.downsample.DownSampleMethods;
-import inflor.core.fcs.FCSFileReader;
 import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
@@ -86,10 +85,9 @@ private TransformSet transformSet;
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
     
+    exec.setProgress(0.01, "Collecting input rows.");
+    
     DataTableSpec[] outSpecs = createSpecs(inData[0].getDataTableSpec());
-    
-    
-    
     String columnName = mSettings.getSelectedColumn();
 	DataColumnProperties props = outSpecs[0].getColumnSpec(columnName).getProperties();
     if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)){
@@ -101,25 +99,24 @@ private TransformSet transformSet;
     ArrayList<DataRow> data = new ArrayList<>();
     targetColumnIndex = inData[0].getSpec().findColumnIndex(mSettings.getSelectedColumn());
     inData[0].forEach(data::add);
-
+    
     currentTask = 0;
     taskCount = data.size();
     BufferedDataContainer container = exec.createDataContainer(outSpecs[0]);
-    
+    exec.setProgress(0.15, "Downsampling data.");
+    exec.checkCanceled();
     data
       .parallelStream()
       .map(row -> createRow(row, exec))
       .forEach(row -> writeRow(row, container, exec));
     
     container.close();
-    
-    return new BufferedDataTable[]{container.getTable()};
-    
+    return new BufferedDataTable[]{container.getTable()}; 
   }
 
   private DataRow createRow(DataRow inRow, ExecutionContext exec){
-    final FCSFrame dataFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(targetColumnIndex)).getFCSFrameValue().deepCopy();
-    final FCSFrame outFrame = downSample(dataFrame);
+    FCSFrame fileFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(targetColumnIndex)).getFCSFrameValue();
+    final FCSFrame outFrame = downSample(fileFrame);
     final String fsName = NodeUtilities.getFileStoreName(outFrame);
     final DataCell[] outCells = new DataCell[inRow.getNumCells()];
     synchronized (exec) {
@@ -174,7 +171,6 @@ private TransformSet transformSet;
     }
   }
 
-
   private synchronized void writeRow(DataRow row, BufferedDataContainer container, ExecutionContext exec) {
     String message = "Writing: " + ((FCSFrameFileStoreDataCell) row.getCell(targetColumnIndex)).getFCSFrameMetadata().getDisplayName(); 
     exec.setProgress(currentTask/(double)taskCount, message);
@@ -186,7 +182,6 @@ private TransformSet transformSet;
     container.addRowToTable(row);
     currentTask++;   
   }
-  
   
   /**
    * {@inheritDoc}
@@ -231,5 +226,4 @@ private TransformSet transformSet;
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
   }
-
 }
