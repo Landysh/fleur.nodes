@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.knime.core.node.InvalidSettingsException;
-import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
@@ -32,7 +31,6 @@ import inflor.core.data.Subset;
 import inflor.core.transforms.AbstractTransform;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.PlotUtils;
-import inflor.knime.nodes.statistics.SummaryStatisticsNodeModel;
 
 public class TransformNodeSettings {
 
@@ -46,7 +44,6 @@ public class TransformNodeSettings {
   private String mSelectedColumn;
   private String mReferenceSubset = DEFAULT_REFERENCE_SUBSET;
 
-  private static final NodeLogger logger = NodeLogger.getLogger(SummaryStatisticsNodeModel.class);
   private static final String KEY_REFERENCE_SUBSET = "ReferenceSubset";
 
   public void save(NodeSettingsWO settings) {

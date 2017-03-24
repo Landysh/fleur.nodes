@@ -250,7 +250,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   }
 
   public BitSet[] getSubsetMatrix() {
-    List<Subset> subsets = getSubsets();
+    List<Subset> subsets = getSubsets(true);
     BitSet[] subsetMatrix = new BitSet[subsets.size()];
     for (int i=0;i<subsets.size();i++){
       subsetMatrix[i] = subsets.get(i).getMembers();
@@ -258,7 +258,10 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return subsetMatrix;
   }
 
-  public List<Subset> getSubsets() {
+  public List<Subset> getSubsets(boolean copy) {
+    if (copy){
+      return subsets.stream().map(s -> s.deepCopy()).collect(Collectors.toList());
+    }
     return subsets;
   }
 
@@ -399,7 +402,6 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
   public BitSet getFilteredFrame(String referenceSubset, boolean includeAnscestry) {
     Optional<Subset> targetSubset =
         subsets.stream().filter(sub -> sub.getLabel().equals(referenceSubset)).findAny();
-
     if (targetSubset.isPresent() && includeAnscestry) {
       Subset currentSubset = targetSubset.get();
       List<Subset> ancestors = currentSubset.findAncestors(getSubsets());
@@ -410,6 +412,10 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     } else {
       return null;
     }
+  }
+
+  public List<Subset> getSubsets() {
+    return getSubsets(true);
   }
 
   public List<String> getSubsetNames() {

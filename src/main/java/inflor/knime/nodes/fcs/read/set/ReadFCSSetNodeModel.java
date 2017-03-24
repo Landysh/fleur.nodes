@@ -144,7 +144,6 @@ public class ReadFCSSetNodeModel extends NodeModel {
     } else {
       return inFrame;
     }
-
   }
 
   private TreeSet<FCSDimension> merge(TreeSet<FCSDimension> a, TreeSet<FCSDimension> b) {

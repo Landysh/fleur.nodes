@@ -1,7 +1,6 @@
 package inflor.core.regressiontree;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,10 +28,13 @@ public class MultiTargetRegressionTree {
     if (root == null) {
       Optional<Integer> size =
           X.entrySet().stream().map(e -> e.getValue().length).reduce((a, b) -> a > b ? a : b);
-      BitSet mask = new BitSet(size.get());
-      mask.set(0, mask.size() - 1);
-      root = new RegressionTreeNode(this, mask, null);
-      currentNode = root;
+     if (size.isPresent()){
+       root = new RegressionTreeNode(this, size.get());
+       currentNode = root;       
+     } else {
+       throw new RuntimeException("Unable to find data size");
+     }
+
     } else {
       Optional<RegressionTreeNode> nextNode = nodesToSplit.stream().findAny();
       if (nextNode.isPresent()) {
@@ -49,7 +51,7 @@ public class MultiTargetRegressionTree {
         nodesToSplit.add(currentNode.getRightNode());
       }
     } else {
-      return true;// TODO?
+      return true;//Is this hit? 
     }
 
     finished = nodesToSplit.size() == 0 ? true : false;

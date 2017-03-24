@@ -43,9 +43,4 @@ public class FCSFrameCellFactory extends AbstractCellFactory {
     // TODO Auto-generated method stub
     return null;
   }
-
-//  @Override
-//  public DataType getDataType() {
-//    return FCSFrameFileStoreDataCell.TYPE;
-//  }
 }

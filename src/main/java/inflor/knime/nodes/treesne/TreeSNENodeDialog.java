@@ -1,17 +1,26 @@
 package inflor.knime.nodes.treesne;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.ComboBoxModel;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.InvalidSettingsException;
@@ -19,6 +28,7 @@ import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
+import inflor.knime.core.NodeUtilities;
 import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 
@@ -33,22 +43,26 @@ public class TreeSNENodeDialog extends NodeDialogPane {
   private static final String TITLE_DATA_TAB = "Data Settings";
   private static final String TITLE_TSNE_TAB = "tSNE Settings";
   private static final String TITLE_TREESNE_TAB = "TreeSNE Settings";
-
+  private static final String LABEL_DIMENSION_BOX = "Frame Dimensions";
   TreeSNENodeSettings mSettings = new TreeSNENodeSettings();
   //Data Settings
   JPanel dataSettingsTab;
   JComboBox<String> columnBox = new JComboBox<>();
-  JComboBox<String> dimensionBox = new JComboBox<>();
   
   //TSNE Settings
   JPanel tSNETab;
   JSpinner maxIterationsSpinner = new JSpinner();
   JSpinner pcaDimCountSpinner = new JSpinner();
   JSpinner perplexitySpinner = new JSpinner();
+  DefaultListModel<String> dimensionModel = new DefaultListModel<>();
+  JList<String> dimensionList = new JList<>(dimensionModel);
   
   //TreeSNE Settings
   JPanel treeSNETab;
   private DataTableSpec spec;
+  private String[] displayNames;
+  private String[] shortNames;
+  private boolean isDimensionListening;
 
   /**
    * New pane for configuring the TSNE node.
@@ -81,12 +95,27 @@ public class TreeSNENodeDialog extends NodeDialogPane {
   }
 
   private JPanel createDataPanel() {
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(columnBox);
-    panel.add(dimensionBox);
+    BorderLayout layout = new BorderLayout();
+    JPanel panel = new JPanel(layout);
+    panel.add(columnBox, BorderLayout.NORTH);
+    panel.add(dimensionList, BorderLayout.CENTER);
+    
+    dimensionList.addListSelectionListener(e-> updateSelectedDimensions(e));
+    
     return panel;
   }
   
+  private void updateSelectedDimensions(ListSelectionEvent e) {
+    if (isDimensionListening){
+      int[] selection = dimensionList.getSelectedIndices();
+      String[] selectedDimesions = new String[selection.length];
+      for (int i=0;i<selectedDimesions.length;i++){
+        selectedDimesions[i] = shortNames[selection[i]];
+      }
+      mSettings.setSelectedDimension(selectedDimesions);
+    }
+  }
+
   @Override
   protected void loadSettingsFrom(NodeSettingsRO settings, DataTableSpec[] specs){
     spec = specs[0];
@@ -100,12 +129,19 @@ public class TreeSNENodeDialog extends NodeDialogPane {
       columnBox.setSelectedIndex(0);
       columnBox.addActionListener(e-> updateFCSColumn(e));
       
-      List<String> possibleDimensions = findDimensionNames(spec);
+      updateDimensions(null);
       
-      if (mSettings.getSelectedColumn().equals(TreeSNENodeSettings.DEFAULT_COLUMN_SELECTION)){
+      //Set the selection state from settings if possible.
+      String[] selectedDimensions = mSettings.getSelectedDimension();
+      int[] selection = new int[selectedDimensions.length];
+      for (int i=0;i<selectedDimensions.length;i++){
+        for (int j=0;j<shortNames.length;j++){
+          if (selectedDimensions[i].equals(shortNames[j])){
+            selection[i]=j;
+          }
+        }
       }
-      
-      
+      dimensionList.setSelectedIndices(selection);
       
       
     } catch (InvalidSettingsException e) {
@@ -119,13 +155,26 @@ public class TreeSNENodeDialog extends NodeDialogPane {
   }
   
   private void updateDimensions(ActionEvent e) {
-     dimensionBox.removeAllItems();
-     findDimensionNames(spec).forEach(name -> dimensionBox.addItem(name));
+    isDimensionListening = false;
+    dimensionModel.removeAllElements(); 
+    readDimensionInformation(spec);
+    Arrays.asList(displayNames).forEach(name -> dimensionModel.addElement(name));
+    isDimensionListening = true;
   }
 
-  private List<String> findDimensionNames(DataTableSpec spec) {
-    // TODO Auto-generated method stub
-    return null;
+  private void readDimensionInformation(DataTableSpec spec) {
+    DataColumnSpec colSpec = spec.getColumnSpec(mSettings.getSelectedColumn());
+    DataColumnProperties props = colSpec.getProperties();
+    boolean hasDisplayNames = props.containsProperty(NodeUtilities.DISPLAY_NAMES_KEY);
+    boolean hasShortNames = props.containsProperty(NodeUtilities.DIMENSION_NAMES_KEY);
+    
+    if (hasDisplayNames&&hasShortNames){
+      shortNames = props.getProperty(NodeUtilities.DIMENSION_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+      displayNames = props.getProperty(NodeUtilities.DISPLAY_NAMES_KEY).split(NodeUtilities.DELIMITER_REGEX);
+    } else {
+      throw new RuntimeException("Unable to parse dimension names");
+    }
+
   }
 
   private List<String> findFCSColumns(DataTableSpec dataTableSpec) {
@@ -136,10 +185,6 @@ public class TreeSNENodeDialog extends NodeDialogPane {
       .map(spec -> spec.getName())
       .collect(Collectors.toList());
     return columnSpec;
-  }
-
-  private void updateDataPanel() {
-    // TODO Auto-generated method stub 
   }
 
   @Override
