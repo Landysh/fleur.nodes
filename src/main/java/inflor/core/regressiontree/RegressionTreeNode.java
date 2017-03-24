@@ -7,23 +7,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import javax.swing.text.html.parser.Entity;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
-import org.apache.commons.math3.stat.descriptive.rank.Median;
 
 @SuppressWarnings("serial")
 public class RegressionTreeNode extends DefaultMutableTreeNode {
 
   private static final String LEFT = "left";
   private static final String RIGHT = "right";
-  BitSet parent;
-  SplitStatistics stats;
-  RegressionTreeNode left;
-  RegressionTreeNode right;
+  private RegressionTreeNode parent;
+  private RegressionTreeNode left;
+  private RegressionTreeNode right;
+  private BitSet parentMask;
+  private SplitStatistics stats;
   private MultiTargetRegressionTree tree;
+  int depth;
 
   class SplitStatistics {
     final String dimensionName;
@@ -40,7 +39,6 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     }
 
     Optional<Double> sumVariances() {
-      double variance = 0;
       return results.entrySet().stream().map(Entry::getValue).reduce((a,b) -> a+b);
     }
 
@@ -53,15 +51,32 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     }
   }
 
-  public RegressionTreeNode(MultiTargetRegressionTree tree, BitSet mask, SplitStatistics newStats) {
+  public RegressionTreeNode(MultiTargetRegressionTree tree, BitSet mask, SplitStatistics newStats, RegressionTreeNode nodeParent) {
     this.tree = tree;
-    parent = mask;
+    parent = nodeParent;
+    //Set all the bits if root.
+    if (nodeParent==null);{
+      mask.set(0,  mask.cardinality()-1);
+    }
+    parentMask = mask;
     stats = newStats;
+    depth = findDepth(); 
+  }
+
+  public RegressionTreeNode(MultiTargetRegressionTree multiTargetRegressionTree, Integer size) {
+    this(multiTargetRegressionTree, new BitSet(size), null, null);
+  }
+
+  protected int findDepth() {
+    if (this.parent==null){//Root Case
+      return 0;      
+    } else {
+      return parent.findDepth() + 1;
+    }
   }
 
   public boolean trySplit() {
     boolean isSplittable = false;
-
     Optional<Integer> size = tree.getX().entrySet().stream().map(e -> e.getValue().length)
         .reduce((a, b) -> a > b ? a : b);
     if (size.isPresent() && size.get() > MultiTargetRegressionTree.DEFAULT_MINIMUM_SPLIT_SIZE) {
@@ -71,20 +86,41 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
               .reduce((a, b) -> lowerVariance(a, b));
 
       if (possibleResult.isPresent()) {
+        Map<String, SplitStatistics> result = possibleResult.get();
+        // create left and right
+        left = new RegressionTreeNode(tree, result.get(LEFT).getMask(), result.get(LEFT), this);
+        right = new RegressionTreeNode(tree, result.get(RIGHT).getMask(), result.get(RIGHT), this);
         isSplittable = true;
-        // create left and right;
+      } else {
+        calculateLeafStats();
       }
     }
     return isSplittable;
   }
 
+  private void calculateLeafStats() {
+    // TODO Auto-generated method stub
+    
+  }
+
   private Map<String, SplitStatistics> lowerVariance(Map<String, SplitStatistics> a,
       Map<String, SplitStatistics> b) {
-    Double aVar = 
-        a.entrySet().stream().map(e -> e.getValue().sumVariances()).reduce((c, d) -> c + d).get();
-    Double bVar =
-        b.entrySet().stream().map(e -> e.getValue().sumVariances()).reduce((c, d) -> d + d).get();
-    return aVar < bVar ? a : b;
+    Optional<Double> aVar = 
+        a.entrySet().stream().map(e -> e.getValue().sumVariances()).filter(Optional::isPresent).map(Optional::get).reduce((c, d) -> c + d);
+    Optional<Double> bVar =
+        b.entrySet().stream().map(e -> e.getValue().sumVariances()).filter(Optional::isPresent).map(Optional::get).reduce((c, d) -> c + d);
+    
+    if(bVar.isPresent()&&aVar.isPresent()){
+      return aVar.get() < bVar.get() ? a : b;
+
+    } else if(aVar.isPresent()){
+      return a;
+    } else if(bVar.isPresent()){
+      return b;
+    } else {
+      throw new RuntimeException("failed to find a split");
+    }
+    
   }
 
   Map<String, SplitStatistics> testDimension(Entry<String, double[]> x, Map<String, double[]> y) {
@@ -96,11 +132,12 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
       double splitValue = xSorted[splitIndex];
       Map<String, SplitStatistics> currentResults = score(splitValue, x, y);
       // Check the left and right variance
-      Double localCombinedVariance = currentResults.entrySet().stream()
-          .map(e -> e.getValue().sumVariances()).reduce((a, b) -> a + b).get();
-      if (bestResults == null || localCombinedVariance < bestCombinedVariance) {
+      Optional<Double> localCombinedVariance = currentResults.entrySet().stream()
+          .map(e -> e.getValue().sumVariances()).filter(opt -> opt.isPresent()).map(Optional::get).reduce((a, b) -> a + b);
+      if (localCombinedVariance.isPresent()&&bestResults == null || 
+          (localCombinedVariance.isPresent()&&localCombinedVariance.get() < bestCombinedVariance)) {
         bestResults = currentResults;
-        bestCombinedVariance = localCombinedVariance;
+        bestCombinedVariance = localCombinedVariance.get();
       }
     }
     return bestResults;
@@ -120,23 +157,19 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
 
     //Initialize results. 
     Map<String, Mean> lMeans = new HashMap<>();
-    Map<String, StandardDeviation>  lDevs = new HashMap<>();
     Map<String, Double> lScore = new HashMap<>();
     Map<String, Mean> rMeans = new HashMap<>();
-    Map<String, StandardDeviation>  rDevs = new HashMap<>();
     Map<String, Double> rScore = new HashMap<>();
     for (int i = 0; i < yKeys.length; i++) {
       lMeans.put(yKeys[i], new Mean());
-      lDevs.put(yKeys[i], new StandardDeviation());
       rMeans.put(yKeys[i], new Mean());
-      rDevs.put(yKeys[i], new StandardDeviation());
       lScore.put(yKeys[i], Double.MAX_VALUE);
       rScore.put(yKeys[i], Double.MAX_VALUE);
     }
     
     for (int i = 0; i < x.length; i++) {
       
-      if (x[i] < splitValue && parent.get(i)) {
+      if (x[i] < splitValue && parentMask.get(i)) {
         left.set(i);
         for (int j = 0; j < yKeys.length; j++) {          
           double value = x[i];
@@ -144,7 +177,7 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
           double increment = calculateObjective(value, mean);
           lScore.put(yKeys[i], lScore.get(yKeys[i])+increment);
         }
-      } else if (parent.get(i)) {
+      } else if (parentMask.get(i)) {
         right.set(i);
         for (int j = 0; j < yKeys.length; j++) {
           double value = x[i];
@@ -190,36 +223,24 @@ public class RegressionTreeNode extends DefaultMutableTreeNode {
     return Math.sqrt(s / (n - 1));
   }
 
-  private double[] upateParameters(double m, double s, double[] y2, int n, int i) {
-    double tempM = m;
-    m = (y2[i] - tempM) / n;
-    s = (y2[i] - tempM) * (y2[i] - m);
-    return new double[] {m, s};
-  }
-
-  public SplitStatistics predict(double[] x) {
-    if (this.isLeaf()) {
-      return stats;
-    } else {
-      String[] keys = tree.getX().keySet().toArray(new String[tree.getX().size()]);
-      int targetIndex = -1;
-      for (int i = 0; i < keys.length; i++) {
-        if (keys[i].equals(stats.dimensionName)) {
-          targetIndex = i;
-          break;
-        }
-      }
-      double val = x[targetIndex];
-      RegressionTreeNode node = val < stats.getSplitValue() ? left : right;;
-      return node.predict(x);
-    }
-  }
-
   public RegressionTreeNode getLeftNode() {
     return left;
   }
 
   public RegressionTreeNode getRightNode() {
     return right;
+  }
+
+  public SplitStatistics predict(double[] x) {
+    if (isLeaf()){
+      return stats;
+    } else {
+      RegressionTreeNode child = evaluate() ? left:right;
+      return child.predict(x);
+    }
+  }
+
+  private boolean evaluate() {
+      return false;
   }
 }
