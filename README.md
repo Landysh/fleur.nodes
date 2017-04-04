@@ -6,7 +6,7 @@
 
 
 ## Installation
-Still in alpha, do not use in production. Nodes may change drastically and without notice! If you insist on giving it a try and don't want to build it yourself, [contact me](mailto: aaron dot hart at gmail dot com).
+Download the jar from the release page and put it in the dropins folder of your KNIME installation and restart.  Easy Peasy.  
 
 ## Useage 
 See the [wiki](https://github.com/AaronNHart/Inflor/wiki)!  
