@@ -26,8 +26,8 @@ public class DownSample {
     //Calculate median minimum distance.
     BitSet shuffleMask = BitSetUtils.getShuffledMask(inFrame.getRowCount(), targetSize);
     FCSFrame dsFrame = FCSUtilities.filterFrame(shuffleMask, inFrame);
-    double[][] mtx = dsFrame.getMatrix(dimensionNames);
-    FCSUtilities.transformMatrix(dimensionNames, transforms, mtx);
+    double[][] mtx = dsFrame.getMatrix(dimensionNames.toArray(new String[dimensionNames.size()]));
+    MatrixUtilities.transformMatrix(dimensionNames.toArray(new String[dimensionNames.size()]), transforms, mtx);
     mtx = MatrixUtilities.transpose(mtx);
     double minimumMedianDistance = calculateMinMedDistance(mtx);
     //Calculate the number of local neighbors for each cell.
@@ -56,8 +56,8 @@ public class DownSample {
     //Calculate the number of local neighbors for each cell.
     double dThreshs = minimumMedianDistance; //alpha
     double[] localDensity = new double[inFrame.getRowCount()];
-    double[][] allData = inFrame.getMatrix(dimensionNames);
-    FCSUtilities.transformMatrix(dimensionNames, transforms, allData);
+    double[][] allData = inFrame.getMatrix(dimensionNames.toArray(new String[dimensionNames.size()]));
+    MatrixUtilities.transformMatrix(dimensionNames.toArray(new String[dimensionNames.size()]), transforms, allData);
     allData = MatrixUtilities.transpose(allData);
     for (int k=0;k<localDensity.length;k++){
       for (int l=0;l<mtx.length;l++){

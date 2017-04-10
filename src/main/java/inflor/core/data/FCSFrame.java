@@ -422,8 +422,8 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     return subsets.stream().map(Subset::getLabel).collect(Collectors.toList());
   }
 
-  public double[][] getMatrix(List<String> dimensionNames) {
-    double[][] mtx = new double[dimensionNames.size()][rowCount];
+  public double[][] getMatrix(String[] dimensionNames) {
+    double[][] mtx = new double[dimensionNames.length][rowCount];
     int i = 0;
     for (String name : dimensionNames) {
       FCSDimension dim = getDimension(name);

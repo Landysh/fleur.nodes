@@ -34,6 +34,8 @@ public class DownsampleNodeSettings {
   public static final String DEFAULT_REFERENCE_SUBSET = "Ungated";
   private static final String KEY_REFERENCE_SUBSET = "Reference Subset";
   private String mReferenceSubset = DEFAULT_REFERENCE_SUBSET;
+  
+  
 
   public void setSelectedColumn(String selectedItem) {
     mSelectedColumn = selectedItem;

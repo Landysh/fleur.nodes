@@ -125,10 +125,10 @@ public class ExtractDataNodeModel extends NodeModel {
   }
 
   private void writeFrame(FCSFrame df, BufferedDataContainer container, ExecutionContext exec) {
-    double[][] data = df.getMatrix(df.getDimensionNames());
+    double[][] data = df.getMatrix(df.getDimensionNames().toArray(new String[df.getDimensionNames().size()]));
     if (mTransform.getBooleanValue()){
     	List<String> names = df.getDimensionNames();
-      FCSUtilities.transformMatrix(names, transformSet, data);
+      MatrixUtilities.transformMatrix(names.toArray(new String[names.size()]), transformSet, data);
     }
     double[][] rowData = MatrixUtilities.transpose(data);
     List<Subset> subsets = df.getSubsets();

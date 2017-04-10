@@ -339,13 +339,4 @@ public class FCSUtilities {
       return null;
     }
   }
-
-  public static void transformMatrix(List<String> dimensionNames, TransformSet transforms,
-      double[][] mtx) {
-    for (int i = 0; i < dimensionNames.size(); i++) {
-      AbstractTransform at = transforms.get(dimensionNames.get(i));
-      mtx[i] = at.transform(mtx[i]);
-    }
-
-  }
 }

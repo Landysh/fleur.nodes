@@ -17,6 +17,12 @@
  */
 package inflor.core.utils;
 
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+
+import inflor.core.transforms.AbstractTransform;
+import inflor.core.transforms.TransformSet;
+
 public class MatrixUtilities {
 
   private MatrixUtilities() {}
@@ -75,5 +81,24 @@ public class MatrixUtilities {
       flat = new double[] {};
     }
     return flat;
+  }
+
+  public static void transformMatrix(String[] dimensionNames, TransformSet txm, double[][] mtx) {
+    for (int i = 0; i < dimensionNames.length; i++) {
+      AbstractTransform at = txm.get(dimensionNames[i]);
+      mtx[i] = at.transform(mtx[i]);
+    }
+  }
+
+  public static void centerAndScale(double[][] x) {
+    double[][] msd = new double[x.length][2];
+    for (int i=0;i<x.length;i++){
+      double m = (new Mean()).evaluate(x[i]);
+      double d = (new StandardDeviation()).evaluate(x[i]);
+      msd[i] = new double[]{m,d};
+      for (int j=0;j<x[i].length;j++){
+        x[i][j] = (x[i][j]-m)/d;
+      }
+    }
   }
 }
