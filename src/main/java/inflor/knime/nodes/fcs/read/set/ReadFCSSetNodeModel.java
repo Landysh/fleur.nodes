@@ -23,6 +23,7 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.def.StringCell;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.BufferedDataContainer;
@@ -56,6 +57,7 @@ import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
 public class ReadFCSSetNodeModel extends NodeModel {
 
   private static final String FCS_FRAME_COLUMN_NAME = "FCS Frame";
+  private static final String FILE_NAME_COLUMN_NAME = "Filename";
 
   // the logger instance
   private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSSetNodeModel.class);
@@ -63,6 +65,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   // Folder containing FCS Files.
   static final String KEY_PATH = "Path";
   static final String DEFAULT_PATH = "None";
+
   private final SettingsModelString mPath = new SettingsModelString(KEY_PATH, DEFAULT_PATH);
 
   // Default Preview Frame Settings.
@@ -165,10 +168,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
   }
 
   private DataTableSpec createSpec() {
-    DataColumnSpecCreator creator =
+    DataColumnSpecCreator fcsFrameCreator =
         new DataColumnSpecCreator(FCS_FRAME_COLUMN_NAME, FCSFrameFileStoreDataCell.TYPE);
+    DataColumnSpecCreator fileNameCreator =
+        new DataColumnSpecCreator(FILE_NAME_COLUMN_NAME, StringCell.TYPE);
     // Create spec
-    DataColumnSpec[] colSpecs = new DataColumnSpec[] {creator.createSpec()};
+    DataColumnSpec[] colSpecs = new DataColumnSpec[] {fcsFrameCreator.createSpec(), fileNameCreator.createSpec()};
     return new DataTableSpec(colSpecs);
   }
 
@@ -242,7 +247,8 @@ public class ReadFCSSetNodeModel extends NodeModel {
       int sizeSaved = NodeUtilities.writeFrameToFilestore(df, fs);
       FCSFrameMetaData metaData = new FCSFrameMetaData(df, sizeSaved);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, metaData);
-      final DataCell[] cells = new DataCell[] {fileCell};
+      final StringCell nameCell = new StringCell(df.getDisplayName());
+      final DataCell[] cells = new DataCell[] {fileCell, nameCell};
 
       final DataRow row = new DefaultRow(key, cells);
       container.addRowToTable(row);
