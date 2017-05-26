@@ -1,4 +1,4 @@
-package inflor.knime.nodes.treesne;
+package inflor.knime.nodes.sne;
 
 public class SNEIterationBean {
 

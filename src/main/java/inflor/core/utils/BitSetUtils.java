@@ -117,5 +117,23 @@ public class BitSetUtils {
     
     return result;
   }
-  
+
+  public static double[][][] partition(double[][] x, BitSet mask) {
+    int firstSize = mask.cardinality();
+    int secondSize = mask.size()-mask.cardinality();
+    double[][] firstPart = new double[firstSize][x[0].length];
+    double[][] secondPart = new double[secondSize][x[0].length];
+    int j=0;
+    int k=0;
+    for (int i=0;i<mask.size();i++){
+      if (mask.get(i)){
+        firstPart[j] = x[i];
+        j++;
+      } else {
+        secondPart[k] = x[i];
+        k++;
+      }
+    }
+    return new double[][][]{firstPart, secondPart};
+  }
 }

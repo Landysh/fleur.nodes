@@ -1,4 +1,4 @@
-package inflor.knime.nodes.treesne;
+package inflor.knime.nodes.sne;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,15 +77,13 @@ public class TreeSNENodeModel extends NodeModel {
   private DataTableSpec createTableSpec(DataTableSpec inSpec) {
     String[] dimensionNames = mSettings.getSelectedDimension();
     
-    DataColumnSpec[] colSpecs = new DataColumnSpec[dimensionNames.length+4];
+    DataColumnSpec[] colSpecs = new DataColumnSpec[dimensionNames.length+2];
     for (int i=0;i<dimensionNames.length;i++){
       colSpecs[i] = new DataColumnSpecCreator(dimensionNames[i], DoubleCell.TYPE).createSpec();
     }
     
     colSpecs[colSpecs.length-4] = new DataColumnSpecCreator(mSettings.TSNE_1, DoubleCell.TYPE).createSpec();
     colSpecs[colSpecs.length-3] = new DataColumnSpecCreator(mSettings.TSNE_2, DoubleCell.TYPE).createSpec();
-    colSpecs[colSpecs.length-2] = new DataColumnSpecCreator(mSettings.TREESNE_1, DoubleCell.TYPE).createSpec();
-    colSpecs[colSpecs.length-1] = new DataColumnSpecCreator(mSettings.TREESNE_2, DoubleCell.TYPE).createSpec();
 
     return new DataTableSpec(colSpecs);
   }
@@ -109,9 +107,9 @@ public class TreeSNENodeModel extends NodeModel {
   @Override
   protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
       final ExecutionContext exec) throws Exception {
-    
+
+    //Get file references
     exec.setProgress(0.01);
-    exec.setMessage("Getting file references");
     exec.checkCanceled();
     ArrayList<DataRow> rowData = new ArrayList<>();
     CloseableRowIterator it = inData[0].iterator();

@@ -19,7 +19,7 @@
 <node category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
 <node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
 <node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.treesne.TreeSNENodeFactory"/>
+<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.sne.TreeSNENodeFactory"/>
 <node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
 <node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
 <node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>

@@ -1,4 +1,4 @@
-package inflor.knime.nodes.treesne;
+package inflor.knime.nodes.sne;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
