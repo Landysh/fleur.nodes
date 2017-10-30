@@ -45,17 +45,17 @@ public class TSNENodeModel extends NodeModel {
   static final String KEY_ITERATIONS = "Iterations";
 
   static final Integer MIN_ITERATIONS = 10;
-  static final Integer MAX_ITERATIONS = 500;
-  static final Integer DEFAULT_ITERATIONS = 250;
+  static final Integer MAX_ITERATIONS = Integer.MAX_VALUE;
+  static final Integer DEFAULT_ITERATIONS = 500;
   // PCA Dims
   static final String KEY_PCA_DIMS = "PCA Dimensions";
   static final Integer MIN_PCA_DIMS = 0;
-  static final Integer MAX_PCA_DIMS = 100;
+  static final Integer MAX_PCA_DIMS = Integer.MAX_VALUE;
   static final Integer DEFAULT_PCA_DIMS = 10;
   // Perplexity
   static final String KEY_PERPLEXITY = "Maximum iterations";
   static final Double MIN_PERPLEXITY = 1.;
-  static final Double MAX_PERPLEXITY = 100.;
+  static final Double MAX_PERPLEXITY = Double.MAX_VALUE;
   static final Double DEFAULT_PERPLEXITY = 20.;
   
   private final SettingsModelColumnFilter2 modelColumns =
