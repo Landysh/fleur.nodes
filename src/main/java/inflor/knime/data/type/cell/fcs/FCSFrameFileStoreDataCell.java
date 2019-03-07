@@ -123,9 +123,9 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
     return metaData;
   }
   
-  @Override
   public FileStore getFileStore() {
-    return super.getFileStore();
+    // Updated as of KNIME 3.7 API.
+	return super.getFileStores()[0];
   }
 
   public FCSFrame getFCSFrameValue() {
