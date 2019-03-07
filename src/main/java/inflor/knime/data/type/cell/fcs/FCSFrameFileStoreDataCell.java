@@ -132,7 +132,7 @@ public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrame
       try {
         int size = metaData.getSize();//currently 2gb max.
         byte[] bytes = new byte[size];
-        FileInputStream fis = new FileInputStream(super.getFileStore().getFile());
+        FileInputStream fis = new FileInputStream(super.getFileStores()[0].getFile());
         fis.read(bytes);
         fis.close();
         return FCSFrame.load(bytes);
