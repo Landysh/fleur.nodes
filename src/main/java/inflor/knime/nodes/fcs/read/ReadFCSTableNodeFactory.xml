@@ -3,7 +3,7 @@
     <name>Read FCS (Table)</name>
     
     <shortDescription>
-        It will do stuff	
+        Read an FCS File directly into a KNIME Data Table	
     </shortDescription>
     
     <fullDescription>

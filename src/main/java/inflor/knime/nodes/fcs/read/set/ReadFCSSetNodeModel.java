@@ -190,7 +190,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
     // Create the output spec and data container.
     final DataTableSpec outSpec = createSpec();
     final BufferedDataContainer container = exec.createDataContainer(outSpec);
-    final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
+    final ArrayList<String> filePaths;
+    try {
+        filePaths = getFilePaths(mPath.getStringValue());
+    } catch (Exception e) {
+    	throw new CanceledExecutionException("Unable to read dir: " + mPath.getStringValue() );
+    }
     fileCount = filePaths.size();
     exec.checkCanceled();
     try {

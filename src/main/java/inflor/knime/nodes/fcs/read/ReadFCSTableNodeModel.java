@@ -25,6 +25,7 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import inflor.core.data.FCSFrame;
@@ -48,6 +49,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
   // File Location
   static final String KEY_FILE_LOCATION = "File Location";
   static final String DEFAULT_FILE_LOCATION = "NoFile";
+  
   // Compensate while reading
   static final String KEY_COMP_ON_READ = "Compensate on read:";
 
@@ -56,6 +58,16 @@ public class ReadFCSTableNodeModel extends NodeModel {
   private static final Object WARN_CHOOSE_A_FILE = "No file selected.";
   private final SettingsModelString mFileLocation =
       new SettingsModelString(KEY_FILE_LOCATION, DEFAULT_FILE_LOCATION);
+  
+  // Header Only
+  static final String KEY_HEADER_ONLY = "Metadata only";
+
+  static final Boolean DEFAULT_HEADER_ONLY = false;
+
+  private final SettingsModelBoolean mHeaderOnly =
+      new SettingsModelBoolean(KEY_HEADER_ONLY, DEFAULT_HEADER_ONLY);
+  
+  
 
   private int currentKeywordIndex = 0;
 
@@ -136,7 +148,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
       FCSFrame columnStore = reader.getFCSFrame();
       DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
 
-      // Read header section
+      // Read header section"foo"
       headerTable = exec.createDataContainer(tableSpecs[0]);
       readHeader(headerTable, keywords);
 
@@ -146,25 +158,27 @@ public class ReadFCSTableNodeModel extends NodeModel {
 
       // Read data section
       dataTable = exec.createDataContainer(tableSpecs[1]);
-      reader.initRowReader();
-      for (Integer j = 0; j < columnStore.getRowCount(); j++) {
-        final RowKey rowKey = new RowKey(j.toString());
-        DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
+      if(!mHeaderOnly.getBooleanValue()) {
+          reader.initRowReader();
+    	  for (Integer j = 0; j < columnStore.getRowCount(); j++) {
+              final RowKey rowKey = new RowKey(j.toString());
+              DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
 
-        final double[] fcsRow = reader.readRow();
-        // for each uncomped parameter
-        int k = 0;
-        while (k < columnStore.getDimensionCount()) {
-          // add uncomped data
-          dataCells[k] = new DoubleCell(fcsRow[k]);
-          k++;
-        }
-        final DataRow dataRow = new DefaultRow(rowKey, dataCells);
-        dataTable.addRowToTable(dataRow);
-        if (j % 100 == 0) {
-          exec.checkCanceled();
-          exec.setProgress(j / (double) columnStore.getRowCount(), j + " rows read.");
-        }
+              final double[] fcsRow = reader.readRow();
+              // for each uncomped parameter
+              int k = 0;
+              while (k < columnStore.getDimensionCount()) {
+                // add uncomped data
+                dataCells[k] = new DoubleCell(fcsRow[k]);
+                k++;
+              }
+              final DataRow dataRow = new DefaultRow(rowKey, dataCells);
+              dataTable.addRowToTable(dataRow);
+              if (j % 100 == 0) {
+                exec.checkCanceled();
+                exec.setProgress(j / (double) columnStore.getRowCount(), j + " rows read.");
+              }
+            }
       }
       // once we are done, we close the container and return its table
       dataTable.close();
@@ -192,6 +206,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
     mFileLocation.loadSettingsFrom(settings);
+    mHeaderOnly.loadSettingsFrom(settings);
   }
 
   private void readHeader(BufferedDataContainer header, Map<String, String> keywords) {
@@ -234,6 +249,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
     mFileLocation.saveSettingsTo(settings);
+    mHeaderOnly.saveSettingsTo(settings);
   }
 
   /**
@@ -241,7 +257,7 @@ public class ReadFCSTableNodeModel extends NodeModel {
    */
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-
     mFileLocation.validateSettings(settings);
+    mHeaderOnly.validateSettings(settings);
   }
 }
