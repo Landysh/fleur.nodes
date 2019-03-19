@@ -20,13 +20,17 @@
  */
 package inflor.knime.data.type.cell.fcs;
 
+import java.util.stream.Collectors;
+
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataCellFactory;
 import org.knime.core.data.DataRow;
+import org.knime.core.data.DataType;
 import org.knime.core.data.container.AbstractCellFactory;
 import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.ExecutionContext;
 
-public class FCSFrameCellFactory extends AbstractCellFactory {
+public class FCSFrameCellFactory extends AbstractCellFactory implements DataCellFactory {
 
   private final FileStoreFactory mfileStoreFactory;
 
@@ -40,7 +44,13 @@ public class FCSFrameCellFactory extends AbstractCellFactory {
 
   @Override
   public DataCell[] getCells(DataRow row) {
-    // TODO Auto-generated method stub
-    return null;
+    //Auto-generated method stub
+    return (DataCell[]) row.stream().collect(Collectors.toList()).toArray();
   }
+
+@Override
+public DataType getDataType() {
+    //Auto-generated method stub
+	return FCSFrameFileStoreDataCell.TYPE;
+	}
 }
