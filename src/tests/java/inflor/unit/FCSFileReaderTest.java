@@ -2,6 +2,9 @@ package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+
 import org.junit.Test;
 
 import inflor.core.data.FCSFrame;
@@ -10,8 +13,8 @@ import inflor.core.fcs.FCSFileReader;
 public class FCSFileReaderTest {
   // Define Constants
 
-  String path1 = "src/io/landysh/inflor/tests/extData/int-15_scatter_events.fcs";
-  String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
+  String path1 = "src/resources/fcs/int-15_scatter_events.fcs";
+  String logiclePath = "src/resources/fcs/logicle-example.fcs";
 
   @Test
   public void testInitialization() throws Exception {
@@ -56,7 +59,17 @@ public class FCSFileReaderTest {
     System.out.println("FCSFileReaderTes::testReadAllData15ScatterEvents completed.");
 
   }
-
+  
+  @Test
+  public void testCytoZoo() throws Exception{
+	  //Setup
+	  String novocytePath = "/media/hartaa1/cold/all_fcs/6736459-new T cell compensation panel_D5_BL5 PE-Cy7.fcs";
+	  final FCSFileReader reader = new FCSFileReader(novocytePath);
+	  String fcsVersion = reader.readFCSVersion(new RandomAccessFile(novocytePath, "r"));
+	  assertEquals(fcsVersion, "FCS3.1");
+	    System.out.println("FCSFileReaderTes::testReadAllData15ScatterEvents completed.");
+  }
+  
   @Test
   public void testReadAllLogicleDataNoComp() throws Exception {
     // Setup

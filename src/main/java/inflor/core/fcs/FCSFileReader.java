@@ -63,6 +63,7 @@ public class FCSFileReader {
   
   private static final int FIRST_BYTE_END_DATA_OFFSET = 34;
   private static final int LAST_BYTE_END_DATA_OFFSET = 41;
+  private static final String DOUBLE_DELIM_TOKEN = "FLEURDELIM";
 
   // file properties
   final String pathToFile;
@@ -198,6 +199,8 @@ public class FCSFileReader {
         && rawKeywords.charAt(rawKeywords.length() - 1) == delimiter.charAt(0)) {
       rawKeywords = rawKeywords.substring(0, rawKeywords.length() - 1);
     }
+    rawKeywords = scrubKeywords(rawKeywords, delimiter);
+
     final StringTokenizer s = new StringTokenizer(rawKeywords, delimiter);
     final HashMap<String, String> header = new HashMap<>();
     Boolean ok = true;
@@ -208,9 +211,9 @@ public class FCSFileReader {
         } else {
           try {
           final String value = s.nextToken().trim();
-          header.put(key, value);
+          header.put(unScrubKeywords(key, delimiter), unScrubKeywords(value, delimiter));
           } catch (NoSuchElementException e) {
-            String message = "Keyword value for: " + key + " does not exist.  Header appears to be malformed, proceed with some caution.";
+            String message = "Keywordz value for: " + key + " does not exist.  Header appears to be malformed, proceed with some caution.";
             LogFactory.createLogger(this.getClass().getName()).log(Level.FINE, message, e);
           } 
         }
@@ -224,7 +227,22 @@ public class FCSFileReader {
     return header;
   }
 
-  private double[] readIntegerRow(double[] row) throws IOException {
+  private String scrubKeywords(String rawKeywords, String delimiter) {
+	  String cleantext = rawKeywords;
+	  //Handle the case of two consecutive delimiters. 
+	  String doubleD  = delimiter + delimiter;
+	  if (cleantext.contains(doubleD)) {
+    	  cleantext = cleantext.replace(doubleD, DOUBLE_DELIM_TOKEN);
+      }
+	return cleantext;
+}
+  
+  private String unScrubKeywords(String input, String delimiter) {
+      	String output = input.replace(DOUBLE_DELIM_TOKEN, input);
+	return output;
+}
+
+private double[] readIntegerRow(double[] row) throws IOException {
     for (int i = 0; i < row.length; i++) {
       Short shortI;
       final byte[] bytes = new byte[bitMap[i] / 8];

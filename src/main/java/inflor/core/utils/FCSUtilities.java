@@ -110,7 +110,8 @@ public class FCSUtilities {
      * Returns a String[] containing all of the values of the $PnN keywords from the specified
      * header table.
      */
-    final int columnCount = Integer.parseInt(keywords.get("$PAR"));
+    final String parCount = keywords.get("$PAR");
+	final int columnCount = Integer.parseInt(parCount);
     final String[] plist = new String[columnCount];
     for (int i = 1; i <= columnCount; i++) {
       final String keyword = "$P" + i + "N";
