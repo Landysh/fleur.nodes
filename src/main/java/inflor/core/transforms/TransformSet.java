@@ -41,10 +41,10 @@ public class TransformSet {
 		AbstractTransform t = map.get(name);
 		FCSDimension dim = df.getDimension(name);
 		if (t.getType().equals(TransformType.LOGICLE)){
-			((LogicleTransform) t).optimizeW(df.getDimension(name).getData());
-		} else if (t instanceof LogrithmicTransform){
+			((LogicleTransform) t).optimize(df.getDimension(name).getData());
+		} else if (t.getType().equals(TransformType.LOGARITHMIC)){
 			((LogrithmicTransform) t).optimize(dim.getData());
-		} else if (t instanceof BoundDisplayTransform){
+		} else if (t.getType().equals(TransformType.BOUNDARY)){
 			((BoundDisplayTransform) t).optimize(dim.getData());
 		}
 	}	

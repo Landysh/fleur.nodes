@@ -1,19 +1,16 @@
 /*
- * ------------------------------------------------------------------------
- *  Copyright 2016 by Aaron Hart
- *  Email: Aaron.Hart@gmail.com
+ * ------------------------------------------------------------------------ Copyright 2016 by Aaron
+ * Hart Email: Aaron.Hart@gmail.com
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License, Version 3, as
- *  published by the Free Software Foundation.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License, Version 3, as published by the Free Software Foundation.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, see <http://www.gnu.org/licenses>.
+ * You should have received a copy of the GNU General Public License along with this program; if
+ * not, see <http://www.gnu.org/licenses>.
  * ---------------------------------------------------------------------
  *
  * Created on December 14, 2016 by Aaron Hart
@@ -24,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -44,9 +42,9 @@ import inflor.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 
-  private static final Logger LOGGER = Logger.getLogger( FCSFileReader.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(FCSFileReader.class.getName());
 
-  
+
   private static final String DEFAULT_ENCODING = "UTF-8";
   // From Table 1 of FCS3.1 Spec. ANALYSIS and OTHER segments ignored.
   private static final int BEGIN_FCS_VERSION_OFFSET = 0;
@@ -54,16 +52,35 @@ public class FCSFileReader {
 
   private static final int BEGIN_BEGIN_TEXT_OFFSET = 10;
   private static final int END_END_TEXT_OFFSET = 17;
-  
+
   private static final int FIRST_BYTE_ENDTEXT_OFFSET = 18;
   private static final int LAST_BYTE_ENDTEXT_OFFSET = 25;
 
   private static final int FIRST_BYTE_BEGINDATA_OFFSET = 26;
   private static final int LAST_BYTE_BEGINDATA_OFFSET = 33;
-  
+
   private static final int FIRST_BYTE_END_DATA_OFFSET = 34;
   private static final int LAST_BYTE_END_DATA_OFFSET = 41;
+
+  // FCS Standard Keywords and Values.
+  public static final String BYTE_ORDER_KEY = "$BYTEORD";
+  // The values of the BYTEORD keyword have been restricted to either 1,2,3,4 (little endian) or
+  public static final String BYTE_ORDER_LITTLE = "1,2,3,4";
+  // 4,3,2,1 (big endian).
+  public static final String BYTE_ORDER_BIG = "4,3,2,1";
+  // Ahem. mother flower.
+  public static final String BYTE_ORDER_MIX = "3,4,1,2";
+
+
+  public static final String EVENT_COUNT_KEY = "$TOT";
+  public static final String DATATYPE_KEY = "$DATATYPE";
+  public static final String DATATYPE_FLOAT = "F";
+  public static final String DATATYPE_INT = "I";
+
+  // Fleur specific keys
   private static final String DOUBLE_DELIM_TOKEN = "FLEURDELIM";
+  public static final String FCS_VERSION_KEY = "FCSVersion";
+
 
   // file properties
   final String pathToFile;
@@ -78,32 +95,42 @@ public class FCSFileReader {
   TreeSet<FCSDimension> data;
   String[] compParameterList = null;
 
-  public FCSFileReader(String filePath) throws IOException {
+  private String endianness = BYTE_ORDER_LITTLE;
+
+  public FCSFileReader(String filePath) throws Exception {
     // Open the file
     pathToFile = filePath;
     final File f = new File(pathToFile);
     fcsFile = new RandomAccessFile(f, "r");
 
+    // do some sanity checking on the file before trying to parse it
+    if (fcsFile.length() <= 100) {
+      throw new Exception("File length < 100 bytes, this is very likely not valid.");
+    }
+
     // text specific properties
     beginText = readOffset(BEGIN_BEGIN_TEXT_OFFSET, END_END_TEXT_OFFSET);
     endText = readOffset(FIRST_BYTE_ENDTEXT_OFFSET, LAST_BYTE_ENDTEXT_OFFSET);
     final HashMap<String, String> header = readHeader();
-    header.put("FCSVersion", readFCSVersion(fcsFile));
+    header.put(FCS_VERSION_KEY, readFCSVersion(fcsFile));
     header.put(FCSUtilities.KEY_FILENAME, f.getName());
+
+    // set endian flag based on required keyword.
+    endianness = header.get(BYTE_ORDER_KEY);
 
     fileDimensionList = FCSUtilities.parseDimensionList(header);
 
-    final int rowCount = Integer.parseInt(header.get("$TOT"));
+    final int rowCount = Integer.parseInt(header.get(EVENT_COUNT_KEY));
     fcsFrame = new FCSFrame(header, rowCount);
 
     // data specific properties
     beginData = readOffset(FIRST_BYTE_BEGINDATA_OFFSET, LAST_BYTE_BEGINDATA_OFFSET);
     readOffset(FIRST_BYTE_END_DATA_OFFSET, LAST_BYTE_END_DATA_OFFSET);
     bitMap = createBitMap(header);
-    dataType = fcsFrame.getKeywordValue("$DATATYPE");
+    dataType = fcsFrame.getKeywordValue(DATATYPE_KEY);
     data = new TreeSet<>();
   }
-  
+
   public void close() throws IOException {
     fcsFile.close();
   }
@@ -131,7 +158,7 @@ public class FCSFileReader {
   }
 
   public void initRowReader() throws IOException {
-     fcsFile.seek(beginData);
+    fcsFile.seek(beginData);
   }
 
   public void readData() throws IOException {
@@ -155,7 +182,7 @@ public class FCSFileReader {
 
     fcsFrame.setData(data);
   }
-  
+
   public void initializeFrame() throws IOException {
     data = new TreeSet<>();
     for (int i = 0; i < fileDimensionList.length; i++) {
@@ -167,19 +194,10 @@ public class FCSFileReader {
   }
 
   public String readFCSVersion(RandomAccessFile raFile) throws IOException {
-      fcsFile.seek(0);
-      final byte[] bytes = new byte[END_FCS_VERSION_OFFSSET - BEGIN_FCS_VERSION_OFFSET + 1];
-      raFile.read(bytes);
-      return new String(bytes, DEFAULT_ENCODING);
-  }
-
-  private double[] readFloatRow(double[] row) throws IOException {
-    for (int i = 0; i < row.length; i++) {
-      final byte[] bytes = new byte[bitMap[i] / 8];
-      fcsFile.read(bytes);
-      row[i] = ByteBuffer.wrap(bytes).getFloat();
-    }
-    return row;
+    fcsFile.seek(0);
+    final byte[] bytes = new byte[END_FCS_VERSION_OFFSSET - BEGIN_FCS_VERSION_OFFSET + 1];
+    raFile.read(bytes);
+    return new String(bytes, DEFAULT_ENCODING);
   }
 
   private HashMap<String, String> readHeader() throws IOException {
@@ -204,23 +222,24 @@ public class FCSFileReader {
     final StringTokenizer s = new StringTokenizer(rawKeywords, delimiter);
     final HashMap<String, String> header = new HashMap<>();
     Boolean ok = true;
-      while (s.hasMoreTokens() && ok) {
-        final String key = s.nextToken().trim();
-        if (key.trim().isEmpty()) {
-          ok = false;
-        } else {
-          try {
+    while (s.hasMoreTokens() && ok) {
+      final String key = s.nextToken().trim();
+      if (key.trim().isEmpty()) {
+        ok = false;
+      } else {
+        try {
           final String value = s.nextToken().trim();
           header.put(unScrubKeywords(key, delimiter), unScrubKeywords(value, delimiter));
-          } catch (NoSuchElementException e) {
-            String message = "Keywordz value for: " + key + " does not exist.  Header appears to be malformed, proceed with some caution.";
-            LogFactory.createLogger(this.getClass().getName()).log(Level.FINE, message, e);
-          } 
+        } catch (NoSuchElementException e) {
+          String message = "Keyword value for: " + key
+              + " does not exist.  Header appears to be malformed, proceed with some caution.";
+          LogFactory.createLogger(this.getClass().getName()).log(Level.FINE, message, e);
         }
       }
+    }
 
 
-    
+
     HashFunction md = Hashing.sha256();
     HashCode code = md.hashBytes(keywordBytes);
     header.put("SHA-256", code.toString());
@@ -228,29 +247,18 @@ public class FCSFileReader {
   }
 
   private String scrubKeywords(String rawKeywords, String delimiter) {
-	  String cleantext = rawKeywords;
-	  //Handle the case of two consecutive delimiters. 
-	  String doubleD  = delimiter + delimiter;
-	  if (cleantext.contains(doubleD)) {
-    	  cleantext = cleantext.replace(doubleD, DOUBLE_DELIM_TOKEN);
-      }
-	return cleantext;
-}
-  
-  private String unScrubKeywords(String input, String delimiter) {
-      	String output = input.replace(DOUBLE_DELIM_TOKEN, input);
-	return output;
-}
-
-private double[] readIntegerRow(double[] row) throws IOException {
-    for (int i = 0; i < row.length; i++) {
-      Short shortI;
-      final byte[] bytes = new byte[bitMap[i] / 8];
-      fcsFile.read(bytes);
-      shortI = ByteBuffer.wrap(bytes).getShort();
-      row[i] = shortI;
+    String cleantext = rawKeywords;
+    // Handle the case of two consecutive delimiters.
+    String doubleD = delimiter + delimiter;
+    if (cleantext.contains(doubleD)) {
+      cleantext = cleantext.replace(doubleD, DOUBLE_DELIM_TOKEN);
     }
-    return row;
+    return cleantext;
+  }
+
+  private String unScrubKeywords(String input, String delimiter) {
+    String output = input.replace(DOUBLE_DELIM_TOKEN, input);
+    return output;
   }
 
   private int readOffset(int start, int end) throws IOException {
@@ -262,15 +270,60 @@ private double[] readIntegerRow(double[] row) throws IOException {
   }
 
   public double[] readRow() throws IOException {
+
     /**
      * Reads the next row of the data.
      */
-
     double[] row = new double[fileDimensionList.length];
-    if ("F".equals(dataType)) {
-      row = readFloatRow(row);
-    } else if ("I".equals(dataType)) {
-      row = readIntegerRow(row);
+    for (int i = 0; i < row.length; i++) {
+      final byte[] bytes = new byte[bitMap[i] / 8];
+      fcsFile.read(bytes);
+      ByteBuffer buffy = ByteBuffer.wrap(bytes);
+      
+      //Swap bytes around based on endian type.
+      if (endianness.equals(BYTE_ORDER_BIG)) {
+        buffy = buffy.order(ByteOrder.BIG_ENDIAN);
+      } else if (endianness.equals(BYTE_ORDER_LITTLE)) {
+        buffy = buffy.order(ByteOrder.LITTLE_ENDIAN);
+      } else if (endianness.contentEquals(BYTE_ORDER_MIX)   ) {
+        //Create new temporary byte arrays.
+        byte[] ba12 = new byte[bitMap[i] / 8/2];
+        byte[] ba34 = new byte[bitMap[i] / 8/2];
+        // Read bytes 3&4
+        for (int byteIndex=0;byteIndex < ba12.length;byteIndex++) {
+          ba34[byteIndex] = bytes[byteIndex];
+        }
+        // Read bytes 1&2
+        for (int byteIndex=0;byteIndex < ba34.length;byteIndex++) {
+          ba12[byteIndex] = bytes[byteIndex + bytes.length/2];
+        }
+        // Create and fill little endian array with byte fragmets 1,2 and 3,4
+        byte[] littleE = new byte[bitMap[i] / 8];
+        for (int byteIndex = 0;byteIndex<littleE.length;byteIndex++) {
+          if (byteIndex < littleE.length/2) {
+            //Add bytes from 1,2 to start.
+            littleE[byteIndex] = ba12[byteIndex];
+          } else {
+            //Add bytes from 3,4 to 2nd half
+            int offset = (littleE.length/2);
+            littleE[byteIndex] = ba34[byteIndex-offset];
+          }
+        }
+        // Byte order should now be 1,2,3,4 (LE)
+        buffy = ByteBuffer.wrap(littleE);
+        buffy.order(ByteOrder.LITTLE_ENDIAN);
+      } else {
+        throw new IOException("Unknown endian definition: " + endianness);
+      }
+      
+      // Read data as specifcied datatype.
+      if (DATATYPE_FLOAT.equals(dataType)) {
+        row[i] = buffy.getFloat();
+      } else if (DATATYPE_INT.equals(dataType)) {
+        row[i] = buffy.getInt();
+      } else {
+        throw new IOException("DataType " + dataType + " not supported." );
+      }
     }
     return row;
   }
@@ -286,7 +339,7 @@ private double[] readIntegerRow(double[] row) throws IOException {
       return null;
     }
   }
-  
+
   public static FCSFrame readNoData(String filePath) {
     FCSFileReader reader;
     try {
@@ -298,7 +351,7 @@ private double[] readIntegerRow(double[] row) throws IOException {
       return null;
     }
   }
-  
+
   public static Map<String, String> readHeaderOnly(String filePath) {
     FCSFileReader reader;
     try {
@@ -325,6 +378,7 @@ private double[] readIntegerRow(double[] row) throws IOException {
   public Integer getBeginData() {
     return beginData;
   }
+
   public String getDataType() {
     return dataType;
   }

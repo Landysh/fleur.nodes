@@ -2,7 +2,6 @@ package inflor.knime.ports.fcs;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -49,8 +48,6 @@ public class FCSFramePortObject extends FileStorePortObject {
   private WeakReference<FCSFrameContent> mContent;
   private List<String> mDimensionNames;
 
-  private Object FileStore;
-  
   public FCSFramePortObject() {
     // to be used in conjunction only with .load().
   }

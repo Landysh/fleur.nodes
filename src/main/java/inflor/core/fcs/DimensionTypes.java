@@ -25,7 +25,8 @@ public enum DimensionTypes {
   SIDE_SCATTER(new String[] {".*side.*", ".*ssc.*", ".*orth.*"}),
   VIABILITY(new String[] {}), 
   TIME(new String[] {".*time.*"}), 
-  DNA(new String[] {".*dapi.*", ".*pi.*"});
+  DNA(new String[] {".*dapi.*", ".*pi.*"}),
+  PULSE_WIDTH(new String[] {"Width"});
 
   private final String[] regi;
 

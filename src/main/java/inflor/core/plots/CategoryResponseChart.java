@@ -62,9 +62,9 @@ public class CategoryResponseChart {
         for (int j = 0; j < unMergedData.length; j++) {
           unMergedData[j] = transformedData[i * unMergedData.length + j];
         }
-
-        Histogram1D hist = new Histogram1D(unMergedData, transform.getMinTranformedValue(),
-            transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+        double tMin = transform.getMinTranformedValue();
+        double tMax = transform.getMaxTransformedValue();
+        Histogram1D hist = new Histogram1D(unMergedData, tMin, tMax, ChartingDefaults.BIN_COUNT);
         double[] x = hist.getNonZeroX();
         double[] y = new double[x.length];
         for (int j = 0; j < y.length; j++) {

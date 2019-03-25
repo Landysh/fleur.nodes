@@ -31,6 +31,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   private static final long serialVersionUID = 1L;
   
+  private static final double LOGICLE_T_PERCENTILE = 99;
   private static final double LOGICLE_W_PERCENTILE = 5;
   private static final double DEFAULT_T = 262144;
   private static final double DEFAULT_W = 0.5;
@@ -78,7 +79,7 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
     return newData;
   }
 
-  public void optimizeW(double[] data) {
+  private double optimizeW(double[] data) {
     /**
      * Based on the percentile method suggested by Parks/Moore.
      */
@@ -88,7 +89,9 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
     } else {
         this.w = 0.2;//TODO: Reasonable?
     }
-    this.logicle = new FastLogicle(logicle.T, this.w, logicle.M, logicle.A);
+    //TODO HACKZ
+    if (w<=0) w=0.2;
+    return w;
   }
 
   @Override
@@ -176,5 +179,24 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   @Override
   public String getDetails() {
     return "t=" + t + ", w="+w+", m="+m+", a=" +a;
+  }
+
+  @Override
+  public void optimize(double[] rawData) {
+    double newt = new Percentile().evaluate(rawData, LOGICLE_T_PERCENTILE);
+    double neww = optimizeW(rawData);
+    //TODO A and M.
+    try {
+      this.logicle = new FastLogicle(newt, neww, logicle.M, logicle.A);
+    }catch (Exception e) {
+      //Ideally we catch this before hand but for now:
+      Exception e2 = new RuntimeException("bad input parameters: T [1] w [2], M [3], A [4]"
+          .replace("[1]", Double.toString(logicle.T))
+          .replace("[2]", Double.toString(logicle.w))
+          .replace("[3]", Double.toString(logicle.M))
+          .replace("[4]", Double.toString(logicle.A))
+          );
+      e2.initCause(e);
+    }
   }
 }

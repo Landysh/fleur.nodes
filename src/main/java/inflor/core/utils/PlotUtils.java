@@ -108,7 +108,9 @@ public class PlotUtils {
     }
     return paintScale;
   }
-
+  
+  
+  // TODO: move to FCSUtils?
   public static AbstractTransform createDefaultTransform(String parameterName) {
     if (DimensionTypes.DNA.matches(parameterName)
         || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
@@ -116,6 +118,9 @@ public class PlotUtils {
         || DimensionTypes.TIME.matches(parameterName)
         || FCSUtilities.MERGE_DIMENSION_NAME.equals(parameterName)){
       return new BoundDisplayTransform(0, 262144);
+      
+    } else if (DimensionTypes.PULSE_WIDTH.matches(parameterName)) {
+       return new BoundDisplayTransform(0, 100);
     } else {
       return new LogicleTransform();
     }

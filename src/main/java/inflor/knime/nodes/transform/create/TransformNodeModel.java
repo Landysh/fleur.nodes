@@ -164,7 +164,7 @@ public class TransformNodeModel extends NodeModel {
     BufferedDataContainer summaryContainer = exec.createDataContainer(outSpecs[1]);
     subtaskIndex = 0;
     transforms.optimize(summaryFrame);
-    transforms.getMap().entrySet().parallelStream().forEach(entry -> optimizeTransform(summaryFrame,
+    transforms.getMap().entrySet().stream().forEach(entry -> optimizeTransform(summaryFrame,
         entry, summaryContainer, optimizeExec, transforms.getMap().size()));
     summaryContainer.close();
 
@@ -230,7 +230,7 @@ public class TransformNodeModel extends NodeModel {
         transformSummaryContainer.addRowToTable(row);
       }
     } catch (IOException e) {
-      logger.error("Unable to create imgage cell.", e);
+      logger.error("Unable to create image cell.", e);
     }
   }
 

@@ -26,6 +26,8 @@ public class Histogram1D {
       int bin = (int) (data[i] / deltaX);
       if (bin >= y.length) {
         bin = binCount - 1;
+      } else if (bin<=0) {
+        bin=0;
       }
       y[bin]++;
     }

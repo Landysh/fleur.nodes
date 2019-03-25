@@ -18,7 +18,7 @@
       point="org.knime.workbench.repository.nodes">
 <node category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
 <node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
-<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="true" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
+<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
 <node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.treesne.TreeSNENodeFactory"/>
 <node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
 <node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
@@ -32,7 +32,7 @@
 <node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.bhtsne.table.TSNENodeFactory">
 </node>
 <node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
-<node category-path="/inflor/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory" id="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
+<node category-path="/inflor/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">

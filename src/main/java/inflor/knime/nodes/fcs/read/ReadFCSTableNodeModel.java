@@ -2,6 +2,7 @@ package inflor.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -92,21 +93,22 @@ public class ReadFCSTableNodeModel extends NodeModel {
     DataTableSpec[] specs = null;
     try {
       final FCSFileReader reader = new FCSFileReader(mFileLocation.getStringValue());
+      reader.initializeFrame();
       final FCSFrame eventsFrame = reader.getFCSFrame();
       specs = createPortSpecs(eventsFrame);
       reader.close();
     } catch (final Exception e) {
       logger.error(ERROR_CHECK_FILE, e);
-      throw new InvalidSettingsException(ERROR_CHECK_FILE);
+      throw new InvalidSettingsException(ERROR_CHECK_FILE, e);
     }
     return specs;
   }
 
-  private DataTableSpec createDataSpec(FCSFrame columnStore) throws InvalidSettingsException {
-    List<String> columnNames = columnStore.getDimensionNames();
+  private DataTableSpec createDataSpec(FCSFrame df) throws InvalidSettingsException {
+    List<String> columnNames = df.getDimensionNames();
     DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.size()];
     for (String columnName : columnNames) {
-      int specIndex = FCSUtilities.findParameterNumnberByName(columnStore.getKeywords(), columnName) - 1;
+      int specIndex = FCSUtilities.findParameterNumnberByName(df.getKeywords(), columnName) - 1;
       colSpecs[specIndex] = new DataColumnSpecCreator(columnName, DoubleCell.TYPE).createSpec();
     }
     return new DataTableSpec(colSpecs);
@@ -144,11 +146,11 @@ public class ReadFCSTableNodeModel extends NodeModel {
     try {
       reader = new FCSFileReader(mFileLocation.getStringValue());
       Map<String, String> keywords = reader.getHeader();
-
+      reader.initializeFrame();
       FCSFrame columnStore = reader.getFCSFrame();
       DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
 
-      // Read header section"foo"
+      // Read header section
       headerTable = exec.createDataContainer(tableSpecs[0]);
       readHeader(headerTable, keywords);
 
@@ -164,13 +166,16 @@ public class ReadFCSTableNodeModel extends NodeModel {
               final RowKey rowKey = new RowKey(j.toString());
               DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
 
-              final double[] fcsRow = reader.readRow();
-              // for each uncomped parameter
-              int k = 0;
-              while (k < columnStore.getDimensionCount()) {
-                // add uncomped data
-                dataCells[k] = new DoubleCell(fcsRow[k]);
-                k++;
+              final double[] fcsRow = reader.readRow(); 
+            
+              
+              // for each uncomped parameter TODO
+              List<String> colnames = reader.getFCSFrame().getDimensionNames();
+              Iterator<String> colIter = colnames.iterator();
+              while (colIter.hasNext()) {
+                String pName = colIter.next();
+                Integer pIndex = FCSUtilities.findParameterNumnberByName(reader.getHeader(), pName)-1;
+                dataCells[pIndex] = new DoubleCell(fcsRow[pIndex]);
               }
               final DataRow dataRow = new DefaultRow(rowKey, dataCells);
               dataTable.addRowToTable(dataRow);

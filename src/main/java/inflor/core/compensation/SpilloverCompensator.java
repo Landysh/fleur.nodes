@@ -93,7 +93,7 @@ public class SpilloverCompensator extends DomainObject {
     String spill;
     // TODO: double check this, it looks wrong. Extract constants. 
     if (keywords.containsKey("$SPILLOVER")) {
-      spill = keywords.get("SPILLOVER");
+      spill = keywords.get("$SPILLOVER");
     } else if (keywords.containsKey("SPILL")) {
       spill = keywords.get("SPILL");
     } else {

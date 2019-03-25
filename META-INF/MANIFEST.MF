@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: io.landysh.inflor;singleton:=true
-Bundle-Version: 0.4.1
+Bundle-Version: 0.4.2
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.knime.workbench.core,
  org.knime.base,
@@ -33,3 +33,4 @@ Bundle-ClassPath: lib/guava-19.0.jar,
  lib/Jama-1.0.3.jar
 Bundle-Activator: inflor.knime.nodes.fcs.read.ReadFCSNodePlugin
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: io.landysh.inflor

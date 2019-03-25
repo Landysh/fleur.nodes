@@ -1,5 +1,7 @@
 package inflor.unit;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import org.junit.Test;
 
 import inflor.core.singlets.SingletsModel;
@@ -34,7 +36,6 @@ public class SingletsModelTest {
     final SingletsModel model3 = new SingletsModel(testParameters3);
 
     final SingletsModel[] testModels = {model1, model2, model3};
-
     System.out.println("SingletsModel testFindColumnNames completed (succefully or otherwise)");
 
   }

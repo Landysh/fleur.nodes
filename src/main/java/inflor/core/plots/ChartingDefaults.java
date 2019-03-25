@@ -18,7 +18,7 @@
 package inflor.core.plots;
 
 public class ChartingDefaults {
-  public static final int BIN_COUNT = 256;
+  public static final int BIN_COUNT = 512;
   public static final ColorSchemes DEFAULT_COLOR_SCHEME = ColorSchemes.COLOR;
   public static final PlotTypes DEFAULT_PLOT_TYPE = PlotTypes.DENSITY;
 

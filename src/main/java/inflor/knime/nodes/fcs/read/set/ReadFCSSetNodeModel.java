@@ -35,8 +35,12 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import inflor.core.compensation.SpilloverCompensator;
 import inflor.core.data.FCSDimension;
 import inflor.core.data.FCSFrame;
 import inflor.core.fcs.FCSFileReader;
@@ -61,10 +65,15 @@ public class ReadFCSSetNodeModel extends NodeModel {
   private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSSetNodeModel.class);
 
   // Folder containing FCS Files.
-  static final String KEY_PATH = "Path";
+  static final String KEY_PATH = "PATH";
   static final String DEFAULT_PATH = "None";
   private final SettingsModelString mPath = new SettingsModelString(KEY_PATH, DEFAULT_PATH);
-
+  
+  // Apply compensation
+  static final String KEY_COMP = "APPLY_COMP";
+  static final Boolean DEFAULT_COMP = true;
+  private final SettingsModelBoolean mComp = new SettingsModelBoolean(KEY_COMP, DEFAULT_COMP);
+  
   // Default Preview Frame Settings.
   // The maximum size of the preview frame (in measurements eg. 100kevents *
   // 10 dimensions)
@@ -88,7 +97,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
-
+    
     if (!mPath.getStringValue().equals(DEFAULT_PATH)) {
       return new DataTableSpec[] {createSpec()};
     } else {
@@ -202,7 +211,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
       filePaths
         .parallelStream()
         .map(FCSFileReader::read)
-        .forEach(columnStore -> addRow(columnStore, container, exec));
+        .forEach(fcsFrame -> addRow(fcsFrame, container, exec));
     } catch (NullPointerException e){
       throw new CanceledExecutionException("Execution cancelled.");
     }
@@ -227,11 +236,19 @@ public class ReadFCSSetNodeModel extends NodeModel {
     return new BufferedDataTable[] {finalTable};
   }
 
-
-
   private synchronized void addRow(FCSFrame df, BufferedDataContainer container,
       ExecutionContext exec) {
-
+    //Compensate from the header. 
+    if (mComp.getBooleanValue()) {
+      SpilloverCompensator sc = new SpilloverCompensator(df.getKeywords());
+      try {
+        df = sc.compensateFCSFrame(df, true);
+      } catch (InvalidProtocolBufferException e) {
+        throw new RuntimeException("Unable to compensate finle: " + df.getDisplayName());
+      }
+    }
+    
+    // Create Preview frame.
     FCSConcatenator concatr = new FCSConcatenator();
     FCSFrame f1 = downSample(df);
     if (previewFrame == null) {
@@ -296,6 +313,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
     mPath.loadSettingsFrom(settings);
+    mComp.loadSettingsFrom(settings);
   }
 
   /**
@@ -320,6 +338,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
     mPath.saveSettingsTo(settings);
+    mComp.saveSettingsTo(settings);
   }
 
   /**
@@ -328,5 +347,6 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
     mPath.validateSettings(settings);
+    mComp.validateSettings(settings);
   }
 }
