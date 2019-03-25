@@ -17,11 +17,14 @@
  */
 package inflor.core.transforms;
 
-import com.google.common.primitives.Doubles;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 public class BoundDisplayTransform extends AbstractTransform {
 
   private static final long serialVersionUID = 1L;
+  private static final double LOWER_BOUND_PERCENT = 1;
+  private static final double UPPER_BOUND_PERCENT = 99;
+
   private double boundaryMin;
   private double boundaryMax;
 
@@ -99,8 +102,8 @@ public class BoundDisplayTransform extends AbstractTransform {
   }
 
   public void optimize(double[] data) {
-    this.boundaryMin = Doubles.min(data);
-    this.boundaryMax = Doubles.max(data);
+    this.boundaryMin = new Percentile().evaluate(data, LOWER_BOUND_PERCENT);
+    this.boundaryMax = new Percentile().evaluate(data, UPPER_BOUND_PERCENT);
   }
 
   @Override

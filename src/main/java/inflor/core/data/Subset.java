@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import inflor.core.gates.BitSetAccumulator;
 import inflor.core.gates.BitSetOperator;
-import inflor.core.gates.GateUtilities;
 import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")

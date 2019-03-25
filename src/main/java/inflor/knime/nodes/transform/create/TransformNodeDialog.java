@@ -34,7 +34,6 @@ import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeDialogPane;
-import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
@@ -49,8 +48,6 @@ import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 public class TransformNodeDialog extends NodeDialogPane {
   
-  private static final NodeLogger logger = NodeLogger.getLogger(TransformNodeDialog.class);
-
   private static final String NO_COLUMNS_AVAILABLE_WARNING = "No Data Available.";
 
   private TransformNodeSettings modelSettings;

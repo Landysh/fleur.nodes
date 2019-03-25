@@ -26,7 +26,7 @@ public class LineageViewFrame extends ApplicationFrame {
   private static final String DIM2 = "SSC-A";
   private static final String DIM1 = "SSC-W";
 
-  public LineageViewFrame(String title) throws IOException {
+  public LineageViewFrame(String title) throws Exception {
     super(title);
 
     List<Hierarchical> testSpecs = new ArrayList<>();

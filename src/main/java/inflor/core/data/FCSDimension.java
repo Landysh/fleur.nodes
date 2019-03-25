@@ -16,7 +16,6 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
   // $PnS Stain name
   private String stainName;
 
-  private String tranformReference;
   // $PnR Range
   private double range;
 
@@ -96,16 +95,8 @@ public class FCSDimension extends DomainObject implements Comparable <FCSDimensi
     }
   }
 
-  public String getTranformReference() {
-    return tranformReference;
-  }
-
   public void setData(double[] newData) {
     this.data = newData;
-  }
-
-  public void setTranformReference(String tranformReference) {
-    this.tranformReference = tranformReference;
   }
 
   @Override

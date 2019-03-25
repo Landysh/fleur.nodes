@@ -45,5 +45,7 @@ public abstract class AbstractTransform extends DomainObject implements Serializ
   public abstract TransformType getType();
 
   public abstract String getDetails();
+  
+  public abstract void optimize(double[] rawData);
 
 }

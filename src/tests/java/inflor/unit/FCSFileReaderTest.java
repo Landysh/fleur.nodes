@@ -2,7 +2,6 @@ package inflor.unit;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.RandomAccessFile;
 
 import org.junit.Test;

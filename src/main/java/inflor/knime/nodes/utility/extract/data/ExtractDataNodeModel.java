@@ -64,7 +64,6 @@ public class ExtractDataNodeModel extends NodeModel {
   private SettingsModelBoolean mTransform =
       new SettingsModelBoolean(KEY_TRANSFORM_DATA, DEFAULT_TRANSFORM);
 
-  private int rowIndex;
   private DataTableSpec outputSpec;
   private TransformSet transformSet;
 
@@ -113,7 +112,6 @@ public class ExtractDataNodeModel extends NodeModel {
     
     BufferedDataContainer container = exec.createDataContainer(outputSpec);
     
-    rowIndex = 0;
     dataSet
       .parallelStream()
       .map(cell -> cell.getFCSFrameValue())
@@ -159,7 +157,6 @@ public class ExtractDataNodeModel extends NodeModel {
       DataRow row = new DefaultRow(rowKey, dataCells);
       
       synchronized (container) {
-        rowIndex++;
         container.addRowToTable(row);
       }
 

@@ -1,24 +1,18 @@
 package inflor.knime.nodes.treesne;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
@@ -43,7 +37,6 @@ public class TreeSNENodeDialog extends NodeDialogPane {
   private static final String TITLE_DATA_TAB = "Data Settings";
   private static final String TITLE_TSNE_TAB = "tSNE Settings";
   private static final String TITLE_TREESNE_TAB = "TreeSNE Settings";
-  private static final String LABEL_DIMENSION_BOX = "Frame Dimensions";
   TreeSNENodeSettings mSettings = new TreeSNENodeSettings();
   //Data Settings
   JPanel dataSettingsTab;

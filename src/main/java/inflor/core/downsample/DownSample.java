@@ -6,8 +6,6 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.math3.ml.distance.EuclideanDistance;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 

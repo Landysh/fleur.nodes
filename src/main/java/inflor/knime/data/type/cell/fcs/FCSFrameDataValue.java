@@ -27,7 +27,6 @@ import org.knime.core.data.DataValue;
 import org.knime.core.data.DataValueComparator;
 import org.knime.core.data.ExtensibleUtilityFactory;
 
-import inflor.core.data.FCSFrame;
 import inflor.knime.core.Icons;
 
 public interface FCSFrameDataValue extends DataValue {
