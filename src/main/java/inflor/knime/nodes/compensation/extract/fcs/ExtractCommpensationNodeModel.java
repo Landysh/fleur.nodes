@@ -2,6 +2,7 @@ package inflor.knime.nodes.compensation.extract.fcs;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.knime.core.node.CanceledExecutionException;
@@ -55,10 +56,11 @@ public class ExtractCommpensationNodeModel extends NodeModel {
   protected CompMatrixPortSpec[] configure(final PortObjectSpec[] inSpecs)
       throws InvalidSettingsException {
 
+    String path = mFileLocation.getStringValue();
+
     CompMatrixPortSpec spec;
-    try {
-      String path = mFileLocation.getStringValue();
-      FCSFileReader reader = new FCSFileReader(path);
+    try (RandomAccessFile raf = new RandomAccessFile(path, "r")){
+      FCSFileReader reader = new FCSFileReader(path, raf);
       Map<String, String> header = reader.getHeader();
       spec = createPortSpec(header);
       reader.close();
@@ -86,9 +88,10 @@ public class ExtractCommpensationNodeModel extends NodeModel {
       throws CanceledExecutionException {
     logger.info("Starting Execution");
     FCSFileReader reader;
-    try {
-      String path = mFileLocation.getStringValue();
-      reader = new FCSFileReader(path);
+    String path = mFileLocation.getStringValue();
+
+    try  (RandomAccessFile raf = new RandomAccessFile(path, "r")){
+      reader = new FCSFileReader(path, raf);
       SpilloverCompensator compr = new SpilloverCompensator(reader.getHeader());
       CompMatrixPortSpec spec = createPortSpec(reader.getHeader());
       CompMatrixPortObject port = new CompMatrixPortObject(spec, compr.getSpilloverValues());

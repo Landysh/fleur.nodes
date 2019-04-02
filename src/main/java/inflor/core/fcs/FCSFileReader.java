@@ -97,11 +97,11 @@ public class FCSFileReader {
 
   private String endianness = BYTE_ORDER_LITTLE;
 
-  public FCSFileReader(String filePath) throws Exception {
+  public FCSFileReader(String filePath, RandomAccessFile raf) throws Exception {
     // Open the file
     pathToFile = filePath;
     final File f = new File(pathToFile);
-    fcsFile = new RandomAccessFile(f, "r");
+    fcsFile = raf;
 
     // do some sanity checking on the file before trying to parse it
     if (fcsFile.length() <= 100) {
@@ -330,8 +330,8 @@ public class FCSFileReader {
 
   public static FCSFrame read(String filePath) {
     FCSFileReader reader;
-    try {
-      reader = new FCSFileReader(filePath);
+    try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")){
+      reader = new FCSFileReader(filePath, raf);
       reader.readData();
       return reader.getFCSFrame();
     } catch (Exception e) {
@@ -342,8 +342,8 @@ public class FCSFileReader {
 
   public static FCSFrame readNoData(String filePath) {
     FCSFileReader reader;
-    try {
-      reader = new FCSFileReader(filePath);
+    try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
+      reader = new FCSFileReader(filePath,raf);
       reader.initializeFrame();
       return reader.getFCSFrame();
     } catch (Exception e) {
@@ -354,8 +354,8 @@ public class FCSFileReader {
 
   public static Map<String, String> readHeaderOnly(String filePath) {
     FCSFileReader reader;
-    try {
-      reader = new FCSFileReader(filePath);
+    try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
+      reader = new FCSFileReader(filePath, raf);
       return reader.getHeader();
     } catch (Exception e) {
       LOGGER.log(Level.FINE, "Header unreadable.", e);
@@ -385,8 +385,8 @@ public class FCSFileReader {
 
   public static boolean isValidFCS(String filePath) {
     boolean isValid = false;
-    try {
-      FCSFileReader reader = new FCSFileReader(filePath);
+    try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")){
+      FCSFileReader reader = new FCSFileReader(filePath, raf);
       isValid = FCSUtilities.validateHeader(reader.getHeader());
     } catch (Exception e) {
       LOGGER.log(Level.FINE, "Invalid File:" + filePath, e);

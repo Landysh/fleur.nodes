@@ -2,6 +2,7 @@ package inflor.ui;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +28,20 @@ public class LineageViewFrame extends ApplicationFrame {
   private static final String DIM1 = "SSC-W";
 
 
-  public LineageViewFrame(String title) throws Exception {
+  public LineageViewFrame(String title) throws IOException {
     super(title);
-
-    List<Hierarchical> testSpecs = new ArrayList<>();
-
     String logiclePath = "src/io/landysh/inflor/tests/extData/logicle-example.fcs";
-    final FCSFileReader reader = new FCSFileReader(logiclePath);
-    reader.readData();
-    final FCSFrame dataStore = reader.getFCSFrame();
+    List<Hierarchical> testSpecs = new ArrayList<>();
+    final FCSFrame dataStore;
 
+    try  (RandomAccessFile raf = new RandomAccessFile(logiclePath, "r")){
+      final FCSFileReader reader = new FCSFileReader(logiclePath, raf);
+      reader.readData();
+      dataStore = reader.getFCSFrame();
+    } catch (Exception e) {
+      throw new IOException("Failed to read file");
+    }
+    
     ChartSpec ly = new ChartSpec();
     ly.setPlotType(PlotTypes.DENSITY);
     ly.setDomainAxisName(DIM1);

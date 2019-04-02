@@ -2,6 +2,7 @@ package inflor.knime.nodes.fcs.read;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,235 +35,236 @@ import inflor.core.fcs.FCSFileReader;
 import inflor.core.utils.FCSUtilities;
 
 /**
- * This is the node model implementation for FCSReader (rows). It is designed to use the Inflor
- * FCSFileReader in the context of a KNIME Source node which produces a standard KNIME data table.
+ * This is the node model implementation for FCSReader (rows). It is designed to
+ * use the Inflor FCSFileReader in the context of a KNIME Source node which
+ * produces a standard KNIME data table.
  * 
  * @author Aaron Hart
  */
 public class ReadFCSTableNodeModel extends NodeModel {
 
-  private static final String ERROR_EXECUTION_FAILED = "Execution Failed while reading data file.";
+	private static final String ERROR_EXECUTION_FAILED = "Execution Failed while reading data file.";
 
-  private static final String ERROR_CHECK_FILE = "Error while checking file. Check that it exists and is valid.";
+	private static final String ERROR_CHECK_FILE = "Error while checking file. Check that it exists and is valid.";
 
-  private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSTableNodeModel.class);
+	private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSTableNodeModel.class);
 
-  // File Location
-  static final String KEY_FILE_LOCATION = "File Location";
-  static final String DEFAULT_FILE_LOCATION = "NoFile";
-  
-  // Compensate while reading
-  static final String KEY_COMP_ON_READ = "Compensate on read:";
+	// File Location
+	static final String KEY_FILE_LOCATION = "File Location";
+	static final String DEFAULT_FILE_LOCATION = "NoFile";
 
-  static final Boolean DEFAULT_COMP_ON_READ = false;
+	// Compensate while reading
+	static final String KEY_COMP_ON_READ = "Compensate on read:";
 
-  private static final Object WARN_CHOOSE_A_FILE = "No file selected.";
-  private final SettingsModelString mFileLocation =
-      new SettingsModelString(KEY_FILE_LOCATION, DEFAULT_FILE_LOCATION);
-  
-  // Header Only
-  static final String KEY_HEADER_ONLY = "Metadata only";
+	static final Boolean DEFAULT_COMP_ON_READ = false;
 
-  static final Boolean DEFAULT_HEADER_ONLY = false;
+	private static final Object WARN_CHOOSE_A_FILE = "No file selected.";
+	private final SettingsModelString mFileLocation = new SettingsModelString(KEY_FILE_LOCATION, DEFAULT_FILE_LOCATION);
 
-  private final SettingsModelBoolean mHeaderOnly =
-      new SettingsModelBoolean(KEY_HEADER_ONLY, DEFAULT_HEADER_ONLY);
-  
-  
+	// Header Only
+	static final String KEY_HEADER_ONLY = "Metadata only";
 
-  private int currentKeywordIndex = 0;
+	static final Boolean DEFAULT_HEADER_ONLY = false;
 
-  /**
-   * Constructor for the node model.
-   */
-  protected ReadFCSTableNodeModel() {
+	private final SettingsModelBoolean mHeaderOnly = new SettingsModelBoolean(KEY_HEADER_ONLY, DEFAULT_HEADER_ONLY);
 
-    // Top port contains header information, bottom, array data
-    super(0, 2);
-  }
+	private int currentKeywordIndex = 0;
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
-      throws InvalidSettingsException {
-    if (mFileLocation.getStringValue().equals(DEFAULT_FILE_LOCATION)) {
-      logger.warn(WARN_CHOOSE_A_FILE);
-    }
-    DataTableSpec[] specs = null;
-    try {
-      final FCSFileReader reader = new FCSFileReader(mFileLocation.getStringValue());
-      reader.initializeFrame();
-      final FCSFrame eventsFrame = reader.getFCSFrame();
-      specs = createPortSpecs(eventsFrame);
-      reader.close();
-    } catch (final Exception e) {
-      logger.error(ERROR_CHECK_FILE, e);
-      throw new InvalidSettingsException(ERROR_CHECK_FILE, e);
-    }
-    return specs;
-  }
+	/**
+	 * Constructor for the node model.
+	 */
+	protected ReadFCSTableNodeModel() {
 
-  private DataTableSpec createDataSpec(FCSFrame df) throws InvalidSettingsException {
-    List<String> columnNames = df.getDimensionNames();
-    DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.size()];
-    for (String columnName : columnNames) {
-      int specIndex = FCSUtilities.findParameterNumnberByName(df.getKeywords(), columnName) - 1;
-      colSpecs[specIndex] = new DataColumnSpecCreator(columnName, DoubleCell.TYPE).createSpec();
-    }
-    return new DataTableSpec(colSpecs);
-  }
+		// Top port contains header information, bottom, array data
+		super(0, 2);
+	}
 
-  private DataTableSpec createKeywordSpec() {
-    final DataColumnSpec[] colSpecs = new DataColumnSpec[2];
-    colSpecs[0] = new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
-    colSpecs[1] = new DataColumnSpecCreator("value", StringCell.TYPE).createSpec();
-    return new DataTableSpec(colSpecs);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs) throws InvalidSettingsException {
 
-  private DataTableSpec[] createPortSpecs(FCSFrame frame) throws InvalidSettingsException {
-    final DataTableSpec[] specs = new DataTableSpec[2];
-    specs[0] = createKeywordSpec();
-    specs[1] = createDataSpec(frame);
-    return specs;
-  }
+		String filePath = mFileLocation.getStringValue();
+		if (filePath.equals(DEFAULT_FILE_LOCATION)) {
+			logger.warn(WARN_CHOOSE_A_FILE);
+		}
+		DataTableSpec[] specs = null;
+		try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
+			final FCSFileReader reader = new FCSFileReader(filePath, raf);
+			reader.initializeFrame();
+			final FCSFrame eventsFrame = reader.getFCSFrame();
+			specs = createPortSpecs(eventsFrame);
+			reader.close();
+		} catch (final Exception e) {
+			logger.warn(ERROR_CHECK_FILE, e);
+			specs = new DataTableSpec[2];
+			specs[0] = createKeywordSpec();
+			specs[1] = new DataTableSpec();
 
-  /**
-   * {@inheritDoc}
-   * 
-   * @throws CanceledExecutionException
-   */
-  @Override
-  protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-      final ExecutionContext exec) throws CanceledExecutionException {
+		}
+		return specs;
+	}
 
-    logger.info("Starting Execution");
-    // get table specs
-    FCSFileReader reader;
-    BufferedDataContainer headerTable = null;
-    BufferedDataContainer dataTable = null;
+	private DataTableSpec createDataSpec(FCSFrame df) throws InvalidSettingsException {
+		List<String> columnNames = df.getDimensionNames();
+		DataColumnSpec[] colSpecs = new DataColumnSpec[columnNames.size()];
+		for (String columnName : columnNames) {
+			int specIndex = FCSUtilities.findParameterNumnberByName(df.getKeywords(), columnName) - 1;
+			colSpecs[specIndex] = new DataColumnSpecCreator(columnName, DoubleCell.TYPE).createSpec();
+		}
+		return new DataTableSpec(colSpecs);
+	}
 
-    try {
-      reader = new FCSFileReader(mFileLocation.getStringValue());
-      Map<String, String> keywords = reader.getHeader();
-      reader.initializeFrame();
-      FCSFrame columnStore = reader.getFCSFrame();
-      DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
+	private DataTableSpec createKeywordSpec() {
+		final DataColumnSpec[] colSpecs = new DataColumnSpec[2];
+		colSpecs[0] = new DataColumnSpecCreator("keyword", StringCell.TYPE).createSpec();
+		colSpecs[1] = new DataColumnSpecCreator("value", StringCell.TYPE).createSpec();
+		return new DataTableSpec(colSpecs);
+	}
 
-      // Read header section
-      headerTable = exec.createDataContainer(tableSpecs[0]);
-      readHeader(headerTable, keywords);
+	private DataTableSpec[] createPortSpecs(FCSFrame frame) throws InvalidSettingsException {
+		final DataTableSpec[] specs = new DataTableSpec[2];
+		specs[0] = createKeywordSpec();
+		specs[1] = createDataSpec(frame);
+		return specs;
+	}
 
-      // check in with the boss before we move on.
-      exec.checkCanceled();
-      exec.setProgress(0.01, "Header read.");
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws CanceledExecutionException
+	 */
+	@Override
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData, final ExecutionContext exec)
+			throws CanceledExecutionException {
 
-      // Read data section
-      dataTable = exec.createDataContainer(tableSpecs[1]);
-      if(!mHeaderOnly.getBooleanValue()) {
-          reader.initRowReader();
-    	  for (Integer j = 0; j < columnStore.getRowCount(); j++) {
-              final RowKey rowKey = new RowKey(j.toString());
-              DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
+		logger.info("Starting Execution");
+		// get table specs
+		FCSFileReader reader;
+		BufferedDataContainer headerTable = null;
+		BufferedDataContainer dataTable = null;
+		String filePath = mFileLocation.getStringValue();
+		try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
+			reader = new FCSFileReader(filePath, raf);
+			Map<String, String> keywords = reader.getHeader();
+			reader.initializeFrame();
+			FCSFrame columnStore = reader.getFCSFrame();
+			DataTableSpec[] tableSpecs = createPortSpecs(columnStore);
 
-              final double[] fcsRow = reader.readRow(); 
-            
-              
-              // for each uncomped parameter TODO
-              List<String> colnames = reader.getFCSFrame().getDimensionNames();
-              Iterator<String> colIter = colnames.iterator();
-              while (colIter.hasNext()) {
-                String pName = colIter.next();
-                Integer pIndex = FCSUtilities.findParameterNumnberByName(reader.getHeader(), pName)-1;
-                dataCells[pIndex] = new DoubleCell(fcsRow[pIndex]);
-              }
-              final DataRow dataRow = new DefaultRow(rowKey, dataCells);
-              dataTable.addRowToTable(dataRow);
-              if (j % 100 == 0) {
-                exec.checkCanceled();
-                exec.setProgress(j / (double) columnStore.getRowCount(), j + " rows read.");
-              }
-            }
-      }
-      // once we are done, we close the container and return its table
-      dataTable.close();
-    } catch (final Exception e) {
-      logger.error(ERROR_EXECUTION_FAILED, e);
-      throw new CanceledExecutionException(ERROR_EXECUTION_FAILED);
-    }
+			// Read header section
+			headerTable = exec.createDataContainer(tableSpecs[0]);
+			readHeader(headerTable, keywords);
 
-    return new BufferedDataTable[] {headerTable.getTable(), dataTable.getTable()};
-  }
+			// check in with the boss before we move on.
+			exec.checkCanceled();
+			exec.setProgress(0.01, "Header read.");
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void loadInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {
-    //TODO
-  }
+			// Read data section
+			dataTable = exec.createDataContainer(tableSpecs[1]);
+			if (!mHeaderOnly.getBooleanValue()) {
+				reader.initRowReader();
+				for (Integer j = 0; j < columnStore.getRowCount(); j++) {
+					final RowKey rowKey = new RowKey(j.toString());
+					DataCell[] dataCells = new DataCell[columnStore.getDimensionCount()];
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-      throws InvalidSettingsException {
-    mFileLocation.loadSettingsFrom(settings);
-    mHeaderOnly.loadSettingsFrom(settings);
-  }
+					final double[] fcsRow = reader.readRow();
 
-  private void readHeader(BufferedDataContainer header, Map<String, String> keywords) {
-    keywords
-      .entrySet()
-      .forEach(entry -> writeRow(header, entry));
-    header.close();
-  }
+					// for each uncomped parameter TODO
+					List<String> colnames = reader.getFCSFrame().getDimensionNames();
+					Iterator<String> colIter = colnames.iterator();
+					while (colIter.hasNext()) {
+						String pName = colIter.next();
+						Integer pIndex = FCSUtilities.findParameterNumnberByName(reader.getHeader(), pName) - 1;
+						dataCells[pIndex] = new DoubleCell(fcsRow[pIndex]);
+					}
+					final DataRow dataRow = new DefaultRow(rowKey, dataCells);
+					dataTable.addRowToTable(dataRow);
+					if (j % 100 == 0) {
+						exec.checkCanceled();
+						exec.setProgress(j / (double) columnStore.getRowCount(), j + " rows read.");
+					}
+				}
+			}
+			// once we are done, we close the container and return its table
+			dataTable.close();
+		} catch (final Exception e) {
+			logger.error(ERROR_EXECUTION_FAILED, e);
+			throw new RuntimeException(ERROR_EXECUTION_FAILED);
+		}
 
-  private synchronized void writeRow(BufferedDataContainer header, Entry<String, String> entry) {
-    String key = entry.getKey();
-    String val = entry.getValue();
-    final RowKey rowKey = new RowKey("Row " + currentKeywordIndex);
-    // the cells of the current row, the types of the cells must match
-    // the column spec (see above)
-    final DataCell[] keywordCells = new DataCell[2];
-    keywordCells[0] = new StringCell(key);
-    keywordCells[1] = new StringCell(val);
-    final DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
-    header.addRowToTable(keywordRow);
-    currentKeywordIndex++;
-  }
+		return new BufferedDataTable[] { headerTable.getTable(), dataTable.getTable() };
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void reset() {/**TODO**/}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+		// TODO
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void saveInternals(final File internDir, final ExecutionMonitor exec)
-      throws IOException, CanceledExecutionException {/**TODO**/}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings) throws InvalidSettingsException {
+		mFileLocation.loadSettingsFrom(settings);
+		mHeaderOnly.loadSettingsFrom(settings);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void saveSettingsTo(final NodeSettingsWO settings) {
-    mFileLocation.saveSettingsTo(settings);
-    mHeaderOnly.saveSettingsTo(settings);
-  }
+	private void readHeader(BufferedDataContainer header, Map<String, String> keywords) {
+		keywords.entrySet().forEach(entry -> writeRow(header, entry));
+		header.close();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-    mFileLocation.validateSettings(settings);
-    mHeaderOnly.validateSettings(settings);
-  }
+	private synchronized void writeRow(BufferedDataContainer header, Entry<String, String> entry) {
+		String key = entry.getKey();
+		String val = entry.getValue();
+		final RowKey rowKey = new RowKey("Row " + currentKeywordIndex);
+		// the cells of the current row, the types of the cells must match
+		// the column spec (see above)
+		final DataCell[] keywordCells = new DataCell[2];
+		keywordCells[0] = new StringCell(key);
+		keywordCells[1] = new StringCell(val);
+		final DataRow keywordRow = new DefaultRow(rowKey, keywordCells);
+		header.addRowToTable(keywordRow);
+		currentKeywordIndex++;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+		/** TODO **/
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveInternals(final File internDir, final ExecutionMonitor exec)
+			throws IOException, CanceledExecutionException {
+		/** TODO **/
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+		mFileLocation.saveSettingsTo(settings);
+		mHeaderOnly.saveSettingsTo(settings);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
+		mFileLocation.validateSettings(settings);
+		mHeaderOnly.validateSettings(settings);
+	}
 }
