@@ -123,7 +123,7 @@ public class TSNEColumnNodeModel extends NodeModel {
     BHTSne2 bht = new BHTSne2();
     int n = data.length;
     int d = data[0].length;
-    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5);
+    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5, 42);
     exec.setProgress(0.15);
     exec.setMessage("Main Loop: ");
     ExecutionContext iterExec = exec.createSubExecutionContext(1);

@@ -13,8 +13,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveAction;
 
-import org.knime.core.node.CanceledExecutionException;
-
 import inflor.core.sne.utils.*;
 
 public class ParallelBHTsne extends BHTSne {
@@ -86,7 +84,7 @@ public class ParallelBHTsne extends BHTSne {
 
   @Override
   double[][] run(double[][] x, int n, int d, int dimCount, int initDimCount, double perplexity,
-      int maxIter, boolean usePCA, double theta) throws CanceledExecutionException {
+      int maxIter, boolean usePCA, double theta) {
     gradientPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
     gradientCalculationPool =
         Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

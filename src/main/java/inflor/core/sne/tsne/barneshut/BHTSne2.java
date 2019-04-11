@@ -32,7 +32,7 @@ import static java.lang.Math.log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 import inflor.core.sne.tsne.*;
 import inflor.core.sne.utils.*;
@@ -42,6 +42,7 @@ public class BHTSne2 implements InteractiveBHTSNE {
   private static final int INTERACTIVE_CHUNK_SIZE = 5;
   private static final String ERROR_THETA_CANT_BE_ZERO = 
       "The Barnes Hut implementation does not support exact inference yet";
+  private static final int DEFAULT_SEED = 42;
   protected final Distance distance = new EuclideanDistance();
   private boolean exact;
   private int maxIterations;
@@ -86,7 +87,7 @@ public class BHTSne2 implements InteractiveBHTSNE {
       int max_iter, boolean use_pca, double theta) {
     int N = X.length;
     int D = X[0].length;
-    init(X, N, D, no_dims, initial_dims, perplexity, max_iter, use_pca, theta);
+    init(X, N, D, no_dims, initial_dims, perplexity, max_iter, use_pca, theta, DEFAULT_SEED);
     return runInteractively();
   }
 
@@ -804,7 +805,7 @@ public class BHTSne2 implements InteractiveBHTSNE {
   // Perform t-SNE
   @Override
   public void init(double[][] inX, int N, int D, int dimCount, int initDimCount, double perplexity,
-      int maxIterations, boolean usePCA, double theta) {
+      int maxIterations, boolean usePCA, double theta, int seed) {
     this.maxIterations = maxIterations;
     this.N = N;
     this.dimCount = dimCount;
@@ -913,8 +914,10 @@ public class BHTSne2 implements InteractiveBHTSNE {
     }
 
     // Initialize solution (randomly)
+    Random rnJesus = new Random();
+    rnJesus.setSeed(seed);
     for (int i = 0; i < N * dimCount; i++){
-      Y[i] = ThreadLocalRandom.current().nextDouble() * 0.0001;
+      Y[i] = rnJesus.nextDouble() * 0.0001;
     }
   }
 

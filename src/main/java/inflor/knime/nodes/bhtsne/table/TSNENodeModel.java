@@ -25,6 +25,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnFilter2;
 import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
+import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 import inflor.core.sne.tsne.barneshut.BHTSne2;
@@ -40,35 +41,39 @@ public class TSNENodeModel extends NodeModel {
 
   // Column filter
   static final String KEY_SLECTED_COLUMNS = "Columns";
+  private final SettingsModelColumnFilter2 modelColumns =
+	      new SettingsModelColumnFilter2(KEY_SLECTED_COLUMNS);
 
   // Iterations
   static final String KEY_ITERATIONS = "Iterations";
-
   static final Integer MIN_ITERATIONS = 10;
-  static final Integer MAX_ITERATIONS = 500;
-  static final Integer DEFAULT_ITERATIONS = 250;
+  static final Integer MAX_ITERATIONS = 5000;
+  static final Integer DEFAULT_ITERATIONS = 500;
+  private final SettingsModelIntegerBounded modelIterations = new SettingsModelIntegerBounded(
+	      KEY_ITERATIONS, DEFAULT_ITERATIONS, MIN_ITERATIONS, MAX_ITERATIONS);
+  
   // PCA Dims
   static final String KEY_PCA_DIMS = "PCA Dimensions";
   static final Integer MIN_PCA_DIMS = 0;
-  static final Integer MAX_PCA_DIMS = 100;
+  static final Integer MAX_PCA_DIMS = 1000;
   static final Integer DEFAULT_PCA_DIMS = 10;
+  private final SettingsModelIntegerBounded modelInitDims = new SettingsModelIntegerBounded(
+	      KEY_PCA_DIMS, DEFAULT_PCA_DIMS, MIN_PCA_DIMS, MAX_PCA_DIMS);
+  
   // Perplexity
   static final String KEY_PERPLEXITY = "Maximum iterations";
   static final Double MIN_PERPLEXITY = 1.;
   static final Double MAX_PERPLEXITY = 100.;
-  static final Double DEFAULT_PERPLEXITY = 20.;
-  
-  private final SettingsModelColumnFilter2 modelColumns =
-      new SettingsModelColumnFilter2(KEY_SLECTED_COLUMNS);
-  private final SettingsModelIntegerBounded modelIterations = new SettingsModelIntegerBounded(
-      KEY_ITERATIONS, DEFAULT_ITERATIONS, MIN_ITERATIONS, MAX_ITERATIONS);
-  private final SettingsModelIntegerBounded modelInitDims = new SettingsModelIntegerBounded(
-      KEY_PCA_DIMS, DEFAULT_PCA_DIMS, MIN_PCA_DIMS, MAX_PCA_DIMS);
-
+  static final Double DEFAULT_PERPLEXITY = 40.;
   private final SettingsModelDoubleBounded modelPerplexity = new SettingsModelDoubleBounded(
-      KEY_PERPLEXITY, DEFAULT_PERPLEXITY, MIN_PERPLEXITY, MAX_PERPLEXITY);
+	      KEY_PERPLEXITY, DEFAULT_PERPLEXITY, MIN_PERPLEXITY, MAX_PERPLEXITY);
 
-private ArrayList<SNEIterationBean> resultList;
+  // Seed
+  static final String KEY_SEED = "Random Seed";
+  static final Integer DEFAULT_SEED = 42;
+  private final SettingsModelInteger modelSeed = new SettingsModelInteger(KEY_SEED, DEFAULT_SEED);
+
+  private ArrayList<SNEIterationBean> resultList;
 
   /**
    * Constructor for the node model.
@@ -125,7 +130,7 @@ private ArrayList<SNEIterationBean> resultList;
     BHTSne2 bht = new BHTSne2();
     int n = data.length;
     int d = data[0].length;
-    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5);
+    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5, modelSeed.getIntValue());
     exec.setProgress(0.15);
     exec.setMessage("Main Loop: ");
     ExecutionContext iterExec = exec.createSubExecutionContext(1);
@@ -195,6 +200,7 @@ private ArrayList<SNEIterationBean> resultList;
     modelPerplexity.loadSettingsFrom(settings);
     modelInitDims.loadSettingsFrom(settings);
     modelIterations.loadSettingsFrom(settings);
+    modelSeed.loadSettingsFrom(settings);
   }
 
   private double[][] readData(BufferedDataTable inData, ExecutionContext exec) {
@@ -238,6 +244,8 @@ private ArrayList<SNEIterationBean> resultList;
     modelIterations.saveSettingsTo(settings);
     modelPerplexity.saveSettingsTo(settings);
     modelInitDims.saveSettingsTo(settings);
+    modelSeed.saveSettingsTo(settings);
+    
   }
 
   /**

@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
 
 import inflor.core.sne.tsne.*;
@@ -46,25 +45,25 @@ public class BHTSne implements BarnesHutTSne {
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity)
-      throws CanceledExecutionException {
+        {
     return tsne(X, no_dims, initial_dims, perplexity, 20000, true);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int maxIterations) throws CanceledExecutionException {
+      int maxIterations)   {
     return tsne(X, no_dims, initial_dims, perplexity, maxIterations, true);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca) throws CanceledExecutionException {
+      int max_iter, boolean use_pca) {
     return tsne(X, no_dims, initial_dims, perplexity, max_iter, use_pca, 0.5);
   }
 
   @Override
   public double[][] tsne(double[][] X, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca, double theta) throws CanceledExecutionException {
+      int max_iter, boolean use_pca, double theta) {
     int N = X.length;
     int D = X[0].length;
     return run(X, N, D, no_dims, initial_dims, perplexity, max_iter, use_pca, theta);
@@ -97,7 +96,7 @@ public class BHTSne implements BarnesHutTSne {
 
   // Perform t-SNE
   double[][] run(double[][] Xin, int N, int D, int no_dims, int initial_dims, double perplexity,
-      int max_iter, boolean use_pca, double theta) throws CanceledExecutionException {
+      int max_iter, boolean use_pca, double theta) {
     boolean exact = (theta == .0) ? true : false;
     if (exact)
       throw new IllegalArgumentException(
@@ -228,7 +227,11 @@ public class BHTSne implements BarnesHutTSne {
       if (exec != null && iter % 20 == 0) {
         exec.setMessage("Executing: " + iter);
         exec.setProgress(iter / max_iter);
-        exec.checkCanceled();
+        try {
+			exec.checkCanceled();
+		} catch (Exception e) {
+			throw new RuntimeException("Execution Cancelled");
+		}
       }
 
       if (exact)
