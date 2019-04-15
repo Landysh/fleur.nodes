@@ -89,12 +89,14 @@ public class ExtractDataNodeModel extends NodeModel {
     final String columnName = mSelectedColumn.getColumnName();
     DataColumnProperties props = inData[0].getSpec().getColumnSpec(columnName).getProperties();
     
-    if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP)) {
+    if (props.containsProperty(NodeUtilities.KEY_TRANSFORM_MAP) && mTransform.getBooleanValue()) {
       String transformString = props.getProperty(NodeUtilities.KEY_TRANSFORM_MAP);
       transformSet =
           TransformSet.loadFromProtoString(transformString);
+    } else if (!mTransform.getBooleanValue()){
+    	logger.info("Extracting raw data.");
     } else {
-      throw new CanceledExecutionException("Unable to parse transform map");
+        throw new RuntimeException("Unable to parse transform map");
     }
 
     // list the cells.
