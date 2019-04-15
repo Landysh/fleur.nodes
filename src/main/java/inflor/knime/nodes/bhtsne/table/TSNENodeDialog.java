@@ -6,6 +6,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentColumnFilter2;
 import org.knime.core.node.defaultnodesettings.DialogComponentNumber;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnFilter2;
 import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
+import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 /**
@@ -48,5 +49,10 @@ public class TSNENodeDialog extends DefaultNodeSettingsPane {
         TSNENodeModel.KEY_PERPLEXITY, TSNENodeModel.DEFAULT_PERPLEXITY,
         TSNENodeModel.MIN_PERPLEXITY, TSNENodeModel.MAX_PERPLEXITY);
     addDialogComponent(new DialogComponentNumber(modelPerplexity, "Perplexity", 1));
+    
+    // Random seed
+    final SettingsModelInteger modelSeed =
+        new SettingsModelInteger(TSNENodeModel.KEY_SEED,TSNENodeModel.DEFAULT_SEED);
+    addDialogComponent(new DialogComponentNumber(modelSeed, TSNENodeModel.KEY_SEED, 1));
   }
 }
