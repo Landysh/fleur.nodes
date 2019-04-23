@@ -20,13 +20,17 @@ public class ReadFCSNodeDialog extends DefaultNodeSettingsPane {
   /**
    * New pane for configuring FCSReader node dialog.
    */
+  
+  private static final String HISTORY_KEY = "Read FCS Node History";
+  
   public ReadFCSNodeDialog() {
     super();
 
     addDialogComponent(new DialogComponentFileChooser(
         new SettingsModelString(ReadFCSTableNodeModel.KEY_FILE_LOCATION,
             ReadFCSTableNodeModel.DEFAULT_FILE_LOCATION),
-        "foo", "fcs"));
+        HISTORY_KEY, "fcs"));
+    
     addDialogComponent(new DialogComponentBoolean(
             new SettingsModelBoolean(ReadFCSTableNodeModel.KEY_HEADER_ONLY,
                 ReadFCSTableNodeModel.DEFAULT_HEADER_ONLY), ReadFCSTableNodeModel.KEY_HEADER_ONLY));

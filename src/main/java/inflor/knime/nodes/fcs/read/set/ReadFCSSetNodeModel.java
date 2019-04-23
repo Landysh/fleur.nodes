@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,6 +24,7 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.def.StringCell;
 import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreFactory;
 import org.knime.core.node.BufferedDataContainer;
@@ -35,8 +37,8 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
-import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
+import org.knime.core.node.port.PortType;
+import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -59,20 +61,18 @@ import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
  */
 public class ReadFCSSetNodeModel extends NodeModel {
 
-  private static final String FCS_FRAME_COLUMN_NAME = "FCS Frame";
+  private static final String FCS_COLUMN_NAME = "FCS Frame";
+  private static final String SOURCE_COLUMN_NAME = "Source";
+  private static final String KW_NAME_COLUMN_NAME = "Name";
+  private static final String KW_VALUE_COLUMN_NAME = "Value";
 
   // the logger instance
   private static final NodeLogger logger = NodeLogger.getLogger(ReadFCSSetNodeModel.class);
-
-  // Folder containing FCS Files.
-  static final String KEY_PATH = "PATH";
-  static final String DEFAULT_PATH = "None";
-  private final SettingsModelString mPath = new SettingsModelString(KEY_PATH, DEFAULT_PATH);
   
-  // Apply compensation
-  static final String KEY_COMP = "APPLY_COMP";
-  static final Boolean DEFAULT_COMP = true;
-  private final SettingsModelBoolean mComp = new SettingsModelBoolean(KEY_COMP, DEFAULT_COMP);
+  // Port Types
+  protected static final PortType IN_PORT_TYPE_0 = PortTypeRegistry.getInstance().getPortType(BufferedDataTable.class, true);
+  protected static final PortType OUT_PORT_TYPE_0 = PortTypeRegistry.getInstance().getPortType(BufferedDataTable.class, false);
+  protected static final PortType OUT_PORT_TYPE_1 = PortTypeRegistry.getInstance().getPortType(BufferedDataTable.class, false);
   
   // Default Preview Frame Settings.
   // The maximum size of the preview frame (in measurements eg. 100kevents *
@@ -83,12 +83,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
   private int currentFileIndex = 0;
   private int fileCount;
   private FCSFrame previewFrame;
-
-  /**
-   * Constructor for the node model.
-   */
-  protected ReadFCSSetNodeModel() {
-    super(0, 1);
+  
+  ReadFCSSetNodeModel() {
+    
+    super(new PortType[] {IN_PORT_TYPE_0}, new PortType[] {OUT_PORT_TYPE_0, OUT_PORT_TYPE_1});
+    
   }
 
   /**
@@ -97,22 +96,36 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
       throws InvalidSettingsException {
+          
+    DataColumnSpecCreator creator0 = new DataColumnSpecCreator(FCS_COLUMN_NAME, FCSFrameFileStoreDataCell.TYPE);
+    DataColumnSpec[] colSpecs0 = new DataColumnSpec[] {creator0.createSpec()};
+    DataTableSpec spec0 = new DataTableSpec(colSpecs0);
+       
+    DataColumnSpecCreator source = new DataColumnSpecCreator(SOURCE_COLUMN_NAME, StringCell.TYPE);    
+    DataColumnSpecCreator name = new DataColumnSpecCreator(KW_NAME_COLUMN_NAME, StringCell.TYPE);
+    DataColumnSpecCreator value = new DataColumnSpecCreator(KW_VALUE_COLUMN_NAME, StringCell.TYPE);
     
-    if (!mPath.getStringValue().equals(DEFAULT_PATH)) {
-      return new DataTableSpec[] {createSpec()};
-    } else {
-      throw new InvalidSettingsException("Please select a file path.");
-    }
+    DataColumnSpec[] colSpecs1 = new DataColumnSpec[] {source.createSpec(), name.createSpec(), value.createSpec()};
+    
+    DataTableSpec spec1 = new DataTableSpec(colSpecs1);
+
+    return new DataTableSpec[] {spec0, spec1};
+  }
+
+  static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+    // http://stackoverflow.com/questions/23699371/java-8-distinct-by-property
+    Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 
   }
 
-  private HashMap<String, String> createColumnPropertiesContent() {
+  private HashMap<String, String> createColumnPropertiesContent(List<String> paths) {
     /**
      * Creates column properties for an FCS Set by looking all of the headers and setting shared
      * keyword values.
      */
-    final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
-    List<Map<String, String>> headers = filePaths.parallelStream().map(FCSFileReader::readHeaderOnly)
+    //final ArrayList<String> filePaths = getFilePaths(mPath.getStringValue());
+    List<Map<String, String>> headers = paths.parallelStream().map(FCSFileReader::readHeaderOnly)
         .filter(map -> !map.isEmpty()).collect(Collectors.toList());
 
     final HashMap<String, String> content = new HashMap<>();
@@ -120,7 +133,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     headers.forEach(map -> map.entrySet().forEach(entry -> updateContent(content, entry)));
 
     // Collect all dimensions for experiment in one Hashset.
-    Optional<TreeSet<FCSDimension>> optionalDimensions = filePaths.stream()
+    Optional<TreeSet<FCSDimension>> optionalDimensions = paths.stream()
         .map(FCSFileReader::readNoData).map(FCSFrame::getData).reduce(this::merge);
 
     if (optionalDimensions.isPresent()) {
@@ -173,37 +186,38 @@ public class ReadFCSSetNodeModel extends NodeModel {
     }
   }
 
-  private DataTableSpec createSpec() {
-    DataColumnSpecCreator creator =
-        new DataColumnSpecCreator(FCS_FRAME_COLUMN_NAME, FCSFrameFileStoreDataCell.TYPE);
-    // Create spec
-    DataColumnSpec[] colSpecs = new DataColumnSpec[] {creator.createSpec()};
-    return new DataTableSpec(colSpecs);
-  }
-
-  static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-    // http://stackoverflow.com/questions/23699371/java-8-distinct-by-property
-    Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-  }
-
   /**
    * {@inheritDoc}
    */
   @Override
-  protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-      final ExecutionContext exec) throws Exception {
+  protected BufferedDataTable[] execute(BufferedDataTable[] inData, ExecutionContext exec) throws Exception {
     currentFileIndex = 0;
     logger.info("Beginning Execution.");
     fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // Create the output spec and data container.
-    final DataTableSpec outSpec = createSpec();
-    final BufferedDataContainer container = exec.createDataContainer(outSpec);
-    final ArrayList<String> filePaths;
+    DataTableSpec[] inSpecs;
+    Boolean readFromColumn = ReadFCSSetSettings.getMMode().equals(ReaderModes.Column.toString());
+    if (readFromColumn) {
+      inSpecs = new DataTableSpec[] {inData[0].getSpec()};
+    } else {
+      inSpecs = new DataTableSpec[] {null};
+    }
+    final DataTableSpec[] outSpecs = configure(inSpecs);
+    final BufferedDataContainer container0 = exec.createDataContainer(outSpecs[0]);
+    final BufferedDataContainer container1 = exec.createDataContainer(outSpecs[1]);
+
+    List<String> filePaths = new ArrayList<String>();
+    String mPath = ReadFCSSetSettings.getPathValue();
     try {
-        filePaths = getFilePaths(mPath.getStringValue());
+      if (readFromColumn) {
+        filePaths = readInputPaths(inData[0]);
+      } else if (!readFromColumn) {
+        filePaths = getFilePaths(mPath);
+      } else {
+        throw new NullPointerException("Unexpected Error"); 
+      }
     } catch (Exception e) {
-    	throw new CanceledExecutionException("Unable to read dir: " + mPath.getStringValue() );
+    	throw new RuntimeException("Unable to read dir: " + mPath );
     }
     fileCount = filePaths.size();
     exec.checkCanceled();
@@ -211,35 +225,50 @@ public class ReadFCSSetNodeModel extends NodeModel {
       filePaths
         .parallelStream()
         .map(FCSFileReader::read)
-        .forEach(fcsFrame -> addRow(fcsFrame, container, exec));
+        .forEach(fcsFrame -> addRow(fcsFrame, container0, container1, exec));
     } catch (NullPointerException e){
-      throw new CanceledExecutionException("Execution cancelled.");
+      logger.error("Execution Failed", e);
+      throw new RuntimeException("Execution failed.");
     }
     exec.checkCanceled();
     exec.setMessage("Finished reading files, creating summary frame.");
     // once we are done, we close the container and return its table
-    container.close();
-    BufferedDataTable inTable = container.getTable();
+    container0.close();
+    container1.close();
+    BufferedDataTable inTable = container0.getTable();
 
-    String columnName = FCS_FRAME_COLUMN_NAME;
+    String columnName = FCS_COLUMN_NAME;
     String key = NodeUtilities.PREVIEW_FRAME_KEY;
     previewFrame.setDisplayName(NodeUtilities.PREVIEW_FRAME_KEY);
     String value = previewFrame.saveAsString();
     
-
     // Create properties
-    HashMap<String, String> content = createColumnPropertiesContent();
+    HashMap<String, String> content = createColumnPropertiesContent(filePaths);
     content.put(key, value);
     
     BufferedDataTable finalTable =
         NodeUtilities.addPropertyToColumn(exec, inTable, columnName, content);
-    return new BufferedDataTable[] {finalTable};
+    return new BufferedDataTable[] {finalTable, container1.getTable()};
+  }
+
+  private List<String> readInputPaths(BufferedDataTable inData) {
+    String mColumn = ReadFCSSetSettings.getColumnValue();
+    List<String> paths = new ArrayList<String>();      
+    if (inData.getDataTableSpec().containsName(mColumn)) {
+      int colIndex = inData.getDataTableSpec().findColumnIndex(mColumn);
+      inData.iterator()
+        .forEachRemaining(row -> paths.add(row.getCell(colIndex).toString()));
+    } else {
+      throw new RuntimeException("Selected Column not found in input table.");
+    }
+    return paths;
   }
 
   private synchronized void addRow(FCSFrame df, BufferedDataContainer container,
-      ExecutionContext exec) {
+      BufferedDataContainer container1, ExecutionContext exec) {
     //Compensate from the header. 
-    if (mComp.getBooleanValue()) {
+    Boolean mComp = ReadFCSSetSettings.getMComp();
+    if (mComp) {
       SpilloverCompensator sc = new SpilloverCompensator(df.getKeywords());
       try {
         df = sc.compensateFCSFrame(df, true);
@@ -247,6 +276,9 @@ public class ReadFCSSetNodeModel extends NodeModel {
         throw new RuntimeException("Unable to compensate finle: " + df.getDisplayName());
       }
     }
+    
+    String source = df.getDisplayName();
+    df.getKeywords().entrySet().forEach(entry -> addMetadata(source, entry, container1, exec));
     
     // Create Preview frame.
     FCSConcatenator concatr = new FCSConcatenator();
@@ -264,13 +296,11 @@ public class ReadFCSSetNodeModel extends NodeModel {
       int sizeSaved = NodeUtilities.writeFrameToFilestore(df, fs);
       FCSFrameMetaData metaData = new FCSFrameMetaData(df, sizeSaved);
       final FCSFrameFileStoreDataCell fileCell = new FCSFrameFileStoreDataCell(fs, metaData);
-      final DataCell[] cells = new DataCell[] {fileCell};
-
-      final DataRow row = new DefaultRow(key, cells);
-      container.addRowToTable(row);
+      container.addRowToTable(new DefaultRow(key, new DataCell[] {fileCell}));
       try {
         exec.checkCanceled();
       } catch (CanceledExecutionException e) {
+        // Unchecked exception as this is called from a stream.
         throw new NullPointerException("Execution cancelled");
       }
       exec.setProgress(currentFileIndex / (double) fileCount,
@@ -279,6 +309,12 @@ public class ReadFCSSetNodeModel extends NodeModel {
     } catch (IOException e) {
       logger.error("Row not added for frame: " + currentFileIndex, e);
     }
+  }
+
+  private void addMetadata(String source, Entry<String, String> entry, BufferedDataContainer container1, ExecutionContext exec) {
+    DataCell[] cells = new DataCell[] {new StringCell(source),new StringCell(entry.getKey()), new StringCell(entry.getValue())};
+    DataRow row = new DefaultRow(UUID.randomUUID().toString(), cells);
+    container1.addRowToTable(row);
   }
 
   private ArrayList<String> getFilePaths(String dirPath) {
@@ -312,8 +348,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
   @Override
   protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
       throws InvalidSettingsException {
-    mPath.loadSettingsFrom(settings);
-    mComp.loadSettingsFrom(settings);
+   ReadFCSSetSettings.load(settings);
   }
 
   /**
@@ -337,8 +372,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
    */
   @Override
   protected void saveSettingsTo(final NodeSettingsWO settings) {
-    mPath.saveSettingsTo(settings);
-    mComp.saveSettingsTo(settings);
+     ReadFCSSetSettings.save(settings);
   }
 
   /**
@@ -346,7 +380,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
    */
   @Override
   protected void validateSettings(final NodeSettingsRO settings) throws InvalidSettingsException {
-    mPath.validateSettings(settings);
-    mComp.validateSettings(settings);
+    ReadFCSSetSettings.validate(settings);
+
   }
 }
