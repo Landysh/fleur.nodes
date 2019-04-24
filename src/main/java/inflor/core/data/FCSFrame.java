@@ -229,7 +229,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     if (matchingDimension.isPresent()) {
       return matchingDimension.get();
     } else {
-      return null;
+      throw new RuntimeException("Parameter name: " + shortName + " not found in " + this.getDimensionNames().toString());
     }
   }
 
