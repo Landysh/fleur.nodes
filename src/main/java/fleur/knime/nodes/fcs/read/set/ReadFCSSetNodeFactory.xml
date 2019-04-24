@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<knimeNode icon="./node_icon.png" type="Source" xmlns="http://knime.org/node/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://knime.org/node/v2.10 http://knime.org/node/v2.10.xsd">
+    <name>Read FCS Files</name>
+    
+    <shortDescription>
+        
+    </shortDescription>
+    
+    <fullDescription>
+        <intro>Read FCS Standard v3.1 compliant data files. Each file will be mapped to a table with each row corresponding to one of the input files.</intro>
+        <option name="Reader Mode">Read data either from a selected column with paths to the files to read or from a folder on the file system.</option>
+        <option name="Selected Column">A column from the optional input table containing paths to fcs files you would like to read.</option>
+        <option name="Input Directory">A folder containing FCS Files.</option>
+        <option name="Compensate on read.">If enabled, will attempt to compensate the fcs files based on their header information (eg. $SPILL).</option>
+
+    </fullDescription>
+    
+    <ports>
+        <inPort index="0" name="Input Table">
+        A table containing at least one column of paths (or URLs) pointing to some FCS Files.
+        </inPort>
+        <outPort index="0" name="FCS Table">
+        A new table containing the FCS Data in the form of FCS Data cells.
+        </outPort>
+        <outPort index="1" name="FCS Metadata">
+        A new table containing the FCS Metadata.
+        </outPort>
+    </ports>    
+    <views>
+        <view index="0" name="name of first view">Description of first view...</view>
+    </views>
+</knimeNode>

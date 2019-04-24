@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read.set;
+package fleur.knime.nodes.fcs.read.set;
 
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.def.StringCell;

@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read.set;
+package fleur.knime.nodes.fcs.read.set;
 
 import java.io.File;
 import java.io.IOException;
@@ -196,7 +196,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     fileStoreFactory = FileStoreFactory.createWorkflowFileStoreFactory(exec);
     // Create the output spec and data container.
     DataTableSpec[] inSpecs;
-    Boolean readFromColumn = ReadFCSSetSettings.getMMode().equals(ReaderModes.Column.toString());
+    Boolean readFromColumn = ReadFCSSetSettings.getMMode().equals(ReadFCSSetSettings.ReaderModes.Column.toString());
     if (readFromColumn) {
       inSpecs = new DataTableSpec[] {inData[0].getSpec()};
     } else {

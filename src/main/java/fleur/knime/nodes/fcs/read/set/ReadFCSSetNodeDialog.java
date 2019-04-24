@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read.set;
+package fleur.knime.nodes.fcs.read.set;
 
 import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
@@ -55,9 +55,9 @@ public class ReadFCSSetNodeDialog extends DefaultNodeSettingsPane {
     
     // Reader mode.
     mMode = new SettingsModelString(ReadFCSSetSettings.KEY_MODE, ReadFCSSetSettings.DEFAULT_MODE.toString());
-    String[] vChoices = new String[ReaderModes.values().length];
+    String[] vChoices = new String[ReadFCSSetSettings.ReaderModes.values().length];
     for (int i=0;i<vChoices.length;i++) {
-      vChoices[i] = ReaderModes.values()[i].toString();
+      vChoices[i] = ReadFCSSetSettings.ReaderModes.values()[i].toString();
     }
     vMode = new DialogComponentButtonGroup(mMode, false, MODE_LABEL, vChoices);
     
@@ -67,10 +67,10 @@ public class ReadFCSSetNodeDialog extends DefaultNodeSettingsPane {
       public void stateChanged(ChangeEvent e) {
         String newMode = mMode.getStringValue();  
         
-        if (newMode.equals(ReaderModes.Browser.toString())) {
+        if (newMode.equals(ReadFCSSetSettings.ReaderModes.Browser.toString())) {
             mColumn.setEnabled(false);
             mPath.setEnabled(true);
-          } else if (newMode.equals(ReaderModes.Column.toString())) {
+          } else if (newMode.equals(ReadFCSSetSettings.ReaderModes.Column.toString())) {
             mColumn.setEnabled(true);
             mPath.setEnabled(false);
           }

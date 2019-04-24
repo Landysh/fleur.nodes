@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read.set;
+package fleur.knime.nodes.fcs.read.set;
 
 import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
@@ -10,6 +10,11 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 public class ReadFCSSetSettings {
   
   // Reader mode:
+
+  public enum ReaderModes {
+    Browser, Column
+  }
+  
   static final String KEY_MODE = "READER_MODE";
   static final String DEFAULT_MODE = ReaderModes.Browser.toString();
   static final SettingsModelString mMode = new SettingsModelString(KEY_MODE, DEFAULT_MODE.toString());
