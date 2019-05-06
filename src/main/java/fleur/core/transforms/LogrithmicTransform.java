@@ -18,12 +18,11 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.transforms;
+package fleur.core.transforms;
 
 import com.google.common.primitives.Doubles;
 
 public class LogrithmicTransform extends AbstractTransform {
-
 
   /**
    * 
@@ -114,5 +113,18 @@ public class LogrithmicTransform extends AbstractTransform {
   @Override
   public String getDetails() {
     return "Min display: " + min + ", Max display: " + max;
+  }
+
+  @Override
+  protected AbstractTransform merge(AbstractTransform t1) {
+    LogrithmicTransform logT = (LogrithmicTransform) t1;
+    double newMin = logT.getMinRawValue() < this.min ? logT.getMinRawValue() :this.min;
+    double newMax = logT.getMaxRawValue() > this.max ? logT.getMaxRawValue():this.max;
+    return new LogrithmicTransform(newMin, newMax);
+  }
+
+  @Override
+  protected AbstractTransform copy() {
+    return new LogrithmicTransform(min, max);
   }
 }

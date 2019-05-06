@@ -15,17 +15,22 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.transforms;
+package fleur.core.transforms;
 
 import java.io.Serializable;
 
-import inflor.core.data.DomainObject;
+import fleur.core.data.DomainObject;
 
 @SuppressWarnings("serial")
 public abstract class AbstractTransform extends DomainObject implements Serializable, Cloneable {
 
   public AbstractTransform(String priorUUID) {
     super(priorUUID);
+  }
+  
+  public AbstractTransform getOptimizedTrasnform(double[] rawData) {
+    this.optimize(rawData);
+    return this.copy();
   }
 
   public abstract double[] transform(double[] rawData);
@@ -47,5 +52,9 @@ public abstract class AbstractTransform extends DomainObject implements Serializ
   public abstract String getDetails();
   
   public abstract void optimize(double[] rawData);
-
+  
+  protected abstract AbstractTransform merge(AbstractTransform t1);
+  
+  protected abstract AbstractTransform copy();
+  
 }

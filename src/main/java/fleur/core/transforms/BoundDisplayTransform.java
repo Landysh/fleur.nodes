@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.transforms;
+package fleur.core.transforms;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
@@ -114,6 +114,26 @@ public class BoundDisplayTransform extends AbstractTransform {
   @Override
   public String getDetails() {
     return "Min display: " + boundaryMin + ", Max display: " + boundaryMax;
+  }
+
+  @Override
+  protected AbstractTransform merge(AbstractTransform t1) {
+    BoundDisplayTransform bdt = (BoundDisplayTransform) t1;
+    double newMin = bdt.getBoundaryMin() < this.boundaryMin ? bdt.getBoundaryMin():this.boundaryMin;
+    double newMax = bdt.getBoundaryMax() > this.boundaryMax ? bdt.getBoundaryMax():this.boundaryMax;
+    return new BoundDisplayTransform(newMin, newMax);
+  }
+  
+  public AbstractTransform copy() {
+    return new BoundDisplayTransform(this.boundaryMin, this.boundaryMax);
+  }
+  
+  double getBoundaryMin() {
+    return this.boundaryMin;
+  }
+  
+  double getBoundaryMax() {
+    return this.boundaryMax;
   }
 
 }

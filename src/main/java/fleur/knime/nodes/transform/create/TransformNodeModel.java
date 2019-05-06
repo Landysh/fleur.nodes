@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.knime.nodes.transform.create;
+package fleur.knime.nodes.transform.create;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -35,13 +35,13 @@ import javax.imageio.ImageIO;
 
 import org.jfree.chart.JFreeChart;
 import org.knime.core.data.DataCell;
-import org.knime.core.data.DataColumnProperties;
 import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataTableSpecCreator;
 import org.knime.core.data.DataType;
+import org.knime.core.data.MissingCell;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.data.image.png.PNGImageCell;
@@ -57,12 +57,11 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.AbstractTransform;
+import fleur.core.transforms.TransformSet;
 import inflor.core.plots.CategoryResponseChart;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
-import inflor.core.utils.PlotUtils;
 import inflor.knime.core.NodeUtilities;
 import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
@@ -83,8 +82,6 @@ public class TransformNodeModel extends NodeModel {
   private TransformNodeSettings modelSettings = new TransformNodeSettings();
 
   private int subtaskIndex;
-
-  private FCSFrame summaryFrame;
 
   /**
    * Constructor for the node model.
@@ -108,63 +105,57 @@ public class TransformNodeModel extends NodeModel {
 
     // Collect the input data.
     exec.setMessage("Reading data");
-    ExecutionContext readExec = exec.createSubExecutionContext(0.25);
+    ExecutionContext readExec = exec.createSubExecutionContext(0.01);
     ArrayList<FCSFrameFileStoreDataCell> dataSet = new ArrayList<>();
     int rowIndex = 0;
     for (final DataRow inRow : inData[0]) {
       FCSFrameFileStoreDataCell cell = (FCSFrameFileStoreDataCell) inRow.getCell(columnIndex);
       dataSet.add(cell);
-      readExec.setProgress((double) rowIndex / inData[0].size(),
+      readExec.setProgress((double) rowIndex / (double) inData[0].size(),
           "Reading: " + cell.getFCSFrameMetadata().getDisplayName());
       rowIndex++;
     }
 
     // create a summary frame containing merged data from all files.
-    DataColumnProperties props = inData[0].getSpec().getColumnSpec(columnName).getProperties();
-    if (props.containsProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME)) {
-      String summaryString = props.getProperty(FCSUtilities.PROP_KEY_PREVIEW_FRAME);
-      summaryFrame = FCSFrame.loadFromProtoString(summaryString);
-      if (!modelSettings.getReferenceSubset()
-          .equals(TransformNodeSettings.DEFAULT_REFERENCE_SUBSET)) {
-        BitSet mask = summaryFrame.getFilteredFrame(modelSettings.getReferenceSubset(), true);
-        summaryFrame = FCSUtilities.filterFrame(mask, summaryFrame);
-      }
-    } else {
-      // Filter it down to reference subset
-      exec.setMessage("filtering data");
-      ExecutionContext filterExec = exec.createSubExecutionContext(0.5);
-      String referenceSubset = modelSettings.getReferenceSubset();
-      List<FCSFrame> filteredData;
-      if (!referenceSubset.equals(TransformNodeSettings.DEFAULT_REFERENCE_SUBSET)) {
-        subtaskIndex = 0;
-        filteredData = dataSet
+    List<FCSFrame> filteredData;
+    // Filter it down to reference subset
+    exec.setMessage("filtering data");
+    ExecutionContext filterExec = exec.createSubExecutionContext(0.5);
+    String referenceSubset = modelSettings.getReferenceSubset();
+    //TODO: potential performance hotspot
+    if (!referenceSubset.equals(TransformNodeSettings.DEFAULT_REFERENCE_SUBSET)) {
+      subtaskIndex = 0;
+      filteredData = dataSet
             .parallelStream()
             .map(cell -> filterDataFrame(filterExec, cell.getFCSFrameValue(), referenceSubset, dataSet.size()))
+            .peek(df -> {
+              filterExec.setProgress(subtaskIndex/dataSet.size());
+              subtaskIndex++;
+            })
             .collect(Collectors.toList());
-      } else {
+    } else {
+      subtaskIndex = 0;
         filteredData = dataSet
             .parallelStream()
             .map(cell -> cell.getFCSFrameValue())
+            .peek(df -> {
+              filterExec.setProgress(subtaskIndex/dataSet.size());
+              subtaskIndex++;
+            })
             .collect(Collectors.toList());
-      }
-      summaryFrame = FCSUtilities.createSummaryFrame(filteredData, 2000);
     }
-
     // Init and Optimize the transform, record results.
     TransformSet transforms = new TransformSet();
-    if (summaryFrame != null) {
-      summaryFrame.getDimensionNames().forEach(
-          name -> transforms.addTransformEntry(name, PlotUtils.createDefaultTransform(name)));
-    } else {
-      throw new CanceledExecutionException("Unable to construct valid data summary.");
-    }
-
     exec.setMessage("Optimizing transforms");
+    exec.setProgress(0.6);
     ExecutionContext optimizeExec = exec.createSubExecutionContext(0.75);
     BufferedDataContainer summaryContainer = exec.createDataContainer(outSpecs[1]);
     subtaskIndex = 0;
-    transforms.optimize(summaryFrame);
-    transforms.getMap().entrySet().stream().forEach(entry -> optimizeTransform(summaryFrame,
+    Set<String> parameterSet = filteredData.stream().map(df -> df.getDimensionNames())
+        .flatMap(List::stream).collect(Collectors.toSet());
+    parameterSet.parallelStream().forEach(name -> transforms.optimizeTransform(name, filteredData));
+    
+    transforms.getMap().entrySet().parallelStream().forEach(entry -> applyTransform(filteredData,
         entry, summaryContainer, optimizeExec, transforms.getMap().size()));
     summaryContainer.close();
 
@@ -215,37 +206,37 @@ public class TransformNodeModel extends NodeModel {
     return FCSUtilities.filterFrame(df.getFilteredFrame(subsetName, true), df);
   }
 
-  private void optimizeTransform(FCSFrame summaryFrame, Entry<String, AbstractTransform> entry,
+  private void applyTransform(List<FCSFrame> flowFrames, Entry<String, AbstractTransform> entry,
       BufferedDataContainer transformSummaryContainer, ExecutionContext optimizeExec,
       Integer size) {
     optimizeExec.setProgress((double) subtaskIndex / size, "Creating plot for: " + entry.getKey());
     AbstractTransform at = entry.getValue();
-    byte[] imageBytes = createTransformPlot(summaryFrame, entry);
+    DataCell[] cells;
     try {
+      byte[] imageBytes = createTransformPlot(flowFrames, entry);
       DataCell imageCell = PNGImageCellFactory.create(imageBytes);
-      DataCell[] cells = new DataCell[] {new StringCell(at.getType().toString()),
-          new StringCell(at.getDetails()), imageCell};
-      DataRow row = new DefaultRow(entry.getKey(), cells);
-      synchronized (transformSummaryContainer) {
-        transformSummaryContainer.addRowToTable(row);
-      }
-    } catch (IOException e) {
+      cells = new DataCell[] {new StringCell(at.getType().toString()),
+          new StringCell(at.getDetails()),imageCell};
+    } catch (Exception e) {
+      cells = new DataCell[] {new StringCell(at.getType().toString()),
+          new StringCell(at.getDetails()), new MissingCell("debug")};
       logger.error("Unable to create image cell.", e);
+    }
+    
+    DataRow row = new DefaultRow(entry.getKey(), cells);
+    synchronized (transformSummaryContainer) {
+      transformSummaryContainer.addRowToTable(row);
     }
   }
 
-  private byte[] createTransformPlot(FCSFrame summaryFrame,
-      Entry<String, AbstractTransform> entry) {
+  private byte[] createTransformPlot(List<FCSFrame> cytFrames,
+      Entry<String, AbstractTransform> entry) throws IOException {
     CategoryResponseChart chart = new CategoryResponseChart(entry.getKey(), entry.getValue());
-    JFreeChart jfc = chart.createChart(summaryFrame);
+    JFreeChart jfc = chart.createChart(cytFrames);
     jfc.setBackgroundPaint(Color.WHITE);
     BufferedImage objBufferedImage = jfc.createBufferedImage(400, 300);
     ByteArrayOutputStream bas = new ByteArrayOutputStream();
-    try {
-      ImageIO.write(objBufferedImage, "png", bas);
-    } catch (IOException e) {
-      logger.error("Unable to create transform plot.", e);
-    }
+    ImageIO.write(objBufferedImage, "png", bas);
     return bas.toByteArray();
   }
 

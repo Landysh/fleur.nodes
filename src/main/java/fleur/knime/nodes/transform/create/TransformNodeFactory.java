@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.knime.nodes.transform.create;
+package fleur.knime.nodes.transform.create;
 
 import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeFactory;

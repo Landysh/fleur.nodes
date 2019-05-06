@@ -18,51 +18,8 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.knime.nodes.transform.create;
+package fleur.core.transforms;
 
-import org.knime.core.node.NodeView;
-
-/**
- * <code>NodeView</code> for the "Transorm" Node.
- * 
- *
- * @author Aaron Hart
- */
-public class TransformNodeView extends NodeView<TransformNodeModel> {
-
-  /**
-   * Creates a new view.
-   * 
-   * @param nodeModel The model (class: {@link TransformNodeModel})
-   */
-  protected TransformNodeView(final TransformNodeModel nodeModel) {
-    super(nodeModel);
-    // TODO: generated method stub
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void modelChanged() {
-    // TODO: generated method stub
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void onClose() {
-    // TODO: generated method stub
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void onOpen() {
-    // TODO: generated method stub
-  }
-
+public enum TransformType {
+  BOUNDARY, LINEAR, LOGARITHMIC, LOGICLE;
 }
-

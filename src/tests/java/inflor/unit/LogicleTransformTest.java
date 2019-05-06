@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
-import inflor.core.transforms.LogicleTransform;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.LogicleTransform;
 
 public class LogicleTransformTest {
   // Define Constants
@@ -17,7 +17,7 @@ public class LogicleTransformTest {
   public void testInitialization() throws Exception {
     // Setup
     FCSFrame data = FCSFileReader.read(logiclePath);
-    LogicleTransform transform = new LogicleTransform();
+    LogicleTransform transform = new LogicleTransform(262144);
     double[] tData = transform.transform(data.getDimension("FSC-A").getData());
     // Test
 

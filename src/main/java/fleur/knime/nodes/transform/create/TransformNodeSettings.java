@@ -15,10 +15,11 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.knime.nodes.transform.create;
+package fleur.knime.nodes.transform.create;
 
 import java.util.BitSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -26,9 +27,9 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
-import inflor.core.transforms.AbstractTransform;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
+import fleur.core.transforms.AbstractTransform;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.PlotUtils;
 
@@ -68,28 +69,35 @@ public class TransformNodeSettings {
 
   public void reset() {/* noop */}
 
-  public void optimizeTransforms(List<FCSFrame> dataSet, List<String> dimensionNames) {
-    List<FCSFrame> filteredData;
-    if (!mReferenceSubset.equals(DEFAULT_REFERENCE_SUBSET)) {
-      filteredData = dataSet.parallelStream().map(df -> {
-        Subset s = FCSUtilities.findCompatibleSubset(df, mReferenceSubset);
-        List<Subset> ancestry = s.findAncestors(df.getSubsets());
-        BitSet mask = s.evaluate(ancestry);
-        return FCSUtilities.filterFrame(mask, df);
-      }).collect(Collectors.toList());
-    } else {
-      filteredData = dataSet;
-    }
-    TreeMap<String, AbstractTransform> transformMap = new TreeMap<>();
-
-    for (String name : dimensionNames) {
-      transformMap.put(name, PlotUtils.createDefaultTransform(name));
-    }
-
-    if (filteredData != null) {
-
-    }
-  }
+//  public void optimizeTransforms(List<FCSFrame> dataSet, List<String> dimensionNames) {
+//    List<FCSFrame> filteredData;
+//    if (!mReferenceSubset.equals(DEFAULT_REFERENCE_SUBSET)) {
+//      filteredData = dataSet.parallelStream().map(df -> {
+//        Subset s = FCSUtilities.findCompatibleSubset(df, mReferenceSubset);
+//        List<Subset> ancestry = s.findAncestors(df.getSubsets());
+//        BitSet mask = s.evaluate(ancestry);
+//        return FCSUtilities.filterFrame(mask, df);
+//      }).collect(Collectors.toList());
+//    } else {
+//      filteredData = dataSet;
+//    }
+//    
+//    TreeMap<String, AbstractTransform> transformMap = new TreeMap<>();
+//
+//    
+//    for (String name : dimensionNames) {
+//      Double range = dataSet.stream()
+//          .filter(tdf -> tdf.getDimensionNames().contains(name))
+//          .map(df -> df.getDimension(name).getRange())
+//          .findAny()
+//          .get(); //Assumes all ranges are the same.  Could be false.
+//      
+//      transformMap.put(name, PlotUtils.createDefaultTransform(name,range));
+//    }
+//
+//    transformMap.
+//    
+//  }
 
   public void setReferenceSubset(String selectedItem) {
     mReferenceSubset = selectedItem;
