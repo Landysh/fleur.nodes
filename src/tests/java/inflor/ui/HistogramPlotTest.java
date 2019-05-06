@@ -7,17 +7,17 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
+import fleur.core.compensation.SpilloverCompensator;
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.gates.ui.GateCreationToolBar;
+import fleur.core.plots.ChartSpec;
+import fleur.core.plots.FCSChartPanel;
+import fleur.core.plots.HistogramPlot;
+import fleur.core.plots.PlotTypes;
 import fleur.core.transforms.LogicleTransform;
 import fleur.core.transforms.TransformSet;
-import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.gates.ui.GateCreationToolBar;
-import inflor.core.plots.ChartSpec;
-import inflor.core.plots.FCSChartPanel;
-import inflor.core.plots.HistogramPlot;
-import inflor.core.plots.PlotTypes;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class HistogramPlotTest extends ApplicationFrame {

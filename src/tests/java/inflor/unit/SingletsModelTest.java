@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
-import inflor.core.singlets.SingletsModel;
+import fleur.core.singlets.SingletsModel;
 
 public class SingletsModelTest {
   // Define Constants

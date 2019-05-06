@@ -12,12 +12,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
 import fleur.core.data.FCSFrame;
-import inflor.core.logging.LogFactory;
-import inflor.core.proto.TransformMapProto.TransformMap;
-import inflor.core.proto.TransformMapProto.TransformMap.Builder;
-import inflor.core.proto.TransformMapProto.TransformMap.Transform;
-import inflor.core.proto.TransformMapProto.TransformMap.TransformEntry;
-import inflor.core.utils.PlotUtils;
+import fleur.core.logging.LogFactory;
+import fleur.core.proto.TransformMapProto.TransformMap;
+import fleur.core.proto.TransformMapProto.TransformMap.Builder;
+import fleur.core.proto.TransformMapProto.TransformMap.Transform;
+import fleur.core.proto.TransformMapProto.TransformMap.TransformEntry;
+import fleur.core.utils.PlotUtils;
 
 public class TransformSet {
 
@@ -71,7 +71,7 @@ public class TransformSet {
       if (at.getType().equals(TransformType.LOGICLE)) {
         LogicleTransform lt = (LogicleTransform) at;
         transformBuilder
-            .setType(inflor.core.proto.TransformMapProto.TransformMap.TransformType.LOGICLE);
+            .setType(fleur.core.proto.TransformMapProto.TransformMap.TransformType.LOGICLE);
         transformBuilder.setLogicleT(lt.getT());
         transformBuilder.setLogicleW(lt.getW());
         transformBuilder.setLogicleM(lt.getM());
@@ -79,13 +79,13 @@ public class TransformSet {
       } else if (at.getType().equals(TransformType.LOGARITHMIC)) {
         LogrithmicTransform logT = (LogrithmicTransform) at;
         transformBuilder
-            .setType(inflor.core.proto.TransformMapProto.TransformMap.TransformType.LOG);
+            .setType(fleur.core.proto.TransformMapProto.TransformMap.TransformType.LOG);
         transformBuilder.setLogMin(logT.getMin());
         transformBuilder.setLogMax(logT.getMax());
       } else if (at.getType().equals(TransformType.BOUNDARY)) {
         BoundDisplayTransform bdt = (BoundDisplayTransform) at;
         transformBuilder
-            .setType(inflor.core.proto.TransformMapProto.TransformMap.TransformType.BOUNDARY);
+            .setType(fleur.core.proto.TransformMapProto.TransformMap.TransformType.BOUNDARY);
         transformBuilder.setBoundMin(bdt.getMinRawValue());
         transformBuilder.setBoundMax(bdt.getMaxRawValue());
       }
@@ -105,16 +105,16 @@ public class TransformSet {
       Transform serializedTransform = entry.getEntry();
       AbstractTransform loadedTransform = null;
       if (serializedTransform.getType()
-          .equals(inflor.core.proto.TransformMapProto.TransformMap.TransformType.LOGICLE)) {
+          .equals(fleur.core.proto.TransformMapProto.TransformMap.TransformType.LOGICLE)) {
         loadedTransform = new LogicleTransform(serializedTransform.getLogicleT(),
             serializedTransform.getLogicleW(), serializedTransform.getLogicleM(),
             serializedTransform.getLogicleA());
       } else if (serializedTransform.getType()
-          .equals(inflor.core.proto.TransformMapProto.TransformMap.TransformType.LOG)) {
+          .equals(fleur.core.proto.TransformMapProto.TransformMap.TransformType.LOG)) {
         loadedTransform = new LogrithmicTransform(serializedTransform.getLogMin(),
             serializedTransform.getLogMax());
       } else if (serializedTransform.getType()
-          .equals(inflor.core.proto.TransformMapProto.TransformMap.TransformType.BOUNDARY)) {
+          .equals(fleur.core.proto.TransformMapProto.TransformMap.TransformType.BOUNDARY)) {
         loadedTransform = new BoundDisplayTransform(serializedTransform.getBoundMin(),
             serializedTransform.getBoundMax());
       }

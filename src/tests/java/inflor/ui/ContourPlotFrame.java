@@ -10,14 +10,14 @@ import org.jfree.ui.ApplicationFrame;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.gates.ui.GateCreationToolBar;
+import fleur.core.plots.ChartSpec;
+import fleur.core.plots.DensityPlot;
+import fleur.core.plots.FCSChartPanel;
+import fleur.core.plots.PlotTypes;
+import fleur.core.sample.DownSample;
 import fleur.core.transforms.TransformSet;
-import inflor.core.downsample.DownSample;
-import inflor.core.gates.ui.GateCreationToolBar;
-import inflor.core.plots.ChartSpec;
-import inflor.core.plots.DensityPlot;
-import inflor.core.plots.FCSChartPanel;
-import inflor.core.plots.PlotTypes;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class ContourPlotFrame extends ApplicationFrame {

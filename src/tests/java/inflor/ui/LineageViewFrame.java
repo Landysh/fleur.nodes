@@ -13,12 +13,12 @@ import org.jfree.ui.ApplicationFrame;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.gates.Hierarchical;
+import fleur.core.gates.RangeGate;
+import fleur.core.plots.ChartSpec;
+import fleur.core.plots.PlotTypes;
 import fleur.core.transforms.TransformSet;
-import inflor.core.gates.Hierarchical;
-import inflor.core.gates.RangeGate;
-import inflor.core.plots.ChartSpec;
-import inflor.core.plots.PlotTypes;
-import inflor.core.ui.CellLineageTree;
+import fleur.core.ui.CellLineageTree;
 
 @SuppressWarnings("serial")
 public class LineageViewFrame extends ApplicationFrame {

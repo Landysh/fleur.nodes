@@ -2,7 +2,7 @@ package fleur.core.data;
 
 import java.util.BitSet;
 
-import inflor.core.plots.ChartingDefaults;
+import fleur.core.plots.ChartingDefaults;
 
 public class Histogram2D {
 

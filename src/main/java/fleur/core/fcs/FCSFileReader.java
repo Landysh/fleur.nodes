@@ -36,9 +36,9 @@ import com.google.common.hash.Hashing;
 
 import fleur.core.data.FCSDimension;
 import fleur.core.data.FCSFrame;
-import inflor.core.logging.LogFactory;
-import inflor.core.utils.FCSUtilities;
-import inflor.core.utils.MatrixUtilities;
+import fleur.core.logging.LogFactory;
+import fleur.core.utils.FCSUtilities;
+import fleur.core.utils.MatrixUtilities;
 
 public class FCSFileReader {
 

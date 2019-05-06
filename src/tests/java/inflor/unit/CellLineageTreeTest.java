@@ -11,10 +11,10 @@ import org.junit.Test;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.gates.Hierarchical;
+import fleur.core.gates.RangeGate;
 import fleur.core.transforms.TransformSet;
-import inflor.core.gates.Hierarchical;
-import inflor.core.gates.RangeGate;
-import inflor.core.ui.CellLineageTree;
+import fleur.core.ui.CellLineageTree;
 
 public class CellLineageTreeTest{
 

@@ -30,8 +30,8 @@ import org.knime.core.node.NodeSettingsWO;
 import fleur.core.data.FCSFrame;
 import fleur.core.data.Subset;
 import fleur.core.transforms.AbstractTransform;
-import inflor.core.utils.FCSUtilities;
-import inflor.core.utils.PlotUtils;
+import fleur.core.utils.FCSUtilities;
+import fleur.core.utils.PlotUtils;
 
 public class TransformNodeSettings {
 

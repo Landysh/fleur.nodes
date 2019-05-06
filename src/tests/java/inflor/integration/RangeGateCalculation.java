@@ -5,9 +5,9 @@ import java.util.logging.Logger;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.gates.RangeGate;
+import fleur.core.logging.LogFactory;
 import fleur.core.transforms.TransformSet;
-import inflor.core.gates.RangeGate;
-import inflor.core.logging.LogFactory;
 
 public class RangeGateCalculation {
   static final int FILE_COUNT = 1;

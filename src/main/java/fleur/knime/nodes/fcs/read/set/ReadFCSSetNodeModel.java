@@ -40,16 +40,16 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import inflor.core.compensation.SpilloverCompensator;
+import fleur.core.compensation.SpilloverCompensator;
 import fleur.core.data.FCSDimension;
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
-import inflor.core.utils.BitSetUtils;
-import inflor.core.utils.FCSConcatenator;
-import inflor.core.utils.FCSUtilities;
-import inflor.knime.core.NodeUtilities;
-import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import fleur.core.utils.BitSetUtils;
+import fleur.core.utils.FCSConcatenator;
+import fleur.core.utils.FCSUtilities;
+import fleur.knime.core.NodeUtilities;
+import fleur.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import fleur.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of ReadFCSSet.

@@ -36,11 +36,11 @@ import java.util.stream.Collectors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
-import inflor.core.logging.LogFactory;
-import inflor.core.proto.FCSFrameProto.Message;
-import inflor.core.proto.FCSFrameProto.Message.Dimension;
-import inflor.core.proto.FCSFrameProto.Message.Keyword;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.logging.LogFactory;
+import fleur.core.proto.FCSFrameProto.Message;
+import fleur.core.proto.FCSFrameProto.Message.Dimension;
+import fleur.core.proto.FCSFrameProto.Message.Keyword;
+import fleur.core.utils.FCSUtilities;
 
 // don't use the default serializer, there is a protobuf spec.
 @SuppressWarnings("serial")
@@ -436,7 +436,7 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
 
   public static FCSFrame loadFromProtoString(String previewString)
       throws InvalidProtocolBufferException {
-    inflor.core.proto.FCSFrameProto.Message.Builder mb = Message.newBuilder();
+    fleur.core.proto.FCSFrameProto.Message.Builder mb = Message.newBuilder();
     JsonFormat.parser().merge(previewString, mb);
     return FCSFrame.load(mb.build().toByteArray());
   }

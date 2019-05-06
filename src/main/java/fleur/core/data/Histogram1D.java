@@ -2,7 +2,7 @@ package fleur.core.data;
 
 import java.util.BitSet;
 
-import inflor.core.utils.BitSetUtils;
+import fleur.core.utils.BitSetUtils;
 
 public class Histogram1D {
 

@@ -17,10 +17,10 @@ import org.jfree.ui.ApplicationFrame;
 import fleur.core.data.FCSDimension;
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
+import fleur.core.plots.CategoryResponseChart;
 import fleur.core.transforms.AbstractTransform;
 import fleur.core.transforms.LogicleTransform;
-import inflor.core.plots.CategoryResponseChart;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
 public class MultiHistogramPlotTest extends ApplicationFrame {

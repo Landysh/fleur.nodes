@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.utils.FCSUtilities;
 
 public class SummaryFrameCreation {
   static final int FILE_COUNT = 10;

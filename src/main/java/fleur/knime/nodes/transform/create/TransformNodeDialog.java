@@ -37,8 +37,8 @@ import org.knime.core.node.NodeDialogPane;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.knime.core.NodeUtilities;
-import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import fleur.knime.core.NodeUtilities;
+import fleur.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 
 /**
  * <code>NodeDialog</code> for the "Transform" Node.

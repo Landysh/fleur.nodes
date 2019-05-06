@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import fleur.core.data.FCSDimension;
 import fleur.core.data.FCSFrame;
+import fleur.core.gates.PolygonGate;
 import fleur.core.transforms.TransformSet;
-import inflor.core.gates.PolygonGate;
 
 public class PolygonGateTest {
 

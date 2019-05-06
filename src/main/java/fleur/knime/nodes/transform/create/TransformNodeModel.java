@@ -58,13 +58,13 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import fleur.core.data.FCSFrame;
+import fleur.core.plots.CategoryResponseChart;
 import fleur.core.transforms.AbstractTransform;
 import fleur.core.transforms.TransformSet;
-import inflor.core.plots.CategoryResponseChart;
-import inflor.core.utils.FCSUtilities;
-import inflor.knime.core.NodeUtilities;
-import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
-import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;
+import fleur.core.utils.FCSUtilities;
+import fleur.knime.core.NodeUtilities;
+import fleur.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
+import fleur.knime.data.type.cell.fcs.FCSFrameMetaData;
 
 /**
  * This is the model implementation of Transform.

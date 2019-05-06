@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import inflor.core.gates.BitSetAccumulator;
-import inflor.core.gates.BitSetOperator;
-import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
+import fleur.core.gates.BitSetAccumulator;
+import fleur.core.gates.BitSetOperator;
+import fleur.core.proto.FCSFrameProto.Message.Subset.Type;
 
 @SuppressWarnings("serial")
 public class Subset extends DomainObject {

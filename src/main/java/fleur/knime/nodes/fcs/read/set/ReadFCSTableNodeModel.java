@@ -32,7 +32,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 import fleur.core.data.FCSFrame;
 import fleur.core.fcs.FCSFileReader;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.utils.FCSUtilities;
 
 /**
  * This is the node model implementation for FCSReader (rows). It is designed to
