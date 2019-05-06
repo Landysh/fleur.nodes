@@ -19,8 +19,8 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
+import fleur.core.fcs.FCSFileReader;
 import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.fcs.FCSFileReader;
 import inflor.knime.ports.compensation.CompMatrixPortObject;
 import inflor.knime.ports.compensation.CompMatrixPortSpec;
 

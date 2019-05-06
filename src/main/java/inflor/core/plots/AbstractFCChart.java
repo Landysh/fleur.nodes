@@ -24,8 +24,8 @@ import java.util.UUID;
 
 import org.jfree.chart.JFreeChart;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 
 public abstract class AbstractFCChart {
 

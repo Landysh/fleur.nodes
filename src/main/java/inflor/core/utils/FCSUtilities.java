@@ -29,14 +29,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
-import inflor.core.fcs.FCSFileReader;
-import inflor.core.fcs.DimensionTypes;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
+import fleur.core.fcs.DimensionTypes;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.AbstractTransform;
+import fleur.core.transforms.TransformSet;
 import inflor.core.singlets.PuleProperties;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.transforms.TransformSet;
 import inflor.knime.core.NodeUtilities;
 
 public class FCSUtilities {

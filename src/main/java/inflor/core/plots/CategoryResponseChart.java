@@ -17,6 +17,8 @@
  */
 package inflor.core.plots;
 
+import java.util.List;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -27,13 +29,10 @@ import org.jfree.ui.RectangleAnchor;
 
 import com.google.common.primitives.Doubles;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Histogram1D;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.utils.FCSUtilities;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Histogram1D;
+import fleur.core.transforms.AbstractTransform;
 import inflor.core.utils.PlotUtils;
-import inflor.knime.core.NodeUtilities;
 
 public class CategoryResponseChart {
 
@@ -45,62 +44,32 @@ public class CategoryResponseChart {
     this.axisName = domainName;
   }
 
-  public JFreeChart createChart(FCSFrame dataFrame) {
+  public JFreeChart createChart(List<FCSFrame> cytFrames) {
 
     CategoryXYZDataSet categoryData = new CategoryXYZDataSet();
     double zMin = Double.MAX_VALUE;
     double zMax = 1;
-    if (dataFrame.getKeywords().containsKey(FCSUtilities.KEY_MERGE_MAP)) {
-      String[] mergeMap = dataFrame.getKeywordValue(FCSUtilities.KEY_MERGE_MAP)
-          .split(NodeUtilities.DELIMITER_REGEX);
-      FCSDimension dim = dataFrame.getDimension(axisName);
-      double[] transformedData = transform.transform(dim.getData());
-      int perFileSize = dim.getData().length / mergeMap.length;
-      for (int i = 0; i < mergeMap.length; i++) {
+    
+    for (int i=0;i<cytFrames.size();i++) {
 
-        double[] unMergedData = new double[perFileSize];
-        for (int j = 0; j < unMergedData.length; j++) {
-          unMergedData[j] = transformedData[i * unMergedData.length + j];
-        }
-        double tMin = transform.getMinTranformedValue();
-        double tMax = transform.getMaxTransformedValue();
-        Histogram1D hist = new Histogram1D(unMergedData, tMin, tMax, ChartingDefaults.BIN_COUNT);
-        double[] x = hist.getNonZeroX();
-        double[] y = new double[x.length];
-        for (int j = 0; j < y.length; j++) {
-          y[j] = i;
-        }
-        double[] z = hist.getNonZeroY();
-        double currentZMin = Doubles.min(z);
-        double currentZMax = Doubles.max(z);
-        if (currentZMin < zMin) {
-          zMin = currentZMin;
-        } else if (currentZMax > zMax) {
-          zMax = currentZMax;
-        }
-
-        categoryData.addCategoricalSeries(mergeMap[i], x, z);
-      }
-    } else {
-      FCSDimension dim = dataFrame.getDimension(axisName);
-      double[] transformedData = transform.transform(dim.getData());
-      Histogram1D hist = new Histogram1D(transformedData, transform.getMinTranformedValue(),
-          transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+      double[] tData = transform.transform(cytFrames.get(i).getDimension(axisName).getData());
+      Histogram1D hist = new Histogram1D(tData, transform.getMinTranformedValue(), transform.getMaxTransformedValue(), ChartingDefaults.BIN_COUNT);
+      
       double[] x = hist.getNonZeroX();
       double[] y = new double[x.length];
       for (int j = 0; j < y.length; j++) {
-        y[j] = 0;
+        y[j] = i;
       }
       double[] z = hist.getNonZeroY();
+
       double currentZMin = Doubles.min(z);
       double currentZMax = Doubles.max(z);
+      categoryData.addCategoricalSeries(cytFrames.get(i).getDisplayName(), x, z);
       if (currentZMin < zMin) {
         zMin = currentZMin;
       } else if (currentZMax > zMax) {
         zMax = currentZMax;
       }
-
-      categoryData.addCategoricalSeries(dataFrame.getDisplayName(), x, z);
     }
 
     ValueAxis domainAxis = PlotUtils.createAxis(axisName, transform);

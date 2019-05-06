@@ -30,8 +30,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.NotConfigurableException;
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.data.ParticleType;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.ParticleType;
 import inflor.core.ui.ButtonColumn;
 import inflor.core.ui.TableColumnAdjuster;
 

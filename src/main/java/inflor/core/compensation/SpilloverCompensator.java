@@ -29,11 +29,9 @@ import java.util.Optional;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import inflor.core.data.DomainObject;
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.DomainObject;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -128,7 +126,7 @@ public class SpilloverCompensator extends DomainObject {
     }
   }
 
-  public FCSFrame compensateFCSFrame(FCSFrame dataFrame, boolean retainUncomped) throws InvalidProtocolBufferException {
+  public FCSFrame compensateFCSFrame(FCSFrame dataFrame, boolean retainUncomped) {
     FCSFrame newFrame = dataFrame.deepCopy();
     double[][] x = new double[compParameters.length][newFrame.getRowCount()];
 
@@ -165,8 +163,6 @@ public class SpilloverCompensator extends DomainObject {
         newFrame.addDimension(dimension.get());
       }
     }
-    
-    
     return newFrame;
   }
 
@@ -207,5 +203,30 @@ public class SpilloverCompensator extends DomainObject {
       }
     }
     return isEmpty;
+  }
+
+  public FCSFrame dryCompensateFCSFrame(FCSFrame df, boolean retainUncomped) {
+    FCSFrame newFrame = df.deepCopy();
+
+    for (int i = 0; i < compParameters.length; i++) {
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
+      if (!dimension.isPresent()) {
+        throw new IllegalArgumentException("DataFrame does not contain matching parameters: " + compParameters[i]);
+      }
+    }
+
+    for (int i = 0; i < compParameters.length; i++) {
+      Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(newFrame, compParameters[i]);
+      dimension.get().setShortName("[" + dimension.get().getShortName() + "]");
+    }
+    newFrame.setCompRef(this.getID());
+    
+    if (retainUncomped){
+      for (int i = 0; i < compParameters.length; i++) {
+        Optional<FCSDimension> dimension = FCSUtilities.findCompatibleDimension(df, compParameters[i]);
+        newFrame.addDimension(dimension.get());
+      }
+    }
+    return newFrame;
   }
 }

@@ -31,8 +31,8 @@ import org.knime.core.data.filestore.FileStore;
 import org.knime.core.data.filestore.FileStoreCell;
 import org.knime.core.node.NodeLogger;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 public class FCSFrameFileStoreDataCell extends FileStoreCell implements FCSFrameDataValue  {

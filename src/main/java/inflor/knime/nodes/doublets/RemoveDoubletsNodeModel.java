@@ -21,7 +21,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 import inflor.core.singlets.SingletsModel;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;

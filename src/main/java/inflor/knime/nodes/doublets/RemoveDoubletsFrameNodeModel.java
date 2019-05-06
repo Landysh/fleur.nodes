@@ -19,7 +19,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 import inflor.core.singlets.SingletsModel;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;

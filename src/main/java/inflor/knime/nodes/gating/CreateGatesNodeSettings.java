@@ -12,7 +12,7 @@ import org.knime.core.node.NodeLogger;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.DomainObject;
+import fleur.core.data.DomainObject;
 import inflor.core.gates.Hierarchical;
 import inflor.knime.core.NodeUtilities;
 

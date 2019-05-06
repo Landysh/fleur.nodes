@@ -33,7 +33,7 @@ import org.jfree.data.Range;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.TextAnchor;
 
-import inflor.core.transforms.LogicleTransform;
+import fleur.core.transforms.LogicleTransform;
 
 @SuppressWarnings("serial")
 public class LogicleNumberAxis extends NumberAxis {

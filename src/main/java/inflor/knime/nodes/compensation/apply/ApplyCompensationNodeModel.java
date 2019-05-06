@@ -39,8 +39,8 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import fleur.core.data.FCSFrame;
 import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.data.FCSFrame;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;
@@ -145,11 +145,7 @@ public class ApplyCompensationNodeModel extends NodeModel {
       //Do the stuff we can in parallel.
       FCSFrame inFrame = ((FCSFrameFileStoreDataCell) inRow.getCell(columnIndex)).getFCSFrameValue();
       FCSFrame compFrame;
-      try {
-        compFrame = compr.compensateFCSFrame(inFrame, mRetainUncomped.getBooleanValue());
-      } catch (InvalidProtocolBufferException e) {
-        throw new RuntimeException("Invalid protocol message.", e);
-      }
+      compFrame = compr.compensateFCSFrame(inFrame, mRetainUncomped.getBooleanValue());
       
       int downSize = (int) (FCSUtilities.DEFAULT_MAX_SUMMARY_FRAME_VALUES/fileCount/compFrame.getDimensionCount());
       BitSet mask = BitSetUtils.getShuffledMask(compFrame.getRowCount(), downSize);

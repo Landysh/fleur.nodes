@@ -9,9 +9,9 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
 import inflor.core.utils.FCSUtilities;
 
 public enum StatType {

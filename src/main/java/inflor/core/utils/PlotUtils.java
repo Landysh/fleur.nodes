@@ -26,7 +26,12 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.data.Range;
 
-import inflor.core.fcs.DimensionTypes;
+import fleur.core.fcs.DimensionTypes;
+import fleur.core.transforms.AbstractTransform;
+import fleur.core.transforms.BoundDisplayTransform;
+import fleur.core.transforms.LogicleTransform;
+import fleur.core.transforms.LogrithmicTransform;
+import fleur.core.transforms.TransformType;
 import inflor.core.logging.LogFactory;
 import inflor.core.plots.AbstractFCChart;
 import inflor.core.plots.ChartSpec;
@@ -37,11 +42,6 @@ import inflor.core.plots.LogicleNumberAxis;
 import inflor.core.plots.PaintModel;
 import inflor.core.plots.PlotTypes;
 import inflor.core.plots.ScatterPlot;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.transforms.BoundDisplayTransform;
-import inflor.core.transforms.LogicleTransform;
-import inflor.core.transforms.LogrithmicTransform;
-import inflor.core.transforms.TransformType;
 
 public class PlotUtils {
 
@@ -82,7 +82,7 @@ public class PlotUtils {
     return newPlot;
   }
 
-  public static AbstractTransform createDefaultTransform(TransformType selectedType) {
+  public static AbstractTransform createDefaultTransform(TransformType selectedType, Double range) {
 
     AbstractTransform newTransform = null;
 
@@ -90,8 +90,8 @@ public class PlotUtils {
       newTransform = new BoundDisplayTransform(Double.MAX_VALUE, Double.MAX_VALUE);
     } else if (selectedType == TransformType.LOGARITHMIC) {
       newTransform = new LogrithmicTransform(1, 1000000);
-    } else if (selectedType == TransformType.LOGICLE) {
-      newTransform = new LogicleTransform();
+    } else if (selectedType == TransformType.LOGICLE && null!=range) {
+      newTransform = new LogicleTransform(range);
     } else {
       // noop
     }
@@ -111,7 +111,7 @@ public class PlotUtils {
   
   
   // TODO: move to FCSUtils?
-  public static AbstractTransform createDefaultTransform(String parameterName) {
+  public static AbstractTransform createDefaultTransform(String parameterName, Double range) {
     if (DimensionTypes.DNA.matches(parameterName)
         || DimensionTypes.FORWARD_SCATTER.matches(parameterName)
         || DimensionTypes.SIDE_SCATTER.matches(parameterName)
@@ -122,7 +122,7 @@ public class PlotUtils {
     } else if (DimensionTypes.PULSE_WIDTH.matches(parameterName)) {
        return new BoundDisplayTransform(0, 100);
     } else {
-      return new LogicleTransform();
+      return new LogicleTransform(range);
     }
   }
 }

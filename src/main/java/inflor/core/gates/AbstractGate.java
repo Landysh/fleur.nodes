@@ -25,10 +25,10 @@ import java.util.HashMap;
 
 import org.w3c.dom.Element;
 
-import inflor.core.data.DomainObject;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.DomainObject;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
-import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public abstract class AbstractGate extends DomainObject implements Hierarchical {

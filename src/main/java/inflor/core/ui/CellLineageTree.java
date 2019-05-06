@@ -29,11 +29,11 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import inflor.core.data.DomainObject;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.DomainObject;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.GateUtilities;
 import inflor.core.gates.Hierarchical;
-import inflor.core.transforms.TransformSet;
 
 @SuppressWarnings("serial")
 public class CellLineageTree extends JTree {

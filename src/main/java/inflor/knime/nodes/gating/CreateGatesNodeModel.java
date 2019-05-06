@@ -30,10 +30,10 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.AbstractGate;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;

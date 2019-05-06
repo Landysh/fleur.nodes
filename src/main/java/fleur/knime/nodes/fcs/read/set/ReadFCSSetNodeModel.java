@@ -40,12 +40,10 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSConcatenator;
 import inflor.core.utils.FCSUtilities;
@@ -270,11 +268,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
     Boolean mComp = ReadFCSSetSettings.getMComp();
     if (mComp) {
       SpilloverCompensator sc = new SpilloverCompensator(df.getKeywords());
-      try {
-        df = sc.compensateFCSFrame(df, true);
-      } catch (InvalidProtocolBufferException e) {
-        throw new RuntimeException("Unable to compensate finle: " + df.getDisplayName());
-      }
+      df = sc.compensateFCSFrame(df, true);
     }
     
     String source = df.getDisplayName();

@@ -24,7 +24,7 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 import inflor.knime.core.NodeUtilities;
 import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;
 import inflor.knime.data.type.cell.fcs.FCSFrameMetaData;

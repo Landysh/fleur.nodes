@@ -43,11 +43,11 @@ import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.data.Range;
 import org.jfree.ui.TextAnchor;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.ui.SelectionButtonListener;
 import inflor.core.gates.ui.XYGateAnnotation;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.ChartUtils;
 

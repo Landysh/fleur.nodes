@@ -15,13 +15,13 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.jfree.chart.JFreeChart;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.GateUtilities;
 import inflor.core.plots.AbstractFCChart;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.FCSChartPanel;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.ChartUtils;
 import inflor.core.utils.FCSUtilities;

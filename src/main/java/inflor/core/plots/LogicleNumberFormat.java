@@ -24,7 +24,7 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
-import inflor.core.transforms.LogicleTransform;
+import fleur.core.transforms.LogicleTransform;
 
 @SuppressWarnings("serial")
 public class LogicleNumberFormat extends NumberFormat {

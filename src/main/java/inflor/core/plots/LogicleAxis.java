@@ -27,7 +27,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.data.Range;
 
-import inflor.core.transforms.LogicleTransform;
+import fleur.core.transforms.LogicleTransform;
 
 @SuppressWarnings("serial")
 public class LogicleAxis extends NumberAxis {

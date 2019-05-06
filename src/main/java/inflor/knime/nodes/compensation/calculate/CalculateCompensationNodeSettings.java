@@ -12,9 +12,9 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
+import fleur.core.data.FCSFrame;
+import fleur.core.data.ParticleType;
 import inflor.core.compensation.TheilSenMatrixCalculator;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.ParticleType;
 import inflor.core.utils.FCSUtilities;
 
 public class CalculateCompensationNodeSettings {

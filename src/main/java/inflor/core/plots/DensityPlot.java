@@ -32,11 +32,11 @@ import org.jfree.ui.RectangleAnchor;
 
 import com.google.common.primitives.Doubles;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Histogram2D;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Histogram2D;
+import fleur.core.transforms.AbstractTransform;
+import fleur.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.PlotUtils;
 

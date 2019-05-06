@@ -17,16 +17,16 @@ import javax.swing.border.TitledBorder;
 
 import org.jfree.chart.JFreeChart;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.DimensionTypes;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.DimensionTypes;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.ui.GateCreationToolBar;
 import inflor.core.plots.AbstractFCChart;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.ChartingDefaults;
 import inflor.core.plots.FCSChartPanel;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.PlotUtils;
 

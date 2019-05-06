@@ -27,11 +27,11 @@ import java.util.Optional;
 
 import org.w3c.dom.Element;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.proto.FCSFrameProto;
 import inflor.core.proto.FCSFrameProto.Message.Subset.Type;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 public class PolygonGate extends AbstractGate {

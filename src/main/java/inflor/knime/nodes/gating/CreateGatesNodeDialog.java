@@ -35,10 +35,10 @@ import org.knime.core.node.port.PortObjectSpec;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import inflor.core.data.DomainObject;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.DomainObject;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.Hierarchical;
-import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 import inflor.core.utils.FCSUtilities;
 import inflor.knime.core.NodeUtilities;

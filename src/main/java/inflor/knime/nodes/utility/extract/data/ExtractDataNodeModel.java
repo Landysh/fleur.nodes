@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnProperties;
@@ -30,9 +31,9 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnName;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
+import fleur.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.MatrixUtilities;
 import inflor.knime.core.NodeUtilities;
@@ -133,7 +134,7 @@ public class ExtractDataNodeModel extends NodeModel {
     double[][] rowData = MatrixUtilities.transpose(data);
     List<Subset> subsets = df.getSubsets();
     for (int i=0;i<rowData.length;i++){
-      RowKey rowKey = new RowKey(df.toString() + i);//TODO maybe not unique. 
+      RowKey rowKey = new RowKey(UUID.randomUUID().toString());//TODO maybe not efficient. 
       DataCell[] dataCells;
       if (subsets.isEmpty()){
         dataCells = new DataCell[df.getDimensionCount()+subsets.size()+1];

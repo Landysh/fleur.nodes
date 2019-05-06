@@ -2,8 +2,8 @@ package inflor.knime.data.type.cell.fcs;
 
 import java.io.Serializable;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 
 public class FCSFrameMetaData implements Serializable {
 

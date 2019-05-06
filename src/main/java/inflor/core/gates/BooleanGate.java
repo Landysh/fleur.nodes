@@ -23,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.Element;
 
-import inflor.core.data.DomainObject;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.DomainObject;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.proto.FCSFrameProto.Message;
-import inflor.core.transforms.TransformSet;
 
 public class BooleanGate extends DomainObject {
 

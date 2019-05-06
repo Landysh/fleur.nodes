@@ -27,8 +27,8 @@ import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.knime.core.NodeUtilities;
 
 public class GateUtilities {

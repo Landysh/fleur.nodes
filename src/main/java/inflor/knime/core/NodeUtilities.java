@@ -47,7 +47,7 @@ import org.knime.core.node.InvalidSettingsException;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 
 public class NodeUtilities {
   

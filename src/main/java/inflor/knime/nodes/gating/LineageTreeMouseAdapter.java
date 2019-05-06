@@ -31,11 +31,11 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.AbstractGate;
 import inflor.core.gates.GateUtilities;
 import inflor.core.plots.ChartSpec;
-import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 import inflor.core.ui.ChartEditorDialog;
 import inflor.core.utils.FCSUtilities;

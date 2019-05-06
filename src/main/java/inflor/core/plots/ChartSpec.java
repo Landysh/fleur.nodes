@@ -19,7 +19,7 @@ package inflor.core.plots;
 
 import java.util.List;
 
-import inflor.core.data.DomainObject;
+import fleur.core.data.DomainObject;
 import inflor.core.gates.Hierarchical;
 
 public class ChartSpec extends DomainObject implements Hierarchical {

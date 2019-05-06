@@ -9,8 +9,8 @@ import java.util.Random;
 import org.apache.commons.math3.stat.descriptive.rank.Median;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.transforms.TransformSet;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.MatrixUtilities;

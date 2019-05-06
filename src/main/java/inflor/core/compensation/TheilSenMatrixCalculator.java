@@ -18,13 +18,13 @@ import org.knime.core.node.ExecutionContext;
 
 import com.google.common.primitives.Doubles;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.ParticleType;
-import inflor.core.fcs.DimensionTypes;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.ParticleType;
+import fleur.core.fcs.DimensionTypes;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.RangeGate;
 import inflor.core.logging.LogFactory;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.BitSetUtils;
 import inflor.core.utils.FCSUtilities;
 
@@ -355,7 +355,7 @@ public class TheilSenMatrixCalculator {
     return particleTypeMap;
   }
 
-  public inflor.core.data.ParticleType getParticleType(String key) {
+  public fleur.core.data.ParticleType getParticleType(String key) {
     return particleTypeMap.get(key);
   }
 }

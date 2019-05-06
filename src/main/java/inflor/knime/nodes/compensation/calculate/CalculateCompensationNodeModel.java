@@ -30,7 +30,7 @@ import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.MatrixUtilities;
 import inflor.knime.ports.compensation.CompMatrixPortObject;

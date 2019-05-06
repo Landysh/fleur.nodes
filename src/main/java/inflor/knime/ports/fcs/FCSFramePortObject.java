@@ -28,7 +28,7 @@ import org.knime.core.node.port.PortTypeRegistry;
 
 import com.google.common.collect.Lists;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 import inflor.knime.core.NodeUtilities;
 import inflor.knime.data.type.cell.fcs.FCSFrameContent;
 import inflor.knime.data.type.cell.fcs.FCSFrameFileStoreDataCell;

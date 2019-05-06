@@ -31,9 +31,9 @@ import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.data.Subset;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.data.Subset;
 import inflor.core.logging.LogFactory;
 
 public class FCSConcatenator implements BinaryOperator<FCSFrame> {
