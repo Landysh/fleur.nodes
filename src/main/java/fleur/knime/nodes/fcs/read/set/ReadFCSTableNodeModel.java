@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read;
+package fleur.knime.nodes.fcs.read.set;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +30,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 import inflor.core.utils.FCSUtilities;
 
 /**

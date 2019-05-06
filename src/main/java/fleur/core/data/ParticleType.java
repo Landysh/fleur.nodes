@@ -1,4 +1,4 @@
-package inflor.core.data;
+package fleur.core.data;
 
 public enum ParticleType {
 	CELLS, BEADS

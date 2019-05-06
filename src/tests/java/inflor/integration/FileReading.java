@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 
 public class FileReading {
   static final int numFiles = 10;

@@ -8,15 +8,15 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.TransformSet;
 import inflor.core.downsample.DownSample;
-import inflor.core.fcs.FCSFileReader;
 import inflor.core.gates.ui.GateCreationToolBar;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.DensityPlot;
 import inflor.core.plots.FCSChartPanel;
 import inflor.core.plots.PlotTypes;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")

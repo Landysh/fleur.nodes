@@ -7,16 +7,16 @@ import javax.swing.event.MouseInputListener;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.LogicleTransform;
+import fleur.core.transforms.TransformSet;
 import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
 import inflor.core.gates.ui.GateCreationToolBar;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.FCSChartPanel;
 import inflor.core.plots.HistogramPlot;
 import inflor.core.plots.PlotTypes;
-import inflor.core.transforms.LogicleTransform;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -39,7 +39,7 @@ public class HistogramPlotTest extends ApplicationFrame {
     ChartSpec spec = new ChartSpec();
     spec.setPlotType(PlotTypes.HISTOGRAM);
     spec.setDomainAxisName("PE-Texas-Red-A");
-    LogicleTransform transform = new LogicleTransform();
+    LogicleTransform transform = new LogicleTransform(262144);
     double[] data = FCSUtilities.findCompatibleDimension(dataFrame, "PE-Texas-Red-A").get().getData();
     transform.optimize(data);
     spec.setRangeAxisName("Count");

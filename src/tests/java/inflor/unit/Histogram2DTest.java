@@ -2,7 +2,7 @@ package inflor.unit;
 
 import org.junit.Test;
 
-import inflor.core.data.Histogram2D;
+import fleur.core.data.Histogram2D;
 
 import static org.junit.Assert.assertEquals;
 

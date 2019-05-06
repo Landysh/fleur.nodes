@@ -3,11 +3,11 @@ package inflor.integration;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.RangeGate;
 import inflor.core.logging.LogFactory;
-import inflor.core.transforms.TransformSet;
 
 public class RangeGateCalculation {
   static final int FILE_COUNT = 1;

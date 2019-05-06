@@ -14,13 +14,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.ui.ApplicationFrame;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.AbstractTransform;
+import fleur.core.transforms.LogicleTransform;
 import inflor.core.plots.CategoryResponseChart;
-import inflor.core.transforms.AbstractTransform;
-import inflor.core.transforms.LogicleTransform;
-import inflor.core.transforms.TransformSet;
 import inflor.core.utils.FCSUtilities;
 
 @SuppressWarnings("serial")
@@ -60,10 +59,9 @@ public class MultiHistogramPlotTest extends ApplicationFrame {
       dataset.put(key, value);
     }
 
-    AbstractTransform transform = new LogicleTransform();
+    AbstractTransform transform = new LogicleTransform(262144);
     CategoryResponseChart plot = new CategoryResponseChart(name, transform);
-    FCSFrame summaryFrame = FCSUtilities.createSummaryFrame(fcsList, 1000);
-    JFreeChart chart = plot.createChart(summaryFrame);
+    JFreeChart chart = plot.createChart(fcsList);
     panel = new ChartPanel(chart);
     JPanel editorPanel = new JPanel();
     editorPanel.add(panel);

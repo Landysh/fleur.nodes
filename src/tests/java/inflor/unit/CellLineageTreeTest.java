@@ -9,11 +9,11 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.junit.Test;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.Hierarchical;
 import inflor.core.gates.RangeGate;
-import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 
 public class CellLineageTreeTest{

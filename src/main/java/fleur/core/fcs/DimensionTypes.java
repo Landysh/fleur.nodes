@@ -18,7 +18,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.fcs;
+package fleur.core.fcs;
 
 public enum DimensionTypes {
   FORWARD_SCATTER(new String[] {".*fsc.*", ".*fcs.*", ".*forward.*", ".*size.*"}),

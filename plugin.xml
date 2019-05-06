@@ -16,35 +16,34 @@
 <extension
       id="fleur.knime.nodes"
       point="org.knime.workbench.repository.nodes">
-<node category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
-<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
-<node after="inflor.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/inflor/read" deprecated="false" factory-class="inflor.knime.nodes.fcs.read.ReadFCSTableNodeFactory"/>
-<node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
-<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
-<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
-<node category-path="/inflor/transform" deprecated="false" factory-class="inflor.knime.nodes.transform.create.TransformNodeFactory"/>
-<node category-path="/inflor/util" deprecated="false" factory-class="inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
-<node category-path="/inflor/util" deprecated="true" factory-class="inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="true" factory-class="inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.utility.extract.data.ExtractDataNodeFactory"/>
-<node category-path="/inflor/analyze" deprecated="false" factory-class="inflor.knime.nodes.bhtsne.table.TSNENodeFactory">
+<node category-path="/fleur/read" deprecated="false" factory-class="fleur.knime.nodes.fcs.read.set.ReadFCSSetNodeFactory"/>
+<node after="fleur.knime.nodes.fcs.read.ReadFCSSetNodeFactory" category-path="/fleur/read" deprecated="false" factory-class="fleur.knime.nodes.fcs.read.set.ReadFCSTableNodeFactory"/>
+<node category-path="/fleur/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory"/>
+<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/fleur/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fcs.ExtractCommpensationNodeFactory"/>
+<node after="inflor.knime.nodes.compensation.apply.ApplyCompensationNodeFactory" category-path="/fleur/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.extract.fjmtx.ExtractCompJONodeFactory"/>
+<node category-path="/fleur/transform" deprecated="false" factory-class="fleur.knime.nodes.transform.create.TransformNodeFactory"/>
+<node category-path="/fleur/util" deprecated="false" factory-class="inflor.knime.nodes.downsample.DownsampleNodeFactory"/>
+<node category-path="/fleur/util" deprecated="true" factory-class="inflor.knime.nodes.portToTableCell.ColumnStoreToTableCellNodeFactory"/>
+<node category-path="/fleur/analyze" deprecated="false" factory-class="inflor.knime.nodes.gating.CreateGatesNodeFactory"/>
+<node category-path="/fleur/analyze" deprecated="true" factory-class="inflor.knime.nodes.statistics.SummaryStatisticsNodeFactory"/>
+<node category-path="/fleur/analyze" deprecated="false" factory-class="inflor.knime.nodes.utility.extract.data.ExtractDataNodeFactory"/>
+<node category-path="/fleur/analyze" deprecated="false" factory-class="inflor.knime.nodes.bhtsne.table.TSNENodeFactory">
 </node>
-<node category-path="/inflor/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
-<node category-path="/inflor/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
+<node category-path="/fleur/comp" deprecated="false" factory-class="inflor.knime.nodes.compensation.calculate.CalculateCompensationNodeFactory"/>
+<node category-path="/fleur/util" factory-class="inflor.knime.nodes.compensation.convert.ConvertMatrixNodeFactory"/>
 </extension>
 
 <extension point="org.knime.workbench.repository.categories">
-		<category icon="META-INF/icons/inflor_knime.png" level-id="inflor" locked="true" name="Inflor" path="/"/>
-  <category description="Nodes for reading FCS Files (eg. to table, frame or set)." icon="META-INF/icons/inflor_knime.png" level-id="read" locked="true" name="Read FCS" path="/inflor">
+		<category icon="META-INF/icons/inflor_knime.png" level-id="fleur" locked="true" name="Fleur Cytometry" path="/"/>
+  <category description="Nodes for reading FCS Files (eg. to table, frame or set)." icon="META-INF/icons/inflor_knime.png" level-id="read" locked="true" name="Read FCS" path="/fleur">
   </category>
-  <category after="read" description="Nodes pertaining to the creation and application of compensation matricies" icon="META-INF/icons/inflor_knime.png" level-id="comp" locked="true" name="Compensate" path="/inflor">
+  <category after="read" description="Nodes pertaining to the creation and application of compensation matricies" icon="META-INF/icons/inflor_knime.png" level-id="comp" locked="true" name="Compensate" path="/fleur">
   </category>
-  <category after="comp" description="Nodes related to creating or altering display transformations (eg. linear, log, or logicle)" icon="META-INF/icons/inflor_knime.png" level-id="transform" locked="true" name="Transform" path="/inflor">
+  <category after="comp" description="Nodes related to creating or altering display transformations (eg. linear, log, or logicle)" icon="META-INF/icons/inflor_knime.png" level-id="transform" locked="true" name="Transform" path="/fleur">
   </category>
-  <category after="transform" description="Nodes to further ananlysis and characterization of cytometry data (eg. gating, sne, clustering)" icon="META-INF/icons/inflor_knime.png" level-id="analyze" locked="true" name="Analyze" path="/inflor">
+  <category after="transform" description="Nodes to further ananlysis and characterization of cytometry data (eg. gating, sne, clustering)" icon="META-INF/icons/inflor_knime.png" level-id="analyze" locked="true" name="Analyze" path="/fleur">
   </category>
-  <category after="analyze" icon="META-INF/icons/inflor_knime.png" level-id="util" locked="true" name="Utilities" path="/inflor">
+  <category after="analyze" icon="META-INF/icons/inflor_knime.png" level-id="util" locked="true" name="Utilities" path="/fleur">
   </category>
 </extension>
 

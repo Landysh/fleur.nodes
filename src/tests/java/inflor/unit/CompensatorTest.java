@@ -6,9 +6,9 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 import inflor.core.compensation.SpilloverCompensator;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
 
 public class CompensatorTest {
 

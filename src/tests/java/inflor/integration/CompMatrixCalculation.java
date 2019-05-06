@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 import inflor.core.compensation.TheilSenMatrixCalculator;
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
 
   public class CompMatrixCalculation {
     ArrayList<FCSFrame> dataSet = new ArrayList<>();

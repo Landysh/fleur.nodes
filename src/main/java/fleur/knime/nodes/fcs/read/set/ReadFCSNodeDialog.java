@@ -1,4 +1,4 @@
-package inflor.knime.nodes.fcs.read;
+package fleur.knime.nodes.fcs.read.set;
 
 import org.knime.core.node.defaultnodesettings.DefaultNodeSettingsPane;
 import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;

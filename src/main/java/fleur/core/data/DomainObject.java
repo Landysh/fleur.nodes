@@ -1,4 +1,4 @@
-package inflor.core.data;
+package fleur.core.data;
 
 import java.io.Serializable;
 import java.util.UUID;

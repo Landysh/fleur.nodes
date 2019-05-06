@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.data;
+package fleur.core.data;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -186,8 +186,9 @@ public class FCSFrame extends DomainObject implements Comparable<String> {
     try {
       return FCSFrame.load(bytes);
     } catch (InvalidProtocolBufferException e) {
-      e.printStackTrace();
-      return null;
+      RuntimeException rte = new RuntimeException("Could not copy fcs frame.");
+      rte.initCause(e);
+      throw rte;
     }
   }
 

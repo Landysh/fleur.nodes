@@ -6,8 +6,8 @@ import java.io.RandomAccessFile;
 
 import org.junit.Test;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
 
 public class FCSFileReaderTest {
   // Define Constants

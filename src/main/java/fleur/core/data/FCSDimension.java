@@ -1,4 +1,4 @@
-package inflor.core.data;
+package fleur.core.data;
 
 // Default serialization not used. We should measure performance.
 @SuppressWarnings("serial")

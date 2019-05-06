@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSFrame;
 
 public class EventFrameTest {
 

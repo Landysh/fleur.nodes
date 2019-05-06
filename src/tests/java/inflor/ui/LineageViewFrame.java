@@ -11,13 +11,13 @@ import javax.swing.UIManager;
 
 import org.jfree.ui.ApplicationFrame;
 
-import inflor.core.data.FCSFrame;
-import inflor.core.fcs.FCSFileReader;
+import fleur.core.data.FCSFrame;
+import fleur.core.fcs.FCSFileReader;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.Hierarchical;
 import inflor.core.gates.RangeGate;
 import inflor.core.plots.ChartSpec;
 import inflor.core.plots.PlotTypes;
-import inflor.core.transforms.TransformSet;
 import inflor.core.ui.CellLineageTree;
 
 @SuppressWarnings("serial")

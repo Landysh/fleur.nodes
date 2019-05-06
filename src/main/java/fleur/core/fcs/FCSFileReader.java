@@ -15,7 +15,7 @@
  *
  * Created on December 14, 2016 by Aaron Hart
  */
-package inflor.core.fcs;
+package fleur.core.fcs;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +34,8 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
 import inflor.core.logging.LogFactory;
 import inflor.core.utils.FCSUtilities;
 import inflor.core.utils.MatrixUtilities;
@@ -98,6 +98,11 @@ public class FCSFileReader {
   private String endianness = BYTE_ORDER_LITTLE;
 
   public FCSFileReader(String filePath, RandomAccessFile raf) throws Exception {
+    this(filePath, raf, false, false);
+  }
+
+  
+  public FCSFileReader(String filePath, RandomAccessFile raf, boolean compOnRead, boolean dropUncomped) throws Exception {
     // Open the file
     pathToFile = filePath;
     final File f = new File(pathToFile);

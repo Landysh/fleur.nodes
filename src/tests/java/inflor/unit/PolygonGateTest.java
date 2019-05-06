@@ -7,10 +7,10 @@ import java.util.BitSet;
 
 import org.junit.Test;
 
-import inflor.core.data.FCSDimension;
-import inflor.core.data.FCSFrame;
+import fleur.core.data.FCSDimension;
+import fleur.core.data.FCSFrame;
+import fleur.core.transforms.TransformSet;
 import inflor.core.gates.PolygonGate;
-import inflor.core.transforms.TransformSet;
 
 public class PolygonGateTest {
 
