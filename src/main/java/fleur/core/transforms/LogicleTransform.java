@@ -31,8 +31,8 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
 
   private static final long serialVersionUID = 1L;
   
-  private static final double LOGICLE_T_PERCENTILE = 99;
-  private static final double LOGICLE_W_PERCENTILE = 5;
+  private static final double LOGICLE_T_PERCENTILE = 99.99;
+  private static final double LOGICLE_W_PERCENTILE = 1;
   //private static final double DEFAULT_T = 262144;
   private static final double DEFAULT_W = 0.5;
   private static final double DEFAULT_M = 4.5;
@@ -199,10 +199,11 @@ public class LogicleTransform extends AbstractTransform implements Serializable 
   public void optimize(double[] rawData) {
     Double newT = new Percentile(LOGICLE_T_PERCENTILE).evaluate(rawData);
     double newW = optimizeW(rawData);
-    //TODO M?
+    double lowerbound = new Percentile(LOGICLE_W_PERCENTILE).evaluate(rawData);
+    double newM = Math.log10(newT - Math.abs(lowerbound));
     try {
-      newT = newT >= logicle.T ? newT : logicle.T; 
-      this.logicle = new FastLogicle(newT, newW);
+      //newT = newT >= logicle.T ? newT : logicle.T; 
+      this.logicle = new FastLogicle(newT, newW, newM, 0);
     }catch (Exception e) {
       //Ideally we catch this beforehand but for now:
       RuntimeException e2 = new RuntimeException("bad input parameters: T [1] w [2], M [3], A [4]"
