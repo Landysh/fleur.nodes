@@ -119,7 +119,7 @@ public class PlotUtils {
         || FCSUtilities.MERGE_DIMENSION_NAME.equals(parameterName)){
       return new BoundDisplayTransform(0, 262144);
       
-    } else if (DimensionTypes.PULSE_WIDTH.matches(parameterName)) {
+    } else if (DimensionTypes.PULSE_WIDTH.matches(parameterName.toLowerCase())) {
        return new BoundDisplayTransform(0, 100);
     } else {
       return new LogicleTransform(range);
