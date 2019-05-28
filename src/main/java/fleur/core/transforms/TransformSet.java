@@ -1,6 +1,5 @@
 package fleur.core.transforms;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +38,12 @@ public class TransformSet {
     
     if (!fcsSet.isEmpty()) {
       Double range = fcsSet.stream().map(df -> df.getDimension(name).getRange()).max(Double::compare).get();
-      AbstractTransform t = PlotUtils.createDefaultTransform(name, range);
+      AbstractTransform t = PlotUtils.createDefaultTransform(name.toLowerCase(), range);
       Optional<AbstractTransform> optimalT = fcsSet.stream()
           .filter(frame -> frame.hasDimension(name))
-          .peek(frame -> System.out.println(frame.getDisplayName()))
+          //.peek(frame -> System.out.println(frame.getDisplayName()))
           .map(frame -> frame.getDimension(name))
-          .peek(dim -> System.out.println(dim))
+          //.peek(dim -> System.out.println(dim))
           .map(dim -> t.getOptimizedTrasnform(dim.getData()))
           .reduce((t1,t2) -> t1.merge(t2));
       map.put(name, optimalT.get());
