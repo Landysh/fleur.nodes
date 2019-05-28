@@ -26,7 +26,7 @@ public enum DimensionTypes {
   VIABILITY(new String[] {}), 
   TIME(new String[] {".*time.*"}), 
   DNA(new String[] {".*dapi.*", ".*pi.*"}),
-  PULSE_WIDTH(new String[] {"Width"});
+  PULSE_WIDTH(new String[] {".*width.*"});
 
   private final String[] regi;
 
