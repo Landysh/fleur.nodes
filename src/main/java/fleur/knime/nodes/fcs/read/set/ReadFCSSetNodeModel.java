@@ -295,7 +295,7 @@ public class ReadFCSSetNodeModel extends NodeModel {
         exec.checkCanceled();
       } catch (CanceledExecutionException e) {
         // Unchecked exception as this is called from a stream.
-        throw new NullPointerException("Execution cancelled");
+        throw new RuntimeException("Execution cancelled");
       }
       exec.setProgress(currentFileIndex / (double) fileCount,
           "Reading file " + (currentFileIndex + 1) + " of: " + fileCount);
