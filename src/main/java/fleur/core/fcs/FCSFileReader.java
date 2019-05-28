@@ -87,7 +87,7 @@ public class FCSFileReader {
   final RandomAccessFile fcsFile;
   final Integer beginText;
   final Integer endText;
-  final Integer beginData;
+  Integer beginData;
   final String dataType;
   final Integer[] bitMap;
   final FCSFrame fcsFrame;
@@ -130,6 +130,9 @@ public class FCSFileReader {
 
     // data specific properties
     beginData = readOffset(FIRST_BYTE_BEGINDATA_OFFSET, LAST_BYTE_BEGINDATA_OFFSET);
+    if (0==beginData) {
+      beginData = Integer.parseInt(header.get("$BEGINDATA"));
+    }
     readOffset(FIRST_BYTE_END_DATA_OFFSET, LAST_BYTE_END_DATA_OFFSET);
     bitMap = createBitMap(header);
     dataType = fcsFrame.getKeywordValue(DATATYPE_KEY);
