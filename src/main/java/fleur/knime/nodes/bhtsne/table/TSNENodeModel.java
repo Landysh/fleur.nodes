@@ -28,7 +28,9 @@ import org.knime.core.node.defaultnodesettings.SettingsModelDoubleBounded;
 import org.knime.core.node.defaultnodesettings.SettingsModelInteger;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
-import fleur.core.sne.tsne.barneshut.BHTSne2;
+import com.jujutsu.tsne.TSneConfig;
+import com.jujutsu.tsne.TSneConfiguration;
+import com.jujutsu.tsne.barneshut.ParallelBHTsne;
 import fleur.core.sne.utils.MatrixOps;
 
 /**
@@ -73,6 +75,20 @@ public class TSNENodeModel extends NodeModel {
   static final Integer DEFAULT_SEED = 42;
   private final SettingsModelInteger modelSeed = new SettingsModelInteger(KEY_SEED, DEFAULT_SEED);
 
+  // Theta
+  static final String KEY_THETA = "theta";
+  static final Double DEFAULT_THETA = 0.5;
+  static final Double MIN_THETA = 0.;
+  static final Double MAX_THETA = Double.MAX_VALUE;
+  private SettingsModelDoubleBounded mTheta = new SettingsModelDoubleBounded(KEY_THETA,DEFAULT_THETA,MIN_THETA,MAX_THETA);
+  
+  // Out dimensions
+  static final int DEFAULT_OUT_DIMS = 2;
+  // Use PCA 
+  static final Boolean DEFAULT_USE_PCA = true;
+
+  
+  
   private ArrayList<SNEIterationBean> resultList;
 
   /**
@@ -127,30 +143,32 @@ public class TSNENodeModel extends NodeModel {
     data = MatrixOps.centerAndScale(data);
     exec.setProgress(0.1);
     exec.setMessage("Initializing bhtSNE");
-    BHTSne2 bht = new BHTSne2();
+    ParallelBHTsne bht = new ParallelBHTsne();
     int n = data.length;
     int d = data[0].length;
-    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5, modelSeed.getIntValue());
-    exec.setProgress(0.15);
-    exec.setMessage("Main Loop: ");
-    ExecutionContext iterExec = exec.createSubExecutionContext(1);
-    resultList = new ArrayList<>();
-    boolean keepGoing = true;
-    while (keepGoing){
-      double num = bht.getCurrentIteration();
-      double den = bht.getMaxIterations();
-      iterExec.setProgress(num/den);
-      iterExec.setMessage("Iteration: " + num);
-      iterExec.checkCanceled();
-      double[][] yCurrent = bht.runInteractively();
-      if (yCurrent[0].length==0){
-        keepGoing = false;
-      } else {
-        keepGoing = true;
-        resultList.add(new SNEIterationBean((int) num, yCurrent));
-      }
-    }   
-    final double[][] yFinal = resultList.get(resultList.size()-1).getData();
+    TSneConfiguration config = new TSneConfig(data, DEFAULT_OUT_DIMS, modelInitDims.getIntValue(),  modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), DEFAULT_USE_PCA, mTheta.getDoubleValue(), false, true);
+    final double[][] yFinal = bht.tsne(config);
+//    bht.init(data, n, d, 2, modelInitDims.getIntValue(), modelPerplexity.getDoubleValue(), modelIterations.getIntValue(), true, 0.5, modelSeed.getIntValue());
+//    exec.setProgress(0.15);
+//    exec.setMessage("Main Loop: ");
+//    ExecutionContext iterExec = exec.createSubExecutionContext(1);
+//    resultList = new ArrayList<>();
+//    boolean keepGoing = true;
+//    while (keepGoing){
+//      double num = bht.getCurrentIteration();
+//      double den = bht.getMaxIterations();
+//      iterExec.setProgress(num/den);
+//      iterExec.setMessage("Iteration: " + num);
+//      iterExec.checkCanceled();
+//      double[][] yCurrent = bht.runInteractively();
+//      if (yCurrent[0].length==0){
+//        keepGoing = false;
+//      } else {
+//        keepGoing = true;
+//        resultList.add(new SNEIterationBean((int) num, yCurrent));
+//      }
+//    }   
+//    final double[][] yFinal = resultList.get(resultList.size()-1).getData();
 
     final DataTableSpec newColSpec = createTableSpec(inData[0].getSpec());
     final DataTableSpec spec = new DataTableSpec(inData[0].getSpec(), newColSpec);
