@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/io.landysh.fleur.feature_0.4.3.qualifier.jar" id="io.landysh.fleur.feature" version="0.4.3.qualifier"/>
+</site>
