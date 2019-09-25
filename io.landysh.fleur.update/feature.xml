@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="io.landysh.fleur.update"
+      label="Fleur Nodes for KNIME Update Site"
+      version="0.4.3.qualifier">
+
+   <includes
+         id="io.landysh.fleur.feature"
+         version="0.0.0"/>
+
+</feature>
